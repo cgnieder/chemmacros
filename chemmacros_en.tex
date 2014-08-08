@@ -3,19 +3,20 @@
 % arara: pdflatex
 % arara: pdflatex
 % --------------------------------------------------------------------------
-% the CHEMMACROS bundle
-%   chemmacros_en.tex
-% macros and commands for chemists
+% the CHEMMACROS package
+%
+%   macros and commands for chemists
+%
 % --------------------------------------------------------------------------
 % Clemens Niederberger
 % --------------------------------------------------------------------------
-% https://bitbucket.org/cgnieder/chemmacros/
+% https://github.com/cgnieder/chemmacros/
 % contact@mychemistry.eu
 % --------------------------------------------------------------------------
 % If you have any ideas, questions, suggestions or bugs to report, please
 % feel free to contact me.
 % --------------------------------------------------------------------------
-% Copyright 2011-2013 Clemens Niederberger
+% Copyright 2011-2014 Clemens Niederberger
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -34,16 +35,10 @@
 \usepackage[greek=newtx]{chemmacros}
 \setcnltx{
   package  = {chemmacros},
-  title    = \huge the \chemmacros\ bundle,
-  url      = https://bitbucket.org/cgnieder/chemmacros/ ,
+  info     = {macros and commands for chemists},
+  url      = https://github.com/cgnieder/chemmacros/ ,
   authors  = Clemens Niederberger ,
   email    = contact@mychemistry.eu ,
-  info     = {
-    packages \chemmacros\ (v\csname chemmacros@version\endcsname),
-    \chemformula\ (v\csname chemformula@version\endcsname),
-    \ghsystem\ (v\csname ghsystem@version\endcsname) and
-    \chemgreek\ (v\csname chemgreek@version\endcsname)\\[2ex]
-    {\Large documentation for the \chemmacros\ package}} ,
   abstract = {%
     \centering
     \includegraphics{chemmacros-logo.pdf}
@@ -176,7 +171,6 @@
   option/synchronize ,
   chemformula/format = \libertineLF
 }
-% \colorlet{chemformula}{black!90}
 
 \sisetup{
   detect-mode=false,
@@ -285,7 +279,7 @@
 \section{Licence, Requirements and \textsc{README}}
 \license
 
-The \chemmacros\ bundle needs the bundles \bnd{l3kernel}~\cite{bnd:l3kernel}
+The \chemmacros\ package needs the bundles \bnd{l3kernel}~\cite{bnd:l3kernel}
 and \bnd{l3packages}~\cite{bnd:l3packages}.  It also needs the packages
 \needpackage{siunitx}~\cite{pkg:siunitx},
 \needpackage{mathtools}~\cite{pkg:mathtools}, \needpackage{bm}~\cite{pkg:bm},
@@ -294,14 +288,16 @@ and \bnd{l3packages}~\cite{bnd:l3packages}.  It also needs the packages
 \pkg{tikz}\footnote{\CTANurl[graphics]{pgf}}~\cite{pkg:pgf} and the \TikZ\
 libraries \code{calc} and \code{arrows}.  Language support is done with the
 help of the \needpackage{translations}~\cite{pkg:translations}.  The
-\chemmacros\ package also loads the other packages of this bundle.
+\chemmacros\ package also loads the packages
+\pkg{chemformula}~\cite{pkg:chemformula} and
+\pkg{chemgreek}~\cite{pkg:chemgreek}.
 
 The package option \option{xspace} also loads the package
 \pkg{xspace}~\cite{pkg:xspace}.
 
-The \chemmacros\ bundle bundles four packages: \chemmacros, \chemformula,
-\ghsystem\ and \chemgreek.  The package dependencies of the other packages are
-described in the respective manuals.
+The package option \option{ghsystem} also loads the package
+\pkg{ghsystem}~\cite{pkg:ghsystem}.
+
 
 \section{Motivation and Background}
 \chemmacros\ started some years ago as a growing list of custom macros that I
@@ -319,14 +315,8 @@ with \chemmacros, though.  Also, some other minor points in \pkg{mhchem}
 always bothered me, but they hardly seemed enough for a new package.  They
 weren't even enough for a feature request to the \pkg{mhchem} author.  The
 challenge and the fun of creating a new package and the wish for a highly
-customizable alternative led to \chemformula\ after all.
-
-\chemformula\ works very similar to \pkg{mhchem} but is more strict as to how
-compounds, stoichiometric factors and arrows are input.  In the same time
-\chemformula\ offers possibilities to customize the output that \pkg{mhchem}
-does not.  Although \chemformula\ is meant as an \emph{alternative} to
-\pkg{mhchem} \chemmacros\ only loads \chemformula\ and uses it at various
-places internally, too.
+customizable alternative led to \chemformula\ after all.  \chemformula{} used
+to part of \chemmacros{} for quite a while but now is an independent package.
 
 As a chemist you are probably aware of the fact that the \acl{UN} have
 developed the \ac{ghs} as a global replacement for the various different
@@ -336,9 +326,11 @@ time.
 
 The package \ghsystem\ enables you to typeset all the hazard and precautionary
 statements and pictograms in a very easy way.  The statements are taken from
-\acs{eu} regulation 1272/2008~\cite{eu:ghsystem_regulation}.
+\acs{eu} regulation 1272/2008~\cite{eu:ghsystem_regulation}.  \ghsystem{} used
+to be a part of \chemmacros{} for quite a while but now is an independent
+package.
 
-There are four points I hope I have achieved with this bundle:
+There are four points I hope I have achieved with this package:
 \begin{itemize}
   \item intuitive usage as far as the syntax of the commands is concerned
   \item the commands shall not only make typesetting easier and faster but also
@@ -427,6 +419,16 @@ With version~4.0 some changes have been made:
   \item Dutch translations.
 \end{itemize}
 
+\subsection{Version 4.6}
+\begin{itemize}
+  \item The packages \chemformula, \chemgreek{} and \ghsystem{} are no longer
+    distributed as a part of \chemmacros{} but as packages of their own.
+  \item Inside \cs{iupac} the characters \code{\textbar} and
+    \code{\textasciicircum} are active.  The corresponding commands
+    \cs{\textbar} and \cs{\textasciicircum} are deprecated now and will be
+    dropped eventually.
+\end{itemize}
+
 \section{Package Options}\label{sec:options}
 \chemmacros\ has several package options. They all are used as key/value pairs
 like
@@ -437,9 +439,6 @@ Some also can be used without value
 (\verbcode+\usepackage[option1]{chemmacros}+), which means that the
 \default{underlined} value is used.
 
-Both \chemformula\ and \ghsystem\ don't have package options of their own.  If
-you load them explicitly any given option will silently fail.  Options can
-then only be set using the setup command.
 \begin{options}
   % circled
   \keychoice{circled}{formal,\default{all},none}\Module{option}\Default{formal}
@@ -452,7 +451,7 @@ then only be set using the setup command.
     This option switches between two kinds of circled charge symbols:
     \cs{fplus} \fplus\ and \verbcode+$\oplus$+ $\oplus$.
   % ghsystem
-  \keybool{ghsystem}\Module{option}\Default{true}
+  \keybool{ghsystem}\Module{option}\Default{false}
     \keyis{ghsystem}{false} disables the automatic loading of the \ghsystem\
     package.
   % greek
@@ -496,10 +495,10 @@ then only be set using the setup command.
 
 
 \section{Setup}\label{sec:setup}
-Various of \chemmacros', \chemformula's and \ghsystem's commands have
-key/value pairs with which they can be customized.  Most times they can be
-used as (optional) argument of the commands themselves.  They also can most
-times be used with the \cs{chemsetup} command.
+Various of \chemmacros' commands have key/value pairs with which they can be
+customized.  Most times they can be used as (optional) argument of the
+commands themselves.  They also can most times be used with the \cs{chemsetup}
+command.
 \begin{commands}
   \command{chemsetup}[\oarg{module}\Marg{\meta{key} = \meta{value}}]
     Set up the options for module \meta{module} only or
@@ -530,7 +529,8 @@ Keys \emph{not} belonging to a module \emph{cannot} be used with
 \cs{chemsetup}!
 
 All options of \chemformula\ belong to the module \module{chemformula} and all
-of \ghsystem's options belong to the module \module{ghsystem}.
+of \ghsystem's options belong to the module \module{ghsystem} which means that
+their options can also be set up using \cs{chemsetup}.
 
 
 \section{Language Settings}\label{sec:languages}
@@ -627,7 +627,7 @@ Choosing the language \code{italian} defines two additional \ac{iupac} commands:
   \command{sin} \iupac{\sin}
 \end{commands}
 
-\part{\chemmacros}\label{part:chemmacros}
+\part{The Package's Features}\label{part:chemmacros}
 \section{Particles, Ions and Symbols}\label{sec:particles}
 \subsection{Predefined}
 
@@ -766,14 +766,17 @@ following command does.
   \command{iupac}[\marg{IUPAC name}]
     Inside this command use \cs{\textbar} and \cs{-} to indicate a breaking
     point or a breaking dash.  Use \cs{\textasciicircum} as a shortcut for
-    \cs*{textsuperscript}.
+    \cs*{textsuperscript}.  In fact, \sinceversion{4.6}since version~4.6 the
+    characters \code{\textbar} and \code{\textasciicircum} are active inside
+    \cs{iupac}. Using \code{\textbar} is equivalent to \cs{\textbar} and using
+    \code{\textasciicircum} is equivalent to \cs{\textasciicircum}.
 \end{commands}
 
 \begin{example}
   \begin{minipage}{.4\linewidth}
     \iupac{%
-      Tetra\|cyclo[2.2.2.1\^{1,4}]\-un\|decane-2\-dodecyl\-%
-      5\-(hepta\|decyl\|iso\|dodecyl\|thio\|ester)%
+      Tetra|cyclo[2.2.2.1^{1,4}]\-un|decane-2\-dodecyl\-%
+      5\-(hepta|decyl|iso|dodecyl|thio|ester)%
     }
   \end{minipage}
 \end{example}
@@ -786,7 +789,7 @@ There are some subtleties: \cs{-} inserts a small space before the hyphen and
 removes a small space after it.  The command \cs{\textbar} not only prevents
 ligatures but also inserts a small space.
 \begin{example}[side-by-side]
-  \huge\iupac{2,4\-Di\|chlor\|pentan} \par
+  \huge\iupac{2,4\-Di|chlor|pentan} \par
   2,4-Dichlorpentan
 \end{example}
 
@@ -892,8 +895,8 @@ please read page~\pageref{desc:one-letter-commands} first before you use them.
 
 \begin{example}
   \iupac{5\chemalpha\-androstan\-3\chembeta\-ol} \par
-  \iupac{\chemalpha\-(tri\|chloro\|methyl)\-\chemomega
-    \-chloro\|poly(1,4\-phenylene\|methylene)}
+  \iupac{\chemalpha\-(tri|chloro|methyl)\-\chemomega
+    \-chloro|poly(1,4\-phenylene|methylene)}
 \end{example}
 
 \paragraph{Hetero Atoms and added Hydrogen}
@@ -924,7 +927,7 @@ few macros for the most common ones.
     it.)
 \end{commands}
 \begin{example}[side-by-side]
-  \iupac{\nitrogen\-methyl\|benz\|amide}
+  \iupac{\nitrogen\-methyl|benz|amide}
   
   \iupac{3\hydrogen\-pyrrole}
   
@@ -1010,15 +1013,15 @@ Although these commands are provided I like to cite~\cite{iupac:bluebook}:
 
 Examples:\nopagebreak
 \begin{example}
-  \iupac{\dexter\-Wein\|s\"aure} =
-  \iupac{\cip{2S,3S}\-Wein\|s\"aure} \par
+  \iupac{\dexter\-Wein|s\"aure} =
+  \iupac{\cip{2S,3S}\-Wein|s\"aure} \par
   \iupac{\dexter\-($-$)\-Threose} =
-  \iupac{\cip{2S,3R}\-($-$)\-2,3,4\-Tri\|hydroxy\|butanal} \par
+  \iupac{\cip{2S,3R}\-($-$)\-2,3,4\-Tri|hydroxy|butanal} \par
   \iupac{\cis\-2\-Butene} =
   \iupac{\zusammen\-2\-Butene}, \par
-  \iupac{\cip{2E,4Z}\-Hexa\|diene} \par
+  \iupac{\cip{2E,4Z}\-Hexa|diene} \par
   \iupac{\meta\-Xylol} =
-  \iupac{1,3\-Di\|methyl\|benzene}
+  \iupac{1,3\-Di|methyl|benzene}
 \end{example}
 
 \paragraph{Coordination Chemistry}
@@ -1033,8 +1036,8 @@ Examples:\nopagebreak
     \sinceversion{4.3}Denote denticity.
 \end{commands}
 \begin{example}
-  Ferrocene = \iupac{bis(\hapto{5}cyclo\|penta\|dienyl)iron} \par
-  \iupac{tetra\-\bridge{3}iodido\-tetrakis[tri\|methyl\|platinum(IV)]}
+  Ferrocene = \iupac{bis(\hapto{5}cyclo|penta|dienyl)iron} \par
+  \iupac{tetra\-\bridge{3}iodido\-tetrakis[tri|methyl|platinum(IV)]}
 \end{example}
 
 Two options allow customization:
@@ -1071,7 +1074,7 @@ overwrite an existing \ac{iupac} command.
 \begin{example}
   \NewChemIUPAC\endo{\textit{endo}}
   \RenewChemIUPAC\anti{\textit{anti}}
-  \iupac{(2\-\endo,7\-\anti)\-2\-bromo\-7\-fluoro\|bicyclo[2.2.1]heptane}
+  \iupac{(2\-\endo,7\-\anti)\-2\-bromo\-7\-fluoro|bicyclo[2.2.1]heptane}
 \end{example}
 
 \cs{RenewChemIUPAC} allows you to redefine the existing \ac{iupac} naming
@@ -2491,31 +2494,12 @@ changed.
   \vspace{1cm}
 \end{example}
 
-\part{Other Packages of the Bundle}
-
-The other three packages, \chemformula, \ghsystem\ and \chemgreek, all have
-their own documentation (if you click on the name the corresponding file will
-open):
-\begin{itemize}
-  \item \url{chemformula_en.pdf}
-  \item \url{ghsystem_en.pdf}
-  \item \url{chemgreek_en.pdf}
-\end{itemize}
-
-This change has been made \sinceversion{4.0}with version~4.0 since with this
-version every of those packages can be used independently from the
-\chemmacros\ package.  It made sense to give each of them an own documentation
-file.  You should be able to find them in the same folder as this document as
-well as via the \code{texdoc} program.  You can also try and click on the
-names in the list above.  They are links and \emph{should} open the respective
-file.
-
 \appendix
 \part{Appendix}
 \addsec{Suggestions and Bug Reports}
 
-Feedback on \chemmacros, \chemformula, \chemgreek, and \ghsystem\ is highly
-appreciated and welcome!
+Feedback on \chemmacros{} (and also on \chemformula, \chemgreek, and
+\ghsystem) is highly appreciated and welcome!
 
 If you have suggestions for macros, missing features \etc, please don't
 hesitate to contact me.  If you recognize any errors, be it chemical ones,
@@ -2524,18 +2508,21 @@ email\footnote{\href{mailto:contact@mychemistry.eu}{contact@mychemistry.eu}}.
 
 If you find any bugs, it would be best, if you'd send me a minimal example,
 with which I can reproduce the bug.  You can also submit an issue on
-\url{https://bitbucket.org/cgnieder/chemmacros/} instead.
+\url{https://github.com/cgnieder/chemmacros/} instead.
 
 Many thanks to all the people who already provided me with feedback,
 especially (in alphabetical order):
 \begin{itemize}
   \item Peter Cao
+  \item Ignacio Fernández Galván for his translation of the hazard and
+    precautionary statements of the \ghsystem{} package into Spanish
   \item Christina Lüdigk
   \item Dr.~Paul King
   \item Jonas Rivetti (Special thanks for his translation of the hazard and
-    precautionary statements into Italian!)
+    precautionary statements of the \ghsystem{} package into Italian!)
   \item Christoph Schäfer
   \item Timo Stein
+  \item Herbert Voß
 \end{itemize}
 
 \end{document}

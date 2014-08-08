@@ -1,5 +1,5 @@
 % --------------------------------------------------------------------------
-% the CHEMGREEK package
+% the CHEMMACROS package
 %
 %   loads of little helpers for chemists
 %
@@ -28,7 +28,7 @@
 % --------------------------------------------------------------------------
 \RequirePackage{ expl3 , xparse , l3keys2e }
 \def\chemmacros@version{4.6}
-\def\chemmacros@date{2014/08/07}
+\def\chemmacros@date{2014/08/08}
 
 \ProvidesExplPackage
   {chemmacros}
@@ -93,7 +93,7 @@
 \bool_new:N      \l__chemmacros_varioref_bool
 \bool_new:N      \l__chemmacros_chemfig_bool
 \bool_new:N      \l__chemmacros_ghsystem_bool
-\bool_set_true:N \l__chemmacros_ghsystem_bool
+% \bool_set_true:N \l__chemmacros_ghsystem_bool
 
 \bool_new:N      \l__chemmacros_iupac_restricted_bool
 \bool_new:N      \l__chemmacros_iupac_strict_bool
@@ -336,7 +336,7 @@
 % define a deprecated command with hints to the corresponding new one:
 \cs_new_protected:Npn \chemmacros_define_deprecated:NN #1#2
   {
-    \cs_new_protected:Npn #1
+    \cs_set_protected:Npn #1
       {
         \msg_warning:nnxx { chemmacros } { command-deprecated }
           { #1 } { #2 }
@@ -350,7 +350,7 @@
 % define a command as dropped!
 \cs_new_protected:Npn \chemmacros_define_dropped:N #1
   {
-    \cs_new_protected:Npn #1
+    \cs_set_protected:Npn #1
       { \msg_error:nnn { chemmacros } { command-dropped } { #1 } }
   }
 
@@ -765,8 +765,6 @@
 \NewChemParticle \prt { p+ }
 \NewChemParticle \ntr { n^0 }
 
-\DeclareChemDropped \Rad
-
 % --------------------------------------------------------------------------
 % charges
 % circled charge signs: they are defined in the `chemformula' module:
@@ -1152,9 +1150,6 @@
 \NewChemIUPAC \tert  { \textit { tert } }
 
 % Fischer
-\DeclareChemDropped \Dfi
-\DeclareChemDropped \Lfi
-
 \NewChemIUPAC \dexter { \textsc { d } }
 \NewChemIUPAC \laevus { \textsc { l } }
 
@@ -1287,7 +1282,7 @@
     \chemmacros_allow_hyphens:
   }
 
-\cs_new_protected:Nn \chemmacros_break_point:
+\cs_new_protected:Npn \chemmacros_break_point:
   {
     \chemmacros_nobreak:
     \tex_discretionary:D { - } { }
@@ -1295,20 +1290,46 @@
     \chemmacros_allow_hyphens:
   }
 
+\cs_new_protected:Npn \chemmacros_superscript:
+  { \mode_if_math:TF { \sb } { \textsuperscript } }
+  
 \bool_new:N \l__chemmacros_inside_iupac_bool
 
-\cs_new_protected:Nn \chemmacros_iupac:n
+\group_begin:
+\char_set_catcode_active:N \~
+\char_set_lccode:nn {`~} {`|}
+\tl_to_lowercase:n { \group_end: \cs_set_eq:NN ~ } \chemmacros_break_point:
+
+\group_begin:
+\char_set_catcode_active:N \~
+\char_set_lccode:nn {`~} {`^}
+\tl_to_lowercase:n { \group_end: \cs_set_protected:Npn ~ }
+  { \chemmacros_superscript: }
+
+\group_begin:
+\char_set_catcode_active:N \|
+\char_set_catcode_active:N \^
+
+\cs_new_protected:Npn \chemmacros_iupac:n
   {
     \group_begin:
       \bool_set_true:N \l__chemmacros_inside_iupac_bool
       \chemmacros_make_iupac:
       \chemmacros_ignore_spaces:
       \cs_set_eq:NN \- \chemmacros_break_point_hyphen:
-      \cs_set_eq:NN \| \chemmacros_break_point:
-      \cs_set_eq:NN \^ \textsuperscript
+      \char_set_catcode_active:N \|
+      \char_set_catcode_active:N \^
+      \chemmacros_define_deprecated:NN \| |
+      \chemmacros_define_deprecated:NN \^ ^
+      \chemmacros_iupac_aux:n
+  }
+
+\cs_new_protected:Npn \chemmacros_iupac_aux:n #1
+  {
       #1
     \group_end:
   }
+\group_end:
 
 % Thanks to Joseph Wright and Enrico Gregorio for the help on the curious
 % redefinition of \- and the end of the compilation
@@ -1317,8 +1338,8 @@
 \cs_set_protected:Npx \- { \exp_not:o { \- } }
 \cs_set_eq:NN \@dischyph \-
 
-\NewDocumentCommand \iupac { m }
-  { \chemmacros_iupac:n { #1 } }
+\NewDocumentCommand \iupac { }
+  { \chemmacros_iupac:n }
 
 % --------------------------------------------------------------------------
 % latin phrases
@@ -2147,7 +2168,7 @@
         \tl_put_right:Nn \g__chemmacros_nmr_element_coupled_tl { \} }
       }
     \tl_put_left:Nn \g__chemmacros_nmr_element_coupled_tl { #2 }
-    \iupac { \^ { #1 } }
+    \iupac { \chemmacros_superscript: { #1 } }
     \bool_if:NTF \l__chemmacros_nmr_parse_bool
       { \chemformula_ch:nV {} \g__chemmacros_nmr_element_coupled_tl }
       { \chemmacros_atom:V \g__chemmacros_nmr_element_coupled_tl }
@@ -4328,7 +4349,7 @@ Version history
 2014/04/08 - version 4.5  - new option `acid-base/subscript'
                           - added Dutch translations
 2014/06/30 - version 4.5a - adapt to deprecated expl3 functions
-2014/08/07 - version 4.6  - from bundle to packages: packages `chemformula',
+2014/08/08 - version 4.6  - from bundle to packages: packages `chemformula',
                             `ghsystem' and `chemgreek' no longer belong to the
                             bundle but now are packages of their own.
 
