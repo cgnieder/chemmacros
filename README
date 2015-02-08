@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------
-the CHEMMACROS package v4.6 2014/08/08
+the CHEMMACROS package v4.7 2015/02/08
 
   macros and commands for chemists
 
@@ -8,7 +8,7 @@ Clemens Niederberger
 Web:    https://github.com/cgnieder/chemmacros/
 E-Mail: contact@mychemistry.eu
 --------------------------------------------------------------------------
-Copyright 2011-2014 Clemens Niederberger
+Copyright 2011-2015 Clemens Niederberger
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3

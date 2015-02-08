@@ -16,7 +16,7 @@
 % If you have any ideas, questions, suggestions or bugs to report, please
 % feel free to contact me.
 % --------------------------------------------------------------------------
-% Copyright 2011-2014 Clemens Niederberger
+% Copyright 2011-2015 Clemens Niederberger
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -429,6 +429,16 @@ With version~4.0 some changes have been made:
     dropped eventually.
 \end{itemize}
 
+\subsection{Version 4.7}
+\begin{itemize}
+  \item Fix broken \cs{iupac}.
+  \item Change the default subscripts of the equilibrium constants to match
+    the usage in the \acs{iupac} Green Book.
+  \item Allow \cs{NewChemPhase} and friends after \verbcode+\begin{document}+.
+  \item New optional argument to phase commands.
+  \item New \module{nmr} options n\option{method} and \option{connector}.
+\end{itemize}
+
 \section{Package Options}\label{sec:options}
 \chemmacros\ has several package options. They all are used as key/value pairs
 like
@@ -577,9 +587,9 @@ non-English translations are provided.
       \normalfont\bfseries \pkg{translations} key &
       \bfseries English default \\
     \midrule
-      K-acid  & \GetTranslation{K-acid} \\
-      K-base  & \GetTranslation{K-base} \\
-      K-water & \GetTranslation{K-water} \\
+      K-acid  & $\GetTranslation{K-acid}$ \\
+      K-base  & $\GetTranslation{K-base}$ \\
+      K-water & $\GetTranslation{K-water}$ \\
     \midrule
       phase-sld & \GetTranslation{phase-lqd} \\
       phase-lqd & \GetTranslation{phase-sld} \\
@@ -595,7 +605,7 @@ non-English translations are provided.
 Currently this includes the following translations:
 \begin{sourcecode}
   % subscript used in \Ka:
-  \DeclareTranslation{German}{K-acid}{S}
+  \DeclareTranslation{German}{K-acid}{\mathrm{s}}
   % the phases \sld and \lqd:
   \DeclareTranslation{German}{phase-sld}{f}
   \DeclareTranslation{German}{phase-lqd}{f{}l}
@@ -1177,15 +1187,15 @@ There is one option which changes the style the \p{} is typeset:
 \begin{options}
   \keychoice{p-style}{italics,slanted,upright}\Module{acid-base}\Default{upright}
     Set the style of the \p{} operator.
-  \keyval{K-acid}{text}\Module{acid-base}\Default{A}
+  \keyval{K-acid}{text}\Module{acid-base}\Default{\cs*{mathrm}\Marg{a}}
     The subscript to \cs{Ka} and \cs{pKa}.
-  \keyval{K-base}{text}\Module{acid-base}\Default{B}
+  \keyval{K-base}{text}\Module{acid-base}\Default{\cs*{mathrm}\Marg{b}}
     The subscript to \cs{Kb} and \cs{pKb}.
-  \keyval{K-water}{text}\Module{acid-base}\Default{W}
+  \keyval{K-water}{text}\Module{acid-base}\Default{\cs*{mathrm}\Marg{w}}
     The subscript to \cs{Kw}.
-  \keychoice{subscript}{lowercase,uppercase}\Module{acid-base}\Default{uppercase}
-    Choose\sinceversion{4.5} if the default subscript is written in lower- or
-    uppercase.
+  % \keychoice{subscript}{lowercase,uppercase}\Module{acid-base}\Default{uppercase}
+  %   Choose\sinceversion{4.5} if the default subscript is written in lower- or
+  %   uppercase.
 \end{options}
 \begin{example}
   \pH, \pKa \par
@@ -1193,24 +1203,25 @@ There is one option which changes the style the \p{} is typeset:
   \chemsetup[acid-base]{p-style=italics} \pH, \pKa
 \end{example}
 
-As\sinceversion{4.2d} you can see the default subscripts of \cs{Kw}, \cs{Ka}
-and \cs{Kb} are uppercase letters.  The literature is inconclusive about if
-this is the right way or if lowercase letters should be preferred.  In
+As\changedversion{4.7} you can see the default subscripts of \cs{Kw}, \cs{Ka}
+and \cs{Kb} are lowercase letters.  The literature is inconclusive about if
+this is the right way or if uppercase letters should be preferred.  In
 textbooks the uppercase variant usually seems to be used while journals seem
-to prefer the lowercase variant.  Since I like the uppercase version better
-this is the default.  If you want to change this you have two possibilities:
+to prefer the lowercase variant.  \chemmacros' default follows the usage
+in~\cite{iupac:greenbook}.  If you want to change this you have two
+possibilities:
 
 \begin{example}
   % this works only in the preamble:
-  % \DeclareTranslation{English}{K-acid}{a}% use your language here
+  % \DeclareTranslation{English}{K-acid}{\mathrm{A}}% use your language here
   % alternative:
-  \chemsetup{acid-base/K-acid=a}% overwrites language dependent settings
+  \chemsetup{acid-base/K-acid=\mathrm{A}}% overwrites language dependent settings
   \pKa
 \end{example}
 
 \section{Oxidation Numbers, Real and Formal Charges}\label{sec:ladungen}
 
-\chemmacros\ distinguishes between real ($+$/$-$) and formal (\fplus/\fminus)
+\chemmacros{} distinguishes between real ($+$/$-$) and formal (\fplus/\fminus)
 charge symbols, also see section~\ref{sec:options}.  All commands using formal
 charge symbols start with a \code{f}.
 
@@ -1786,6 +1797,10 @@ number of options.  For historical reasons they all belong to the module
     The used default unit.
   \keychoice{nucleus}{\Marg{\meta{num},\meta{atom}}}\Module{nmr}\Default{\Marg{1,H}}
     The used default nucleus.
+  \keyval{connector}{code}\Default{-}
+    \sinceversion{4.7}Places \meta{code} between the nucleus and the method.
+  \keyval{method}{code}\Default{NMR}
+    \sinceversion{4.7}The measuring method.
   \keyval{format}{commands}\Module{nmr}\Default
     For example \cs*{bfseries}.
   \keychoice{pos-number}{side,sub,super}\Module{nmr}\Default{side}
@@ -2285,6 +2300,10 @@ There are two options to customize the output:
   To make it complete: NaCl\aq.
 \end{example}
 
+All those phase commands have an optional argument\sinceversion{4.7}:
+\begin{example}[side-by-side]
+  \ch{H2O "\lqd[\SI{5}{\celsius}]"}
+\end{example}
 
 \subsection{Define Own Phases}
 Depending on the subject of your document you might need to indicate other
