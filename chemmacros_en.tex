@@ -276,7 +276,7 @@
 \begin{document}
 
 \part{Preliminaries}
-\section{Licence, Requirements and \textsc{README}}
+\section{Licence, Requirements and \textsc{README}}\label{sec:licence-requ-readme}
 \license
 
 The \chemmacros\ package needs the bundles \bnd{l3kernel}~\cite{bnd:l3kernel}
@@ -299,7 +299,7 @@ The package option \option{ghsystem} also loads the package
 \pkg{ghsystem}~\cite{pkg:ghsystem}.
 
 
-\section{Motivation and Background}
+\section{Motivation and Background}\label{sec:motiv-backgr}
 \chemmacros\ started some years ago as a growing list of custom macros that I
 frequently used.  I cannot completely recall when and why I decided to release
 them as a package.  Well -- here we go and you might find it useful, too, I
@@ -346,7 +346,7 @@ in many places.  If you find anything not compliant with \ac{iupac}
 recommendations\footnote{This does not concern the \cs{ox} command. The
   \ac{iupac} version is \cs{ox}\sarg.} I would welcome an email very much!
 
-\section{News}
+\section{News}\label{sec:news}
 \subsection{Version~4.0}
 With version~4.0 some changes have been made:
 \begin{itemize}
@@ -438,6 +438,24 @@ With version~4.0 some changes have been made:
   \item New optional argument to phase commands.
   \item New \module{nmr} options n\option{method} and \option{connector}.
 \end{itemize}
+
+\section{Important Information}\label{sec:import-inform}
+\chemmacros\ loads a number of packages (see also
+section~\ref{sec:licence-requ-readme}).  Most notably those are
+\begin{itemize}
+  \item \pkg{environ},
+  \item \pkg{translations},
+  \item \pkg{xfrac},
+  \item \pkg{siunitx},
+  \item \pkg{tikz} and the libraries \code{calc} and \code{arrows},
+  \item \pkg{mathtools} (which in turn loads \pkg{amsmath}),
+  \item \pkg{bm},
+  \item \pkg{chemformula} and \pkg{chemgreek}.
+\end{itemize}
+
+Since the package \pkg{bm} does font changing things and should be loaded
+after any other font packages you should definitely load \chemmacros\
+\emph{after} any font related packages you're loading for your document.
 
 \section{Package Options}\label{sec:options}
 \chemmacros\ has several package options. They all are used as key/value pairs
