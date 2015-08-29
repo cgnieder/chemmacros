@@ -1,0 +1,262 @@
+% --------------------------------------------------------------------------
+%
+% the CHEMMACROS package -- module: `base'
+%
+% --------------------------------------------------------------------------
+% Clemens Niederberger
+% --------------------------------------------------------------------------
+% https://github.org/cgnieder/chemmacros/
+% contact@mychemistry.eu
+% --------------------------------------------------------------------------
+% If you have any ideas, questions, suggestions or bugs to report, please
+% feel free to contact me.
+% --------------------------------------------------------------------------
+% Copyright 2011-2015 Clemens Niederberger
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Clemens Niederberger.
+% --------------------------------------------------------------------------
+\ChemModule{base}{2015/07/25 basic chemmacros module}
+
+% --------------------------------------------------------------------------
+\msg_new:nnn {chemmacros} {command-deprecated}
+  {
+    The~ command~ \token_to_str:N #1 \c_space_tl is~ deprecated.~ Use~
+    \token_to_str:N #2 \c_space_tl instead.
+  }
+
+% define a deprecated command with hints to the corresponding new one:
+\cs_new_protected:Npn \chemmacros_define_deprecated:NN #1#2
+  {
+    \cs_set_protected:Npn #1
+      {
+        \msg_warning:nnnn {chemmacros} {command-deprecated} {#1} {#2}
+        #2
+      }
+  }
+
+\NewDocumentCommand \DeclareChemDeprecated {mm}
+  { \chemmacros_define_deprecated:NN #1 #2 }
+
+% --------------------------------------------------------------------------
+% define a macro set:
+% \NewChem... \RenewChem... \DeclareChem... \ProvideChem...
+% #1: macro names
+% #2: arg spec
+% #3: internal command call
+\cs_new_protected:Npn \chemmacros_new_macroset:nnn #1#2#3
+  {
+    \exp_args:Nc \NewDocumentCommand {NewChem#1} {#2}
+      {
+        \cs_if_free:NTF ##1
+          { #3 }
+          { \msg_error:nnn {chemmacros} {new-#1} {##1} }
+      }
+    \exp_args:Nc \NewDocumentCommand {RenewChem#1} {#2}
+      {
+        \cs_if_free:NTF ##1
+          { \msg_error:nnn {chemmacros} {renew-#1} {##1} }
+          { #3 }
+      }
+    \exp_args:Nc \NewDocumentCommand {DeclareChem#1} {#2} {#3}
+    \exp_args:Nc \NewDocumentCommand {ProvideChem#1} {#2}
+      { \cs_if_free:NT ##1 { #3 } }
+    \msg_new:nnn {chemmacros} {new-#1}
+      {
+        You've~ tried~ to~ define~ a~ #1~ with~ \token_to_str:N
+        \NewChem #1 ,~ but~ the~ command~ sequence~ \token_to_str:N ##1
+        \c_space_tl already~ exists.~ Please~ choose~ another~ name.
+      }
+    \msg_new:nnn {chemmacros} {renew-#1}
+      {
+        You've~ tried~ to~ renew~ the~ #1~ \token_to_str:N ##1 ,~ but~
+        it~ doesn't~ exist.
+      }
+  }
+
+\NewDocumentCommand \NewChemMacroset {mmm}
+  { \cs_new_protected:Npn \chemmacros_new_macroset:nnn {#1} {#2} {#3} }
+
+\cs_new_protected:Npn \chemmacros_new_environment_macroset:nnn #1#2#3
+  {
+    \exp_args:Nc \NewDocumentCommand {NewChem#1} {#2}
+      {
+        \bool_if:nTF { \cs_if_free_p:c {##1} && \cs_if_free_p:c {end##1} }
+          { #3 }
+          { \msg_error:nnn {chemmacros} {new-#1} {##1} }
+      }
+    \exp_args:Nc \NewDocumentCommand {RenewChem#1} {#2}
+      {
+        \bool_if:nTF { \cs_if_free_p:c {##1} || \cs_if_free_p:c {end##1} }
+          { \msg_error:nnn {chemmacros} {renew-#1} {##1} }
+          { #3 }
+      }
+    \exp_args:Nc \NewDocumentCommand {DeclareChem#1} {#2} {#3}
+    \exp_args:Nc \NewDocumentCommand {ProvideChem#1} {#2}
+      {
+        \bool_if:nT { \cs_if_free_p:c {##1} && \cs_if_free_p:c {end##1} }
+          { #3 }
+      }
+    \msg_new:nnn {chemmacros} {new-#1}
+      {
+        You've~ tried~ to~ define~ a~ #1~ with~ \token_to_str:N
+        \NewChem #1 ,~ but~ the~ command~ sequence~ \exp_not:c {##1}
+        \c_space_tl already~ exists.~ Please~ choose~ another~ name.
+      }
+    \msg_new:nnn {chemmacros} {renew-#1}
+      { You've~ tried~ to~ renew~ the~ #1~ ##1,~ but~ it~ doesn't~ exist. }
+  }
+  
+% --------------------------------------------------------------------------
+% basic tools:
+\cs_new:Npn \chemmacros_remove_backslash:N #1
+  { \exp_after:wN \use_none:n \token_to_str:N #1 }
+
+\cs_new_eq:NN \chemmacros_ignore_spaces: \tex_ignorespaces:D
+
+\cs_new_protected:Npn \chemmacros_leave_vmode: { \hbox_unpack:N \c_empty_box }
+\cs_new_protected:Npn \chemmacros_nobreak:     { \tex_penalty:D \c_ten_thousand }
+\cs_new_protected:Npn \chemmacros_allow_break: { \tex_penalty:D \c_zero }
+\cs_new_protected:Npn \chemmacros_skip_nobreak:N #1
+  {
+    \chemmacros_nobreak:
+    \skip_horizontal:N #1
+    \chemmacros_nobreak:
+  }
+
+\prg_new_conditional:Npnn \chemmacros_tex_if:nn #1#2 {p,T,F,TF}
+  { \use:c { if #1 } #2 \prg_return_true: \else: \prg_return_false: \fi: }
+
+\prg_new_conditional:Npnn \chemmacros_latex_if:n #1 {p,T,F,TF}
+  { #1 { \prg_return_true: } { \prg_return_false: } }
+
+\prg_new_conditional:Npnn \chemmacros_is_int:n #1 {p,T,F,TF}
+  {
+    \if_charcode:w ! \if_int_compare:w 9 < 1#1 ! \else: _ \fi:
+      \prg_return_true:
+    \else:
+      \prg_return_false:
+    \fi:
+  }
+
+\prg_new_conditional:Npnn \chemmacros_if_loaded:nn #1#2 {p,T,F,TF}
+  {
+    \use:c {chemmacros_if_#1_loaded:nTF} {#2}
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+  
+\prg_new_conditional:Npnn \chemmacros_if_package_loaded:n #1 {p,T,F,TF}
+  {
+    \cs_if_exist:cTF {ver@#1.sty}
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+
+\prg_new_conditional:Npnn \chemmacros_if_class_loaded:n #1 {p,T,F,TF}
+  {
+    \cs_if_exist:cTF {ver@#1.cls}
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+
+% --------------------------------------------------------------------------
+% some checks at begin document:
+\bool_new:N \l__chemmacros_in_document_bool
+\bool_new:N \l__chemmacros_chemstyle_bool
+
+\AtBeginDocument
+  {
+    \bool_set_true:N \l__chemmacros_in_document_bool
+    \@ifpackageloaded { chemstyle }
+      { \bool_set_true:N \l__chemmacros_chemstyle_bool }
+      { \bool_set_false:N \l__chemmacros_chemstyle_bool }
+  }
+
+% --------------------------------------------------------------------------
+% detection and handling of bold face:
+\RequirePackage{bm}
+
+\prg_new_protected_conditional:Npnn \chemmacros_if_bold: {T,F,TF}
+  {
+    \seq_if_in:NVTF \l__chemmacros_if_bf_seq \f@series
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+
+\seq_new:N  \l__chemmacros_if_bf_seq
+
+\seq_set_split:Nnn \l__chemmacros_if_bf_seq { , }
+  {
+    b , bc , bm , bx , bux ,
+    eb , ebc , ebx , mb ,
+    sb , sbc , sbx ,
+    ub , ubc , ubx
+  }
+
+\cs_new_protected:Npn \chemmacros_bold:n #1
+  {
+    \chemmacros_if_bold:TF
+      {
+        \mode_if_math:TF
+          { \bm {#1} }
+          { \textbf {#1} }
+      }
+      {#1}
+  }
+
+\cs_new_protected:Npn \chemmacros_detect_bold:n
+  { \error \chemmacros_bold:n }
+
+% --------------------------------------------------------------------------
+\RequirePackage{amstext}
+
+\cs_new_protected:Npn \chemmacros_text:n #1
+  { \mode_if_math:TF { \text {#1} } {#1} }
+\cs_generate_variant:Nn \chemmacros_text:n { V }
+
+\cs_new_protected:Npn \chemmacros_math:n #1
+  { \chemmacros_text:n { \c_math_toggle_token #1 \c_math_toggle_token } }
+\cs_generate_variant:Nn \chemmacros_math:n { V }
+
+% --------------------------------------------------------------------------
+% a setup command:
+\NewDocumentCommand \chemsetup { o m }
+  {
+    \IfNoValueTF {#1}
+      { \keys_set:nn {chemmacros} {#2} }
+      { \keys_set:nn { chemmacros / #1 } {#2} }
+  }
+
+\keys_define:nn {chemmacros}
+  { modules .code:n = \chemmacros_load_modules:n {#1} }
+
+% --------------------------------------------------------------------------
+
+% load package #1 and add its options to chemmacros
+%   this requires that package #1 defines its options with l3keys using its
+%   name as module
+\cs_new_protected:Npn \chemmacros_integrate_package:nn #1#2
+  {
+    \tl_if_blank:nTF {#2}
+      { \RequirePackage {#1} }
+      { \RequirePackage {#1} [#2] }
+    \keys_define:nn {chemmacros}
+      {
+        #1 .choice: ,
+        #1 / unknown .code:n =
+          \keys_set:no {#1} { \l_keys_key_tl = ##1 }
+      }
+  }
+
+% --------------------------------------------------------------------------
+

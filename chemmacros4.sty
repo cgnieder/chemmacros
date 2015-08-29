@@ -1,0 +1,4374 @@
+% --------------------------------------------------------------------------
+% the CHEMMACROS package
+%
+%   comprehensive support for typesetting chemistry documents
+%
+% --------------------------------------------------------------------------
+% Clemens Niederberger
+% --------------------------------------------------------------------------
+% https://github.org/cgnieder/chemmacros/
+% contact@mychemistry.eu
+% --------------------------------------------------------------------------
+% If you have any ideas, questions, suggestions or bugs to report, please
+% feel free to contact me.
+% --------------------------------------------------------------------------
+% Copyright 2011-2015 Clemens Niederberger
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Clemens Niederberger.
+% --------------------------------------------------------------------------
+\RequirePackage{ expl3 , xparse , l3keys2e }
+\def\chemmacros@version{4.7a}
+\def\chemmacros@date{2015/08/16}
+
+\ExplSyntaxOn
+\ProvidesExplPackage
+  {chemmacros4}
+  {\chemmacros@date}
+  {\chemmacros@version}
+  {\c_chemmacros_info_tl \c_space_tl (CN)}
+
+% --------------------------------------------------------------------------
+% variants of kernel commands:
+\cs_generate_variant:Nn \prop_if_in:NnTF   { NV , Nx }
+\cs_generate_variant:Nn \prop_put:Nnn      { NV , NVV , NVx }
+\cs_generate_variant:Nn \prop_get:NnNTF    { NV }
+\cs_generate_variant:Nn \tl_set_rescan:Nnn { NnV }
+\cs_generate_variant:Nn \tl_if_eq:nnTF     { V }
+\cs_generate_variant:Nn \tl_const:cn       { cV }
+\cs_generate_variant:Nn \tl_to_lowercase:n { f }
+
+% --------------------------------------------------------------------------
+% load required packages
+% the technical ones:
+\RequirePackage { environ , scrlfile , etoolbox , translations }
+% related to other topics like mathematics or graphics:
+\RequirePackage { xfrac , siunitx , tikz, mathtools , bm }
+% other packages of this bundle -- ghsystem is not loaded here but at the end
+% of the preamble depending on a package option:
+\RequirePackage { chemformula , chemgreek }
+% TikZ libraries (the don't like expl3 syntax):
+\ExplSyntaxOff
+\usetikzlibrary{calc,arrows}
+\ExplSyntaxOn
+
+% --------------------------------------------------------------------------
+% boolean variables for the package options
+\bool_new:N      \l__chemmacros_xspace_bool
+\bool_set_true:N \l__chemmacros_xspace_bool
+
+\bool_new:N      \l__chemmacros_circled_bool
+\bool_set_true:N \l__chemmacros_circled_bool
+\bool_new:N      \l__chemmacros_circled_formal_bool
+\bool_set_true:N \l__chemmacros_circled_formal_bool
+\bool_new:N      \l__chemmacros_circled_chem_bool
+\bool_set_true:N \l__chemmacros_circled_chem_bool
+
+\bool_new:N      \l__chemmacros_EZ_cool_bool
+\bool_new:N      \l__chemmacros_Nu_mathspec_bool
+\bool_new:N      \l__chemmacros_chemstyle_bool
+\bool_new:N      \l__chemmacros_hyperref_bool
+\bool_new:N      \l__chemmacros_varioref_bool
+\bool_new:N      \l__chemmacros_chemfig_bool
+\bool_new:N      \l__chemmacros_ghsystem_bool
+% \bool_set_true:N \l__chemmacros_ghsystem_bool
+
+\bool_new:N      \l__chemmacros_iupac_restricted_bool
+\bool_new:N      \l__chemmacros_iupac_strict_bool
+\bool_new:N      \l__chemmacros_in_document_bool
+
+\AtBeginDocument
+  {
+    \bool_set_true:N \l__chemmacros_in_document_bool
+    \@ifpackageloaded { chemstyle }
+      { \bool_set_true:N \l__chemmacros_chemstyle_bool }
+      { \bool_set_false:N \l__chemmacros_chemstyle_bool }
+    \@ifpackageloaded { varioref }
+      { \bool_set_true:N \l__chemmacros_varioref_bool }
+      { \bool_set_false:N \l__chemmacros_varioref_bool }
+    \@ifpackageloaded { hyperref }
+      { \bool_set_true:N \l__chemmacros_hyperref_bool }
+      { \bool_set_false:N \l__chemmacros_hyperref_bool }
+    \@ifpackageloaded { chemfig }
+      { \bool_set_true:N \l__chemmacros_chemfig_bool }
+      { \bool_set_false:N \l__chemmacros_chemfig_bool }
+  }
+
+% --------------------------------------------------------------------------
+% warning / error messages
+\msg_new:nnnn { chemmacros } { language-not-defined }
+  { The~ language~ `#1'~ is~ not~ defined~ by~ chemmacros. }
+  {
+    You~ chose~ the~ language~ `#1'~ which~ is~ not~ defined~ by~ chemmacros.~
+    `english'~ is~ used~ instead.~ If~ you~ just~ mistyped~ try~ again!~
+    Otherwise~ contact~ the~ author~ and~ he'll~ probably~ add~ your~ language.
+  }
+
+\msg_new:nnnn { chemmacros } { already-defined }
+  { The~ command~ #1~ is~ already~ defined. }
+  {
+    The~ command~ #1~ has~ already~ been~ otherwise.~ chemmacros~ also~ tries~
+    to~ define~ it~ and~ fails.~
+  }
+
+\msg_new:nnnn { chemmacros } { not-defined }
+  { The~ command~ #1~ is~ not~ defined,~ yet. }
+  {
+    The~ command~ #1~ is~ not~ defined,~ yet.~ chemmacros~ tries~ to~
+    redefine~ it~ and~ fails.~
+  }
+
+\msg_new:nnnn { chemmacros } { option-deprecated }
+  { The~ option~ `#1'~ is~ deprecated.~ I~ will~ ignore~ it. }
+  {
+    The~ package~ option~ `#1'~ is~ deprecated~ and~ not~ used~ by~
+    chemmacros~ any~ more.~ It~ will~ therefore~ simply~ be~ ignored.
+  }
+
+\msg_new:nnnn { chemmacros } { command-deprecated }
+  {
+    The~ command~ \token_to_str:N #1 \c_space_tl is~ deprecated.~ Use~
+    \token_to_str:N #2 \c_space_tl instead.
+  }
+  {
+    The~ command~ \token_to_str:N #1 \c_space_tl is~ deprecated.~ Use~
+    \token_to_str:N #2 \c_space_tl instead.
+  }
+
+\msg_new:nnnn { chemmacros } { command-dropped }
+  {
+    The~ command~ \token_to_str:N #1 \c_space_tl has~ been~ dropped.~ I'm~
+    sorry.
+  }
+  {
+    The~ command~ \token_to_str:N #1 \c_space_tl has~ been~ dropped.~ I'm~
+    sorry.
+  }
+
+\msg_new:nnnn { chemmacros } { new-particle }
+  {
+    The~ command~ sequence~ \token_to_str:N #1 \c_space_tl is~ already~
+    defined.
+  }
+  {
+    You've~ tried~ to~ define~ a~ particle~ with~ \token_to_str:N
+    \NewChemParticle ,~ but~ the~ command~ sequence~ \token_to_str:N #1
+    \c_space_tl already~ exists.~ Please~ choose~ another~ name.
+  }
+
+\msg_new:nnnn { chemmacros } { renew-particle }
+  { The~ particle~ \token_to_str:N #1 \c_space_tl is~ not~ defined. }
+  {
+    You've~ tried~ to~ renew~ the~ particle~ \token_to_str:N #1 ,~ but~ it~
+    doesn't~ exist.
+  }
+
+\msg_new:nnnn { chemmacros } { new-latin }
+  {
+    The~ command~ sequence~ \token_to_str:N #1 \c_space_tl is~ already~
+    defined.
+  }
+  {
+    You've~ tried~ to~ define~ a~ latin~ phrase~ with~\token_to_str:N
+    \NewChemLatin ,~ but~ the~ command~ sequence~ \token_to_str:N #1
+    \c_space_tl already~ exists.~ Please~ choose~ another~ name.
+  }
+
+\msg_new:nnnn { chemmacros } { renew-latin }
+  { The~ latin~ phrase \token_to_str:N #1 \c_space_tl is~ not~ defined. }
+  {
+    You've~ tried~ to~ renew~ the~ latin~ phrase~ \token_to_str:N #1 ,~ but~
+    it~ doesn't~ exist.
+  }
+
+\msg_new:nnnn { chemmacros } { new-nmr }
+  {
+    The~ command~ sequence~ \token_to_str:N #1 \c_space_tl is~ already~
+    defined.
+  }
+  {
+    You've~ tried~ to~ define~ a~ NMR~ command~ with~\token_to_str:N
+    \NewChemParticle ,~ but~ the~ command~ sequence~ \token_to_str:N #1
+    \c_space_tl already~ exists.~ Please~ choose~ another~ name.
+  }
+
+\msg_new:nnnn { chemmacros } { renew-nmr }
+  { The~ NMR~ command~ \token_to_str:N #1 \c_space_tl is~ not~ defined. }
+  {
+    You've~ tried~ to~ renew~ the~ NMR~ command~ \token_to_str:N #1 ,~ but~
+    it~ doesn't~ exist.
+  }
+
+\msg_new:nnnn { chemmacros } { new-phase }
+  {
+    The~ command~ sequence~ \token_to_str:N #1 \c_space_tl is~ already~
+    defined.
+  }
+  {
+    You've~ tried~ to~ define~ a~ phase~ with~ \token_to_str:N
+    \NewChemPhase ,~ but~ the~ command~ sequence~ \token_to_str:N #1
+    \c_space_tl already~ exists.~ Please~ choose~ another~ name.
+  }
+
+\msg_new:nnnn { chemmacros } { renew-phase }
+  { The~ phase~ \token_to_str:N #1 \c_space_tl is~ not~ defined. }
+  {
+    You've~ tried~ to~ renew~ the~ phase~ \token_to_str:N #1 ,~ but~ it~
+    doesn't~ exist.
+  }
+
+\msg_new:nnnn { chemmacros } { new-iupac }
+  {
+    The~ iupac~ naming~ command~ \token_to_str:N #1 \c_space_tl is~ already~
+    defined.
+  }
+  {
+    You've~ tried~ to~ define~ a~ iupac~ naming~ command~ with~
+    \token_to_str:N \NewChemIUPAC ,~ but~ the~ iupac~ command~
+    \token_to_str:N #1 \c_space_tl already~ exists.~ Choose~ another~ name~
+    or~ use~ \token_to_str:N \RenewChemIUPAC .
+  }
+
+\msg_new:nnnn { chemmacros } { renew-iupac }
+  {
+    The~ iupac~ naming~ command~ \token_to_str:N #1 \c_space_tl is~ not~
+    defined.
+  }
+  {
+    You've~ tried~ to~ renew~ the~ iupac~ command~ \token_to_str:N #1 ,~ but~
+    it~ doesn't~ exist.~ Use~ \token_to_str:N \NewChemIUPAC \c_space_tl
+    instead.
+  }
+
+\msg_new:nnnn { chemmacros } { let-iupac }
+  {
+    The~ iupac~ naming~ command~ \token_to_str:N #2 \c_space_tl is~ not~
+    defined.
+  }
+  {
+    You've~ tried~ to~ let~ the~ iupac~ command~ \token_to_str:N #1 ~ to~ the~
+    iupac~ command~ \token_to_str:N #2 ,~ but~ the~ latter~ doesn't~ exist.~
+    Use~ \token_to_str:N \NewChemIUPAC \c_space_tl instead~ or~declare~
+    \token_to_str:N #2 \c_space_tl first.
+  }
+
+\msg_new:nnnn { chemmacros } { ox }
+  { \token_to_str:N \ox \c_space_tl : ~ #1 ~ \msg_line_context: . }
+  { \token_to_str:N \ox \c_space_tl : ~ #1 ~ \msg_line_context: . }
+
+\msg_new:nnnn { chemmacros } { OX }
+  { \token_to_str:N \OX \c_space_tl : ~ #1 ~ \msg_line_context: . }
+  { \token_to_str:N \OX \c_space_tl : ~ #1 ~ \msg_line_context: . }
+
+\msg_new:nnnn { chemmacros } { redox }
+  { \token_to_str:N \redox \c_space_tl : ~ #1 ~ \msg_line_context: . }
+  { \token_to_str:N \redox \c_space_tl : ~ #1 ~ \msg_line_context: . }
+
+\msg_new:nnnn { chemmacros } { chemfig }
+  {
+    You~ need~ to~ load~ the~ `chemfig'~ package~ in~ order~ to~ make~
+    \exp_after:wN \token_to_str:N \cs:w #1 \cs_end: \c_space_tl work~
+    properly~ \msg_line_context: .
+  }
+  {
+    You~ need~ to~ load~ the~ `chemfig'~ package~ in~ order~ to~ make~
+    \exp_after:wN \token_to_str:N \cs:w #1 \cs_end: \c_space_tl work~
+    properly~ \msg_line_context: .
+  }
+
+\msg_new:nnnn { chemmacros } { new-state }
+  {
+    The~ state~ \exp_after:wN \token_to_str:N \cs:w #1 \cs_end: \c_space_tl
+    already~ exists.~ You~ need~ to~ use~ \token_to_str:N \RenewChemState
+    \c_space_tl to~ alter~ it~ \msg_line_context: .
+  }
+  {
+    The~ state~ \exp_after:wN \token_to_str:N \cs:w #1 \cs_end: \c_space_tl
+    already~ exists.~ You~ need~ to~ use~ \token_to_str:N \RenewChemState
+    \c_space_tl to~ alter~ it~ \msg_line_context: .
+  }
+
+\msg_new:nnnn { chemmacros } { renew-state }
+  {
+    The~ state~ \exp_after:wN \token_to_str:N \cs:w #1 \cs_end: \c_space_tl
+    isn't~ set~ up~ yet.~ You~ need~ to~ use~ \token_to_str:N
+    \NewChemState \c_space_tl to~ create~ it~ \msg_line_context: .
+  }
+  {
+    The~ state~ \exp_after:wN \token_to_str:N \cs:w #1 \cs_end: \c_space_tl
+    isn't~ set~ up~ yet.~ You~ need~ to~ use~ \token_to_str:N
+    \NewChemState \c_space_tl to~ create ~it~ \msg_line_context: .
+  }
+
+\msg_new:nnn { chemmacros } { state-syntax }
+  {
+    You're~ using~ a~ no~ longer~ recommended~ syntax~ to~ (re-)define~ a~
+    state~ variable~ \msg_line_context: .~ This~ syntax~ may~ deprecate~ and~
+    be~ removed~ in~ the~ future.
+  }
+
+% declare an option as deprecated:
+\cs_new_protected:Npn \chemmacros_option_deprecated:n #1
+  { \msg_warning:nnn { chemmacros } { option-deprecated } { #1 } }
+
+% define a deprecated command with hints to the corresponding new one:
+\cs_new_protected:Npn \chemmacros_define_deprecated:NN #1#2
+  {
+    \cs_set_protected:Npn #1
+      {
+        \msg_warning:nnxx { chemmacros } { command-deprecated }
+          { #1 } { #2 }
+        #2
+      }
+  }
+
+\NewDocumentCommand \DeclareChemDeprecated { mm }
+  { \chemmacros_define_deprecated:NN #1 #2 }
+
+% define a command as dropped!
+\cs_new_protected:Npn \chemmacros_define_dropped:N #1
+  {
+    \cs_set_protected:Npn #1
+      { \msg_error:nnn { chemmacros } { command-dropped } { #1 } }
+  }
+
+\NewDocumentCommand \DeclareChemDropped { m }
+  { \chemmacros_define_dropped:N #1 }
+
+% --------------------------------------------------------------------------
+% temporary variables
+\tl_new:N  \l__chemmacros_tmpa_tl
+\tl_new:N  \l__chemmacros_tmpb_tl
+\int_new:N \l__chemmacros_tmpa_int
+\box_new:N \l__chemmacros_tmpa_box
+
+% --------------------------------------------------------------------------
+% language settings:
+\bool_new:N      \l__chemmacros_language_auto_bool
+\bool_set_true:N \l__chemmacros_language_auto_bool
+% this token list will hold the chosen language for chemmacros; since the
+% language is either chosen automatically or by option it is only available at
+% begin document
+\tl_new:N        \l_chemmacros_language_tl
+\tl_set:Nn       \l_chemmacros_language_tl { english }
+\tl_new:N        \l__chemmacros_current_language_tl
+
+% translate the key #1
+\cs_new:Npn \chemmacros_translate:n #1
+  {
+    \bool_if:NTF \l__chemmacros_language_auto_bool
+      { \GetTranslation{#1} }
+      { \GetTranslationFor{\l_chemmacros_language_tl}{#1} }
+  }
+
+\AtBeginDocument{
+  \bool_if:NTF \l__chemmacros_language_auto_bool
+    {
+      \tl_set:Nx \l_chemmacros_language_tl
+        { \@trnslt@language{\@trnslt@current@language} }
+    }
+    {
+      \tl_set_eq:NN
+        \l_chemmacros_language_tl
+        \l__chemmacros_current_language_tl
+    }
+}
+
+% --------------------------------------------------------------------------
+% package options
+%   circled     => circle charges
+%   detect-bold => behaviour when font series bold
+%   EZ          => cool or chemmacros version of \E
+%   german      => change pKA => pKS etc
+%   iupac       => behaviour of nomenclature commands
+%   ngerman     => an alias :)
+%   ghsystem    => load ghsystem or don't
+%   method      => use `chemformula' or `mhchem'
+%   strict      => errors or warnings
+%   synchronize => let particles et.al. adapt chemformula's font selection
+%   ugreek      => behaviour of \chemDelta, \chemalpha, ...
+%   version=1   => compatibility for documents set with v1.*
+%   xspace      => add an \xspace after a whole bunch of macros
+
+% this boolean has to be public since the other packages of the bundle may
+% want to know its value
+
+\bool_new:N \l__chemmacros_detect_bold_bool
+\bool_set_true:N \l__chemmacros_detect_bold_bool
+
+\bool_new:N \l__chemmacros_option_greek_set_bool
+\bool_new:N \l__chemmacros_use_upgreek_bool
+\bool_new:N \l__chemmacros_use_textgreek_bool
+\bool_new:N \l__chemmacros_use_kpfonts_bool
+\bool_new:N \l__chemmacros_use_newtx_bool
+
+\cs_new:Npn \chemmacros_inner_font: {}
+
+\keys_define:nn { chemmacros / option }
+  {
+    compatibility      .code:n = ,
+    bpchem             .code:n = \chemmacros_option_deprecated:n { bpchem } ,
+    circletype         .choice: ,
+    circletype / math  .code:n  =
+      { \bool_set_false:N \l__chemmacros_circled_chem_bool } ,
+    circletype / chem  .code:n  =
+      { \bool_set_true:N \l__chemmacros_circled_chem_bool } ,
+    circletype         .default:n = chem ,
+    circled            .choice: ,
+    circled / none     .code:n =
+      {
+        \bool_set_false:N \l__chemmacros_circled_bool
+        \bool_set_false:N \l__chemmacros_circled_formal_bool
+      } ,
+    circled / formal   .code:n =
+      {
+        \bool_set_true:N \l__chemmacros_circled_bool
+        \bool_set_true:N \l__chemmacros_circled_formal_bool
+      } ,
+    circled / all      .code:n =
+      {
+        \bool_set_true:N \l__chemmacros_circled_bool
+        \bool_set_false:N \l__chemmacros_circled_formal_bool
+      } ,
+    circled            .default:n  = all ,
+    detect-bold        .code:n = \chemmacros_option_deprecated:n { detect-bold } ,
+    EZ                 .code:n = \chemmacros_option_deprecated:n { EZ } ,
+    german             .code:n     =
+      \tl_set:Nn \l__chemmacros_current_language_tl { german } ,
+    ngerman            .code:n     =
+      \tl_set:Nn \l__chemmacros_current_language_tl { ngerman } ,
+    ghsystem           .bool_set:N = \l__chemmacros_ghsystem_bool ,
+    ghsystem           .default:n  = true ,
+    iupac              .choice: ,
+    iupac / restricted .code:n     =
+      \bool_set_true:N \l__chemmacros_iupac_restricted_bool
+      \bool_set_false:N \l__chemmacros_iupac_strict_bool ,
+    iupac / auto       .code:n     =
+      \bool_set_false:N \l__chemmacros_iupac_restricted_bool
+      \bool_set_false:N \l__chemmacros_iupac_strict_bool ,
+    iupac / strict     .code:n     =
+      \bool_set_false:N \l__chemmacros_iupac_restricted_bool
+      \bool_set_true:N \l__chemmacros_iupac_strict_bool ,
+    language           .code:n     =
+      \tl_if_eq:nnTF { #1 } { auto }
+        { \bool_set_true:N \l__chemmacros_language_auto_bool }
+        {
+          \bool_set_false:N \l__chemmacros_language_auto_bool
+          \tl_set:Nn \l__chemmacros_current_language_tl { #1 }
+        } ,
+    method             .choice: ,
+    method / chemformula   .code:n     =
+      \chemmacros_option_deprecated:n { method } ,
+    method / mhchem    .code:n     =
+      \chemmacros_option_deprecated:n { method } ,
+    Nu                 .choice: ,
+    Nu / mathspec      .code:n     =
+     \bool_set_true:N \l__chemmacros_Nu_mathspec_bool ,
+    Nu / chemmacros    .code:n     =
+     \bool_set_false:N \l__chemmacros_Nu_mathspec_bool ,
+    strict             .code:n     =
+      \chemmacros_option_deprecated:n { strict } ,
+    synchronize        .choice: ,
+    synchronize / true .code:n     =
+      \cs_set_eq:NN \chemmacros_inner_font: \chemformula_font_inner: ,
+    synchronize / false .code:n = \cs_set:Nn \chemmacros_inner_font: {} ,
+    synchronize        .default:n  = true ,
+    greek              .choice: ,
+    greek / upgreek    .code:n     =
+      \chemgreek_activate_mapping:n { upgreek }
+      \bool_set_true:N \l__chemmacros_option_greek_set_bool ,
+    greek / textgreek   .code:n    =
+      \chemgreek_activate_mapping:n { textgreek }
+      \bool_set_true:N \l__chemmacros_option_greek_set_bool ,
+    greek / kpfonts    .code:n     =
+      \chemgreek_activate_mapping:n { kpfonts }
+      \bool_set_true:N \l__chemmacros_option_greek_set_bool ,
+    greek / newtx      .code:n     =
+      \chemgreek_activate_mapping:n { newtx }
+      \bool_set_true:N \l__chemmacros_option_greek_set_bool ,
+    greek / mathdesign .code:n     =
+      \chemgreek_activate_mapping:n { mathdesign }
+      \bool_set_true:N \l__chemmacros_option_greek_set_bool ,
+    greek / fourier    .code:n     =
+      \chemgreek_activate_mapping:n { fourier }
+      \bool_set_true:N \l__chemmacros_option_greek_set_bool ,
+    greek / textalpha  .code:n     =
+      \chemgreek_activate_mapping:n { textalpha }
+      \bool_set_true:N \l__chemmacros_option_greek_set_bool ,
+    greek / math       .code:n     =
+      \chemgreek_activate_mapping:n { default }
+      \bool_set_true:N \l__chemmacros_option_greek_set_bool ,
+    greek / auto       .code:n     =
+      \bool_set_false:N \l__chemmacros_option_greek_set_bool ,
+    greek              .default:n  = auto ,
+    upgreek            .code:n = \chemmacros_option_deprecated:n { upgreek } ,
+    version            .code:n = \chemmacros_option_deprecated:n { version } ,
+    cmversion          .code:n = \chemmacros_option_deprecated:n { cmversion } ,
+    cmversion          .choice: ,
+    xspace             .bool_set:N = \l__chemmacros_xspace_bool ,
+    xspace             .default:n  = true
+  }
+
+
+
+\ProcessKeysOptions { chemmacros / option }
+
+% --------------------------------------------------------------------------
+% set up a few things:
+% - is `ghsystem' requested?
+% - do we need `xspace'?
+% - what about the greek letters?
+
+\seq_new:N  \l__chemmacros_greek_packages_seq
+\prop_new:N \l__chemmacros_greek_mapping_prop
+
+\cs_new_protected:Npn \chemmacros_add_greek_package_mapping:nn #1#2
+  {
+    \seq_put_right:Nn \l__chemmacros_greek_packages_seq {#1}
+    \prop_put:Nnn \l__chemmacros_greek_mapping_prop {#1} {#2}
+  }
+
+\cs_generate_variant:Nn \chemgreek_activate_mapping:n { V }
+
+\cs_new_protected:Npn \__chemmacros_select_greek_mapping:n #1
+  {
+    \bool_if:NF \l__chemmacros_option_greek_set_bool
+      {
+        \@ifpackageloaded { #1 }
+          {
+            \prop_get:NnN
+              \l__chemmacros_greek_mapping_prop
+              { #1 }
+              \l__chemmacros_tmpa_tl
+            \chemgreek_activate_mapping:V \l__chemmacros_tmpa_tl
+            \bool_set_true:N \l__chemmacros_option_greek_set_bool
+            \seq_map_break:
+          }
+          { }
+      }
+  }
+
+\chemmacros_add_greek_package_mapping:nn {upgreek}    {upgreek}
+\chemmacros_add_greek_package_mapping:nn {textgreek}  {textgreek}
+\chemmacros_add_greek_package_mapping:nn {mathdesign} {mathdesign}
+\chemmacros_add_greek_package_mapping:nn {kpfonts}    {kpfonts}
+\chemmacros_add_greek_package_mapping:nn {newtxmath}  {newtx}
+\chemmacros_add_greek_package_mapping:nn {fourier}    {fourier}
+\chemmacros_add_greek_package_mapping:nn {textalpha}  {textalpha}
+
+\AtEndPreamble
+  {
+    \bool_if:NT \l__chemmacros_ghsystem_bool
+      { \RequirePackage { ghsystem } }
+    \bool_if:NT \l__chemmacros_xspace_bool
+      { \RequirePackage { xspace } }
+    \seq_map_function:NN
+      \l__chemmacros_greek_packages_seq
+      \__chemmacros_select_greek_mapping:n
+  }
+
+\cs_new_protected:Npn \chemmacros_xspace:
+  { \bool_if:NT \l__chemmacros_xspace_bool { \xspace } }
+
+% --------------------------------------------------------------------------
+% TikZ drawings - helper macros
+\cs_new_protected:Npn \chemmacros_tikz_picture:nn #1#2
+  { \tikzpicture[#1] #2 \endtikzpicture }
+\cs_generate_variant:Nn \chemmacros_tikz_picture:nn { fn,xn }
+
+\cs_new_protected:Npn \chemmacros_tikz_draw:n #1
+  { \draw[#1] }
+\cs_generate_variant:Nn \chemmacros_tikz_draw:n { f,x }
+
+\cs_new_protected:Npn \chemmacros_tikz_node:n #1
+  { \node[#1] }
+\cs_generate_variant:Nn \chemmacros_tikz_node:n { f,x }
+
+\cs_new_protected:Npn \chemmacros_tikz_shade:n #1
+  { \shade[#1] }
+\cs_generate_variant:Nn \chemmacros_tikz_shade:n { f,x }
+
+\cs_new_protected:Npn \chemmacros_tikz_shadedraw:n #1
+  { \shadedraw[#1] }
+\cs_generate_variant:Nn \chemmacros_tikz_shadedraw:n { f,x }
+
+\cs_new_protected:Npn \chemmacros_tikz_node_in_draw:n #1
+  { node[#1] }
+\cs_generate_variant:Nn \chemmacros_tikz_node_in_draw:n { f,x }
+
+% --------------------------------------------------------------------------
+% a few general functions:
+\cs_new_eq:NN \chemmacros_leave_vmode:   \chemformula_leave_vmode:
+\cs_new_eq:NN \chemmacros_ignore_spaces: \tex_ignorespaces:D
+\cs_new_eq:NN \chemmacros_nobreak:       \chemformula_nobreak:
+\cs_new_eq:NN \chemmacros_allow_break:   \chemformula_allow_break:
+\cs_new_eq:NN \chemmacros_skip_nobreak:N \chemformula_skip_nobreak:N
+\cs_new:Npn   \chemmacros_remove_backslash:N #1
+  { \exp_after:wN \use_none:n \token_to_str:N #1 }
+
+\prg_new_protected_conditional:Npnn \chemmacros_if_is_cs:n #1 { T,F,TF }
+  {
+    \tl_set:Nx \l__chemmacros_tmpa_tl { \token_if_cs:NTF #1 { } { x } }
+    \tl_if_blank:VTF \l__chemmacros_tmpa_tl
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+
+% detection and handling of bold face:
+\prg_new_protected_conditional:Npnn \chemmacros_if_bold: { T,F,TF }
+  {
+    \seq_if_in:NVTF \l__chemmacros_if_bf_seq \f@series
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+
+\seq_new:N  \l__chemmacros_if_bf_seq
+
+\seq_set_split:Nnn \l__chemmacros_if_bf_seq { , }
+  {
+    b , bc , bm , bx , bux ,
+    eb , ebc , ebx , mb ,
+    sb , sbc , sbx ,
+    ub , ubc , ubx
+  }
+
+\cs_new_protected:Npn \chemmacros_bm:n #1
+  {
+    \bool_if:NTF \l__chemmacros_detect_bold_bool
+      { \bm { #1 } }
+      { #1 }
+  }
+
+\cs_new_protected:Npn \chemmacros_bf:n #1
+  {
+    \bool_if:NTF \l__chemmacros_detect_bold_bool
+      { { \normalfont \bfseries #1 } }
+      { { \normalfont #1 } }
+  }
+
+\cs_new_protected:Npn \chemmacros_detect_bold:n #1
+  {
+    \chemmacros_if_bold:TF
+      {
+        \mode_if_math:TF
+          { \chemmacros_bm:n { #1 } }
+          { \chemmacros_bf:n { #1 } }
+      }
+      { #1 }
+  }
+
+% ---------------------------------------------------------------------------
+% transition state symbol
+\cs_new_protected:Npn \__chemmacros_transition_state:
+  {
+    \text
+      {
+        \skip_horizontal:n { .1ex }
+        \hbox_overlap_right:n
+          { \rule { .6ex } { 0pt } \rule { .05ex } { 1.3ex } }
+        \hbox_overlap_right:n { \rule [ .4ex ] { 1.3ex } { .05ex } }
+        \rule [ .85ex ] { 1.3ex } { .05ex }
+        \skip_horizontal:n { .1ex }
+      }
+  }
+
+\cs_new_protected:Npn \chemmacros_transition_state:
+  {
+    \ensuremath
+      {
+        \mathchoice
+          { \displaystyle }
+          { \textstyle }
+          { \scriptstyle }
+          { \scriptscriptstyle }
+        \__chemmacros_transition_state:
+      }
+  }
+
+% \DeclareDocumentCommand?
+\cs_new_eq:NN \transitionstatesymbol \chemmacros_transition_state:
+
+% --------------------------------------------------------------------------
+% let's make use of `chemformula' inside some of `chemmacros' commands:
+\cs_new_protected:Nn \chemmacros_atom:n
+  {
+    \mode_if_math:TF
+      { \text { \chemmacros_inner_font: #1 } }
+      { \group_begin: \chemmacros_inner_font: #1 \group_end: }
+  }
+\cs_generate_variant:Nn \chemmacros_atom:n { V }
+
+\cs_new_protected:Npn \chemmacros_text:n #1
+  { \mode_if_math:TF { \text { #1 } } { #1 } }
+
+\tl_new:N \l__chemmacros_chemformula_tl
+
+\cs_new_protected:Npn \chemmacros_chemformula:n #1
+  {
+    \group_begin:
+      \cs_set_eq:NN \chemformula_font_inner: \chemmacros_inner_font:
+      \chemformula_chcpd:nn {} { #1 }
+    \group_end:
+  }
+\cs_generate_variant:Nn \chemmacros_chemformula:n { x,V }
+
+% --------------------------------------------------------------------------
+% particles, charges
+\NewDocumentCommand \NewChemParticle { mm }
+  {
+    \cs_if_free:NTF #1
+      { \chemmacros_define_particle:Nn #1 { #2 } }
+      { \msg_error:nnn { chemmacros } { new-particle } { #1 } }
+  }
+
+\NewDocumentCommand \RenewChemParticle { mm }
+  {
+    \cs_if_free:NTF #1
+      { \msg_error:nnn { chemmacros } { renew-particle } { #1 } }
+      { \chemmacros_define_particle:Nn #1 { #2 } }
+  }
+
+\NewDocumentCommand \DeclareChemParticle { mm }
+  { \chemmacros_define_particle:Nn #1 { #2 } }
+
+\cs_new_protected:Nn \chemmacros_define_particle:Nn
+  {
+    \cs_set_protected:Npn #1
+      {
+        \chemformula_chcpd:nn {} { #2 }
+        \chemmacros_xspace:
+      }
+  }
+
+\NewChemParticle \el  { e- }
+\NewChemParticle \prt { p+ }
+\NewChemParticle \ntr { n^0 }
+
+% --------------------------------------------------------------------------
+% charges
+% circled charge signs: they are defined in the `chemformula' module:
+% use directly:
+
+\cs_new_protected:Npn \fplus  { { \chemformula_fplus:  } }
+\cs_new_protected:Npn \fminus { { \chemformula_fminus: } }
+
+% change output depending on circled-option
+\cs_new_eq:NN \chemmacros_plus: \chemformula_plus:
+\cs_new_eq:NN \chemmacros_minus: \chemformula_minus:
+
+\cs_new_protected:Npn \chemmacros_formal_plus:
+  {
+    \group_begin:
+      \bool_set_true:N \l_chemformula_formal_charges_bool
+      \chemformula_plus:
+    \group_end:
+  }
+
+\cs_new_protected:Npn \chemmacros_formal_minus:
+  {
+    \group_begin:
+      \bool_set_true:N \l_chemformula_formal_charges_bool
+      \chemformula_minus:
+    \group_end:
+  }
+
+\cs_new_protected:Npn \chemmacros_charge:n #1
+  {
+    \chemformula_superscript:n
+      { \chemmacros_detect_bold:n { #1 } }
+  }
+
+\keys_define:nn { chemmacros / charges }
+  { append .code:n = \chemmacros_option_deprecated:n { append } }
+
+\NewDocumentCommand \mch { o }
+  {
+    \IfNoValueTF { #1 }
+      { \chemmacros_charge:n { \chemmacros_minus: } }
+      { \chemmacros_charge:n { #1 \chemmacros_minus: } }
+  }
+
+\NewDocumentCommand \pch { o }
+  {
+    \IfNoValueTF { #1 }
+      { \chemmacros_charge:n { \chemmacros_plus: } }
+      { \chemmacros_charge:n { #1 \chemmacros_plus: } }
+  }
+
+\NewDocumentCommand \fmch { o }
+  {
+    \IfNoValueTF { #1 }
+      { \chemmacros_charge:n { \chemmacros_formal_minus: } }
+      { \chemmacros_charge:n { #1 \chemmacros_formal_minus: } }
+  }
+
+\NewDocumentCommand \fpch { o }
+  {
+    \IfNoValueTF { #1 }
+      { \chemmacros_charge:n { \chemmacros_formal_plus: } }
+      { \chemmacros_charge:n { #1 \chemmacros_formal_plus: } }
+  }
+
+\tl_new:N  \l__chemmacros_partial_charge_format_tl
+\tl_set:Nn \l__chemmacros_partial_charge_format_tl { \tiny }
+
+\cs_new_protected:Npn \delm
+  {
+    \mbox {
+      \l__chemmacros_partial_charge_format_tl
+      \c_math_toggle_token \delta \chemmacros_minus: \c_math_toggle_token
+    }
+    \chemmacros_xspace:
+  }
+\cs_new_protected:Npn \delp
+  {
+    \mbox {
+      \l__chemmacros_partial_charge_format_tl
+      \c_math_toggle_token \delta \chemmacros_plus: \c_math_toggle_token
+    }
+    \chemmacros_xspace:
+  }
+\cs_new_protected:Npn \fdelm
+  {
+    \mbox {
+      \l__chemmacros_partial_charge_format_tl
+      \c_math_toggle_token \delta \chemmacros_formal_minus: \c_math_toggle_token
+    }
+    \chemmacros_xspace:
+  }
+\cs_new_protected:Npn \fdelp
+  {
+    \mbox {
+      \l__chemmacros_partial_charge_format_tl
+      \c_math_toggle_token \delta \chemmacros_formal_plus: \c_math_toggle_token
+    }
+    \chemmacros_xspace:
+  }
+
+\cs_new_protected:Npn \scrm
+  { \ensuremath { \scriptstyle \chemmacros_minus: } }
+\cs_new_protected:Npn \scrp
+  { \ensuremath { \scriptstyle \chemmacros_plus: } }
+\cs_new_protected:Npn \fscrm
+  { \ensuremath { \scriptstyle \chemmacros_formal_minus: } }
+\cs_new_protected:Npn \fscrp
+  { \ensuremath { \scriptstyle \chemmacros_formal_plus: } }
+\cs_new_protected:Npn \fsscrm
+  { \ensuremath { \scriptscriptstyle \chemmacros_formal_minus: } }
+\cs_new_protected:Npn \fsscrp
+  { \ensuremath { \scriptscriptstyle \chemmacros_formal_plus: } }
+
+\keys_define:nn { chemmacros / charges }
+  {
+    partial-format .tl_set:N = \l__chemmacros_partial_charge_format_tl
+  }
+
+% --------------------------------------------------------------------------
+% ions, molecules
+% proton, hydroxide, hydronium/oxonium, water, nucleophile, electrophile
+\NewChemParticle \Hpl { H+ }
+\NewChemParticle \Hyd { OH- }
+\NewChemParticle \HtO { H3O+ }
+\NewChemParticle \El  { E+ }
+\NewChemParticle \water { H2O }
+
+\NewDocumentCommand \chemmacros_Nu:w { o }
+  {
+    \IfNoValueF { #1 } { \keys_set:nn { chemmacros / particle } { #1 } }
+    \bool_if:NTF \l__chemmacros_particle_elpair_bool
+      { \chemmacros_elpair:n { Nu } \mch }
+      { \chemmacros_chemformula:n { Nu- } }
+    \chemmacros_xspace:
+  }
+
+\AtBeginDocument
+  {
+    \bool_if:NTF \l__chemmacros_Nu_mathspec_bool
+      { \cs_set_eq:NN \Nuc \chemmacros_Nu:w }
+      { \cs_set_eq:NN \Nu \chemmacros_Nu:w }
+  }
+
+\cs_new_protected:Npn \chemmacros_ba:
+  {
+    \bool_if:NTF \l__chemmacros_particle_elpair_bool
+      { \chemmacros_elpair:n { ba } \mch }
+      { \chemmacros_chemformula:n { ba- } }
+    \chemmacros_xspace:
+  }
+
+\NewDocumentCommand \ba { o }
+  {
+    \group_begin:
+      \IfNoValueF { #1 } { \keys_set:nn { chemmacros / particle } { #1 } }
+      \chemmacros_ba:
+    \group_end:
+  }
+
+\cs_new_protected:Npn \chemmacros_elpair:n #1
+  {
+    \bool_if:NTF \l__chemmacros_chemfig_bool
+      {
+        \bool_if:NTF \l__chemmacros_elpair_dots_bool
+          { \chlewis { 0: } { #1 } }
+          { \chlewis { 0| } { #1 } }
+%          { { \chemmacros_inner_font: #1 \chlewis { 0=| } { \vphantom { #1 } } } }
+      }
+      {
+        \msg_error:nnn { chemmacros } { chemfig } { #1 }
+        \chemmacros_atom:n { #1 }
+      }
+  }
+
+\bool_new:N \l__chemmacros_particle_elpair_bool
+\bool_new:N \l__chemmacros_elpair_dots_bool
+
+\keys_define:nn { chemmacros / particle }
+  {
+    elpair         .choice: ,
+    elpair / false .code:n    =
+      { \bool_set_false:N \l__chemmacros_particle_elpair_bool } ,
+    elpair / dots  .code:n    =
+      {
+        \bool_set_true:N \l__chemmacros_particle_elpair_bool
+        \bool_set_true:N \l__chemmacros_elpair_dots_bool
+      } ,
+    elpair / dash  .code:n    =
+      {
+        \bool_set_true:N \l__chemmacros_particle_elpair_bool
+        \bool_set_false:N \l__chemmacros_elpair_dots_bool
+      } ,
+    elpair         .default:n = dots
+  }
+
+% --------------------------------------------------------------------------
+% IUPAC
+\prop_new:N \l__chemmacros_iupac_prop
+
+\cs_new_protected:Npn \chemmacros_new_iupac:Nn #1#2
+  {
+    \tl_set:Nx \l__chemmacros_tmpa_tl
+      { \chemmacros_remove_backslash:N #1 }
+    \prop_if_in:NVTF \l__chemmacros_iupac_prop \l__chemmacros_tmpa_tl
+      { \msg_error:nnn { chemmacros } { new-iupac } { #1 } }
+      {
+        \prop_put:NVn \l__chemmacros_iupac_prop
+          \l__chemmacros_tmpa_tl
+          { #2 }
+      }
+    \chemmacros_make_iupac:
+  }
+
+\cs_new_protected:Npn \chemmacros_define_iupac:Nn #1#2
+  {
+    \tl_set:Nx \l__chemmacros_tmpa_tl
+      { \chemmacros_remove_backslash:N #1 }
+    \prop_put:NVn \l__chemmacros_iupac_prop
+      \l__chemmacros_tmpa_tl
+      { #2 }
+    \chemmacros_make_iupac:
+  }
+
+\cs_new_protected:Npn \chemmacros_renew_iupac:Nn #1#2
+  {
+    \tl_set:Nx \l__chemmacros_tmpa_tl
+      { \chemmacros_remove_backslash:N #1 }
+    \prop_if_in:NVTF \l__chemmacros_iupac_prop \l__chemmacros_tmpa_tl
+      {
+        \prop_put:NVn \l__chemmacros_iupac_prop
+          \l__chemmacros_tmpa_tl
+          { #2 }
+      }
+      { \msg_error:nnn { chemmacros } { renew-iupac } { #1 } }
+    \chemmacros_make_iupac:
+  }
+
+\cs_new_protected:Npn \chemmacros_let_iupac:NN #1#2
+  {
+    \tl_set:Nx \l__chemmacros_tmpa_tl
+      { \chemmacros_remove_backslash:N #1 }
+    \tl_set:Nx \l__chemmacros_tmpb_tl
+      { \chemmacros_remove_backslash:N #2 }
+    \prop_get:NVNTF \l__chemmacros_iupac_prop
+      \l__chemmacros_tmpb_tl
+      \l__chemmacros_tmpc_tl
+      {
+        \prop_put:NVV \l__chemmacros_iupac_prop
+          \l__chemmacros_tmpa_tl
+          \l__chemmacros_tmpc_tl
+      }
+      { \msg_error:nnnn { chemmacros } { let-iupac } { #1 } { #2 } }
+    \chemmacros_make_iupac:
+  }
+
+\cs_new_protected:Npn \chemmacros_define_deprecated_iupac:NN #1#2
+  {
+    \chemmacros_define_iupac:Nn #1
+      {
+        \msg_warning:nnnn { chemmacros } { command-deprecated }
+          { #1 } { #2 }
+        #2
+      }
+  }
+
+
+\cs_new_protected:Npn \chemmacros_make_iupac:
+  {
+    \bool_if:NT \l__chemmacros_in_document_bool
+      {
+        \bool_if:NTF \l__chemmacros_inside_iupac_bool
+          {
+            \prop_map_inline:Nn \l__chemmacros_iupac_prop
+              { \cs_set_protected:cpn { ##1 } { ##2 } }
+          }
+          {
+            \bool_if:NF \l__chemmacros_iupac_restricted_bool
+              {
+                \bool_if:NTF \l__chemmacros_iupac_strict_bool
+                  {
+                    \prop_map_inline:Nn \l__chemmacros_iupac_prop
+                      { \cs_set_protected:cpn { ##1 } { ##2 } }
+                  }
+                  {
+                    \prop_map_inline:Nn \l__chemmacros_iupac_prop
+                      {
+                        \cs_if_exist:cF { ##1 }
+                          { \cs_set_protected:cpn { ##1 } { ##2 } }
+                      }
+                  }
+              }
+          }
+      }    
+  }
+
+\AtBeginDocument { \chemmacros_make_iupac: }
+
+\NewDocumentCommand \DeclareChemIUPAC { mm }
+  { \chemmacros_define_iupac:Nn #1 { #2 } }
+
+\NewDocumentCommand \NewChemIUPAC { mm }
+  { \chemmacros_new_iupac:Nn #1 { #2 } }
+
+\NewDocumentCommand \RenewChemIUPAC { mm }
+  { \chemmacros_renew_iupac:Nn #1 { #2 } }
+
+\NewDocumentCommand \LetChemIUPAC { mm }
+  { \chemmacros_let_iupac:NN #1 #2 }
+
+\NewDocumentCommand \DeprecateChemIUPAC { mm }
+  { \chemmacros_define_deprecated_iupac:NN #1 #2 }
+
+% stereo descriptors and other nomenclature commands
+% Cahn-Ingold-Prelog
+\dim_new:N  \l__chemmacros_cip_kern_dim
+\dim_set:Nn \l__chemmacros_cip_kern_dim { .075em }
+
+\keys_define:nn { chemmacros / iupac }
+  { cip-kern .dim_set:N = \l__chemmacros_cip_kern_dim }
+
+\NewDocumentCommand \cip { m }
+  { \chemmacros_cip:n { #1 } }
+
+\cs_new_protected:Npn \chemmacros_cip:n #1
+  { ( \textit{#1} \tex_kern:D \l__chemmacros_cip_kern_dim ) }
+
+\DeprecateChemIUPAC \Rcip \rectus
+\DeprecateChemIUPAC \Scip \sinister
+
+\NewChemIUPAC \rectus   { \cip { R } }
+\NewChemIUPAC \sinister { \cip { S } }
+
+\LetChemIUPAC \R \rectus
+\LetChemIUPAC \S \sinister
+
+% TikZ needs : to be other
+\ExplSyntaxOff
+\protected\def\chemmacros@sconf#1%
+  {%
+    \begingroup
+    \tikz[baseline,text height=1.5ex,text depth=.25ex]
+      {
+        \node[anchor=base] (chemmacros@@Sconf) {#1} ;
+        \draw[->,thick,rotate=90]
+          ($(chemmacros@@Sconf.center)+(20:.8em)$) arc (20:340:.8em);
+      }%
+    \endgroup
+  }
+
+\protected\def\chemmacros@rconf#1%
+  {%
+    \begingroup
+    \tikz[baseline,text height=1.5ex,text depth=.25ex]
+      {
+        \node[anchor=base] (chemmacros@@Rconf) {#1} ;
+        \draw[<-,thick,rotate=90]
+          ($(chemmacros@@Rconf.center)+(20:.8em)$) arc (20:340:.8em) ;
+      }%
+    \endgroup
+  }
+\ExplSyntaxOn
+
+\NewDocumentCommand \Sconf { O{S} } { \chemmacros@sconf { #1 } }
+\NewDocumentCommand \Rconf { O{R} } { \chemmacros@rconf { #1 } }
+
+% E(ntgegen)/Z(usammen)
+\NewChemIUPAC \entgegen { \cip { E } }
+\NewChemIUPAC \zusammen { \cip { Z } }
+
+\LetChemIUPAC \E \entgegen
+\LetChemIUPAC \Z \zusammen
+
+% cis/trans
+\NewChemIUPAC \cis   { \textit { cis } }
+\NewChemIUPAC \trans { \textit { trans } }
+
+% fac/mer
+\NewChemIUPAC \fac { \textit { fac } }
+\NewChemIUPAC \mer { \textit { mer } }
+
+% tert
+\NewChemIUPAC \tert  { \textit { tert } }
+
+% Fischer
+\NewChemIUPAC \dexter { \textsc { d } }
+\NewChemIUPAC \laevus { \textsc { l } }
+
+\LetChemIUPAC \D \dexter
+\LetChemIUPAC \L \laevus
+
+% ortho/meta/para
+\NewChemIUPAC \ortho { \textit { o } }
+\NewChemIUPAC \meta  { \textit { m } }
+\NewChemIUPAC \para  { \textit { p } }
+
+% syn/anti
+\NewChemIUPAC \syn  { \textit { syn } }
+\NewChemIUPAC \anti { \textit { anti } }
+
+% coordination chemistry
+\bool_new:N \l__chemmacros_bridge_super_bool
+
+\keys_define:nn { chemmacros / iupac }
+  {
+    bridge-number         .choice: ,
+    bridge-number / sub   .code:n     =
+      \bool_set_false:N \l__chemmacros_bridge_super_bool ,
+    bridge-number / super .code:n     =
+      \bool_set_true:N \l__chemmacros_bridge_super_bool ,
+    coord-use-hyphen      .bool_set:N = \l__chemmacros_coord_use_hyphen_bool ,
+    coord-use-hyphen      .default:n  = true
+  }
+
+\cs_new_protected:Npn \chemformula_hapto:n #1
+  {
+    \chemeta \chemformula_superscript:n { #1 }
+    \bool_if:NT \l__chemmacros_coord_use_hyphen_bool
+      { \chemmacros_break_point_hyphen: }
+  }
+
+\cs_new_protected:Npn \chemformula_dento:n #1
+  {
+    \chemkappa \chemformula_superscript:n { #1 }
+    \bool_if:NT \l__chemmacros_coord_use_hyphen_bool
+      { \chemmacros_break_point_hyphen: }
+  }
+
+\cs_new_protected:Npn \chemformula_bridge:n #1
+  {
+    \chemmu
+    \tl_if_blank:nF { #1 }
+      {
+        \bool_if:NTF \l__chemmacros_bridge_super_bool
+          { \chemformula_superscript:n { #1 } }
+          { \chemformula_subscript:n { #1 } }
+      }
+    \bool_if:NT \l__chemmacros_coord_use_hyphen_bool
+      { \chemmacros_break_point_hyphen: }
+  }
+
+\NewChemIUPAC \hapto  { \chemformula_hapto:n }
+\NewChemIUPAC \dento  { \chemformula_dento:n }
+\NewChemIUPAC \bridge { \chemformula_bridge:n }
+
+% attachments to heteroatoms / added hydrogen
+\NewChemIUPAC \hydrogen   { \textit { H } }
+\NewChemIUPAC \oxygen     { \textit { O } }
+\NewChemIUPAC \nitrogen   { \textit { N } }
+\NewChemIUPAC \sulfur     { \textit { S } }
+\NewChemIUPAC \phosphorus { \textit { P } }
+
+\LetChemIUPAC \H  \hydrogen
+\LetChemIUPAC \O  \oxygen
+\LetChemIUPAC \N  \nitrogen
+\LetChemIUPAC \Sf \sulfur
+\LetChemIUPAC \P  \phosphorus
+
+% language specific settings
+\AtBeginDocument
+  {
+    \bool_if:NT \l__chemmacros_italian_bool
+      {
+        \NewChemIUPAC \sin  { \textit { sin } }
+        \NewChemIUPAC \ter  { \textit { ter } }
+      }
+  }
+
+% greek letters
+\NewChemIUPAC \a { \chemalpha }
+\NewChemIUPAC \b { \chembeta }
+\NewChemIUPAC \g { \chemgamma }
+\NewChemIUPAC \d { \chemdelta }
+\NewChemIUPAC \k { \chemkappa }
+\NewChemIUPAC \m { \chemmu }
+\NewChemIUPAC \n { \chemeta }
+\NewChemIUPAC \w { \chemomega }
+
+% \iupac (basically the same as bpchem's \IUPAC)
+% - allows multiple breaking points as compound names can get really long and
+%   especially in multicolumn documents can span more than two lines
+% - add a (very) little space before the hyphen and a little negative space
+%   after it
+% - add a little space at breaking points if not broken
+% - enables all naming commands regardless if they're definied otherwise or not
+\cs_new_protected:Nn \chemmacros_allow_hyphens:
+  {
+    \chemmacros_nobreak:
+    \skip_horizontal:N \c_zero_dim
+  }
+
+\dim_new:N  \l__chemmacros_iupac_hyphen_pre_dim
+\dim_set:Nn \l__chemmacros_iupac_hyphen_pre_dim { .01em }
+\dim_new:N  \l__chemmacros_iupac_hyphen_post_dim
+\dim_set:Nn \l__chemmacros_iupac_hyphen_post_dim { -.03em }
+\dim_new:N  \l__chemmacros_iupac_break_dim
+\dim_set:Nn \l__chemmacros_iupac_break_dim { .03em }
+
+\keys_define:nn { chemmacros / iupac }
+  {
+    hyphen-pre-space  .dim_set:N = \l__chemmacros_iupac_hyphen_pre_dim ,
+    hyphen-post-space .dim_set:N = \l__chemmacros_iupac_hyphen_post_dim ,
+    break-space       .dim_set:N = \l__chemmacros_iupac_break_dim
+  }
+
+\cs_new_protected:Nn \chemmacros_break_point_hyphen:
+  {
+    \chemmacros_nobreak:
+    \tex_discretionary:D { - } { }
+      {
+        \tex_kern:D \l__chemmacros_iupac_hyphen_pre_dim
+        -
+        \tex_kern:D \l__chemmacros_iupac_hyphen_post_dim
+      }
+    \chemmacros_allow_hyphens:
+  }
+
+\cs_new_protected:Npn \chemmacros_break_point:
+  {
+    \chemmacros_nobreak:
+    \tex_discretionary:D { - } { }
+      { \tex_kern:D \l__chemmacros_iupac_break_dim }
+    \chemmacros_allow_hyphens:
+  }
+
+\cs_new_protected:Npn \chemmacros_superscript:
+  { \mode_if_math:TF { \sb } { \textsuperscript } }
+  
+\bool_new:N \l__chemmacros_inside_iupac_bool
+
+\group_begin:
+\char_set_catcode_active:N \~
+\char_set_lccode:nn {`~} {`|}
+\tl_to_lowercase:n { \group_end: \cs_set_eq:NN ~ } \chemmacros_break_point:
+
+\group_begin:
+\char_set_catcode_active:N \~
+\char_set_lccode:nn {`~} {`^}
+\tl_to_lowercase:n { \group_end: \cs_set_protected:Npn ~ }
+  { \chemmacros_superscript: }
+
+\group_begin:
+\char_set_catcode_active:N \|
+\char_set_catcode_active:N \^
+
+\cs_new_protected:Npn \chemmacros_iupac:n #1
+  {
+    \group_begin:
+      \bool_set_true:N \l__chemmacros_inside_iupac_bool
+      \chemmacros_make_iupac:
+      \chemmacros_ignore_spaces:
+      \cs_set_eq:NN \- \chemmacros_break_point_hyphen:
+      \chemmacros_define_deprecated:NN \| |
+      \chemmacros_define_deprecated:NN \^ ^
+      \tl_set_rescan:Nnn \l__chemmacros_tmpa_tl
+        {
+          \char_set_catcode_active:N \|
+          \char_set_catcode_active:N \^
+        }
+        {#1}
+      \l__chemmacros_tmpa_tl
+    \group_end:
+  }
+
+% \cs_new_protected:Npn \chemmacros_iupac_aux:n #1
+%   {
+%       #1
+%     \group_end:
+%   }
+\group_end:
+
+% Thanks to Joseph Wright and Enrico Gregorio for the help on the curious
+% redefinition of \- and the end of the compilation
+% see http://tex.stackexchange.com/q/42405/5049 for reference
+\cs_set_protected:Npx \| { \exp_not:o { \| } }
+\cs_set_protected:Npx \- { \exp_not:o { \- } }
+\cs_set_eq:NN \@dischyph \-
+
+\NewDocumentCommand \iupac { }
+  { \chemmacros_iupac:n }
+
+% --------------------------------------------------------------------------
+% latin phrases
+\tl_new:N  \l__chemmacros_latin_format_tl
+\tl_set:Nn \l__chemmacros_latin_format_tl { \itshape }
+
+\keys_define:nn { chemmacros / latin }
+  { format . tl_set:N = \l__chemmacros_latin_format_tl }
+
+\cs_new_protected:Npn \chemmacros_latin:n #1
+  { { \l__chemmacros_latin_format_tl #1 } }
+
+\prop_new:N \l__chemmacros_latin_prop
+
+\cs_new_protected:Npn \chemmacros_new_latin:Nn #1#2
+  {
+    \cs_if_free:NTF #1
+      {
+        \cs_new_protected:Npn #1
+          { \chemmacros_latin:n { #2 } \chemmacros_xspace: }
+        \prop_put:Nnn \l__chemmacros_latin_prop { #1 } { #2 }
+      }
+      { \msg_error:nnn { chemmacros } { new-latin } { #1 } }
+  }
+
+\cs_new_protected:Npn \chemmacros_define_latin:Nn #1#2
+  {
+    \cs_if_free:NTF #1
+      {
+        \cs_new_protected:Npn #1
+          { \chemmacros_latin:n { #2 } \chemmacros_xspace: }
+        \prop_put:Nnn \l__chemmacros_latin_prop { #1 } { #2 }
+      }
+      {
+        \cs_set_protected:Npn #1
+          { \chemmacros_latin:n { #2 } \chemmacros_xspace: }
+        \prop_put:Nnn \l__chemmacros_latin_prop { #1 } { #2 }
+      }
+  }
+
+\cs_new_protected:Npn \chemmacros_renew_latin:Nn #1#2
+  {
+    \prop_if_in:NnTF \l__chemmacros_latin_prop { #1 }
+      { \cs_set:Npn #1 { \chemmacros_latin:n { #2 } \chemmacros_xspace: } }
+      { \msg_error:nnn { chemmacros } { renew-latin } { #1 } }
+  }
+
+\NewDocumentCommand \NewChemLatin { mm }
+  { \chemmacros_new_latin:Nn #1 { #2 } }
+
+\NewDocumentCommand \RenewChemLatin { mm }
+  { \chemmacros_renew_latin:Nn #1 { #2 } }
+
+\NewDocumentCommand \DeclareChemLatin { mm }
+  { \chemmacros_define_latin:Nn #1 { #2 } }
+
+\AtBeginDocument
+  {
+    \bool_if:NTF \l__chemmacros_chemstyle_bool
+      {
+        \AfterPackage* { chemstyle }
+          {
+            \cs_undefine:N \invacuo
+            \cs_set_eq:NN \chemmacros_latin:n \cst@latin
+          }
+      }
+      {
+        \cs_new_eq:NN  \latin \chemmacros_latin:n
+      }
+    \NewChemLatin \insitu   { in~situ }
+    \NewChemLatin \abinitio { ab~initio }
+    \NewChemLatin \invacuo  { in~vacuo }
+  }
+
+% --------------------------------------------------------------------------- %
+% acid / base
+\tl_new:N  \l__chemmacros_k_acid_tl
+\tl_new:N  \l__chemmacros_k_base_tl
+\tl_new:N  \l__chemmacros_k_water_tl
+
+% \bool_new:N \l__chemmacros_subscript_lowercase_bool
+
+\tl_set:Nn \l__chemmacros_k_acid_tl
+  { \chemmacros_translate:n {K-acid} }
+
+\tl_set:Nn \l__chemmacros_k_base_tl
+  { \chemmacros_translate:n {K-base} }
+
+\tl_set:Nn \l__chemmacros_k_water_tl
+  { \chemmacros_translate:n {K-water} }
+
+\keys_define:nn { chemmacros / acid-base }
+  {
+    p-style             .choice: ,
+    p-style / slanted   .code:n   = \cs_set_eq:NN \chemmacros_p_style:n \textsl ,
+    p-style / italics   .code:n   = \cs_set_eq:NN \chemmacros_p_style:n \textit ,
+    p-style / upright   .code:n   = \cs_set_eq:NN \chemmacros_p_style:n \textup ,
+    K-acid              .tl_set:N = \l__chemmacros_k_acid_tl ,
+    K-base              .tl_set:N = \l__chemmacros_k_base_tl ,
+    K-water             .tl_set:N = \l__chemmacros_k_water_tl ,
+    subscript           .code:n   = \chemmacros_option_deprecated:n {#1}
+    % subscript / lowercase .code:n =
+    %   \bool_set_true:N \l__chemmacros_subscript_lowercase_bool ,
+    % subscript / uppercase .code:n =
+    %   \bool_set_false:N \l__chemmacros_subscript_lowercase_bool
+  }
+
+\cs_new_eq:NN \chemmacros_p_style:n \textup
+
+\cs_new_protected:Npn \Ka
+  {
+    \ensuremath
+      {
+        \chemmacros_detect_bold:n
+          {
+            K
+            \c_math_subscript_token
+              { \l__chemmacros_k_acid_tl }
+          }
+      }
+    \chemmacros_xspace:
+  }
+
+\cs_new_protected:Npn \Kb
+  {
+    \ensuremath
+      {
+        \chemmacros_detect_bold:n
+          {
+            K
+            \c_math_subscript_token
+              { \l__chemmacros_k_base_tl }
+          }
+      }
+    \chemmacros_xspace:
+  }
+
+\cs_new_protected:Npn \Kw
+  {
+    \ensuremath
+      {
+        \chemmacros_detect_bold:n
+          {
+            K
+            \c_math_subscript_token
+              { \l__chemmacros_k_water_tl }
+          }
+      }
+    \chemmacros_xspace:
+  }
+
+\cs_new_protected:Npn \chemmacros_p:n #1
+  {
+    \group_begin:
+      \mbox
+        {
+          \chemmacros_p_style:n { p }
+          \ensuremath { #1 }
+        }
+    \group_end:
+  }
+
+\NewDocumentCommand \p { m }
+  { \chemmacros_p:n { #1 } }
+
+\cs_new_protected:Npn \pH
+  {
+    \chemmacros_p:n { \chemmacros_chemformula:n { H } }
+    \chemmacros_xspace:
+  }
+
+\cs_new_protected:Npn \pOH
+  {
+    \chemmacros_p:n { \chemmacros_chemformula:n { OH } }
+    \chemmacros_xspace:
+  }
+
+\NewDocumentCommand \pKa { o }
+  {
+    \chemmacros_p:n
+      {
+        \Ka \IfNoValueF { #1 }
+          { {} \c_math_subscript_token { \chemmacros_detect_bold:n { #1 } } }
+      }
+    \chemmacros_xspace:
+  }
+
+\NewDocumentCommand \pKb { o }
+  {
+    \chemmacros_p:n
+      {
+        \Kb \IfNoValueF { #1 }
+          { {} \c_math_subscript_token { \chemmacros_detect_bold:n { #1 } } }
+      }
+    \chemmacros_xspace:
+  }
+
+% --------------------------------------------------------------------------
+% units
+\DeclareSIUnit { \atm        } { atm }
+\DeclareSIUnit { \atmosphere } { atm }
+\DeclareSIUnit { \calory     } { cal }
+\DeclareSIUnit { \cal        } { cal }
+
+\AtBeginDocument
+  {
+    \bool_if:NF \l__chemmacros_chemstyle_bool
+      {
+        \DeclareSIUnit { \cmc   } { \cubic\centi\metre }
+        \DeclareSIUnit { \molar } { \mole\per\cubic\deci\metre }
+        \DeclareSIUnit { \Molar } { \textsc{m} }
+      }
+  }
+
+\DeclareSIUnit { \moLar   } { \mole\per\liter }
+\DeclareSIUnit { \MolMass } { \gram\per\mole }
+\DeclareSIUnit { \normal  } { \textsc{n} }
+\DeclareSIUnit { \torr    } { torr }
+
+% --------------------------------------------------------------------------
+% reaction mechanisms
+% \mech[<type>]
+% <type> - substitutions: {}, 1, 2, se, 1e, 2e, ar
+%        - eliminations:  e, e1, e2, cb
+\tl_new:N \l__chemmacros_mech_type_tl
+\tl_new:N \l__chemmacros_mech_mol_tl
+\tl_new:N \l__chemmacros_mech_ar_tl
+
+\cs_new_protected:Npn \__chemmacros_set_mech:nnn #1#2#3
+  {
+    \tl_set:Nn \l__chemmacros_mech_type_tl { #1 }
+    \tl_set:Nn \l__chemmacros_mech_mol_tl  { #2 }
+    \tl_set:Nn \l__chemmacros_mech_ar_tl   { #3 }
+  }
+
+\keys_define:nn { chemmacros / mech }
+  {
+    type      .choice: ,
+    type /    .code:n    =
+      {
+        \__chemmacros_set_mech:nnn { S }
+          {
+            \c_math_toggle_token
+              \c_math_subscript_token { \text {N} }
+            \c_math_toggle_token
+          }
+          { }
+      } ,
+    type / 1  .code:n    =
+      {
+        \__chemmacros_set_mech:nnn { S }
+          {
+            \c_math_toggle_token
+              \c_math_subscript_token { \text {N} }
+            \c_math_toggle_token
+            1
+          }
+          { }
+      } ,
+    type / 2  .code:n    =
+      {
+        \__chemmacros_set_mech:nnn { S }
+          {
+            \c_math_toggle_token
+              \c_math_subscript_token { \text {N} }
+            \c_math_toggle_token
+            2
+          }
+          { }
+      } ,
+    type / se .code:n    =
+      {
+        \__chemmacros_set_mech:nnn { S }
+          {
+            \c_math_toggle_token
+              \c_math_subscript_token { \text {E} }
+            \c_math_toggle_token
+          }
+          { }
+      } ,
+    type / 1e .code:n    =
+      {
+        \__chemmacros_set_mech:nnn { S }
+          {
+            \c_math_toggle_token
+              \c_math_subscript_token { \text {E} }
+            \c_math_toggle_token
+            1
+          }
+          { }
+      } ,
+    type / 2e .code:n    =
+      {
+        \__chemmacros_set_mech:nnn { S }
+          {
+            \c_math_toggle_token
+              \c_math_subscript_token { \text {E} }
+            \c_math_toggle_token
+            2
+          }
+          { }
+      } ,
+    type / ar .code:n    =
+      {
+        \__chemmacros_set_mech:nnn { S }
+          {
+            \c_math_toggle_token
+              \c_math_subscript_token { \text {E} }
+            \c_math_toggle_token
+          }
+          { Ar - }
+      } ,
+    type / e  .code:n    =
+      { \__chemmacros_set_mech:nnn { E } { } { } } ,
+    type / e1 .code:n    =
+      { \__chemmacros_set_mech:nnn { E } { 1 } { } } ,
+    type / e2 .code:n    =
+      { \__chemmacros_set_mech:nnn { E } { 2 } { } } ,
+    type / cb .code:n    =
+      {
+        \__chemmacros_set_mech:nnn { E }
+          {
+            1
+            \c_math_toggle_token
+              \c_math_subscript_token { \text {cb} }
+            \c_math_toggle_token
+          }
+          { }
+      } ,
+    type      .default:n = 
+  }
+
+\cs_new_protected:Npn \chemmacros_mech:n #1
+  {
+    \tl_if_blank:nTF { #1 }
+      { \keys_set:nn { chemmacros / mech } { type } }
+      { \keys_set:nn { chemmacros / mech } { type = #1 } }
+    \mbox
+      {
+        \tl_use:N \l__chemmacros_mech_ar_tl
+        \tl_use:N \l__chemmacros_mech_type_tl
+        \tl_use:N \l__chemmacros_mech_mol_tl
+      }
+    \chemmacros_xspace:
+  }
+
+\NewDocumentCommand \mech { o }
+  {
+    \IfNoValueTF { #1 }
+      { \chemmacros_mech:n { } }
+      { \chemmacros_mech:n { #1 } }
+  }
+
+% --------------------------------------------------------------------------
+% oxidation numbers
+% \ox{<number>,<atom>}
+\bool_new:N       \l__chemmacros_ox_sign_bool
+\bool_new:N       \l__chemmacros_ox_integer_bool
+\bool_new:N       \l__chemmacros_ox_explicit_sign_bool
+\bool_set_false:N \l__chemmacros_ox_explicit_sign_bool
+\bool_new:N       \l__chemmacros_ox_format_roman_bool
+\bool_set_true:N  \l__chemmacros_ox_format_roman_bool
+\bool_new:N       \l__chemmacros_ox_decimal_marker_comma_bool
+\bool_set_false:N \l__chemmacros_ox_decimal_marker_comma_bool
+\bool_new:N       \l__chemmacros_ox_parse_bool
+\bool_set_true:N  \l__chemmacros_ox_parse_bool
+\bool_new:N       \l__chemmacros_ox_side_bool
+\bool_new:N       \l__chemmacros_ox_super_bool
+\bool_new:N       \l__chemmacros_ox_top_bool
+\bool_set_true:N  \l__chemmacros_ox_top_bool
+\bool_new:N       \l__chemmacros_ox_align_center_bool
+
+\int_new:N \l__chemmacros_ox_number_int
+\fp_new:N  \l__chemmacros_ox_number_fp
+
+\cs_new_protected:Npn \__chemmacros_ox_process_number:n #1
+  {
+    \bool_if:NTF \l__chemmacros_ox_parse_bool
+      {
+        \tl_if_in:nnTF { #1 } { / }
+          { \__chemmacros_ox_fraction:w #1 \q_stop }
+          {
+            \__chemmacros_ox_sign:n { #1 }
+            \__chemmacros_ox_value:n { #1 }
+          }
+      }
+      { #1 }
+  }
+
+\DeclareInstance { xfrac } { chemmacros-ox-frac } { text }
+  {
+    scale-factor        = 1.2 ,
+    denominator-bot-sep = -.5ex ,
+    numerator-top-sep   = -.3ex ,
+    slash-left-kern     = -.2em ,
+    slash-right-kern    = -.2em ,
+    slash-symbol-font   = lmr
+  }
+
+\cs_new_protected:Npn \__chemmacros_ox_fraction:w #1/#2 \q_stop
+  {
+    \bool_set_false:N \l__chemmacros_ox_format_roman_bool
+    \__chemmacros_ox_sign:n { #1 }
+    \bool_if:NTF \l__chemmacros_ox_side_bool
+      { \sfrac { \__chemmacros_ox_value:n { #1 } } { #2 } }
+      {
+        \sfrac [ chemmacros-ox-frac ]
+          { \__chemmacros_ox_value:n { #1 } }
+          { #2 }
+      }
+  }
+
+\cs_new_protected:Npn \__chemmacros_ox_sign:n #1
+  {
+    \fp_compare:nNnT { #1 } > { 0 }
+      {
+        \bool_if:NT \l__chemmacros_ox_explicit_sign_bool
+          { \c_math_toggle_token + \c_math_toggle_token }
+      }
+    \fp_compare:nNnT { #1 } = { 0 }
+      {
+        \bool_if:NT \l__chemmacros_ox_explicit_sign_bool
+          { \c_math_toggle_token \pm \c_math_toggle_token }
+      }
+    \fp_compare:nNnT { #1 } < { 0 }
+      { \c_math_toggle_token - \c_math_toggle_token }
+  }
+
+\cs_new_protected:Npn \__chemmacros_ox_value:n #1
+  {
+    \fp_set:Nn \l__chemmacros_ox_number_fp { abs(#1) }
+    \__chemmacros_ox_is_integer:V \l__chemmacros_ox_number_fp
+    \bool_if:NTF \l__chemmacros_ox_format_roman_bool
+      { \__chemmacros_fp_to_Roman:V \l__chemmacros_ox_number_fp }
+      {
+        \bool_if:NTF \l__chemmacros_ox_integer_bool
+          {
+            \c_math_toggle_token
+              \__chemmacros_fp_to_arabic:V \l__chemmacros_ox_number_fp
+            \c_math_toggle_token
+          }
+          {
+            \c_math_toggle_token
+              \__chemmacros_fp_show:V \l__chemmacros_ox_number_fp
+            \c_math_toggle_token
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__chemmacros_ox_is_integer:n #1
+  {
+    \fp_set:Nn \l__chemmacros_tmpa_fp { round(#1 + 1 , 0 ) - 1 }
+    \fp_compare:nNnTF { \l__chemmacros_tmpa_fp } = { #1 }
+      { \bool_set_true:N \l__chemmacros_ox_integer_bool }
+      {
+        \bool_set_false:N \l__chemmacros_ox_integer_bool
+        \bool_set_false:N \l__chemmacros_ox_format_roman_bool
+      }
+  }
+\cs_generate_variant:Nn \__chemmacros_ox_is_integer:n { V }
+
+\cs_new_protected:Npn \__chemmacros_fp_to_Roman:n #1
+  {
+    \group_begin:
+      \fp_set:Nn \l__chemmacros_tmpa_fp { round(#1 , 0 ) }
+      \int_set:Nn \l__chemmacros_tmpa_int
+        { \fp_to_tl:N \l__chemmacros_tmpa_fp } 
+      \int_compare:nTF { \l__chemmacros_tmpa_int = 0 }
+        { 0 }
+        { \int_to_Roman:n { \l__chemmacros_tmpa_int } }
+    \group_end:
+  }
+\cs_generate_variant:Nn \__chemmacros_fp_to_Roman:n { V }
+
+\cs_new_protected:Npn \__chemmacros_fp_to_arabic:n #1
+  {
+    \group_begin:
+      \fp_set:Nn \l__chemmacros_tmpa_tl { #1 }
+      \fp_to_tl:N \l__chemmacros_tmpa_tl
+    \group_end:
+  }
+\cs_generate_variant:Nn \__chemmacros_fp_to_arabic:n { V }
+
+\cs_new_protected:Npn \__chemmacros_fp_show:n #1
+  {
+    \group_begin:
+      \fp_set:Nn \l__chemmacros_tmpa_tl { #1 }
+      \bool_if:NTF \l__chemmacros_ox_decimal_marker_comma_bool
+        {
+          \tl_set:Nx \l__chemmacros_tmpb_tl
+            { \fp_to_tl:N \l__chemmacros_tmpa_tl }
+          \tl_replace_once:Nnn \l__chemmacros_tmpb_tl { . } { {,} }
+          \tl_use:N \l__chemmacros_tmpb_tl
+        }
+        { \fp_to_tl:N \l__chemmacros_tmpa_tl }
+    \group_end:
+  }
+\cs_generate_variant:Nn \__chemmacros_fp_show:n { V }
+
+\cs_new_protected:Npn \__chemmacros_ox_write:nn #1#2
+  {
+    \tl_if_blank:nT { #1 }
+      { \msg_error:nnx { chemmacros } { ox } { oxidation~number~missing } }
+    \tl_if_blank:nT { #2 }
+      { \msg_error:nnx { chemmacros } { ox } { atom~missing } }
+    \ensuremath
+      {
+        \bool_if:NT \l__chemmacros_ox_super_bool
+          {
+            \chemmacros_text:n
+              {
+                #2
+                \c_math_toggle_token
+                  \c_math_superscript_token
+                    { \text { \tiny \__chemmacros_ox_process_number:n { #1 } } }
+                \c_math_toggle_token
+              }
+          }
+        \bool_if:NT \l__chemmacros_ox_side_bool
+          {
+            \chemmacros_text:n
+              { #2 ( \text { \__chemmacros_ox_process_number:n { #1 } } ) }
+          }
+        \bool_if:NT \l__chemmacros_ox_top_bool
+          {
+            \overset
+              {
+                \bool_if:NTF \l__chemmacros_ox_align_center_bool
+                  { \clap } { \rlap }
+                {
+                  \chemmacros_text:n
+                    { \tiny \__chemmacros_ox_process_number:n { #1 } }
+                }
+              }
+              { \chemmacros_text:n { #2 } }
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__chemmacros_ox_pos_top:
+  {
+    \bool_set_true:N  \l__chemmacros_ox_top_bool
+    \bool_set_false:N \l__chemmacros_ox_super_bool
+    \bool_set_false:N \l__chemmacros_ox_side_bool
+  }
+
+\cs_new_protected:Npn \__chemmacros_ox_pos_super:
+  {
+    \bool_set_false:N \l__chemmacros_ox_top_bool
+    \bool_set_true:N  \l__chemmacros_ox_super_bool
+    \bool_set_false:N \l__chemmacros_ox_side_bool
+  }
+
+\cs_new_protected:Npn \__chemmacros_ox_pos_side:
+  {
+    \bool_set_false:N \l__chemmacros_ox_top_bool
+    \bool_set_false:N \l__chemmacros_ox_super_bool
+    \bool_set_true:N  \l__chemmacros_ox_side_bool
+  }
+
+\keys_define:nn { chemmacros / ox }
+  {
+    pos            .choice: ,
+    pos / top      .code:n     = \__chemmacros_ox_pos_top: ,
+    pos / super    .code:n     = \__chemmacros_ox_pos_super: ,
+    pos / side     .code:n     = \__chemmacros_ox_pos_side: ,
+    roman          .bool_set:N = \l__chemmacros_ox_format_roman_bool ,
+    roman          .default:n  = true ,
+    parse          .bool_set:N = \l__chemmacros_ox_parse_bool ,
+    parse          .default:n  = true ,
+    explicit-sign  .bool_set:N = \l__chemmacros_ox_explicit_sign_bool ,
+    explicit-sign  .default:n  = true ,
+    decimal-marker .choice: ,
+    decimal-marker / comma .code:n =
+      { \bool_set_true:N \l__chemmacros_ox_decimal_marker_comma_bool } ,
+    decimal-marker / point .code:n =
+      { \bool_set_false:N \l__chemmacros_ox_decimal_marker_comma_bool } ,
+    align          .choice: ,
+    align / center .code:n    = \bool_set_true:N \l__chemmacros_ox_align_center_bool ,
+    align / right  .code:n    = \bool_set_false:N \l__chemmacros_ox_align_center_bool
+  }
+
+% \ox[<keyval>]{<num>,<atom>}
+% \ox*[<keyval>]{<num>,<atom>} => always number on the side
+\cs_new_protected:Npn \chemmacros_ox:nnnn #1#2#3#4
+  {
+    \group_begin:
+      \tl_if_blank:nF { #1 } { \__chemmacros_ox_pos_super: }
+      \keys_set:nn { chemmacros / ox } { #2 }
+      \__chemmacros_ox_write:nn { #3 } { #4 }
+    \group_end:
+  }
+
+\NewDocumentCommand \ox { s o > { \SplitArgument { 1 } { , } } m }
+  {
+    \IfBooleanTF { #1 }
+      {
+        \IfNoValueTF { #2 }
+          { \chemmacros_ox:nnnn { #1 } {    } #3 }
+          { \chemmacros_ox:nnnn { #1 } { #2 } #3 }
+      }
+      {
+        \IfNoValueTF { #2 }
+          { \chemmacros_ox:nnnn { } {    } #3 }
+          { \chemmacros_ox:nnnn { } { #2 } #3 }
+      }
+  }
+
+% --------------------------------------------------------------------------- %
+% - oxidation arrows
+\tl_new:N   \l__chemmacros_redox_begin_tl
+\tl_new:N   \l__chemmacros_redox_end_tl
+\tl_new:N   \l__chemmacros_redox_tikz_tl
+\tl_new:N   \l__chemmacros_redox_shift_tl
+\tl_new:N   \l__chemmacros_redox_anchor_tl
+\tl_new:N   \l__chemmacros_redox_side_tl
+
+\fp_new:N   \l__chemmacros_redox_shift_fp
+
+\dim_new:N  \l__chemmacros_redox_sep_dim
+\dim_new:N  \l__chemmacros_redox_sep_default_dim
+\dim_set:Nn \l__chemmacros_redox_sep_default_dim { .2em }
+\dim_new:N  \l__chemmacros_redox_dist_dim
+\dim_set:Nn \l__chemmacros_redox_dist_dim {.6em}
+
+% place and name nodes:
+% \OX{<name>,<atom>}
+\NewDocumentCommand \OX { > { \SplitArgument { 1 } { , } } m }
+  { \chemmacros_redox_partner:nn #1 }
+
+\cs_new_protected:Npn \chemmacros_redox_partner:nn #1#2
+  {
+    \chemformula_latex_if:nTF { measuring@ }
+      {
+        \group_begin:
+        \tikz[baseline=(#1.base)]
+          { \node [inner~sep=0pt] (#1) { #2 } ; }
+        \group_end:
+      }
+      {
+        \tl_if_blank:nT { #1 }
+          { \msg_error:nnx { chemmacros } { OX } { node~name~missing } }
+        \tl_if_blank:nT { #2 }
+          { \msg_error:nnx { chemmacros } { OX } { atom~missing } }
+        \tikz[baseline=(#1.base),remember~picture]
+          { \node [inner~sep=0pt] (#1) { #2 } ; }
+      }
+  }
+
+\cs_new_protected:Npn \__chemmacros_redox_coordinates:nn #1#2
+  {
+    \tl_set:Nn \l__chemmacros_redox_begin_tl { #1 }
+    \tl_set:Nn \l__chemmacros_redox_end_tl   { #2 }
+  }
+
+\cs_new_protected:Npn \chemmacros_redox:nnnnn #1#2#3#4#5
+  {
+    \tl_clear:N \l__chemmacros_redox_begin_tl
+    \tl_clear:N \l__chemmacros_redox_end_tl
+    \tl_clear:N \l__chemmacros_redox_tikz_tl
+    \__chemmacros_redox_coordinates:nn { #1 } { #2 }
+    \tl_if_blank:nF { #3 }
+      { \tl_set:Nn \l__chemmacros_redox_tikz_tl { #3 } }
+    \tl_if_blank:nTF { #4 }
+      {
+        \fp_set:Nn \l__chemmacros_redox_shift_fp  { 1 }
+        \tl_set:Nn \l__chemmacros_redox_anchor_tl { above }
+        \tl_set:Nn \l__chemmacros_redox_side_tl { north }
+        \dim_set_eq:NN
+          \l__chemmacros_redox_sep_dim
+          \l__chemmacros_redox_sep_default_dim
+      }
+      {
+        \fp_compare:nNnTF { #4 } < { 0 }
+          {
+            \tl_set:Nn \l__chemmacros_redox_anchor_tl { below }
+            \tl_set:Nn \l__chemmacros_redox_side_tl { south }
+            \exp_args:NNo \dim_set:Nn \l__chemmacros_redox_sep_dim
+              { - \l__chemmacros_redox_sep_default_dim }
+          }
+          {
+            \tl_set:Nn \l__chemmacros_redox_anchor_tl { above }
+            \tl_set:Nn \l__chemmacros_redox_side_tl { north }
+            \dim_set_eq:NN
+              \l__chemmacros_redox_sep_dim
+              \l__chemmacros_redox_sep_default_dim
+          }
+        \fp_set:Nn \l__chemmacros_redox_shift_fp { #4 }
+      }
+      \tl_set:Nn \l__chemmacros_redox_shift_tl
+        { \fp_to_tl:N \l__chemmacros_redox_shift_fp }
+    \tikz[remember~picture,overlay]
+      {
+        \chemmacros_tikz_draw:f { \tl_use:N \l__chemmacros_redox_tikz_tl }
+        ($
+          (\l__chemmacros_redox_begin_tl .
+          \l__chemmacros_redox_side_tl)+(0,\l__chemmacros_redox_sep_dim)
+        $)
+        -- 
+        ++(0,\l__chemmacros_redox_shift_tl * \l__chemmacros_redox_dist_dim) -|
+        node [pos=.25,\l__chemmacros_redox_anchor_tl] { { #5 } }
+        ($
+          (\l__chemmacros_redox_end_tl .
+          \l__chemmacros_redox_side_tl)+(0,\l__chemmacros_redox_sep_dim)
+        $) ;
+      }
+  }
+
+\NewDocumentCommand \redox { > { \SplitArgument { 1 } { , } } r() o o G{} }
+  {
+    \IfNoValueT { #1 }
+      {
+        \msg_error:nnx { chemmacros } { redox }
+          { You~need~to~specify~coordinates }
+      }
+    \IfNoValueTF { #2 }
+      { \chemmacros_redox:nnnnn #1 { } { } { #4 } }
+      {
+        \IfNoValueTF { #3 }
+          { \chemmacros_redox:nnnnn #1 { #2 } {    } { #4 } }
+          { \chemmacros_redox:nnnnn #1 { #2 } { #3 } { #4 } }
+      }
+  }
+
+% redox-keys
+\keys_define:nn { chemmacros / redox }
+  {
+    dist .dim_set:N = \l__chemmacros_redox_dist_dim ,
+    dist .default:n = { .6em } ,
+    sep  .dim_set:N = \l__chemmacros_redox_sep_default_dim ,
+    sep  .default:n = { .2em }
+  }
+
+% --------------------------------------------------------------------------- %
+% spectroscopy
+\tl_new:N  \g__chemmacros_nmr_isotope_tl
+\tl_new:N  \l__chemmacros_nmr_isotope_default_tl
+\tl_set:Nn \l__chemmacros_nmr_isotope_default_tl { 1 }
+\tl_new:N  \l__chemmacros_nmr_coupling_nuclei_tl
+\tl_new:N  \l__chemmacros_nmr_coupling_nuclei_pre_tl
+\tl_set:Nn \l__chemmacros_nmr_coupling_nuclei_pre_tl { ( }
+\tl_new:N  \l__chemmacros_nmr_coupling_nuclei_post_tl
+\tl_set:Nn \l__chemmacros_nmr_coupling_nuclei_post_tl { ) }
+\tl_new:N  \l__chemmacros_nmr_coupling_bonds_tl
+\tl_new:N  \l__chemmacros_nmr_coupling_bonds_pre_tl
+\tl_set:Nn \l__chemmacros_nmr_coupling_bonds_pre_tl { }
+\tl_set:Nn \l__chemmacros_nmr_coupling_bonds_post_tl { \! }
+\tl_new:N  \l__chemmacros_nmr_coupling_symbol_tl
+\tl_set:Nn \l__chemmacros_nmr_coupling_symbol_tl { J }
+\tl_new:N  \g__chemmacros_nmr_element_coupled_tl
+\tl_new:N  \g__chemmacros_nmr_element_tl
+\tl_new:N  \l__chemmacros_nmr_element_default_tl
+\tl_set:Nn \l__chemmacros_nmr_element_default_tl { H }
+\tl_new:N  \l__chemmacros_nmr_format_tl
+\tl_new:N  \l__chemmacros_nmr_delta_tl
+\tl_new:N  \l__chemmacros_nmr_coupling_unit_tl
+\tl_set:Nn \l__chemmacros_nmr_coupling_unit_tl { \hertz }
+\tl_new:N  \l__chemmacros_nmr_unit_tl
+\tl_set:Nn \l__chemmacros_nmr_unit_tl { \mega\hertz }
+\tl_new:N  \l__chemmacros_nmr_list_setup_tl
+\tl_set:Nn \l__chemmacros_nmr_list_setup_tl
+  {
+    \topsep\z@skip \partopsep\z@skip 
+    \itemsep\z@ \parsep\z@ \itemindent\z@
+    \leftmargin\z@
+  }
+\tl_new:N  \l__chemmacros_nmr_position_tl
+\tl_new:N  \l__chemmacros_nmr_element_method_connector_tl
+\tl_set:Nn \l__chemmacros_nmr_element_method_connector_tl {-}
+\tl_new:N  \l__chemmacros_nmr_method_tl
+\tl_set:Nn \l__chemmacros_nmr_method_tl {NMR}
+
+\bool_new:N      \l__chemmacros_nmr_coupling_nuclei_sub_bool
+\bool_new:N      \l__chemmacros_nmr_frequency_bool
+\bool_new:N      \l__chemmacros_nmr_solvent_bool
+\bool_new:N      \l__chemmacros_nmr_delimiters_bool
+\bool_new:N      \l__chemmacros_nmr_comma_bool
+\bool_new:N      \l__chemmacros_nmr_inner_bool
+\bool_new:N      \l__chemmacros_nmr_position_side_bool
+\bool_new:N      \l__chemmacros_nmr_parse_bool
+\bool_set_true:N \l__chemmacros_nmr_parse_bool
+\bool_new:N      \l__chemmacros_nmr_list_bool
+\bool_new:N      \l__chemmacros_nmr_use_equal_bool
+\bool_new:N      \l__chemmacros_nmr_custom_command_active_bool
+\bool_new:N      \l__chemmacros_nmr_custom_command_used_bool
+
+\cs_new_protected:Npn \__chemmacros_nmr_nucleus:nn #1#2
+  {
+    \tl_gset:Nn \g__chemmacros_nmr_isotope_tl { #1 }
+    \tl_if_in:nnTF { #2 } { [ }
+      { \__chemmacros_nmr_element:w #2 \q_stop }
+      {
+        \tl_gset:No \g__chemmacros_nmr_element_tl { #2 }
+        \tl_gclear:N \g__chemmacros_nmr_element_coupled_tl
+      }
+  }
+\cs_generate_variant:Nn \__chemmacros_nmr_nucleus:nn { VV }
+
+\cs_new_protected:Npn \__chemmacros_nmr_nucleus:w #1,#2 \q_stop
+  {
+    \tl_gset:Nn \g__chemmacros_nmr_isotope_tl { #1 }
+    \tl_if_in:nnTF { #2 } { [ }
+      { \__chemmacros_nmr_element:w #2 \q_stop }
+      {
+        \tl_gset:No \g__chemmacros_nmr_element_tl { #2 }
+        \tl_gclear:N \g__chemmacros_nmr_element_coupled_tl
+      }
+  }
+
+\cs_new_protected:Npn \__chemmacros_nmr_element:w #1[#2] \q_stop
+  {
+    \tl_gset:Nn \g__chemmacros_nmr_element_tl { #1 }
+    \tl_gset:Nn \g__chemmacros_nmr_element_coupled_tl { #2 }
+  }
+
+\cs_new_protected:Npn \__chemmacros_nmr_default_nucleus:w #1,#2 \q_stop
+  {
+    \tl_set:Nn \l__chemmacros_nmr_isotope_default_tl { #1 }
+    \tl_set:Nn \l__chemmacros_nmr_element_default_tl { #2 }
+  }
+
+\cs_new_protected:Npn \__chemmacros_nmr_base:nn #1#2
+  {
+    \tl_if_blank:VF \g__chemmacros_nmr_element_coupled_tl
+      {
+        \tl_put_left:Nn \g__chemmacros_nmr_element_coupled_tl { \{ }
+        \tl_put_right:Nn \g__chemmacros_nmr_element_coupled_tl { \} }
+      }
+    \tl_put_left:Nn \g__chemmacros_nmr_element_coupled_tl { #2 }
+    \iupac { ^ { #1 } }
+    \bool_if:NTF \l__chemmacros_nmr_parse_bool
+      { \chemformula_ch:nV {} \g__chemmacros_nmr_element_coupled_tl }
+      { \chemmacros_atom:V \g__chemmacros_nmr_element_coupled_tl }
+    \tl_use:N \l__chemmacros_nmr_element_method_connector_tl
+    \tl_use:N \l__chemmacros_nmr_method_tl
+  }
+\cs_generate_variant:Nn \__chemmacros_nmr_base:nn { VV }
+
+\cs_new_protected:Npn \__chemmacros_nmr_frequency:n #1
+  {
+    \tl_if_in:nnTF { #1 } { , }
+      { \__chemmacros_nmr_frequency_aux_i:w #1 \q_stop }
+      { \__chemmacros_nmr_frequency_aux_ii:n { #1 } }
+  }
+
+\cs_new_protected:Npn \__chemmacros_nmr_frequency_aux_i:w #1,#2 \q_stop
+  { \SI { #1 } { #2 } }
+
+\cs_new_protected:Npn \__chemmacros_nmr_frequency_aux_ii:n #1
+  { \SI { #1 } { \tl_use:N \l__chemmacros_nmr_unit_tl } }
+
+\cs_new_eq:NN \__chemmacros_nmr_number:n \use:n
+\cs_new_eq:NN \__chemmacros_nmr_position:n \use:n
+
+\keys_define:nn { chemmacros / nmr }
+  {
+    unit          .tl_set:N      = \l__chemmacros_nmr_unit_tl ,
+    unit          .default:n     = \mega\hertz ,
+    nucleus       .code:n        =
+      { \__chemmacros_nmr_default_nucleus:w #1 \q_stop } ,
+    nucleus       .default:n     = { 1,H } ,
+    format        .tl_set:N      = \l__chemmacros_nmr_format_tl ,
+    method        .tl_set:N      = \l__chemmacros_nmr_method_tl ,
+    connector     .tl_set:N      = \l__chemmacros_nmr_element_method_connector_tl ,
+    pos-number    .choice: ,
+    pos-number / sub  .code:n =
+      \tl_set:Nn \l__chemmacros_nmr_position_tl { _ }
+      \bool_set_false:N \l__chemmacros_nmr_position_side_bool ,
+    pos-number / super .code:n =
+      \tl_set:Nn \l__chemmacros_nmr_position_tl { ^ }
+      \bool_set_false:N \l__chemmacros_nmr_position_side_bool ,
+    pos-number / side .code:n =
+      \tl_set:Nn \l__chemmacros_nmr_position_tl { - }
+      \bool_set_true:N \l__chemmacros_nmr_position_side_bool ,
+    coupling-unit .tl_set:N   = \l__chemmacros_nmr_coupling_unit_tl ,
+    coupling-pos  .choice: ,
+    coupling-pos / sub .code:n =
+      \bool_set_true:N \l__chemmacros_nmr_coupling_nuclei_sub_bool ,
+    coupling-pos / side .code:n =
+      \bool_set_false:N \l__chemmacros_nmr_coupling_nuclei_sub_bool ,
+    coupling-nuclei-pre  .tl_set:N =
+      \l__chemmacros_nmr_coupling_nuclei_pre_tl ,
+    coupling-nuclei-post .tl_set:N =
+      \l__chemmacros_nmr_coupling_nuclei_post_tl ,
+    coupling-bonds-pre   .tl_set:N =
+      \l__chemmacros_nmr_coupling_bonds_pre_tl ,
+    coupling-bonds-post  .tl_set:N =
+      \l__chemmacros_nmr_coupling_bonds_post_tl ,
+    coupling-symbol .tl_set:N    =
+      \l__chemmacros_nmr_coupling_symbol_tl ,
+    atom-number-cs .code:n       =
+      \cs_set_eq:NN \__chemmacros_nmr_number:n #1 ,
+    coupling-pos-cs .code:n      =
+      \cs_set_eq:NN \__chemmacros_nmr_position:n #1 ,
+    parse         .bool_set:N    = \l__chemmacros_nmr_parse_bool ,
+    delta         .code:n        =
+      \tl_set:Nn \l__chemmacros_nmr_delta_tl { \, #1 } ,
+    list          .bool_set:N    = \l__chemmacros_nmr_list_bool ,
+    list          .default:n     = true ,
+    list-setup    .tl_set:N      = \l__chemmacros_nmr_list_setup_tl ,
+    use-equal     .bool_set:N    = \l__chemmacros_nmr_use_equal_bool ,
+    use-equal     .default:n     = true
+  }
+
+\prop_new:N \l__chemmacros_nmr_prop
+
+\cs_new_protected:Npn \chemmacros_new_nmr:Nn #1#2
+  {
+    \bool_if:nTF
+      {
+        \prop_if_in_p:Nn \l__chemmacros_nmr_prop { #1 }
+        ||
+        \cs_if_exist_p:N #1
+      }
+      { \msg_error:nnn { chemmacros } { new-nmr } { #1 } }
+      {
+        \prop_put:Nnn \l__chemmacros_nmr_prop { #1 } { #2 }
+        \NewDocumentCommand #1 { s }
+          { \IfBooleanTF {##1} { \NMR*{#2} } { \NMR{#2} } }
+      }
+  }
+
+\cs_new_protected:Npn \chemmacros_define_nmr:Nn #1#2
+  {
+    \prop_put:Nnn \l__chemmacros_nmr_prop { #1 } { #2 }
+    \cs_if_exist:NTF #1
+      {
+        \RenewDocumentCommand #1 { s }
+          { \IfBooleanTF {##1} { \NMR*{#2} } { \NMR{#2} } }
+      }
+      {
+        \NewDocumentCommand #1 { s }
+          { \IfBooleanTF {##1} { \NMR*{#2} } { \NMR{#2} } }
+      }
+  }
+
+\cs_new_protected:Npn \chemmacros_renew_nmr:Nn #1#2
+  {
+    \bool_if:nTF
+      {
+        \prop_if_in_p:Nn \l__chemmacros_nmr_prop { #1 }
+        &&
+        \cs_if_exist_p:N #1
+      }
+      {
+        \prop_put:Nnn \l__chemmacros_nmr_prop { #1 } { #2 }
+        \RenewDocumentCommand #1 { s }
+          { \IfBooleanTF {##1} { \NMR*{#2} } { \NMR{#2} } }
+      }
+      { \msg_error:nnn { chemmacros } { renew-nmr } { #1 } }
+  }
+
+\NewDocumentCommand \NewChemNMR { mm }
+  { \chemmacros_new_nmr:Nn #1 { #2 } }
+
+\NewDocumentCommand \RenewChemNMR { mm }
+  { \chemmacros_renew_nmr:Nn #1 { #2 } }
+
+\NewDocumentCommand \DeclareChemNMR { mm }
+  { \chemmacros_define_nmr:Nn #1 { #2 } }
+
+\NewDocumentCommand \NMR { s G{} D(){} O{} }
+  {
+    \IfBooleanTF { #1 }
+      { \chemmacros_nmr:nnnn { * } { #2 } { #3 } { #4 } }
+      { \chemmacros_nmr:nnnn {   } { #2 } { #3 } { #4 } }
+  }
+
+\AtBeginDocument
+  {
+    % \NMR{<num>,<elem>}(<num>,<unit>)[<solvent>] ALL arguments are optional
+    % \NMR* same but without ": $\delta$" at end
+    \cs_new_protected:Npn \chemmacros_nmr:nnnn #1#2#3#4
+      {
+        \bool_if:NT \l__chemmacros_nmr_list_bool { \item \scan_stop: }
+        \group_begin:
+          \chemmacros_leave_vmode:
+          \bool_set_false:N \l__chemmacros_nmr_frequency_bool
+          \bool_set_false:N \l__chemmacros_nmr_solvent_bool
+          \tl_if_empty:nF { #3 }
+            { \bool_set_true:N \l__chemmacros_nmr_frequency_bool }
+          \tl_if_empty:nF { #4 }
+            { \bool_set_true:N \l__chemmacros_nmr_solvent_bool }
+          \bool_if:nT
+            {
+              \l__chemmacros_nmr_frequency_bool
+              ||
+              \l__chemmacros_nmr_solvent_bool
+            }
+            { \bool_set_true:N \l__chemmacros_nmr_delimiters_bool }
+          \bool_if:nT
+            {
+              \l__chemmacros_nmr_frequency_bool
+              &&
+              \l__chemmacros_nmr_solvent_bool
+            }
+            { \bool_set_true:N \l__chemmacros_nmr_comma_bool }
+          \tl_if_empty:nTF { #2 }
+            {
+              \__chemmacros_nmr_nucleus:VV
+                \l__chemmacros_nmr_isotope_default_tl
+                \l__chemmacros_nmr_element_default_tl
+            }
+            { \__chemmacros_nmr_nucleus:w #2 \q_stop }
+          \mode_if_math:TF
+            {
+              \text
+                {
+                  \group_begin:
+                    \tl_use:N \l__chemmacros_nmr_format_tl
+                    \__chemmacros_nmr_base:VV
+                      \g__chemmacros_nmr_isotope_tl
+                      \g__chemmacros_nmr_element_tl
+                    \bool_if:NT \l__chemmacros_nmr_delimiters_bool
+                      { ~ ( }
+                    \bool_if:NT \l__chemmacros_nmr_frequency_bool
+                      { \__chemmacros_nmr_frequency:n { #3 } }
+                    \bool_if:NT \l__chemmacros_nmr_comma_bool
+                      { , ~ }
+                    \bool_if:NT \l__chemmacros_nmr_solvent_bool
+                      { \chemmacros_atom:n { #4 } }
+                    \bool_if:NT \l__chemmacros_nmr_delimiters_bool
+                      { ) }
+                    \tl_if_blank:nT { #1 } { : ~ }
+                  \group_end:
+                }
+              \tl_if_blank:nT { #1 }
+                {
+                  \delta
+                  \text { \l__chemmacros_nmr_delta_tl }
+                  \bool_if:NT \l__chemmacros_nmr_use_equal_bool { = }
+                }
+            }
+            {
+              \group_begin:
+                \tl_use:N \l__chemmacros_nmr_format_tl
+                \__chemmacros_nmr_base:VV
+                  \g__chemmacros_nmr_isotope_tl
+                  \g__chemmacros_nmr_element_tl
+                \bool_if:NT \l__chemmacros_nmr_delimiters_bool
+                  { ~ ( }
+                \bool_if:NT \l__chemmacros_nmr_frequency_bool
+                  { \__chemmacros_nmr_frequency:n { #3 } }
+                \bool_if:NT \l__chemmacros_nmr_comma_bool
+                  { , ~ }
+                \bool_if:NT \l__chemmacros_nmr_solvent_bool
+                  {
+                    \bool_if:NTF \l__chemmacros_nmr_parse_bool
+                      { \chemformula_ch:nn { } { #4 } }
+                      { #4 }
+                  }
+                \bool_if:NT \l__chemmacros_nmr_delimiters_bool
+                  { ) }
+                \tl_if_blank:nT { #1 } { : }
+              \group_end:
+              \tl_if_blank:nT { #1 }
+                {
+                  \tl_use:N \c_space_tl
+                  \c_math_toggle_token
+                    \delta
+                  \c_math_toggle_token
+                  \l__chemmacros_nmr_delta_tl
+                  \bool_if:NT \l__chemmacros_nmr_use_equal_bool { ~ = }
+                }
+              \bool_if:NF \l__chemmacros_nmr_comma_bool
+                { \tl_if_blank:nT { #1 } { \chemmacros_xspace: } }
+            }
+        \group_end:
+      }
+  }
+
+\NewDocumentCommand \chemmacros_data:w { smo }
+  {
+    \bool_if:NT \l__chemmacros_nmr_list_bool { \item }
+    {
+      \tl_use:N \l__chemmacros_nmr_format_tl #2
+      \IfNoValueF { #3 } { ~ ( #3 ) }
+      \IfBooleanT { #1 } { \bool_if:NT \l__chemmacros_nmr_use_equal_bool { : } }
+    }
+    \IfBooleanF { #1 } { \bool_if:NT \l__chemmacros_nmr_use_equal_bool { ~ = } }
+  }
+
+\cs_new_protected:Npn \chemmacros_val:n #1
+  {
+    \tl_if_in:nnTF { #1 } { -- }
+      { \chemmacros_val_aux:w #1 \q_nil }
+      { \num { #1 } }
+  }
+
+\cs_new_protected:Npn \chemmacros_val_aux:w #1--#2 \q_nil
+  { \numrange { #1 } { #2 } }
+
+\NewDocumentEnvironment { experimental } { o }
+  {
+    \group_begin:
+    \IfNoValueF { #1 } { \keys_set:nn { chemmacros / nmr } { #1 } }
+    \bool_set_true:N \l__chemmacros_nmr_inner_bool
+    \cs_set_eq:NN \#    \chemmacros_nmr_number:n
+    \cs_set_eq:NN \pos  \chemmacros_nmr_position:n
+    \cs_set_eq:NN \J    \chemmacros_nmr_coupling:w
+    \cs_set_eq:NN \data \chemmacros_data:w
+    \cs_set_eq:NN \val  \chemmacros_val:n
+    \bool_if:NT \l__chemmacros_nmr_list_bool
+      { \list {} { \l__chemmacros_nmr_list_setup_tl } }
+  }
+  {
+    \bool_if:NT \l__chemmacros_nmr_list_bool
+      { \endlist }
+    \group_end:
+    \chemmacros_ignore_spaces:
+  }
+
+\cs_new_protected:Npn \chemmacros_nmr_number:n #1
+  {
+    \__chemmacros_nmr_number:n { #1 } \,
+    \chemmacros_atom:V \g__chemmacros_nmr_element_tl
+  }
+
+\cs_new_protected:Npn \chemmacros_nmr_position:n #1
+  {
+    \chemmacros_chemformula:x
+      {
+        \exp_not:V \g__chemmacros_nmr_element_tl
+        \bool_if:NF \l__chemmacros_nmr_position_side_bool
+          {
+            \exp_not:V \l__chemmacros_nmr_position_tl
+            \exp_not:n { {#1} }
+          }
+      }
+    \bool_if:NT \l__chemmacros_nmr_position_side_bool
+      {
+        \tl_use:N \l__chemmacros_nmr_position_tl
+        \__chemmacros_nmr_position:n { #1 }
+      }
+  }
+
+\cs_new_protected:Npn \chemmacros_nmr_coupling:w
+  {
+    \tl_clear:N \l__chemmacros_nmr_coupling_nuclei_tl
+    \tl_clear:N \l__chemmacros_nmr_coupling_bonds_tl
+    \peek_meaning:NTF (
+      { \__chemmacros_nmr_coupling:w }
+      { \__chemmacros_nmr_coupling_aux_i:w }
+  }
+
+\cs_new_protected:Npn \__chemmacros_nmr_coupling:w (#1;#2)
+  {
+    \tl_set:Nn \l__chemmacros_nmr_coupling_bonds_tl
+      {
+        \l__chemmacros_nmr_coupling_bonds_pre_tl
+        #1
+        \l__chemmacros_nmr_coupling_bonds_post_tl
+      }
+    \bool_if:NTF \l__chemmacros_nmr_coupling_nuclei_sub_bool
+      {
+        \tl_set:Nn \l__chemmacros_nmr_coupling_nuclei_tl
+          {
+            \c_math_subscript_token
+              { \chemmacros_chemformula:n {#2} }
+          }
+      }
+      {
+        \tl_set:Nn \l__chemmacros_nmr_coupling_nuclei_tl
+          {
+            \l__chemmacros_nmr_coupling_nuclei_pre_tl
+            \chemmacros_chemformula:n {#2}
+            \l__chemmacros_nmr_coupling_nuclei_post_tl
+          }
+      }
+    \__chemmacros_nmr_coupling_aux_i:w
+  }
+
+\cs_new_protected:Npn \__chemmacros_nmr_coupling_aux_i:w
+  {
+    \peek_meaning:NTF [
+      { \__chemmacros_nmr_coupling_aux_ii:w }
+      { \__chemmacros_nmr_coupling_aux_iii:n }
+  }
+
+\cs_new_protected:Npn \__chemmacros_nmr_coupling_aux_ii:w [#1]#2
+  {
+    \group_begin:
+      \sisetup
+        {
+          list-final-separator={,~},
+          list-pair-separator={,~},
+          list-units=single
+        }
+      \c_math_toggle_token
+        ^{ \l__chemmacros_nmr_coupling_bonds_tl }
+        \l__chemmacros_nmr_coupling_symbol_tl
+        \l__chemmacros_nmr_coupling_nuclei_tl = \SIlist{#2}{#1}
+      \c_math_toggle_token
+    \group_end:
+  }
+
+\cs_new_protected:Npn \__chemmacros_nmr_coupling_aux_iii:n #1
+  {
+    \group_begin:
+      \sisetup
+        {
+          list-final-separator={,~},
+          list-pair-separator={,~},
+          list-units=single
+        }
+      \c_math_toggle_token
+         ^{ \l__chemmacros_nmr_coupling_bonds_tl }
+         \l__chemmacros_nmr_coupling_symbol_tl
+         \l__chemmacros_nmr_coupling_nuclei_tl
+         = \exp_args:Nno \SIlist { #1 } { \l__chemmacros_nmr_coupling_unit_tl }
+      \c_math_toggle_token
+    \group_end:
+  }
+
+% --------------------------------------------------------------------------
+% deprecated mhName:
+\keys_define:nn { chemmacros }
+  { mhName .code:n = \chemmacros_option_deprecated:n { mhName } }
+
+% --------------------------------------------------------------------------- %
+% - phases
+\bool_new:N \l__chemmacros_phases_sub_bool
+\dim_new:N  \l__chemmacros_phases_space_dim
+\dim_set:Nn \l__chemmacros_phases_space_dim { .1333 em }
+\prop_new:N \l__chemmacros_phases_prop
+\prop_new:N \l__chemmacros_phases_german_prop
+
+\keys_define:nn { chemmacros / phases }
+  {
+    pos        .choice: ,
+    pos / sub  .code:n    = \bool_set_true:N \l__chemmacros_phases_sub_bool ,
+    pos / side .code:n    = \bool_set_false:N \l__chemmacros_phases_sub_bool ,
+    space      .dim_set:N = \l__chemmacros_phases_space_dim
+  }
+
+\cs_new_protected:Npn \chemmacros_new_phase:Nn #1#2
+  {
+    \tl_set:Nx \l__chemmacros_tmpa_tl
+      { \chemmacros_remove_backslash:N #1 }
+    \cs_if_free:NF #1
+      { \msg_error:nnn {chemmacros} {new-phase} {#1} }
+    \exp_args:Nx \@trnslt@declare@translation
+      { phase-\l__chemmacros_tmpa_tl } {fallback} {#2}
+    \__chemmacros_define_phase:Nx #1
+      {
+        \exp_not:N \chemmacros_translate:n
+          { phase-\l__chemmacros_tmpa_tl }
+      }
+  }
+
+\cs_new_protected:Npn \chemmacros_define_phase:Nn #1#2
+  {
+    \tl_set:Nx \l__chemmacros_tmpa_tl
+      { \chemmacros_remove_backslash:N #1 }
+    \exp_args:Nx \@trnslt@declare@translation
+      { phase-\l__chemmacros_tmpa_tl } {fallback} {#2}
+    \__chemmacros_define_phase:Nx #1
+      {
+        \exp_not:N \chemmacros_translate:n
+          { phase-\l__chemmacros_tmpa_tl }
+      }
+  }
+
+\cs_new_protected:Npn \chemmacros_renew_phase:Nn #1#2
+  {
+    \tl_set:Nx \l__chemmacros_tmpa_tl
+      { \chemmacros_remove_backslash:N #1 }
+    \cs_if_exist:NF #1
+      { \msg_error:nnn {chemmacros} {renew-phase} {#1} }
+    \exp_args:Nx \@trnslt@declare@translation
+      { phase-\l__chemmacros_tmpa_tl } {fallback} {#2}
+    \__chemmacros_define_phase:Nx #1
+      {
+        \exp_not:N \chemmacros_translate:n
+          { phase-\l__chemmacros_tmpa_tl }
+      }
+  }
+
+\NewDocumentCommand \NewChemPhase { mom }
+  { \chemmacros_new_phase:Nn #1 {#3} }
+
+\NewDocumentCommand \DeclareChemPhase { mom }
+  { \chemmacros_define_phase:Nn #1 {#3} }
+
+\NewDocumentCommand \RenewChemPhase { mom }
+  { \chemmacros_renew_phase:Nn #1 {#3} }
+
+\cs_new_protected:Npn \__chemmacros_define_phase:Nn #1#2
+  {
+    \cs_if_exist:NF #1 { \cs_new:Npn #1 {} }
+    \DeclareDocumentCommand #1 { o }
+      {
+        \bool_if:NTF \l__chemmacros_phases_sub_bool
+          {
+            \bool_if:NTF \l_chemformula_inside_ch_bool
+              { \chemformula_subscript:n { ( #2 \IfNoValueF {##1} {,~##1} ) } }
+              {
+                \ensuremath
+                  {
+                    \c_math_subscript_token
+                    { \text { ( #2 \IfNoValueF {##1} {,~##1} ) } }
+                  }
+              }
+          }
+          {
+            \ensuremath
+              {
+                \skip_horizontal:N \l__chemmacros_phases_space_dim
+                \text { ( #2 \IfNoValueF {##1} {,~##1} ) }
+              }
+          }
+      }
+  }
+\cs_generate_variant:Nn \__chemmacros_define_phase:Nn { Nx }
+
+\NewChemPhase \sld {s}
+\NewChemPhase \lqd {l}
+\NewChemPhase \gas {g}
+\NewChemPhase \aq  {aq}
+
+\cs_new_protected:Npn \chemmacros_phase:n #1
+  {
+    \bool_if:NTF \l__chemmacros_phases_sub_bool
+      { \ensuremath { \c_math_subscript_token { \text { (#1) } } } }
+      {
+        \ensuremath
+          {
+            \skip_horizontal:N \l__chemmacros_phases_space_dim
+            \text { (#1) }
+          }
+      }
+  }
+
+\NewDocumentCommand \phase { m }
+  { \chemmacros_phase:n {#1} }
+
+% --------------------------------------------------------------------------
+% reaction environments
+\cs_new_protected:Npn \__chemmacros_record_for_lor:nnnnn #1#2#3#4#5
+  {
+    \tl_if_eq:nnT { #1 } { reaction }
+      {
+        \group_begin:
+          % we need to prevent \Hy@make@anchor from being written to the lor
+          % file:
+          \bool_if:NT \l__chemmacros_hyperref_bool
+            { \cs_set:Npn \Hy@make@anchor {} }
+          \addcontentsline { lor } { reaction }
+            {
+              \tl_use:N \l__chemmacros_reaction_lorname_tl
+              \tl_use:N \c_space_tl
+              #2 #3 #4 #5
+              \tl_use:N \g__chemmacros_reaction_description_tl
+            }
+          \tl_gclear:N \g__chemmacros_reaction_description_tl
+        \group_end:
+      }
+  }
+
+% redefine mathtools' command \MT_define_tagform:nwnn to ensure we add an
+% entry to the list of reactions even if the user redefines the reaction tag
+% this should probably be done via patching...
+\AfterPackage* { mathtools }
+  {
+    \cs_set_protected:Npn \MT_define_tagform:nwnn #1[#2]#3#4
+      {
+        \@namedef{MT_tagform_#1:n}##1
+          {
+            % this is the original part:
+            \maketag@@@{#3\ignorespaces#2{##1}\unskip\@@italiccorr#4}
+            % this is added => this disturbs hyperref:
+            \__chemmacros_record_for_lor:nnnnn
+              { #1 } { #3 } { #2 } { ##1 } { #4 }
+          }
+      }
+  }
+
+\tl_new:N \g__chemmacros_reaction_description_tl
+
+\cs_new_protected:Npn \chemmacros_add_reaction_description:n #1
+  {
+    \tl_if_blank:nF { #1 }
+      { \tl_gset:Nn \g__chemmacros_reaction_description_tl { : ~ #1 } }
+  }
+
+\NewDocumentCommand \AddRxnDesc { m }
+  { \chemmacros_add_reaction_description:n { #1 } }
+
+% define \listofreactions
+\tl_new:N \l__chemmacros_reaction_lorname_tl
+\tl_new:N \reactionlistname
+\tl_new:N \l__chemmacros_reaction_heading_tl
+
+\cs_new:Npn \__chemmacros_reaction_heading:n #1
+  { \l__chemmacros_reaction_heading_tl { #1 } }
+\cs_generate_variant:Nn \__chemmacros_reaction_heading:n { V }
+
+\cs_new_protected:Npn \listofreactions
+  {
+    \__chemmacros_reaction_heading:V \reactionlistname
+    \@starttoc { lor }
+  }
+
+\cs_new_protected:Npn \l@reaction #1#2
+  { \@dottedtocline { 1 } { 1.5em } { 2.3em } { #1 } { #2 } }
+
+% create tagform
+\newtagform { reaction } { \{ } { \} }
+\newcounter { chemmacros_save_reaction }
+\newcounter { reaction }
+
+% switch to reaction tags
+\cs_new_protected:Npn \__chemmacros_begin_reaction:
+  {
+    % create individual names for `hyperref':
+    \bool_if:NT \l__chemmacros_hyperref_bool
+      {
+        \cs_set:Npn \theHequation
+          { R . \theHsection . \arabic { reaction } }
+      }
+    % enable labelformat `reaction':
+    \bool_if:NT \l__chemmacros_varioref_bool
+      { \cs_set_eq:NN \p@equation \p@reaction }
+    \setcounter { chemmacros_save_reaction } { \value { equation } }
+    \setcounter { equation } { \value { reaction } }
+    \usetagform { reaction }
+  }
+
+% switch back to equation tags
+\cs_new_protected:Npn \__chemmacros_end_reaction:
+  {
+    \setcounter { reaction } { \value { equation } }
+    \setcounter { equation } { \value { chemmacros_save_reaction } }
+  }
+
+% --------------------------------------------------------------------------- %
+\bool_new:N \l__chemmacros_reactions_star_bool
+\bool_new:N \l__chemmacros_reactions_args_bool
+
+\keys_define:nn { chemmacros / reaction }
+  {
+    star         .bool_set:N = \l__chemmacros_reactions_star_bool ,
+    star         .default:n  = true ,
+    arg          .bool_set:N = \l__chemmacros_reactions_args_bool ,
+    arg          .default:n  = true ,
+    list-name    .tl_set:N   = \reactionlistname ,
+    list-entry   .code:n     =
+      \tl_set:Nn \l__chemmacros_reaction_lorname_tl { #1 } ,
+    list-heading .tl_set:N   = \l__chemmacros_reaction_heading_tl
+  }
+
+% \DeclareChemReaction[<keyval>]{<name>}{<type>}
+\cs_new_protected:Npn \__chemmacros_define_reaction:Nnnn #1#2#3#4
+  {
+    \bool_set_false:N \l__chemmacros_reactions_star_bool
+    \bool_set_false:N \l__chemmacros_reactions_args_bool
+    \keys_set:nn { chemmacros / reaction } { #2 }
+    \bool_if:NTF \l__chemmacros_reactions_args_bool
+      {
+        #1 { #3 } [ 2 ] []
+          {
+            \__chemmacros_begin_reaction:
+            \AddRxnDesc { ##1 }
+            \begin { #4 } { ##2 }
+              \chemmacros_equation_chemformula:V \BODY
+            \end{ #4 }
+            \__chemmacros_end_reaction:
+          }
+        \bool_if:NT \l__chemmacros_reactions_star_bool
+          {
+            #1 { #3* } [ 1 ]
+              {
+                \begin { #4* } { ##1 }
+                  \chemmacros_equation_chemformula:V \BODY
+                \end { #4* }
+              }
+          }
+      }
+      {
+        #1 { #3 } [ 1 ] []
+          {
+            \__chemmacros_begin_reaction:
+            \AddRxnDesc { ##1 }
+            \begin { #4 }
+              \chemmacros_equation_chemformula:V \BODY
+            \end { #4 }
+            \__chemmacros_end_reaction:
+          }
+        \bool_if:NT \l__chemmacros_reactions_star_bool
+          {
+            #1 { #3* }
+              {
+                \begin { #4* }
+                  \chemmacros_equation_chemformula:V \BODY
+                \end { #4* }
+              }
+          }
+      }
+    \ignorespaces
+  }
+
+\cs_new_protected:Npn \chemmacros_define_reaction:nnn #1#2#3
+  {
+    \cs_if_exist:cTF { #2 }
+      { \__chemmacros_define_reaction:Nnnn \RenewEnviron { #1 } { #2 } { #3 } }
+      { \__chemmacros_define_reaction:Nnnn \NewEnviron { #1 } { #2 } { #3 } }
+  }
+
+\cs_new_protected:Npn \chemmacros_new_reaction:nnn #1#2#3
+  {
+    \cs_if_exist:cTF { #2 }
+      { \msg_error:nnx { chemmacros } { already-defined } { #2 } }
+      { \__chemmacros_define_reaction:Nnnn \NewEnviron { #1 } { #2 } { #3 } }
+  }
+
+\cs_new_protected:Npn \chemmacros_renew_reaction:nnn #1#2#3
+  {
+    \cs_if_exist:cTF { #2 }
+      { \__chemmacros_define_reaction:Nnnn \RenewEnviron { #1 } { #2 } { #3 } }
+      { \msg_error:nnx { chemmacros } { not-defined } { #2 } }
+  }
+
+\NewDocumentCommand \NewChemReaction { O{} m m }
+  { \chemmacros_new_reaction:nnn { #1 } { #2 } { #3 } }
+\NewDocumentCommand \RenewChemReaction { O{} m m }
+  { \chemmacros_renew_reaction:nnn { #1 } { #2 } { #3 } }
+\NewDocumentCommand \DeclareChemReaction { O{} m m }
+  { \chemmacros_declare_reaction:nnn { #1 } { #2 } { #3 } }
+\DeclareChemDeprecated \newreaction \NewChemReaction
+
+\cs_new_protected:Npn \chemmacros_equation_chemformula:n #1
+  { \chemformula_ch:nn { } { #1 } }
+\cs_generate_variant:Nn \chemmacros_equation_chemformula:n { V }
+
+% predefined:
+\NewChemReaction [ star ] { reaction }  { equation }
+\NewChemReaction [ star ] { reactions } { align }
+
+% --------------------------------------------------------------------------
+% thermodynamics et.al.
+% \standardstate as defined by the chemstyle package. Thanks to Joseph Wright
+% the `chemstyle' provides it with \providecommand so it doesn't matter which
+% package defines it first
+\ProvideDocumentCommand \standardstate {}
+  { { \ensuremath { \chemmacros_standardstate: } } }
+
+\cs_new_protected:Npn \chemmacros_standardstate:
+  { \mathpalette \chemmacros_standardstate_aux: \circ }
+
+\cs_new_protected:Npn \chemmacros_standardstate_aux: #1#2
+  {
+    \ooalign
+      {
+        \tex_hfil:D
+        \c_math_toggle_token #1- \c_math_toggle_token
+        \tex_hfil:D
+        \tex_cr:D
+        \tex_hfil:D
+        \c_math_toggle_token #1#2 \c_math_toggle_token
+        \tex_hfil:D
+        \tex_cr:D
+      }
+  }
+
+\cs_new_protected:Npn \changestate
+  { \mathop{} \! \chemDelta }
+
+% --------------------------------------------------------------------------
+% \State
+\tl_new:N  \l__chemmacros_State_delta_tl
+\tl_set:Nn \l__chemmacros_State_delta_tl { \changestate }
+\tl_new:N  \l__chemmacros_State_exponent_tl
+\tl_set:Nn \l__chemmacros_State_exponent_tl { \standardstate }
+
+\bool_new:N      \l__chemmacros_State_delta_bool
+\bool_set_true:N \l__chemmacros_State_delta_bool
+\bool_new:N      \l__chemmacros_State_subscript_left_bool
+\bool_set_true:N \l__chemmacros_State_subscript_left_bool
+\bool_new:N      \l__chemmacros_State_exponent_bool
+\bool_set_true:N \l__chemmacros_State_exponent_bool
+
+\keys_define:nn { chemmacros / state }
+  {
+    delta     .code:n     =
+      {
+        \exp_args:Nf \tl_if_eq:nnTF { #1 } { false }
+          { \bool_set_false:N \l__chemmacros_State_delta_bool }
+          {
+            \bool_set_true:N \l__chemmacros_State_delta_bool
+            \tl_set:Nn \l__chemmacros_State_delta_tl { #1 }
+          }
+      } ,
+    subscript-left .bool_set:N = \l__chemmacros_State_subscript_left_bool ,
+    subscript-left .default:n  = true ,
+    exponent  .code:n     =
+      {
+        \exp_args:Nf \tl_if_eq:nnTF { #1 } { false }
+          { \bool_set_false:N \l__chemmacros_State_exponent_bool }
+          {
+            \bool_set_true:N \l__chemmacros_State_exponent_bool
+            \tl_set:Nn \l__chemmacros_State_exponent_tl { #1 }
+          }
+      } ,
+    exponent  .default:n  = \standardstate
+  }
+
+% old syntax (v1.1):
+% \State[<exp>,<Delta>,<subscript pos>]{<Symbol>}{<subscript>}
+% old syntax (v2.0):
+% \State[<keyval>]{<Symbol>}{<subscript>}
+% {<subscript>} is an optional argument!
+\cs_new_protected:Npn \chemmacros_state:nnn #1#2#3
+  {
+    \group_begin:
+      \keys_set:nn { chemmacros / state } { #1 }
+      \ensuremath
+       {
+          \bool_if:NT \l__chemmacros_State_delta_bool
+            { \tl_use:N \l__chemmacros_State_delta_tl }
+          \bool_if:NT \l__chemmacros_State_subscript_left_bool
+            { \c_math_subscript_token { \text { #3 } } }
+          #2
+          \bool_if:NF \l__chemmacros_State_subscript_left_bool
+            { \c_math_subscript_token { \text { #3 } } }
+          \bool_if:NT \l__chemmacros_State_exponent_bool
+            { ^ { \tl_use:N \l__chemmacros_State_exponent_tl } }
+        }
+    \group_end:
+  }
+\cs_generate_variant:Nn \chemmacros_state:nnn { xnV }
+
+\NewDocumentCommand \State { s O{} m G{} }
+  {
+    \group_begin:
+      \IfBooleanT { #1 }
+        {
+          \keys_set:nn { chemmacros / state }
+            { subscript-left = false , exponent = }
+        }
+      \chemmacros_state:nnn { #2 } { #3 } { #4 }
+    \group_end:
+  }
+
+% --------------------------------------------------------------------------
+\tl_new:N  \l__chemmacros_thermod_subscript_left_tl
+\tl_new:N  \l__chemmacros_thermod_subscript_left_default_tl
+\tl_new:N  \l__chemmacros_thermod_subscript_tl
+\tl_new:N  \l__chemmacros_thermod_subscript_default_tl
+\tl_new:N  \l__chemmacros_thermod_unit_tl
+\tl_new:N  \l__chemmacros_thermod_exponent_tl
+\tl_new:N  \l__chemmacros_thermod_exponent_default_tl
+\tl_set:Nn \l__chemmacros_thermod_exponent_default_tl { \standardstate }
+\tl_new:N  \l__chemmacros_thermod_delta_tl
+\tl_new:N  \l__chemmacros_thermod_delta_default_tl
+\tl_set:Nn \l__chemmacros_thermod_delta_default_tl { \changestate }
+
+\bool_new:N \l__chemmacros_renewstate_bool
+\bool_new:N \l__chemmacros_state_overwrite_error_bool
+
+\keys_define:nn { chemmacros }
+  {
+    State / subscript         .choice: ,
+    State / subscript / left  .code:n   =
+      { \tl_set:Nn \l__chemmacros_thermod_subscript_left_tl { true } } ,
+    State / subscript / right .code:n   =
+      { \tl_set:Nn \l__chemmacros_thermod_subscript_left_tl { false } } ,
+    State / exponent          .tl_set:N =
+      \l__chemmacros_thermod_exponent_tl ,
+    State / delta             .tl_set:N =
+      \l__chemmacros_thermod_delta_tl ,
+    State / unit              .tl_set:N =
+      \l__chemmacros_thermod_unit_tl ,
+    setnewstate / subscript-left .tl_set:N =
+      \l__chemmacros_thermod_subscript_left_default_tl ,
+    setnewstate / subscript   .tl_set:N =
+      \l__chemmacros_thermod_subscript_default_tl ,
+    setnewstate / exponent    .tl_set:N =
+      \l__chemmacros_thermod_exponent_default_tl ,
+    setnewstate / delta       .tl_set:N =
+      \l__chemmacros_thermod_delta_default_tl
+  }
+
+% \NewChemState{<name>}[<keyval>]{<symbol>}{<unit>}
+\NewDocumentCommand \NewChemState { omO{}mm }
+  {
+    \bool_set_false:N \l__chemmacros_renewstate_bool
+    \bool_set_true:N \l__chemmacros_state_overwrite_error_bool
+    \__chemmacros_setnewstate_reset:
+    \IfNoValueTF { #1 }
+      { \chemmacros_define_state:nnnn { #3 } { #2 } { #4 } { #5 } }
+      {
+        \msg_warning:nn { chemmacros } { state-syntax }
+        \chemmacros_define_state:nnnn { #1#3 } { #2 } { #4 } { #5 }
+      }
+  }
+% \DeclareChemState{<name>}[<keyval>]{<symbol>}{<unit>}
+\NewDocumentCommand \DeclareChemState { omO{}mm }
+  {
+    \bool_set_false:N \l__chemmacros_renewstate_bool
+    \bool_set_false:N \l__chemmacros_state_overwrite_error_bool
+    \__chemmacros_setnewstate_reset:
+    \IfNoValueTF { #1 }
+      { \chemmacros_define_state:nnnn { #3 } { #2 } { #4 } { #5 } }
+      {
+        \msg_warning:nn { chemmacros } { state-syntax }
+        \chemmacros_define_state:nnnn { #1#3 } { #2 } { #4 } { #5 }
+      }
+  }
+% \RenewChemState{<name>}[<keyval>]{<symbol>}{<unit>}
+\NewDocumentCommand \RenewChemState { omO{}mm }
+  {
+    \bool_set_true:N \l__chemmacros_renewstate_bool
+    \bool_set_true:N \l__chemmacros_state_overwrite_error_bool
+    \__chemmacros_setnewstate_reset:
+    \IfNoValueTF { #1 }
+      { \chemmacros_define_state:nnnn { #3 } { #2 } { #4 } { #5 } }
+      {
+        \msg_warning:nn { chemmacros } { state-syntax }
+        \chemmacros_define_state:nnnn { #1#3 } { #2 } { #4 } { #5 }
+      }
+  }
+% TODO
+\cs_set_protected:Npn \setnewstate
+  {
+    \msg_warning:nnnn { chemmacros } { command-deprecated }
+      { \setnewstate } { \NewChemState }
+    \NewChemState
+  }
+\cs_set_protected:Npn \renewstate
+  {
+    \msg_warning:nnnn { chemmacros } { command-deprecated }
+      { \renewstate } { \RenewChemState }
+    \RenewChemState
+  }
+
+\cs_new_protected:Npn \__chemmacros_setnewstate_reset:
+  {
+    \tl_set:Nn  \l__chemmacros_thermod_subscript_left_default_tl { true }
+    \tl_clear:N \l__chemmacros_thermod_subscript_default_tl
+    \tl_set:Nn  \l__chemmacros_thermod_exponent_default_tl { \standardstate }
+    \tl_set:Nn  \l__chemmacros_thermod_delta_default_tl { \changestate }
+  }
+
+\cs_new_protected:Npn \chemmacros_define_state:nnnn #1#2#3#4
+  {
+    \keys_set:nn { chemmacros / setnewstate } { #1 }
+    \chemmacros_if_is_cs:nTF { #2 }
+      { \__chemmacros_set_state:xnn { \cs_to_str:N #2 } { #3 } { #4 } }
+      {
+        \msg_warning:nn { chemmacros } { state-syntax }
+        \__chemmacros_set_state:nnn { #2 } { #3 } { #4 }
+      }
+  }
+
+\cs_new_protected:Npn \__chemmacros_set_state:nnn #1#2#3
+  {
+    \bool_if:NT \l__chemmacros_state_overwrite_error_bool
+      {
+        \bool_if:NTF \l__chemmacros_renewstate_bool
+          {
+            \cs_if_exist:cF { #1 }
+              { \msg_error:nnx { chemmacros } { nenew-state } { #1 } }
+          }
+          {
+            \cs_if_exist:cT { #1 }
+              { \msg_error:nnx { chemmacros } { new-state } { #1 } }
+          }
+      }
+    \cs_undefine:c { chemmacros_ #1 _reset: }
+    \cs_undefine:c { c__chemmacros_ #1 _subscript_tl }
+    \cs_undefine:c { c__chemmacros_ #1 _exponent_tl }
+    \cs_undefine:c { c__chemmacros_ #1 _delta_tl }
+    \cs_undefine:c { c__chemmacros_ #1 _left_tl }
+    \cs_undefine:c { c__chemmacros_ #1 _unit_tl }
+    \cs_undefine:c { #1 }
+    \cs_undefine:c { #1 _aux_i:n }
+    \cs_undefine:c { #1 _aux_ii:n }
+    \cs_undefine:c { #1 _aux_iii:n }
+    \group_begin:
+      \tl_const:cV
+        { c__chemmacros_ #1 _subscript_tl }
+        \l__chemmacros_thermod_subscript_default_tl
+      \tl_const:cV
+        { c__chemmacros_ #1 _exponent_tl }
+        \l__chemmacros_thermod_exponent_default_tl
+      \tl_const:cV
+        { c__chemmacros_ #1 _delta_tl }
+        \l__chemmacros_thermod_delta_default_tl
+      \tl_const:cV
+        { c__chemmacros_ #1 _left_tl }
+        \l__chemmacros_thermod_subscript_left_default_tl
+      \tl_const:cn
+        { c__chemmacros_ #1 _unit_tl }
+        { #3 }
+      \cs_new_protected:cpn {chemmacros_ #1 _reset: }
+        {
+          \tl_set_eq:Nc
+            \l__chemmacros_thermod_subscript_tl
+            { c__chemmacros_ #1 _subscript_tl }
+          \tl_set_eq:Nc
+            \l__chemmacros_thermod_exponent_tl
+            { c__chemmacros_ #1 _exponent_tl }
+          \tl_set_eq:Nc
+            \l__chemmacros_thermod_delta_tl
+            { c__chemmacros_ #1 _delta_tl }
+          \tl_set_eq:Nc
+            \l__chemmacros_thermod_subscript_left_tl
+            { c__chemmacros_ #1 _left_tl }
+          \tl_set_eq:Nc
+            \l__chemmacros_thermod_unit_tl
+            { c__chemmacros_ #1 _unit_tl }
+        }
+      \cs_new_protected:cpn { #1 }
+        {
+          \use:c {chemmacros_ #1 _reset: }
+          \peek_meaning:NTF [
+            { \tl_use:c { #1 _aux_i:n } }
+            {
+              \peek_meaning:NTF (
+                { \tl_use:c { #1 _aux_ii:n } }
+                { \tl_use:c { #1 _aux_iii:n } }
+            }
+        }
+      \cs_new_protected:cpn { #1 _aux_i:n } [##1]
+        {
+          \keys_set:nn { chemmacros / State } { ##1 }
+          \peek_meaning:NTF (
+            { \tl_use:c { #1 _aux_ii:n } }
+            { \tl_use:c { #1 _aux_iii:n } }
+        }
+      \cs_new_protected:cpn { #1 _aux_ii:n } (##1)
+        {
+          \tl_set:Nn \l__chemmacros_thermod_subscript_tl { ##1 }
+          \tl_use:c { #1 _aux_iii:n }
+        }
+      \cs_new_protected:cpn { #1 _aux_iii:n } ##1
+        {
+          \ensuremath
+            {
+              \tl_if_eq:VnTF
+                \l__chemmacros_thermod_subscript_left_tl { true }
+                {
+                  \chemmacros_state:xnV
+                    {
+                      subscript-left = true ,
+                      exponent       =
+                        { \exp_not:V \l__chemmacros_thermod_exponent_tl } ,
+                      delta          =
+                        { \exp_not:V \l__chemmacros_thermod_delta_tl }
+                    }
+                    { #2 }
+                }
+                {
+                  \chemmacros_state:xnV
+                    {
+                      subscript-left = false ,
+                      exponent       =
+                        { \exp_not:V \l__chemmacros_thermod_exponent_tl } ,
+                      delta          =
+                        { \exp_not:V \l__chemmacros_thermod_delta_tl }
+                    }
+                    { #2 }
+                }
+                \l__chemmacros_thermod_subscript_tl
+                =
+                \exp_args:NnV \SI { ##1 } \l__chemmacros_thermod_unit_tl
+            }
+        }
+    \group_end:
+    \ignorespaces
+  }
+\cs_generate_variant:Nn \__chemmacros_set_state:nnn { x }
+
+% predefined:
+\NewChemState \Enthalpy {H} {\kilo\joule\per\mole}
+\NewChemState \Entropy [ delta=false, subscript-left=false ]
+  {S} {\joule\per\kelvin\per\mole}
+\NewChemState \Gibbs {G} {\kilo\joule\per\mole}
+
+% --------------------------------------------------------------------------
+% Newman projections
+\fp_new:N  \l__chemmacros_newman_rel_angle_fp
+\fp_zero:N \l__chemmacros_newman_rel_angle_fp
+\fp_new:N  \l__chemmacros_newman_tmp_angle_fp
+\fp_new:N  \l__chemmacros_newman_abs_angle_fp
+\fp_zero:N \l__chemmacros_newman_abs_angle_fp
+\fp_new:N  \l__chemmacros_newman_scale_fp
+\fp_set:Nn \l__chemmacros_newman_scale_fp { 1 }
+\fp_new:N  \l__chemmacros_newman_x_fp
+\fp_new:N  \l__chemmacros_newman_y_fp
+
+\tl_new:N \l__chemmacros_newman_tikz_ring_tl
+\tl_new:N \l__chemmacros_newman_tikz_front_tl
+\tl_new:N \l__chemmacros_newman_tikz_back_tl
+
+\bool_new:N \l__chemmacros_newman_tikz_back_bool
+
+\keys_define:nn { chemmacros / newman }
+  {
+    ring       .tl_set:N  = \l__chemmacros_newman_tikz_ring_tl ,
+    atoms      .tl_set:N  = \l__chemmacros_newman_tikz_front_tl ,
+    back-atoms .code:n    =
+      {
+        \bool_set_true:N \l__chemmacros_newman_tikz_back_bool
+        \tl_set:Nn \l__chemmacros_newman_tikz_back_tl { #1 }
+      } ,
+    scale       .fp_set:N  = \l__chemmacros_newman_scale_fp ,
+    scale       .default:n = 1 ,
+    angle       .fp_set:N  = \l__chemmacros_newman_abs_angle_fp ,
+    angle       .default:n = 0
+  }
+
+% \newman[<keyval>](<angle>){<1>,<2>,<3>,<4>,<5>,<6>}
+\NewDocumentCommand \newman { o d() > { \SplitArgument { 5 } { , } } m }
+  {
+    \group_begin:
+      \IfNoValueF { #1 } { \keys_set:nn { chemmacros / newman } { #1 } }
+      \IfNoValueTF { #2 }
+        { \chemmacros_newman_atoms:nnnnnnn {    } #3 }
+        { \chemmacros_newman_atoms:nnnnnnn { #2 } #3 }
+    \group_end:
+  }
+
+% place atoms:
+% #1: angle
+% #2 - #7: atoms
+\cs_new_protected:Npn \chemmacros_newman_atoms:nnnnnnn #1#2#3#4#5#6#7
+  {
+    \tl_if_blank:nTF { #1 }
+      {
+        \fp_set_eq:NN
+          \l__chemmacros_newman_rel_angle_fp
+          \l__chemmacros_newman_abs_angle_fp
+      }
+      { \fp_set:Nn \l__chemmacros_newman_rel_angle_fp { #1 } }
+    \chemmacros_tikz_picture:xn
+      {
+        scale = \fp_to_tl:N \l__chemmacros_newman_scale_fp ,
+        chemmacros_newman_atom_front / .style =
+          {
+            inner~sep=0pt,
+            outer~sep=0pt,
+            \tl_use:N \l__chemmacros_newman_tikz_front_tl
+          },
+        chemmacros_newman_atom_back / .style =
+          {
+            inner~sep=0pt,
+            outer~sep=0pt,
+            \bool_if:NTF \l__chemmacros_newman_tikz_back_bool
+              { \tl_use:N \l__chemmacros_newman_tikz_back_tl }
+              { \tl_use:N \l__chemmacros_newman_tikz_front_tl }
+          }
+      }
+      {
+        \chemmacros_tikz_draw:f
+          { \tl_use:N \l__chemmacros_newman_tikz_ring_tl }
+          (0pt,0pt) circle (\fp_to_dim:N \l__chemmacros_newman_scale_fp * 15) ;
+        \chemmacros_newman_back_node:nn
+          { 30 }
+          { \IfNoValueF { #6 } { #6 } }
+        \chemmacros_newman_back_node:nf
+          { 150 }
+          { \IfNoValueF { #7 } { #7 } }
+        \chemmacros_newman_back_node:nf
+          { 270 }
+          { \IfNoValueF { #5 } { #5 } }
+        \chemmacros_newman_front_node:nf
+          { 90 }
+          { \IfNoValueF { #2 } { #2 } }
+        \chemmacros_newman_front_node:nf
+          { 210 }
+          { \IfNoValueF { #3 } { #3 } }
+        \chemmacros_newman_front_node:nf
+          { 330 }
+          { \IfNoValueF { #4 } { #4 } }
+    }
+  }
+
+% provide cartesian coordiantes from polar coordinates
+% #1: fp variable for x
+% #2: fp variable for y
+% #3: angle
+% #4: radius
+\cs_new_protected:Npn \chemmacros_polar_to_cartesian:NNnn #1#2#3#4
+  {
+    \fp_set:Nn #1 { #4 * cos( #3 / 180 * pi ) }% x
+    \fp_set:Nn #2 { #4 * sin( #3 / 180 * pi ) }% y
+  }
+
+% place back nodes
+\cs_new_protected:Npn \chemmacros_newman_back_node:nn #1#2
+  {
+    \group_begin:
+      \fp_add:Nn \l__chemmacros_newman_rel_angle_fp { #1 }
+      \chemmacros_polar_to_cartesian:NNnn
+        \l__chemmacros_newman_x_fp
+        \l__chemmacros_newman_y_fp
+        { \l__chemmacros_newman_rel_angle_fp }
+        { \l__chemmacros_newman_scale_fp }
+      \chemmacros_tikz_draw:f
+        { \tl_use:N \l__chemmacros_newman_tikz_ring_tl }
+        (
+          15 * \fp_to_dim:N \l__chemmacros_newman_x_fp ,
+          15 * \fp_to_dim:N \l__chemmacros_newman_y_fp
+        )
+        --
+        (
+          30 * \fp_to_dim:N \l__chemmacros_newman_x_fp ,
+          30 * \fp_to_dim:N \l__chemmacros_newman_y_fp
+        ) ;
+      \chemmacros_polar_to_cartesian:NNnn
+        \l__chemmacros_newman_x_fp
+        \l__chemmacros_newman_y_fp
+        { \l__chemmacros_newman_rel_angle_fp }
+        { \l__chemmacros_newman_scale_fp }
+      \chemmacros_tikz_node:f
+        {
+          chemmacros_newman_atom_back,
+          anchor = -180 + \fp_to_int:N \l__chemmacros_newman_rel_angle_fp
+        }
+        at
+        (
+          31 * \fp_to_dim:N \l__chemmacros_newman_x_fp ,
+          31 * \fp_to_dim:N \l__chemmacros_newman_y_fp
+        )
+        { #2 } ;
+    \group_end:
+  }
+\cs_generate_variant:Nn \chemmacros_newman_back_node:nn { nf }
+
+% place front nodes:
+\cs_new_protected:Npn \chemmacros_newman_front_node:nn #1#2
+  {
+    \chemmacros_polar_to_cartesian:NNnn
+      \l__chemmacros_newman_x_fp
+      \l__chemmacros_newman_y_fp
+      { #1 }
+      { \l__chemmacros_newman_scale_fp }
+    \chemmacros_tikz_draw:f
+      { \tl_use:N \l__chemmacros_newman_tikz_ring_tl }
+      (0pt,0pt) -- ++
+      (
+        30 * \fp_to_dim:N \l__chemmacros_newman_x_fp ,
+        30 * \fp_to_dim:N \l__chemmacros_newman_y_fp
+      ) ;
+    \chemmacros_polar_to_cartesian:NNnn
+      \l__chemmacros_newman_x_fp
+      \l__chemmacros_newman_y_fp
+      { #1 }
+      { \l__chemmacros_newman_scale_fp }
+    \chemmacros_tikz_node:f
+      { chemmacros_newman_atom_front, anchor = -180 + #1 }
+      at
+      (
+        31 * \fp_to_dim:N \l__chemmacros_newman_x_fp ,
+        31 * \fp_to_dim:N \l__chemmacros_newman_y_fp
+      )
+      { #2 } ;
+  }
+\cs_generate_variant:Nn \chemmacros_newman_front_node:nn { nf }
+
+% --------------------------------------------------------------------------
+% \orbital[<keyval>]{<type>}
+% variables:
+\bool_new:N      \l__chemmacros_orbital_type_s_bool
+\bool_new:N      \l__chemmacros_orbital_type_p_bool
+\bool_new:N      \l__chemmacros_orbital_type_sp_bool
+\bool_new:N      \l__chemmacros_orbital_type_sptwo_bool
+\bool_new:N      \l__chemmacros_orbital_type_spthree_bool
+\bool_new:N      \l__chemmacros_orbital_s_phase_bool
+\bool_set_true:N \l__chemmacros_orbital_s_phase_bool
+\bool_new:N      \l__chemmacros_orbital_p_phase_bool
+\bool_set_true:N \l__chemmacros_orbital_p_phase_bool
+\bool_new:N      \l__chemmacros_orbital_sp_phase_bool
+\bool_set_true:N \l__chemmacros_orbital_sp_phase_bool
+\bool_new:N      \l__chemmacros_orbital_sptwo_phase_bool
+\bool_set_true:N \l__chemmacros_orbital_sptwo_phase_bool
+\bool_new:N      \l__chemmacros_orbital_spthree_phase_bool
+\bool_set_true:N \l__chemmacros_orbital_spthree_phase_bool
+\bool_new:N      \l__chemmacros_orbital_p_half_bool
+\bool_new:N      \l__chemmacros_orbital_overlay_bool
+\bool_new:N      \l__chemmacros_orbital_opacity_bool
+
+\tl_new:N  \l__chemmacros_orbital_s_color_tl
+\tl_set:Nn \l__chemmacros_orbital_s_color_tl { black }
+\tl_new:N  \l__chemmacros_orbital_s_phase_color_tl
+\tl_new:N  \l__chemmacros_orbital_p_color_tl
+\tl_set:Nn \l__chemmacros_orbital_p_color_tl { black }
+\tl_new:N  \l__chemmacros_orbital_p_pphase_color_tl
+\tl_new:N  \l__chemmacros_orbital_p_mphase_color_tl
+\tl_new:N  \l__chemmacros_orbital_sp_color_tl
+\tl_set:Nn \l__chemmacros_orbital_sp_color_tl { black }
+\tl_new:N  \l__chemmacros_orbital_sp_pphase_color_tl
+\tl_new:N  \l__chemmacros_orbital_sp_mphase_color_tl
+\tl_new:N  \l__chemmacros_orbital_sptwo_color_tl
+\tl_set:Nn \l__chemmacros_orbital_sptwo_color_tl { black }
+\tl_new:N  \l__chemmacros_orbital_sptwo_pphase_color_tl
+\tl_new:N  \l__chemmacros_orbital_sptwo_mphase_color_tl
+\tl_new:N  \l__chemmacros_orbital_spthree_color_tl
+\tl_set:Nn \l__chemmacros_orbital_spthree_color_tl { black }
+\tl_new:N  \l__chemmacros_orbital_spthree_pphase_color_tl
+\tl_new:N  \l__chemmacros_orbital_spthree_mphase_color_tl
+\tl_new:N  \l__chemmacros_orbital_s_scale_tl
+\tl_set:Nn \l__chemmacros_orbital_s_scale_tl { 1 }
+\tl_new:N  \l__chemmacros_orbital_p_scale_tl
+\tl_set:Nn \l__chemmacros_orbital_p_scale_tl { 1 }
+\tl_new:N  \l__chemmacros_orbital_sp_scale_tl
+\tl_set:Nn \l__chemmacros_orbital_sp_scale_tl { 1 }
+\tl_new:N  \l__chemmacros_orbital_sptwo_scale_tl
+\tl_set:Nn \l__chemmacros_orbital_sptwo_scale_tl { 1 }
+\tl_new:N  \l__chemmacros_orbital_spthree_scale_tl
+\tl_set:Nn \l__chemmacros_orbital_spthree_scale_tl { 1 }
+
+\fp_new:N  \l__chemmacros_orbital_angle_fp
+\fp_set:Nn \l__chemmacros_orbital_angle_fp { 90 }
+\fp_new:N  \l__chemmacros_orbital_opacity_fp
+\fp_set:Nn \l__chemmacros_orbital_opacity_fp { 0.5 }
+
+\cs_new:Npn \__chemmacros_orbital_options:
+  {
+    \__chemmacros_orbital_overlay: , \__chemmacros_orbital_opacity: ,
+    inner~sep=0 , outer~sep=0 , line~width=.2pt ,
+    rotate = { \fp_use:N \l__chemmacros_orbital_angle_fp - 90 } ,
+    baseline ,
+    minimum~size = 0
+  }
+
+\cs_new:Npn \__chemmacros_orbital_overlay:
+  { \bool_if:NT \l__chemmacros_orbital_overlay_bool { overlay } }
+
+\cs_new:Npn \__chemmacros_orbital_opacity:
+  {
+    \bool_if:NT \l__chemmacros_orbital_opacity_bool
+      { opacity = { \fp_use:N \l__chemmacros_orbital_opacity_fp } }
+  }
+
+% --------------------------------------------------------------------------
+% s-orbitals
+\cs_new_protected:Npn \__chemmacros_orbital_type_s:
+  {
+    \bool_set_true:N \l__chemmacros_orbital_type_s_bool
+    \bool_set_false:N \l__chemmacros_orbital_type_p_bool
+    \bool_set_false:N \l__chemmacros_orbital_type_sp_bool
+    \bool_set_false:N \l__chemmacros_orbital_type_sptwo_bool
+    \bool_set_false:N \l__chemmacros_orbital_type_spthree_bool
+  }
+
+\keys_define:nn { chemmacros / orbital / s }
+  {
+    phase .choice: ,
+    phase / + .code:n =
+      { \bool_set_true:N \l__chemmacros_orbital_s_phase_bool } ,
+    phase / - .code:n =
+      { \bool_set_false:N \l__chemmacros_orbital_s_phase_bool } ,
+    scale .tl_set:N   = \l__chemmacros_orbital_s_scale_tl ,
+    color .tl_set:N   = \l__chemmacros_orbital_s_color_tl
+  }
+
+\cs_new_protected:Npn \__chemmacros_orbital_s_draw:n #1
+  {
+    \keys_set:nn { chemmacros / orbital / s } { #1 }
+    \bool_if:NTF \l__chemmacros_orbital_s_phase_bool
+      {
+        \tl_if_in:NnTF \l__chemmacros_orbital_s_color_tl { ! }
+          {
+            \tl_set:Nn \l__chemmacros_orbital_s_phase_color_tl
+              { \tl_use:N \l__chemmacros_orbital_s_color_tl }
+          }
+          {
+            \tl_set:Nn \l__chemmacros_orbital_s_phase_color_tl
+              { \tl_use:N \l__chemmacros_orbital_s_color_tl ! 90 }
+          }
+      }
+      {
+        \tl_set:Nn \l__chemmacros_orbital_s_phase_color_tl
+          { black ! 5 }
+      }
+    \chemmacros_tikz_picture:xn{ \__chemmacros_orbital_options: }
+      {
+        \chemmacros_tikz_shade:f
+          { ball~color = \l__chemmacros_orbital_s_phase_color_tl }
+          (0pt,0pt) circle (\l__chemmacros_orbital_s_scale_tl * .6em) ;
+      }
+  }
+
+% --------------------------------------------------------------------------
+% p-orbitals
+\cs_new_protected:Npn \__chemmacros_orbital_type_p:
+  {
+    \bool_set_false:N \l__chemmacros_orbital_type_s_bool
+    \bool_set_true:N  \l__chemmacros_orbital_type_p_bool
+    \bool_set_false:N \l__chemmacros_orbital_type_sp_bool
+    \bool_set_false:N \l__chemmacros_orbital_type_sptwo_bool
+    \bool_set_false:N \l__chemmacros_orbital_type_spthree_bool
+  }
+
+\keys_define:nn { chemmacros / orbital / p }
+  {
+    phase .choice: ,
+    phase / + .code:n =
+      { \bool_set_true:N \l__chemmacros_orbital_p_phase_bool } ,
+    phase / - .code:n =
+      { \bool_set_false:N \l__chemmacros_orbital_p_phase_bool } ,
+    scale .tl_set:N   = \l__chemmacros_orbital_p_scale_tl ,
+    angle .fp_set:N   = \l__chemmacros_orbital_angle_fp ,
+    color .tl_set:N   = \l__chemmacros_orbital_p_color_tl ,
+    half  .bool_set:N = \l__chemmacros_orbital_p_half_bool ,
+    half  .default:n  = true
+  }
+
+\cs_new_protected:Npn \__chemmacros_orbital_p_draw:n #1
+  {
+    \keys_set:nn { chemmacros / orbital / p } { #1 }
+    \bool_if:NTF \l__chemmacros_orbital_p_phase_bool
+      {
+        \tl_if_in:NnTF \l__chemmacros_orbital_p_color_tl { ! }
+          {
+            \tl_set:Nn \l__chemmacros_orbital_p_pphase_color_tl
+              { \tl_use:N \l__chemmacros_orbital_p_color_tl }
+          }
+          {
+            \tl_set:Nn \l__chemmacros_orbital_p_pphase_color_tl
+              { \tl_use:N \l__chemmacros_orbital_p_color_tl ! 90 }
+          }
+        \tl_set:Nn \l__chemmacros_orbital_p_mphase_color_tl
+          { black ! 5 }
+        
+      }
+      {
+        \tl_if_in:NnTF \l__chemmacros_orbital_p_color_tl { ! }
+          {
+            \tl_set:Nn \l__chemmacros_orbital_p_mphase_color_tl
+              { \tl_use:N \l__chemmacros_orbital_p_color_tl }
+          }
+          {
+            \tl_set:Nn \l__chemmacros_orbital_p_mphase_color_tl
+              { \tl_use:N \l__chemmacros_orbital_p_color_tl ! 90 }
+          }
+        \tl_set:Nn \l__chemmacros_orbital_p_pphase_color_tl
+          { black ! 5 }
+      }
+    \chemmacros_tikz_picture:xn { \__chemmacros_orbital_options: }
+      {
+        \chemmacros_tikz_shadedraw:f
+          {
+            draw = \l__chemmacros_orbital_p_pphase_color_tl ,
+            ball~color = \l__chemmacros_orbital_p_pphase_color_tl
+          }
+          (0pt,0pt) .. controls ++
+          (
+            - \l__chemmacros_orbital_p_scale_tl * 2em ,
+            \l__chemmacros_orbital_p_scale_tl * 2em
+          )
+          and ++
+          (
+            \l__chemmacros_orbital_p_scale_tl * 2em ,
+            \l__chemmacros_orbital_p_scale_tl * 2em
+          )
+          .. (0pt,0pt);
+        \bool_if:NF \l__chemmacros_orbital_p_half_bool
+          {
+            \chemmacros_tikz_shadedraw:f
+              {
+                draw = \l__chemmacros_orbital_p_mphase_color_tl ,
+                ball~color = \l__chemmacros_orbital_p_mphase_color_tl
+              }
+              (0pt,0pt) .. controls ++
+              (
+                - \l__chemmacros_orbital_p_scale_tl * 2em ,
+                - \l__chemmacros_orbital_p_scale_tl * 2em
+              )
+              and ++
+              (
+                \l__chemmacros_orbital_p_scale_tl * 2em ,
+                - \l__chemmacros_orbital_p_scale_tl * 2em
+              )
+              .. (0pt,0pt);
+          }
+      }
+  }
+
+% --------------------------------------------------------------------------
+% sp-orbitals
+\cs_new_protected:Npn \__chemmacros_orbital_type_sp:
+  {
+    \bool_set_false:N \l__chemmacros_orbital_type_s_bool
+    \bool_set_false:N \l__chemmacros_orbital_type_p_bool
+    \bool_set_true:N  \l__chemmacros_orbital_type_sp_bool
+    \bool_set_false:N \l__chemmacros_orbital_type_sptwo_bool
+    \bool_set_false:N \l__chemmacros_orbital_type_spthree_bool
+  }
+
+\keys_define:nn { chemmacros / orbital / sp }
+  {
+    phase .choice: ,
+    phase / + .code:n =
+      { \bool_set_true:N \l__chemmacros_orbital_sp_phase_bool } ,
+    phase / - .code:n =
+      { \bool_set_false:N \l__chemmacros_orbital_sp_phase_bool } ,
+    scale .tl_set:N   = \l__chemmacros_orbital_sp_scale_tl ,
+    angle .fp_set:N   = \l__chemmacros_orbital_angle_fp ,
+    color .tl_set:N   = \l__chemmacros_orbital_sp_color_tl
+  }
+
+\cs_new_protected:Npn \__chemmacros_orbital_sp_draw:n #1
+  {
+    \keys_set:nn { chemmacros / orbital / sp } { #1 }
+    \bool_if:NTF \l__chemmacros_orbital_sp_phase_bool
+      {
+        \tl_if_in:NnTF \l__chemmacros_orbital_sp_color_tl { ! }
+          {
+            \tl_set:Nn \l__chemmacros_orbital_sp_pphase_color_tl
+              { \tl_use:N \l__chemmacros_orbital_sp_color_tl }
+          }
+          {
+            \tl_set:Nn \l__chemmacros_orbital_sp_pphase_color_tl
+              { \tl_use:N \l__chemmacros_orbital_sp_color_tl ! 90 }
+          }
+        \tl_set:Nn \l__chemmacros_orbital_sp_mphase_color_tl
+          { black ! 5 }
+        
+      }
+      {
+        \tl_if_in:NnTF \l__chemmacros_orbital_sp_color_tl { ! }
+          {
+            \tl_set:Nn \l__chemmacros_orbital_sp_mphase_color_tl
+              { \tl_use:N \l__chemmacros_orbital_sp_color_tl }
+          }
+          {
+            \tl_set:Nn \l__chemmacros_orbital_sp_mphase_color_tl
+              { \tl_use:N \l__chemmacros_orbital_sp_color_tl ! 90 }
+          }
+        \tl_set:Nn \l__chemmacros_orbital_sp_pphase_color_tl
+          { black ! 5 }
+      }
+    \chemmacros_tikz_picture:xn { \__chemmacros_orbital_options: }
+      {
+        \chemmacros_tikz_shadedraw:f
+          {
+            draw = \l__chemmacros_orbital_sp_pphase_color_tl ,
+            ball~color = \l__chemmacros_orbital_sp_pphase_color_tl
+          }
+          (0pt,0pt) .. controls ++
+          (
+            - \l__chemmacros_orbital_sp_scale_tl * 2em ,
+            \l__chemmacros_orbital_sp_scale_tl * 2em
+          )
+          and ++
+          (
+            \l__chemmacros_orbital_sp_scale_tl * 2em ,
+            \l__chemmacros_orbital_sp_scale_tl * 2em
+          )
+          .. (0pt,0pt);
+        \chemmacros_tikz_shadedraw:f
+          {
+            draw = \l__chemmacros_orbital_sp_mphase_color_tl ,
+            ball~color = \l__chemmacros_orbital_sp_mphase_color_tl
+          }
+          (0pt,0pt) .. controls ++
+          (
+            - \l__chemmacros_orbital_sp_scale_tl * .6em ,
+            - \l__chemmacros_orbital_sp_scale_tl * .6em
+          )
+          and ++
+          (
+            \l__chemmacros_orbital_sp_scale_tl * .6em ,
+            - \l__chemmacros_orbital_sp_scale_tl * .6em
+          )
+          .. (0pt,0pt);
+      }
+  }
+
+% --------------------------------------------------------------------------
+% sp2-orbitals
+\cs_new_protected:Npn \__chemmacros_orbital_type_sptwo:
+  {
+    \bool_set_false:N \l__chemmacros_orbital_type_s_bool
+    \bool_set_false:N \l__chemmacros_orbital_type_p_bool
+    \bool_set_false:N \l__chemmacros_orbital_type_sp_bool
+    \bool_set_true:N  \l__chemmacros_orbital_type_sptwo_bool
+    \bool_set_false:N \l__chemmacros_orbital_type_spthree_bool
+  }
+
+\keys_define:nn { chemmacros / orbital / sp2 }
+  {
+    phase .choice: ,
+    phase / + .code:n =
+      { \bool_set_true:N \l__chemmacros_orbital_sptwo_phase_bool } ,
+    phase / - .code:n =
+      { \bool_set_false:N \l__chemmacros_orbital_sptwo_phase_bool } ,
+    scale .tl_set:N   = \l__chemmacros_orbital_sptwo_scale_tl ,
+    angle .fp_set:N   = \l__chemmacros_orbital_angle_fp ,
+    color .tl_set:N   = \l__chemmacros_orbital_sptwo_color_tl
+  }
+
+\cs_new_protected:Npn \__chemmacros_orbital_sptwo_draw:n #1
+  {
+    \keys_set:nn { chemmacros / orbital / sp2 } { #1 }
+    \bool_if:NTF \l__chemmacros_orbital_sptwo_phase_bool
+      {
+        \tl_if_in:NnTF \l__chemmacros_orbital_sptwo_color_tl { ! }
+          {
+            \tl_set:Nn \l__chemmacros_orbital_sptwo_pphase_color_tl
+              { \tl_use:N \l__chemmacros_orbital_sptwo_color_tl }
+          }
+          {
+            \tl_set:Nn \l__chemmacros_orbital_sptwo_pphase_color_tl
+              { \tl_use:N \l__chemmacros_orbital_sptwo_color_tl ! 90 }
+          }
+        \tl_set:Nn \l__chemmacros_orbital_sptwo_mphase_color_tl
+          { black ! 5 }
+        
+      }
+      {
+        \tl_if_in:NnTF \l__chemmacros_orbital_sptwo_color_tl { ! }
+          {
+            \tl_set:Nn \l__chemmacros_orbital_sptwo_mphase_color_tl
+              { \tl_use:N \l__chemmacros_orbital_sptwo_color_tl }
+          }
+          {
+            \tl_set:Nn \l__chemmacros_orbital_sptwo_mphase_color_tl
+              { \tl_use:N \l__chemmacros_orbital_sptwo_color_tl ! 90 }
+          }
+        \tl_set:Nn \l__chemmacros_orbital_sptwo_pphase_color_tl
+          { black ! 5 }
+      }
+    \chemmacros_tikz_picture:xn { \__chemmacros_orbital_options: }
+      {
+        \chemmacros_tikz_shadedraw:f
+          {
+            draw = \l__chemmacros_orbital_sptwo_pphase_color_tl ,
+            ball~color = \l__chemmacros_orbital_sptwo_pphase_color_tl
+          }
+          (0pt,0pt) .. controls ++
+          (
+            - \l__chemmacros_orbital_sptwo_scale_tl * 2em ,
+            \l__chemmacros_orbital_sptwo_scale_tl * 2em
+          )
+          and ++
+          (
+            \l__chemmacros_orbital_sptwo_scale_tl * 2em ,
+            \l__chemmacros_orbital_sptwo_scale_tl * 2em
+          )
+          .. (0pt,0pt);
+        \chemmacros_tikz_shadedraw:f
+          {
+            draw = \l__chemmacros_orbital_sptwo_mphase_color_tl ,
+            ball~color = \l__chemmacros_orbital_sptwo_mphase_color_tl
+          }
+          (0pt,0pt) .. controls ++
+          (
+            - \l__chemmacros_orbital_sptwo_scale_tl * .8em ,
+            - \l__chemmacros_orbital_sptwo_scale_tl * .8em
+          )
+          and ++
+          (
+            \l__chemmacros_orbital_sptwo_scale_tl * .8em ,
+            - \l__chemmacros_orbital_sptwo_scale_tl * .8em
+          )
+          .. (0pt,0pt);
+      }
+  }
+
+% --------------------------------------------------------------------------
+% sp3-orbitals
+\cs_new_protected:Npn \__chemmacros_orbital_type_spthree:
+  {
+    \bool_set_false:N \l__chemmacros_orbital_type_s_bool
+    \bool_set_false:N \l__chemmacros_orbital_type_p_bool
+    \bool_set_false:N \l__chemmacros_orbital_type_sp_bool
+    \bool_set_false:N \l__chemmacros_orbital_type_sptwo_bool
+    \bool_set_true:N  \l__chemmacros_orbital_type_spthree_bool
+  }
+
+\keys_define:nn { chemmacros / orbital / sp3 }
+  {
+    phase .choice: ,
+    phase / + .code:n =
+      { \bool_set_true:N \l__chemmacros_orbital_spthree_phase_bool } ,
+    phase / - .code:n =
+     { \bool_set_false:N \l__chemmacros_orbital_spthree_phase_bool } ,
+    scale .tl_set:N   = \l__chemmacros_orbital_spthree_scale_tl ,
+    angle .fp_set:N   = \l__chemmacros_orbital_angle_fp ,
+    color .tl_set:N   = \l__chemmacros_orbital_spthree_color_tl
+  }
+
+\cs_new_protected:Npn \__chemmacros_orbital_spthree_draw:n #1
+  {
+    \keys_set:nn { chemmacros / orbital / sp3 } { #1 }
+    \bool_if:NTF \l__chemmacros_orbital_spthree_phase_bool
+      {
+        \tl_if_in:NnTF \l__chemmacros_orbital_spthree_color_tl { ! }
+          {
+            \tl_set:Nn \l__chemmacros_orbital_spthree_pphase_color_tl
+              { \tl_use:N \l__chemmacros_orbital_spthree_color_tl }
+          }
+          {
+            \tl_set:Nn \l__chemmacros_orbital_spthree_pphase_color_tl
+              { \tl_use:N \l__chemmacros_orbital_spthree_color_tl ! 90 }
+          }
+        \tl_set:Nn \l__chemmacros_orbital_spthree_mphase_color_tl
+          { black ! 5 }
+        
+      }
+      {
+        \tl_if_in:NnTF \l__chemmacros_orbital_spthree_color_tl { ! }
+          {
+            \tl_set:Nn \l__chemmacros_orbital_spthree_mphase_color_tl
+              { \tl_use:N \l__chemmacros_orbital_spthree_color_tl }
+          }
+          {
+            \tl_set:Nn \l__chemmacros_orbital_spthree_mphase_color_tl
+              { \tl_use:N \l__chemmacros_orbital_spthree_color_tl ! 90 }
+          }
+        \tl_set:Nn \l__chemmacros_orbital_spthree_pphase_color_tl
+          { black ! 5 }
+      }
+    \chemmacros_tikz_picture:xn { \__chemmacros_orbital_options: }
+      {
+        \chemmacros_tikz_shadedraw:f
+          {
+            draw = \l__chemmacros_orbital_spthree_pphase_color_tl ,
+            ball~color = \l__chemmacros_orbital_spthree_pphase_color_tl
+          }
+          (0pt,0pt) .. controls ++
+          (
+            - \l__chemmacros_orbital_spthree_scale_tl * 2em ,
+            \l__chemmacros_orbital_spthree_scale_tl * 2em
+          )
+          and ++
+          (
+            \l__chemmacros_orbital_spthree_scale_tl * 2em ,
+            \l__chemmacros_orbital_spthree_scale_tl * 2em
+          )
+          .. (0pt,0pt);
+        \chemmacros_tikz_shadedraw:f
+          {
+            draw = \l__chemmacros_orbital_spthree_mphase_color_tl ,
+            ball~color = \l__chemmacros_orbital_spthree_mphase_color_tl
+          }
+          (0pt,0pt) .. controls ++
+          (
+            - \l__chemmacros_orbital_spthree_scale_tl * 1em ,
+            - \l__chemmacros_orbital_spthree_scale_tl * 1em
+          )
+          and ++
+          (
+            \l__chemmacros_orbital_spthree_scale_tl * 1em ,
+            - \l__chemmacros_orbital_spthree_scale_tl * 1em
+          )
+          .. (0pt,0pt);
+      }
+  }
+
+% --------------------------------------------------------------------------
+% main command
+\keys_define:nn { chemmacros / orbital }
+  {
+    overlay .bool_set:N = \l__chemmacros_orbital_overlay_bool ,
+    overlay .default:n  = true ,
+    opacity .code:n     =
+      {
+        \fp_compare:nTF { #1 = 1 }
+          { \bool_set_false:N \l__chemmacros_orbital_opacity_bool }
+          { \bool_set_true:N \l__chemmacros_orbital_opacity_bool }
+        \fp_set:Nn \l__chemmacros_orbital_opacity_fp { #1 }
+      }
+  }
+
+\keys_define:nn { chemmacros / orbital / type }
+  {
+    s   .code:n = { \__chemmacros_orbital_type_s: } ,
+    p   .code:n = { \__chemmacros_orbital_type_p: } ,
+    sp  .code:n = { \__chemmacros_orbital_type_sp: } ,
+    sp2 .code:n = { \__chemmacros_orbital_type_sptwo: } ,
+    sp3 .code:n = { \__chemmacros_orbital_type_spthree: }
+  }
+
+\cs_new_protected:Npn \chemmacros_orbital:n #1
+  {
+    \bool_if:NT \l__chemmacros_orbital_type_s_bool
+      { \__chemmacros_orbital_s_draw:n { #1 } }
+    \bool_if:NT \l__chemmacros_orbital_type_p_bool
+      { \__chemmacros_orbital_p_draw:n { #1 } }
+    \bool_if:NT \l__chemmacros_orbital_type_sp_bool
+      { \__chemmacros_orbital_sp_draw:n { #1 } }
+    \bool_if:NT \l__chemmacros_orbital_type_sptwo_bool
+      { \__chemmacros_orbital_sptwo_draw:n { #1 } }
+    \bool_if:NT \l__chemmacros_orbital_type_spthree_bool
+      { \__chemmacros_orbital_spthree_draw:n { #1 } }
+  }
+
+\NewDocumentCommand \orbital { o m }
+  {
+    \group_begin:
+      \keys_set:nn { chemmacros / orbital / type } { #2 }
+      \IfNoValueTF { #1 }
+        { \chemmacros_orbital:n {    } }
+        { \chemmacros_orbital:n { #1 } }
+    \group_end:
+  }
+
+% --------------------------------------------------------------------------
+% arrow tips for electron movement
+\dim_new:N \l__chemmacros_el_length_dim
+
+% full tip for pairs
+\pgfarrowsdeclare { el } { el }
+  {
+    \dim_set:Nn \l__chemmacros_el_length_dim
+      { 2.5pt + 2.5\pgflinewidth }
+    \pgfarrowsleftextend { -\l__chemmacros_el_length_dim }
+    \pgfarrowsrightextend { .5\pgflinewidth }
+  }
+  {
+    \dim_set:Nn \l__chemmacros_el_length_dim
+      { 2.5pt + 2.5\pgflinewidth }
+    \pgfsetdash {} { 0pt }
+    \pgfsetroundjoin
+    \pgfsetroundcap
+    \pgfpathmoveto { \pgfpoint { 0pt } { 0pt } }
+    \pgfpathlineto
+      {
+        \pgfpoint
+          { -\l__chemmacros_el_length_dim }
+          { .3\l__chemmacros_el_length_dim }
+      }
+    \pgfpathlineto
+      { \pgfpoint { -.5\l__chemmacros_el_length_dim } { 0pt } }
+    \pgfpathlineto
+      {
+        \pgfpoint
+          { -\l__chemmacros_el_length_dim }
+          { -.3\l__chemmacros_el_length_dim }
+      }
+    \pgfpathlineto { \pgfpoint { 0pt } { 0pt } }
+    \pgfusepathqfillstroke
+  }
+
+% half tip on the left
+\pgfarrowsdeclare { left~el } { left~el }
+  {
+    \dim_set:Nn \l__chemmacros_el_length_dim
+      { 2.5pt + 2.5\pgflinewidth }
+    \pgfarrowsleftextend { -\l__chemmacros_el_length_dim }
+    \pgfarrowsrightextend { .5\pgflinewidth }
+  }
+  {
+    \dim_set:Nn \l__chemmacros_el_length_dim
+      { 2.5pt + 2.5\pgflinewidth }
+    \pgfsetdash {} { 0pt }
+    \pgfsetroundjoin
+    \pgfsetroundcap
+    \pgfpathmoveto { \pgfpoint { 0pt } { 0pt } }
+    \pgfpathlineto
+      {
+        \pgfpoint
+          { -\l__chemmacros_el_length_dim }
+          { .3\l__chemmacros_el_length_dim }
+      }
+    \pgfpathlineto { \pgfpoint { -.5\l__chemmacros_el_length_dim } { 0pt } }
+    \pgfpathlineto { \pgfpoint { 0pt } { 0pt } }
+    \pgfusepathqfillstroke
+  }
+
+% half tip in the right
+\pgfarrowsdeclare { right~el } { right~el }
+  {
+    \dim_set:Nn \l__chemmacros_el_length_dim
+      { 2.5pt + 2.5\pgflinewidth }
+    \pgfarrowsleftextend { -\l__chemmacros_el_length_dim }
+    \pgfarrowsrightextend { .5\pgflinewidth }
+  }
+  {
+    \dim_set:Nn \l__chemmacros_el_length_dim
+      { 2.5pt + 2.5\pgflinewidth }
+    \pgfsetdash {} { 0pt }
+    \pgfsetroundjoin
+    \pgfsetroundcap
+    \pgfpathmoveto { \pgfpoint { 0pt } { 0pt } }
+    \pgfpathlineto
+      {
+        \pgfpoint
+          { -\l__chemmacros_el_length_dim }
+          { -.3\l__chemmacros_el_length_dim }
+      }
+    \pgfpathlineto { \pgfpoint { -.5\l__chemmacros_el_length_dim } { 0pt } }
+    \pgfpathlineto { \pgfpoint { 0pt } { 0pt } }
+    \pgfusepathqfillstroke
+  }
+
+% --------------------------------------------------------------------------
+% setup
+\NewDocumentCommand \chemsetup { o m }
+  {
+    \IfNoValueTF { #1 }
+      { \keys_set:nn { chemmacros } { #2 } }
+      {
+        \tl_if_eq:nnTF { #1 } { chemformula }
+          { \setchemformula { #2 } }
+          { \keys_set:nn { chemmacros / #1 } { #2 } }
+      }
+    \ignorespaces
+  }
+
+
+% --------------------------------------------------------------------------
+% hyperref support
+% ?? unsure about adding IUPAC commands
+\AfterPackage* { hyperref }
+  {
+    \pdfstringdefDisableCommands
+      {
+        % \cs_set:Npn \- { - } % maybe not a good idea...
+        \cs_set:Npn \| { }
+        \cs_set:Npn \pH { pH }
+        \cs_set:Npn \pOH { pOH }
+        \cs_set:Npn \iupac #1 { #1 }
+        \cs_set:Npn \cip #1 { (#1) }
+        \cs_set:Npn \cis { cis }
+        \cs_set:Npn \trans { trans }
+        \cs_set:Npn \tert { tert }
+        \cs_set:Npn \ortho { o }
+        \cs_set:Npn \meta { m }
+        \cs_set:Npn \para { p }
+        \cs_set:Npn \syn { syn }
+        \cs_set:Npn \anti { anti }
+      }
+  }
+
+% --------------------------------------------------------------------------
+% language support -- provided through `translations'
+% equilibrium constants:
+\DeclareTranslationFallback {K-acid}  {\mathrm{a}}
+\DeclareTranslation{German} {K-acid}  {\mathrm{s}}
+\DeclareTranslation{Dutch}  {K-acid}  {\mathrm{z}}
+
+\DeclareTranslationFallback {K-base}  {\mathrm{b}}
+
+\DeclareTranslationFallback {K-water} {\mathrm{w}}
+
+% phases:
+\DeclareTranslation{German}{phase-sld}{ f }
+\DeclareTranslation{German}{phase-lqd}{ f{}l }
+% list of reactions:
+\DeclareTranslationFallback  {list-of-reactions} { List~ of~ reactions }
+\DeclareTranslation{English} {list-of-reactions} { List~ of~ reactions }
+\DeclareTranslation{German}  {list-of-reactions} { Reaktionsverzeichnis }
+\DeclareTranslation{Italian} {list-of-reactions} { Elenco~ delle~ reazioni }
+\DeclareTranslation{French}  {list-of-reactions} { Table~ des~ r\'eactions }
+\DeclareTranslation{Dutch}   {list-of-reactions} { Lijst~ van~ reacties }
+%
+\DeclareTranslationFallback  {reaction} { Reaction }
+\DeclareTranslation{English} {reaction} { Reaction }
+\DeclareTranslation{German}  {reaction} { Reaktion }
+\DeclareTranslation{Italian} {reaction} { Reazione }
+\DeclareTranslation{French}  {reaction} { R\'eaction }
+\DeclareTranslation{Dutch}   {reaction} { Reactie }
+
+\tl_set:Nn \l__chemmacros_reaction_lorname_tl
+  { \chemmacros_translate:n {reaction} }
+\tl_set:Nn \reactionlistname
+  { \chemmacros_translate:n {list-of-reactions} }
+
+\tex_endinput:D
+
+% --------------------------------------------------------------------------
+Version history
+2011/05/15 - version 1.0  - CTAN release
+2011/06/22 - version 1.1  - "LaTeXified" whole package for safer usage
+                          - less user work required (like loading package
+                            after another)
+                          - more particle macros
+                          - latin phrases
+                          - extra units
+                          - acid/base commands
+                          - \mech
+                          - \NMR
+                          - \mhName, \setmhName, \newreaction, phases
+                          - \renewstate, \setstatesubscript
+                          - improved orbitals
+                          - simpler package options, option german, bpchem
+                          - bug fixes
+2011/10/28 - version 2.0  - rewritten in expl3
+                          - customization via \chemsetup
+                          - new commands \p, \fplus, \fminus, \fpch, \fmch,
+                            \fscrp, \fsrcm, \fdelp, \fdelm, \orbital, \chemsetup
+                          - various commands have a new syntax
+                          - removed: \setmhName, \setredoxdist,
+                            \setstatesubscript, \porb, \phorb, \pxorb, \pyorb,
+                            \pzorb, \setorbheight, \solid, \liquid
+                          - reaction environments work with hyperref and
+                            varioref
+2011/11/03 - version 2.0a - minor bug fixes
+                          - new feature for \Nu
+                          - new command \ba
+2012/01/28 - version 3.0  - bundled with packages `formula' and `ghs'
+                          - new commands \Ka, \Kb, \Kw
+                          - commands can detect if font series is bold
+                          - new package option "detect-bold"
+                          - new package option "method" => choose between
+                            `mhchem' and `formula' for internal uses.
+                          - new package option "ghs" => load `ghs' or don't
+                          - new package option "synchronize"
+                          - new package option "strict"
+                          - new command \iupac
+                          - new command \listofreactions, reaction environments
+                            with optional argument
+                          - \cis, \trans, \tert without \xspace
+2012/01/30 - version 3.0a - bugfix in formula.sty
+                          - renamed formula => chemformula
+                            and ghs => ghsystem to make the names unique
+                            (following a request by Karl Berry for TeXlive)
+2012/02/03 - version 3.0b - new command \DeclareChemParticle, updated
+                            documentation
+2012/02/05 - version 3.0c - renamed pictogram files (following a request by
+                            Karl Berry for TeXlive)
+                          - new package option "Nu"
+2012/02/10 - version 3.0d - several bugfixes in chemformula
+                          - bugfixes with \DeclareChemParticle
+                          - new command \RenewChemParticle
+                          - new option phases / pos
+                          - new commands \DeclareChemPhase, \RenewChemPhase,
+                            \phase
+                          - changed default behaviour of phases
+                          - removed optional argument from \sld and \lqd
+                          - new arrow type <>
+2012/02/19 - version 3.1  - new commands \DeclareChemIUPAC and \RenewChemIUPAC
+                          - new option "option/iupac"
+                          - deprecated option: "option/EZ"
+                          - deprecated commands:
+                            \newreaction => \DeclareChemReaction
+                            \setnewstate => \DeclareChemState
+                            \renewstate  => \RenewChemState
+                            \Rcip        => \R
+                            \Scip        => \S
+                            \Dfi         => \D
+                            \Lfi         => \L
+                          - new arrow types -/>, </- and <o>
+                          - new commands \DeclareChemArrow, \RenewChemArrow and
+                            \ShowChemArrow
+2012/02/26 - version 3.1a - "operator" p rewritten to follow IUPAC
+                            recommendations
+                          - new option "acid-base/p-style"
+                          - deprecated option: "option/detect-bold"
+2012/03/03 - version 3.1b - arrow types are stored in a sequence to automate the
+                            search and replace in the right order 
+                          - new arrow type ==                                   
+                          - IUPAC compliance for stoichiometric factors
+                          - new handling of super- and subscripts to correct
+                            various flaws: clear distinction between isotope and
+                            formula
+                          - new option charge-vshift
+                          - IUPAC compliance for \Delta and \ox
+2012/03/14 - version 3.1c - compatibility with KOMA's global option
+                            "version = <value>"
+                          - bugfix in the list of reactions
+                          - improved arrow labels
+2012/03/20 - version 3.2  - new: option input via @{<options>}
+                          - improved list of reactions: resetting the "reaction"
+                            counter now doesn't cause errors any more
+                          - \AddRxnDesc added which allows to add descriptions
+                            to each reaction in the "reactions" environment
+2012/05/07 - version 3.3  - new environment `experimental' that allows some
+                            formatting for the for displaying of measurement
+                            results
+                          - more greek letters for the \iupac command
+                          - \ch now bypasses \ref{}, \label{}, and \intertext{}
+                          - small adjustments of the iupac commands \| and \-
+                          - bug fix: option `upgreek' is now working and was
+                            renamed to `greek'
+                          - proper language support
+2012/05/13 - version 3.3a - Italian translations of the H, EUH and P statements
+                          - \hapto and \bridge
+2012/05/18 - version 3.3b - compatibility with MiKTeX
+2012/05/18 - version 3.3c - fix in the `ghsystem/language' option
+2012/07/24 - version 3.3d - additional picture file type `pdf'
+                          - default bond length set to 1.1667ex
+                          - bug fix in the bonds
+                          - added kerning to cip commands, new option
+                            `iupac/cip-kern'
+                          - bug fix: messages needed to be defined before the
+                            options
+2012/08/21 - version 3.3e - new option ox/align=center|right
+                          - a new option to \NMR and to \J
+2012/09/11 - version 3.4  - cleaned a little, minor bug fixes
+                          - switched to internal scratch variables
+                          - new command \bond, more bond types
+                          - new commands \DeclareChemBond, \DeclareChemBondAlias,
+                            \RenewChemBond and \ShowChemBond
+                          - radical point thicker, new options `radical-style'
+                            and `radical-radius'
+2012/10/03 - version 3.4a - bug fix in coupling constant \J
+2013/01/04 - version 3.4b - bug fix in the sub- and superscript handling
+2013/01/28 - version 3.5  - disallow breaks at bonds
+                          - allow breaks after arrows
+                          - made some spaces in chemformulas stretch- and
+                            shrinkable
+                          - various internal code improvements
+                          - changed defaults for horizontal spaces that have in
+                            set in ex into corresponding values in em.
+                          - improvements to the placement of sub- and superscripts
+2013/02/19 - version 3.5a - bug fix: `ghsystem' recognizes language again
+2013/02/26 - version 3.6  - support for use with the `breqn' package
+                          - chemformula: math escaping also via \(\)
+                          - chemformula internal: clearer escaping macros
+                          - new options: `radical-vshift', `radical-hshift'
+                            and `radical-space'
+                          - bug fix: `radical-...' options are now correctly set
+                          - stoichiometric factors: add leading 0 if missing
+                          - new option: `stoich-paren-parse'
+                          - internal changes: be way more rigid about protected
+                            and expandable macros
+                          - internal changes: clearer distinction between
+                            private macros and accessable module macros
+                          - internal changes: clearer distinction between
+                            document commands and module level commands
+                          - chemformula's !()() syntax now also works with babel's
+                            French
+2013/02/27 - version 3.6a - bug fix: escaped text and math stays escaped, i.e.
+                            also arrow code like `<=>'
+2013/04/19 - version 3.6b - chemformula: new key `arrow-min-length'
+                          - bug fix: stoichiometric fractions correctly displayed
+                          - changed appearance of \cip to use upright parentheses
+2013/07/06 - version 4.0  - `chemformula' doesn't automatically load
+                            `chemmacros' any more but can be used stand-alone
+                          - option `bpchem' has been dropped
+                          - improved detection of bold font series
+                          - changed wrongly used \mbox in definition of \Ka,
+                            \Kb and \Kw into \ensuremath
+                          - adapt \mch and \pch to match `chemformula's
+                            charges
+                          - dropped option `method=mhchem'
+                          - support for `kpfonts' and `newtxmath' upright
+                            greek letters added, greek alphabet complete both
+                            for uppercase and lowercase; this is handled by
+                            the new package in the family: `chemgreek'
+                          - \OX and \redox now work in `amsmath's environment
+                            by ignoring the measuring phase
+                          - language management with the halp of the
+                            `translations' package =>
+                            recognize document language automatically and use
+                            it if it a) is known to `chemmacros' and b) has
+                            not been overwritten by the `language' option;
+                            this also made minor changes to `ghsystem'
+                            necessary; additionally this lead to changes in
+                            the way phases are defined
+                          - status of \Dfi and \Lfi changed from `deprecated'
+                            to `dropped'
+                          - new option `charges/partial-format'
+                          - fixed wrongly written contents to the lor when
+                            used together with `hyperref'
+                          - new option `reaction/list-heading'
+                          - option `charges/append' deprecated
+2013/08/07 - version 4.0a - extra pair of braces in definition of
+                            \standardstate
+                          - added missing \exp_not:n to the definitions of
+                            \chemmacros_declare_phase:Nn and kin
+2013/08/24 - version 4.1  - changed `0' values in TikZ coordinates into `0pt'
+                            see http://tex.stackexchange.com/q/128792/5049 and
+                            http://tex.stackexchange.com/q/118467/5049 for
+                            reference
+2013/10/28 - version 4.2  - changed particles with electron pairs to use
+                            \chlewis
+                          - changed \Delta in thermodynamic state variables
+                            into \ChemDelta for IUPAC compliance and defined
+                            it as an operator
+                          - change in the syntax of \DeclareChemState and
+                            \RenewChemState and improved both internal
+                            definition and user interface
+2013/10/31 - version 4.2a - bug bix in \hapto and \bridge
+2013/11/04 - version 4.2b - new IUPAC commands: \fac/\mer
+2013/11/20 - version 4.2c - step bundle version due to changes in `chemgreek'
+2013/12/15 - version 4.2d - small changes to the translating mechansim which
+                            now seems to be more logical: `language=auto'
+                            detects the current `babel' language and
+                            `language=<lang>' overwrites to the chosen
+                            language
+                          - new options `acid-base/K-acid', `acid-base/K-base'
+                            and `acid-base/K-water'
+                          - adapt \ox to updates in `l3fp'
+2014/01/09 - version 4.2e - step bundle version due to changes in `ghsystem'
+2014/01/24 - version 4.3  - \NewChemIUPAC, \LetChemIUPAC
+                          - \NewChemParticle
+                          - \NewChemNMR
+                          - \NewChemPhase
+                          - \NewChemReaction, \RenewChemReaction
+                          - \NewChemState
+                          - added macro names with more meaningfule names to
+                            each of the one-letter name commands
+                          - changed behaviour of \DeclareChem to match
+                            \DeclareRobustCommand, i.e., no check if command
+                            is defined; added a \NewChem variant to each that
+                            /does/ check; use \NewChem instead of \DeclareChem
+                            for definitions
+                          - new iupac command \dento
+                          - new option choice `nmr/pos=super'
+                          - bug fix in appearance of coupling nuclei
+                          - new possibilities for formatting the output of the
+                            NMR coupling constants output with \J:
+                            `coupling-pos=side/sub', `coupling-nuclei-pre',
+                            coupling-nuclei-post', `coupling-bonds-pre',
+                            coupling-bonds-post', `coupling-symbol'
+                          - internal changes to the greek letter mapping
+                            selection mechanism
+                          - deprecate package option `strict'
+                          - deprecate package option `cmversion': also all
+                            backwards compatibility for version 1 has been
+                            dropped
+                          - drop command \mhName
+2014/01/29 - version 4.4  - bug fix in the display of the coupling constant
+                          - bug fix in phase definitions (need to adapt to
+                            changes in `translations'
+                          - new option `nmr/atom-number-cs'
+                          - new option `nmr/coupling-pos-cs'
+2014/04/08 - version 4.5  - new option `acid-base/subscript'
+                          - added Dutch translations
+2014/06/30 - version 4.5a - adapt to deprecated expl3 functions
+2014/08/08 - version 4.6  - from bundle to packages: packages `chemformula',
+                            `ghsystem' and `chemgreek' no longer belong to the
+                            bundle but now are packages of their own.
+2015/02/08 - version 4.7  - fix \iupac so active letters like | still work
+                            inside other macros (\section, ...)
+                          - Change the default subscripts of the equilibrium
+                            constants to match the usage in the IUPAC Green
+                            Book
+                          - allow \NewChemPhase and friends after \begin{document}
+                          - new optional argument to phase commands
+                          - new options `nmr/method' and `nmr/connector'
+2015/08/29 - version 5.0  - integration as v4.7 into v5.0 of chemmacros for
+                            backwards compatibility
+                          - fix typo in \l_chemformula_formal_charges_bool
+
+% --------------------------------------------------------------------------- %
+% TODO:
+- add d-orbitals
+- make electron movement arrow tips (`el', `left el' and `right el') public
+- phase commands with arguments (see http://texwelt.de/wissen/fragen/9264)
+

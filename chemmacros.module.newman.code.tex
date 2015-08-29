@@ -1,0 +1,211 @@
+% --------------------------------------------------------------------------
+%
+% the CHEMMACROS package -- module: `newman'
+%
+% --------------------------------------------------------------------------
+% Clemens Niederberger
+% --------------------------------------------------------------------------
+% https://github.org/cgnieder/chemmacros/
+% contact@mychemistry.eu
+% --------------------------------------------------------------------------
+% If you have any ideas, questions, suggestions or bugs to report, please
+% feel free to contact me.
+% --------------------------------------------------------------------------
+% Copyright 2011-2015 Clemens Niederberger
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Clemens Niederberger.
+% --------------------------------------------------------------------------
+\ChemModule{newman}{2015/07/13 newman projections}
+
+\chemmacros_load_module:n {tikz}
+
+% Newman projections
+\fp_new:N  \l__chemmacros_newman_rel_angle_fp
+\fp_zero:N \l__chemmacros_newman_rel_angle_fp
+\fp_new:N  \l__chemmacros_newman_tmp_angle_fp
+\fp_new:N  \l__chemmacros_newman_abs_angle_fp
+\fp_zero:N \l__chemmacros_newman_abs_angle_fp
+\fp_new:N  \l__chemmacros_newman_scale_fp
+\fp_set:Nn \l__chemmacros_newman_scale_fp { 1 }
+\fp_new:N  \l__chemmacros_newman_x_fp
+\fp_new:N  \l__chemmacros_newman_y_fp
+
+\tl_new:N \l__chemmacros_newman_tikz_ring_tl
+\tl_new:N \l__chemmacros_newman_tikz_front_tl
+\tl_new:N \l__chemmacros_newman_tikz_back_tl
+
+\bool_new:N \l__chemmacros_newman_tikz_back_bool
+
+\keys_define:nn { chemmacros / newman }
+  {
+    ring       .tl_set:N  = \l__chemmacros_newman_tikz_ring_tl ,
+    atoms      .tl_set:N  = \l__chemmacros_newman_tikz_front_tl ,
+    back-atoms .code:n    =
+      {
+        \bool_set_true:N \l__chemmacros_newman_tikz_back_bool
+        \tl_set:Nn \l__chemmacros_newman_tikz_back_tl { #1 }
+      } ,
+    scale       .fp_set:N  = \l__chemmacros_newman_scale_fp ,
+    scale       .default:n = 1 ,
+    angle       .fp_set:N  = \l__chemmacros_newman_abs_angle_fp ,
+    angle       .default:n = 0
+  }
+
+% \newman[<keyval>](<angle>){<1>,<2>,<3>,<4>,<5>,<6>}
+\NewDocumentCommand \newman { o d() > { \SplitArgument { 5 } { , } } m }
+  {
+    \group_begin:
+      \IfNoValueF { #1 } { \keys_set:nn { chemmacros / newman } { #1 } }
+      \IfNoValueTF { #2 }
+        { \chemmacros_newman_atoms:nnnnnnn {    } #3 }
+        { \chemmacros_newman_atoms:nnnnnnn { #2 } #3 }
+    \group_end:
+  }
+
+% place atoms:
+% #1: angle
+% #2 - #7: atoms
+\cs_new_protected:Npn \chemmacros_newman_atoms:nnnnnnn #1#2#3#4#5#6#7
+  {
+    \tl_if_blank:nTF { #1 }
+      {
+        \fp_set_eq:NN
+          \l__chemmacros_newman_rel_angle_fp
+          \l__chemmacros_newman_abs_angle_fp
+      }
+      { \fp_set:Nn \l__chemmacros_newman_rel_angle_fp { #1 } }
+    \chemmacros_tikz_picture:xn
+      {
+        scale = \fp_to_decimal:N \l__chemmacros_newman_scale_fp ,
+        chemmacros_newman_atom_front / .style =
+          {
+            inner~sep=0pt,
+            outer~sep=0pt,
+            \tl_use:N \l__chemmacros_newman_tikz_front_tl
+          },
+        chemmacros_newman_atom_back / .style =
+          {
+            inner~sep=0pt,
+            outer~sep=0pt,
+            \bool_if:NTF \l__chemmacros_newman_tikz_back_bool
+              { \tl_use:N \l__chemmacros_newman_tikz_back_tl }
+              { \tl_use:N \l__chemmacros_newman_tikz_front_tl }
+          }
+      }
+      {
+        \chemmacros_tikz_draw:x
+          { \exp_not:V \l__chemmacros_newman_tikz_ring_tl }
+          (0pt,0pt) circle (\fp_to_dim:N \l__chemmacros_newman_scale_fp * 15) ;
+        \chemmacros_newman_back_node:nn
+          { 30 }
+          { \IfNoValueF { #6 } { #6 } }
+        \chemmacros_newman_back_node:nf
+          { 150 }
+          { \IfNoValueF { #7 } { #7 } }
+        \chemmacros_newman_back_node:nf
+          { 270 }
+          { \IfNoValueF { #5 } { #5 } }
+        \chemmacros_newman_front_node:nf
+          { 90 }
+          { \IfNoValueF { #2 } { #2 } }
+        \chemmacros_newman_front_node:nf
+          { 210 }
+          { \IfNoValueF { #3 } { #3 } }
+        \chemmacros_newman_front_node:nf
+          { 330 }
+          { \IfNoValueF { #4 } { #4 } }
+    }
+  }
+
+% provide cartesian coordiantes from polar coordinates
+% #1: fp variable for x
+% #2: fp variable for y
+% #3: angle
+% #4: radius
+\cs_new_protected:Npn \chemmacros_polar_to_cartesian:NNnn #1#2#3#4
+  {
+    \fp_set:Nn #1 { #4 * cos( #3 / 180 * pi ) }% x
+    \fp_set:Nn #2 { #4 * sin( #3 / 180 * pi ) }% y
+  }
+
+% place back nodes
+\cs_new_protected:Npn \chemmacros_newman_back_node:nn #1#2
+  {
+    \group_begin:
+      \fp_add:Nn \l__chemmacros_newman_rel_angle_fp { #1 }
+      \chemmacros_polar_to_cartesian:NNnn
+        \l__chemmacros_newman_x_fp
+        \l__chemmacros_newman_y_fp
+        { \l__chemmacros_newman_rel_angle_fp }
+        { \l__chemmacros_newman_scale_fp }
+      \chemmacros_tikz_draw:x
+        { \exp_not:V \l__chemmacros_newman_tikz_ring_tl }
+        (
+          15 * \fp_to_dim:N \l__chemmacros_newman_x_fp ,
+          15 * \fp_to_dim:N \l__chemmacros_newman_y_fp
+        )
+        --
+        (
+          30 * \fp_to_dim:N \l__chemmacros_newman_x_fp ,
+          30 * \fp_to_dim:N \l__chemmacros_newman_y_fp
+        ) ;
+      \chemmacros_polar_to_cartesian:NNnn
+        \l__chemmacros_newman_x_fp
+        \l__chemmacros_newman_y_fp
+        { \l__chemmacros_newman_rel_angle_fp }
+        { \l__chemmacros_newman_scale_fp }
+      \chemmacros_tikz_node:x
+        {
+          chemmacros_newman_atom_back,
+          anchor = -180 + \fp_to_int:N \l__chemmacros_newman_rel_angle_fp
+        }
+        at
+        (
+          31 * \fp_to_dim:N \l__chemmacros_newman_x_fp ,
+          31 * \fp_to_dim:N \l__chemmacros_newman_y_fp
+        )
+        { #2 } ;
+    \group_end:
+  }
+\cs_generate_variant:Nn \chemmacros_newman_back_node:nn { nf }
+
+% place front nodes:
+\cs_new_protected:Npn \chemmacros_newman_front_node:nn #1#2
+  {
+    \chemmacros_polar_to_cartesian:NNnn
+      \l__chemmacros_newman_x_fp
+      \l__chemmacros_newman_y_fp
+      { #1 }
+      { \l__chemmacros_newman_scale_fp }
+    \chemmacros_tikz_draw:x
+      { \exp_not:V \l__chemmacros_newman_tikz_ring_tl }
+      (0pt,0pt) -- ++
+      (
+        30 * \fp_to_dim:N \l__chemmacros_newman_x_fp ,
+        30 * \fp_to_dim:N \l__chemmacros_newman_y_fp
+      ) ;
+    \chemmacros_polar_to_cartesian:NNnn
+      \l__chemmacros_newman_x_fp
+      \l__chemmacros_newman_y_fp
+      { #1 }
+      { \l__chemmacros_newman_scale_fp }
+    \chemmacros_tikz_node:x
+      { chemmacros_newman_atom_front, anchor = -180 + #1 }
+      at
+      (
+        31 * \fp_to_dim:N \l__chemmacros_newman_x_fp ,
+        31 * \fp_to_dim:N \l__chemmacros_newman_y_fp
+      )
+      { #2 } ;
+  }
+\cs_generate_variant:Nn \chemmacros_newman_front_node:nn { nf }

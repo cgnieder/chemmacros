@@ -1,0 +1,138 @@
+% --------------------------------------------------------------------------
+%
+% the CHEMMACROS package -- module: `thermodynamics'
+%
+% --------------------------------------------------------------------------
+% Clemens Niederberger
+% --------------------------------------------------------------------------
+% https://github.org/cgnieder/chemmacros/
+% contact@mychemistry.eu
+% --------------------------------------------------------------------------
+% If you have any ideas, questions, suggestions or bugs to report, please
+% feel free to contact me.
+% --------------------------------------------------------------------------
+% Copyright 2011-2015 Clemens Niederberger
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Clemens Niederberger.
+% --------------------------------------------------------------------------
+\ChemModule{thermodynamics}{2015/06/09 thermodynamics}
+
+\RequirePackage {siunitx}
+
+\tl_new:N \l__chemmacros_state_pre_tl
+\tl_new:N \l__chemmacros_state_sp_left_tl
+\tl_new:N \l__chemmacros_state_sb_left_tl
+\tl_new:N \l__chemmacros_state_sp_right_tl
+\tl_new:N \l__chemmacros_state_sb_right_tl
+\tl_new:N \l__chemmacros_state_sb_pos_tl
+\tl_new:N \l__chemmacros_state_symbol_tl
+\tl_new:N \l__chemmacros_state_unit_tl
+
+\tl_set:Nn \l__chemmacros_state_pre_tl { \changestate }
+\tl_set:Nn \l__chemmacros_state_sp_right_tl { \standardstate }
+\tl_set:Nn \l__chemmacros_state_sb_pos_tl {left}
+
+\keys_define:nn {chemmacros/thermodynamics}
+  {
+    pre               .tl_set:N   = \l__chemmacros_state_pre_tl ,
+    superscript-left  .tl_set:N   = \l__chemmacros_state_sp_left_tl ,
+    superscript-right .tl_set:N   = \l__chemmacros_state_sp_right_tl ,
+    superscript       .meta:n     = { superscript-right = #1 } ,
+    subscript-left    .tl_set:N   = \l__chemmacros_state_sb_left_tl ,
+    subscript-right   .tl_set:N   = \l__chemmacros_state_sb_right_tl ,
+    subscript         .meta:n     = { subscript-left = #1 } ,
+    unit              .tl_set:N   = \l__chemmacros_state_unit_tl ,
+    unit              .groups:n   = {variables}
+  }
+
+\cs_new_protected:Npn \chemmacros_state:nn #1#2
+  {
+    % pre (\Delta)
+    % superscript-left
+    % superscript-right (\standardstate)
+    % subscript-left
+    % subscript-right
+    \group_begin:
+      \keys_set:nn {chemmacros/thermodynamics} {#1}
+      \ensuremath
+        {
+          \chemmacros_text:V \l__chemmacros_state_pre_tl
+          \c_math_superscript_token
+            { \chemmacros_text:V \l__chemmacros_state_sp_left_tl }
+          \c_math_subscript_token
+            { \chemmacros_text:V \l__chemmacros_state_sb_left_tl }
+          #2
+          \c_math_superscript_token
+            { \chemmacros_text:V \l__chemmacros_state_sp_right_tl }
+          \c_math_subscript_token
+            { \chemmacros_text:V \l__chemmacros_state_sb_right_tl }
+        }
+    \group_end:
+  }
+\cs_generate_variant:Nn \chemmacros_state:nn { nV }
+
+\DeclareDocumentCommand \state { O{}m }
+  { \chemmacros_state:nn {#1} {#2} }
+
+\cs_new_protected:Npn \chemmacros_declare_state:Nn #1#2
+  {
+    \keys_define:xn {chemmacros/thermodynamics/\chemmacros_remove_backslash:N #1}
+      {
+        pre               .meta:nn = {chemmacros/thermodynamics} { pre = ##1 } ,
+        superscript-left  .meta:nn = {chemmacros/thermodynamics} { superscript-left = ##1 } ,
+        superscript-right .meta:nn = {chemmacros/thermodynamics} { superscript-right = ##1 } ,
+        superscript       .meta:n  = { superscript-right = ##1 } ,
+        subscript-left    .meta:nn = {chemmacros/thermodynamics} { subscript-left = ##1 } ,
+        subscript-right   .meta:nn = {chemmacros/thermodynamics} { subscript-right = ##1 } ,
+        subscript         .meta:n     = { subscript-left = ##1 } ,
+        subscript-pos     .choices:nn =
+          { left , right }
+          { \tl_set_eq:NN \l__chemmacros_state_sb_pos_tl \l_keys_choice_tl } ,
+        symbol            .tl_set:N = \l__chemmacros_state_symbol_tl ,
+        unit              .tl_set:N = \l__chemmacros_state_unit_tl
+      }
+    \DeclareDocumentCommand #1 { sO{}D(){}m }
+      {
+        \group_begin:
+          \keys_set:xn {chemmacros/thermodynamics/\chemmacros_remove_backslash:N #1} {#2}
+          \tl_if_blank:nF {##3}
+            {
+              \keys_set:nx {chemmacros/thermodynamics}
+                { subscript-\l__chemmacros_state_sb_pos_tl = \exp_not:n {##3} }
+            }
+          \ensuremath
+            {
+              \chemmacros_state:nV {##2} \l__chemmacros_state_symbol_tl
+              \keys_set_groups:nnn {chemmacros/thermodynamics} {variables} {##2}
+              \IfBooleanF {##1} { = \SI {##4} { \l__chemmacros_state_unit_tl } }
+            }
+        \group_end:
+      }
+  }
+
+\chemmacros_new_macroset:nnn {State} {mm} { \chemmacros_declare_state:Nn #1 {#2} }
+
+% --------------------------------------------------------------------------
+% predefined:
+\NewChemState \enthalpy { symbol = H , unit = \kilo\joule\per\mole }
+\NewChemState \entropy  { symbol = S , unit = \joule\per\kelvin\per\mole , pre = }
+\NewChemState \gibbs    { symbol = G , unit = \kilo\joule\per\mole }
+
+\ChemCompatibilityTo{5.2}
+  \DeclareChemDeprecated \State    \state
+  \DeclareChemDeprecated \Enthalpy \enthalpy
+  \DeclareChemDeprecated \Entropy  \entropy
+  \DeclareChemDeprecated \Gibbs    \gibbs
+\EndChemCompatibility
+
+% --------------------------------------------------------------------------

@@ -1,0 +1,405 @@
+% --------------------------------------------------------------------------
+%
+% the CHEMMACROS package -- module: `redox'
+%
+% --------------------------------------------------------------------------
+% Clemens Niederberger
+% --------------------------------------------------------------------------
+% https://github.org/cgnieder/chemmacros/
+% contact@mychemistry.eu
+% --------------------------------------------------------------------------
+% If you have any ideas, questions, suggestions or bugs to report, please
+% feel free to contact me.
+% --------------------------------------------------------------------------
+% Copyright 2011-2015 Clemens Niederberger
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Clemens Niederberger.
+% --------------------------------------------------------------------------
+\ChemModule{redox}{2015/07/22 oxidation numbers, redox reactions}
+
+\chemmacros_load_modules:n {tikz,xfrac}
+
+\RequirePackage{mathtools,relsize}
+
+\msg_new:nnn {chemmacros} {redox}
+  { \token_to_str:N #1 \c_space_tl : ~ #2 ~ \msg_line_context: . }
+
+
+% --------------------------------------------------------------------------
+% oxidation numbers
+% \ox{<number>,<atom>}
+\bool_new:N       \l__chemmacros_ox_sign_bool
+\bool_new:N       \l__chemmacros_ox_integer_bool
+\bool_new:N       \l__chemmacros_ox_explicit_sign_bool
+\bool_new:N       \l__chemmacros_ox_format_roman_bool
+\bool_new:N       \l__chemmacros_ox_decimal_marker_comma_bool
+\bool_new:N       \l__chemmacros_ox_parse_bool
+\bool_new:N       \l__chemmacros_ox_side_bool
+\bool_new:N       \l__chemmacros_ox_super_bool
+\bool_new:N       \l__chemmacros_ox_top_bool
+\bool_new:N       \l__chemmacros_ox_align_center_bool
+
+\int_new:N \l__chemmacros_ox_number_int
+\fp_new:N  \l__chemmacros_ox_number_fp
+
+\cs_new_protected:Npn \__chemmacros_ox_process_number:n #1
+  {
+    \bool_if:NTF \l__chemmacros_ox_parse_bool
+      {
+        \tl_if_in:nnTF {#1} { / }
+          { \__chemmacros_ox_fraction:w #1 \q_stop }
+          {
+            \__chemmacros_ox_sign:n  {#1}
+            \__chemmacros_ox_value:n {#1}
+          }
+      }
+      {#1}
+  }
+
+\cs_new_protected:Npn \__chemmacros_ox_fraction:w #1/#2 \q_stop
+  {
+    \group_begin:
+      \bool_set_false:N \l__chemmacros_ox_format_roman_bool
+      \__chemmacros_ox_sign:n {#1}
+      \bool_if:NTF \l__chemmacros_ox_side_bool
+        { \chemmacros_ox_text_frac:nn }
+        { \chemmacros_ox_super_frac:nn }
+        { \__chemmacros_ox_value:n {#1} }
+        {#2}
+    \group_end:
+  }
+
+\cs_new_protected:Npn \__chemmacros_ox_sign:n #1
+  {
+    \bool_if:nT
+      {
+        \fp_compare_p:n { #1 > 0 } &&
+        \l__chemmacros_ox_explicit_sign_bool
+      }
+      { \c_math_toggle_token + \c_math_toggle_token }
+    \bool_if:nT
+      {
+        \fp_compare_p:n { #1 = 0 } &&
+        \l__chemmacros_ox_explicit_sign_bool
+      }
+      { \c_math_toggle_token \pm \c_math_toggle_token }
+    \fp_compare:nT { #1 < 0 }
+      { \c_math_toggle_token - \c_math_toggle_token }
+  }
+
+\cs_new_protected:Npn \__chemmacros_ox_value:n #1
+  {
+    \fp_set:Nn \l__chemmacros_ox_number_fp { abs(#1) }
+    \__chemmacros_ox_is_integer:n { \l__chemmacros_ox_number_fp }
+    \bool_if:NTF \l__chemmacros_ox_format_roman_bool
+      { \__chemmacros_fp_to_Roman:n { \l__chemmacros_ox_number_fp } }
+      {
+        \bool_if:NTF \l__chemmacros_ox_integer_bool
+          {
+            \c_math_toggle_token
+              \__chemmacros_fp_to_arabic:n { \l__chemmacros_ox_number_fp }
+            \c_math_toggle_token
+          }
+          {
+            \c_math_toggle_token
+              \fp_use:N \l__chemmacros_ox_number_fp
+            \c_math_toggle_token
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__chemmacros_ox_is_integer:n #1
+  {
+    \fp_set:Nn \l__chemmacros_tmpa_fp { round(#1 + 1 , 0 ) - 1 }
+    \fp_compare:nNnTF { \l__chemmacros_tmpa_fp } = {#1}
+      { \bool_set_true:N \l__chemmacros_ox_integer_bool }
+      {
+        \bool_set_false:N \l__chemmacros_ox_integer_bool
+        \bool_set_false:N \l__chemmacros_ox_format_roman_bool
+      }
+  }
+
+\cs_new_protected:Npn \__chemmacros_fp_to_Roman:n #1
+  {
+    \group_begin:
+      \fp_compare:nTF { \l__chemmacros_tmpa_fp = 0 }
+        {0}
+        { \int_to_Roman:n { \fp_to_int:N \l__chemmacros_tmpa_fp } }
+    \group_end:
+  }
+
+\cs_new_protected:Npn \__chemmacros_fp_to_arabic:n #1
+  {
+    \group_begin:
+      \fp_set:Nn \l__chemmacros_tmpa_fp {#1}
+      \bool_if:NTF \l__chemmacros_ox_decimal_marker_comma_bool
+        {
+          \tl_set:Nx \l__chemmacros_tmpa_tl { \fp_to_decimal:N \l__chemmacros_tmpa_fp }
+          \tl_replace_once:Nnn \l__chemmacros_tmpa_tl {.} { {,} }
+          \tl_use:N \l__chemmacros_tmpa_tl
+        }
+        { \fp_to_decimal:N \l__chemmacros_tmpa_fp }
+    \group_end:
+  }
+
+\tl_new:N \l__chemmacros_ox_side_connect_tl
+
+\cs_new_protected:Npn \__chemmacros_ox_write:nn #1#2
+  {
+    \tl_if_blank:nT {#1}
+      { \msg_error:nnn {chemmacros} {redox} {\ox} {oxidation~number~missing} }
+    \tl_if_blank:nT {#2}
+      { \msg_error:nnn {chemmacros} {redox} {\ox} {oxidation-atom~missing} }
+    \hbox_set:Nn \l__chemmacros_tmpa_box
+      {
+        \chemmacros_text:n
+          { \relsize {-3} \__chemmacros_ox_process_number:n {#1} }
+      }
+    \hbox_set:Nn \l__chemmacros_tmpb_box { \chemmacros_chemformula:n {#2} }
+    \chemmacros_math:n
+      {
+        \bool_if:NT \l__chemmacros_ox_super_bool
+          {
+            \box_use:N \l__chemmacros_tmpb_box
+            \c_math_superscript_token { \box_use:N \l__chemmacros_tmpa_box }
+          }
+        \bool_if:NT \l__chemmacros_ox_side_bool
+          {
+            \chemmacros_text:n
+              {
+                #2
+                \tl_use:N \l__chemmacros_ox_side_connect_tl
+                ( \__chemmacros_ox_process_number:n {#1} )
+              }
+          }
+        \bool_if:NT \l__chemmacros_ox_top_bool
+          {
+            \bool_if:NF \l__chemmacros_ox_align_center_bool
+              { 
+                \hbox_set_to_wd:Nnn \l__chemmacros_tmpa_box
+                  { \box_wd:N \l__chemmacros_tmpb_box }
+                  { \rlap { \hbox_unpack:N \l__chemmacros_tmpa_box } \hfil }
+              }
+            \overset
+              {
+                \bool_if:NTF \l__chemmacros_ox_align_center_bool
+                  { \clap }
+                  { \use:n }
+                { \box_use:N \l__chemmacros_tmpa_box }
+              }
+              { \box_use:N \l__chemmacros_tmpb_box }
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__chemmacros_ox_pos_top:
+  {
+    \bool_set_true:N  \l__chemmacros_ox_top_bool
+    \bool_set_false:N \l__chemmacros_ox_super_bool
+    \bool_set_false:N \l__chemmacros_ox_side_bool
+  }
+
+\cs_new_protected:Npn \__chemmacros_ox_pos_super:
+  {
+    \bool_set_false:N \l__chemmacros_ox_top_bool
+    \bool_set_true:N  \l__chemmacros_ox_super_bool
+    \bool_set_false:N \l__chemmacros_ox_side_bool
+  }
+
+\cs_new_protected:Npn \__chemmacros_ox_pos_side:
+  {
+    \bool_set_false:N \l__chemmacros_ox_top_bool
+    \bool_set_false:N \l__chemmacros_ox_super_bool
+    \bool_set_true:N  \l__chemmacros_ox_side_bool
+  }
+
+\keys_define:nn {chemmacros/redox}
+  {
+    pos            .choice: ,
+    pos / top      .code:n     = \__chemmacros_ox_pos_top: ,
+    pos / super    .code:n     = \__chemmacros_ox_pos_super: ,
+    pos / side     .code:n     = \__chemmacros_ox_pos_side: ,
+    pos            .initial:n  = super ,
+    side-connect   .tl_set:N   = \l__chemmacros_ox_side_connect_tl ,
+    side-connect   .initial:n  = \, ,
+    text-frac      .code:n     =
+      \cs_set_protected:Npn \chemmacros_ox_text_frac:nn ##1##2 {#1} ,
+    text-frac      .initial:n  = \chemfrac[text]{#1}{#2} ,
+    super-frac     .code:n     =
+      \cs_set_protected:Npn \chemmacros_ox_super_frac:nn ##1##2 {#1} ,
+    super-frac     .initial:n  = \chemfrac[superscript]{#1}{#2} ,
+    roman          .bool_set:N = \l__chemmacros_ox_format_roman_bool ,
+    roman          .default:n  = true ,
+    roman          .initial:n  = true ,
+    parse          .bool_set:N = \l__chemmacros_ox_parse_bool ,
+    parse          .default:n  = true ,
+    parse          .initial:n  = true ,
+    explicit-sign  .bool_set:N = \l__chemmacros_ox_explicit_sign_bool ,
+    explicit-sign  .default:n  = true ,
+    decimal-marker .choice: ,
+    decimal-marker / comma .code:n =
+      { \bool_set_true:N \l__chemmacros_ox_decimal_marker_comma_bool } ,
+    decimal-marker / point .code:n =
+      { \bool_set_false:N \l__chemmacros_ox_decimal_marker_comma_bool } ,
+    decimal-marker .initial:n = point ,
+    align          .choice: ,
+    align / center .code:n    =
+      \bool_set_true:N \l__chemmacros_ox_align_center_bool ,
+    align / right  .code:n    =
+      \bool_set_false:N \l__chemmacros_ox_align_center_bool ,
+    align          .initial:n = center
+  }
+
+% \ox[<keyval>]{<num>,<atom>}
+% \ox*[<keyval>]{<num>,<atom>} => always number on the top
+\cs_new_protected:Npn \chemmacros_ox:nnnn #1#2#3#4
+  {
+    \group_begin:
+      \keys_set:nn {chemmacros/redox} {#2}
+      \tl_if_blank:nF {#1} { \__chemmacros_ox_pos_top: }
+      \__chemmacros_ox_write:nn {#3} {#4}
+    \group_end:
+  }
+
+\NewDocumentCommand \ox { sO{}>{\SplitArgument{1}{,}}m }
+  {
+    \IfBooleanTF {#1}
+      { \chemmacros_ox:nnnn {#1} {#2} #3 }
+      { \chemmacros_ox:nnnn {  } {#2} #3 }
+  }
+
+% ---------------------------------------------------------------------------
+% redox reactions
+\tl_new:N   \l__chemmacros_redox_begin_tl
+\tl_new:N   \l__chemmacros_redox_end_tl
+\tl_new:N   \l__chemmacros_redox_tikz_tl
+\tl_new:N   \l__chemmacros_redox_shift_tl
+\tl_new:N   \l__chemmacros_redox_anchor_tl
+\tl_new:N   \l__chemmacros_redox_side_tl
+
+\fp_new:N   \l__chemmacros_redox_shift_fp
+
+\dim_new:N  \l__chemmacros_redox_sep_dim
+\dim_new:N  \l__chemmacros_redox_sep_default_dim
+\dim_set:Nn \l__chemmacros_redox_sep_default_dim {.2em}
+\dim_new:N  \l__chemmacros_redox_dist_dim
+\dim_set:Nn \l__chemmacros_redox_dist_dim {.6em}
+
+% place and name nodes:
+% \OX{<name>,<atom>}
+\NewDocumentCommand \OX { >{\SplitArgument{1}{,}}m }
+  { \chemmacros_redox_partner:nn #1 }
+
+\cs_new_protected:Npn \chemmacros_redox_partner:nn #1#2
+  {
+    \chemmacros_tex_if:nnTF {measuring@} {}
+      {
+        \group_begin:
+          \tikz[baseline=(#1.base)] { \node [inner~sep=0pt] (#1) {#2} ; }
+        \group_end:
+      }
+      {
+        \tl_if_blank:nT {#1}
+          { \msg_error:nnnn {chemmacros} {redox} {\OX} {node~name~missing} }
+        \tl_if_blank:nT {#2}
+          { \msg_error:nnnn {chemmacros} {redox} {\OX} {atom~missing} }
+        \tikz[baseline=(#1.base),remember~picture]
+          { \node [inner~sep=0pt] (#1) {#2} ; }
+      }
+  }
+
+\cs_new_protected:Npn \__chemmacros_redox_coordinates:nn #1#2
+  {
+    \tl_set:Nn \l__chemmacros_redox_begin_tl {#1}
+    \tl_set:Nn \l__chemmacros_redox_end_tl   {#2}
+  }
+
+\cs_new_protected:Npn \chemmacros_redox:nnnnn #1#2#3#4#5
+  {
+    \tl_clear:N \l__chemmacros_redox_begin_tl
+    \tl_clear:N \l__chemmacros_redox_end_tl
+    \tl_clear:N \l__chemmacros_redox_tikz_tl
+    \__chemmacros_redox_coordinates:nn {#1} {#2}
+    \tl_if_blank:nF {#3}
+      { \tl_set:Nn \l__chemmacros_redox_tikz_tl {#3} }
+    \tl_if_blank:nTF {#4}
+      {
+        \fp_set:Nn \l__chemmacros_redox_shift_fp  {1}
+        \tl_set:Nn \l__chemmacros_redox_anchor_tl {above}
+        \tl_set:Nn \l__chemmacros_redox_side_tl   {north}
+        \dim_set_eq:NN
+          \l__chemmacros_redox_sep_dim
+          \l__chemmacros_redox_sep_default_dim
+      }
+      {
+        \fp_compare:nNnTF {#4} < {0}
+          {
+            \tl_set:Nn \l__chemmacros_redox_anchor_tl {below}
+            \tl_set:Nn \l__chemmacros_redox_side_tl   {south}
+            \exp_args:NNo \dim_set:Nn \l__chemmacros_redox_sep_dim
+              { - \l__chemmacros_redox_sep_default_dim }
+          }
+          {
+            \tl_set:Nn \l__chemmacros_redox_anchor_tl {above}
+            \tl_set:Nn \l__chemmacros_redox_side_tl   {north}
+            \dim_set_eq:NN
+              \l__chemmacros_redox_sep_dim
+              \l__chemmacros_redox_sep_default_dim
+          }
+        \fp_set:Nn \l__chemmacros_redox_shift_fp {#4}
+      }
+      \tl_set:Nx \l__chemmacros_redox_shift_tl
+        { \fp_to_decimal:N \l__chemmacros_redox_shift_fp }
+    \tikz[remember~picture,overlay]
+      {
+        \chemmacros_tikz_draw:x { \exp_not:V \l__chemmacros_redox_tikz_tl }
+        ($
+          (\l__chemmacros_redox_begin_tl .
+          \l__chemmacros_redox_side_tl)+(0,\l__chemmacros_redox_sep_dim)
+        $)
+        -- 
+        ++(0,\l__chemmacros_redox_shift_tl * \l__chemmacros_redox_dist_dim) -|
+        node [pos=.25,\l__chemmacros_redox_anchor_tl] { {#5} }
+        ($
+          (\l__chemmacros_redox_end_tl .
+          \l__chemmacros_redox_side_tl)+(0,\l__chemmacros_redox_sep_dim)
+        $) ;
+      }
+  }
+
+\NewDocumentCommand \redox { >{\SplitArgument{1}{,}}r()ooG{} }
+  {
+    \IfNoValueT {#1}
+      {
+        \msg_error:nnnn {chemmacros} {redox} {\redox}
+          {You~need~to~specify~coordinates}
+      }
+    \IfNoValueTF {#2}
+      { \chemmacros_redox:nnnnn #1 { } { } {#4} }
+      {
+        \IfNoValueTF {#3}
+          { \chemmacros_redox:nnnnn #1 {#2} {  } {#4} }
+          { \chemmacros_redox:nnnnn #1 {#2} {#3} {#4} }
+      }
+  }
+
+% redox-keys
+\keys_define:nn {chemmacros/redox}
+  {
+    dist .dim_set:N = \l__chemmacros_redox_dist_dim ,
+    dist .initial:n = {.6em} ,
+    sep  .dim_set:N = \l__chemmacros_redox_sep_default_dim ,
+    sep  .initial:n = {.2em}
+  }
+
+% --------------------------------------------------------------------------

@@ -1,0 +1,137 @@
+% --------------------------------------------------------------------------
+%
+% the CHEMMACROS package -- module: `xfrac'
+%
+% --------------------------------------------------------------------------
+% Clemens Niederberger
+% --------------------------------------------------------------------------
+% https://github.org/cgnieder/chemmacros/
+% contact@mychemistry.eu
+% --------------------------------------------------------------------------
+% If you have any ideas, questions, suggestions or bugs to report, please
+% feel free to contact me.
+% --------------------------------------------------------------------------
+% Copyright 2011-2015 Clemens Niederberger
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Clemens Niederberger.
+% --------------------------------------------------------------------------
+\ChemModule{xfrac}{2015/07/22 use xfrac package with chemmacros}
+
+\RequirePackage{xfrac}
+
+% --------------------------------------------------------------------------
+
+% #1: type
+% #2: numerator
+% #3: denominator
+\cs_new_protected:Npn \chemmacros_frac:nnn #1#2#3
+  {
+    \IfInstanceExistTF {xfrac} {chemmacros-frac-\f@family-#1}
+      { \sfrac [chemmacros-frac-\f@family-#1] {#2} {#3} }
+      { \sfrac [chemmacros-frac-default-#1]{#2} {#3} }
+  }
+
+\NewDocumentCommand \chemfrac {O{text}mm}
+  { \chemmacros_frac:nnn {#1} {#2} {#3} }
+
+% --------------------------------------------------------------------------
+
+% default:
+\DeclareInstance {xfrac} {chemmacros-frac-cmr-superscript} {text}
+  {
+    numerator-top-sep   = -.1ex ,
+    slash-left-kern     = -.2em ,
+    slash-right-kern    = -.2em ,
+    slash-symbol-font   = cmr
+  }
+
+\DeclareInstance {xfrac} {chemmacros-frac-cmr-text} {text}
+  {
+    numerator-top-sep   = 0ex ,
+    slash-left-kern     = -.2em ,
+    slash-right-kern    = -.2em ,
+    slash-symbol-font   = cmr
+  }
+
+% computer modern (same as default):
+\DeclareInstance {xfrac} {chemmacros-frac-cmr-superscript} {text}
+  {
+    numerator-top-sep   = -.1ex ,
+    slash-left-kern     = -.2em ,
+    slash-right-kern    = -.2em ,
+    slash-symbol-font   = cmr
+  }
+
+\DeclareInstance {xfrac} {chemmacros-frac-cmr-text} {text}
+  {
+    numerator-top-sep   = 0ex ,
+    slash-left-kern     = -.2em ,
+    slash-right-kern    = -.2em ,
+    slash-symbol-font   = cmr
+  }
+
+% Linux Libertine T lining:
+\DeclareInstance {xfrac} {chemmacros-frac-LinuxLibertineT-TLF-text} {text}
+  {
+    numerator-top-sep   = 0ex ,
+    slash-left-kern     = 0em ,
+    slash-right-kern    = .05em ,
+    slash-symbol-font   = LinuxLibertineT-TLF
+  }
+
+\DeclareInstance {xfrac} {chemmacros-frac-LinuxLibertineT-TLF-superscript} {text}
+  {
+    scale-factor        = 1.2 ,
+    denominator-bot-sep = -.1ex ,
+    numerator-top-sep   = -.1ex ,
+    slash-left-kern     = .1em ,
+    slash-right-kern    = .1em ,
+    slash-symbol-font   = LinuxLibertineT-TLF
+  }
+
+% Linux Libertine T oldstyle:
+\DeclareInstance {xfrac} {chemmacros-frac-LinuxLibertineT-TOsF-text} {text}
+  {
+    denominator-bot-sep = .1ex ,
+    numerator-top-sep   = -.2ex ,
+    slash-left-kern     = 0em ,
+    slash-right-kern    = 0em ,
+    slash-symbol-font   = LinuxLibertineT-TOsF
+  }
+
+\DeclareInstance {xfrac} {chemmacros-frac-LinuxLibertineT-TOsF-superscript} {text}
+  {
+    scale-factor        = 1.2 ,
+    denominator-bot-sep = -.1ex ,
+    numerator-top-sep   = -.2ex ,
+    slash-left-kern     = 0em ,
+    slash-right-kern    = .1em ,
+    slash-symbol-font   = LinuxLibertineT-TOsF
+  }
+
+% lmodern:
+\DeclareInstance {xfrac} {chemmacros-frac-lmr-superscript} {text}
+  {
+    slash-left-kern     = -.2em ,
+    slash-right-kern    = -.2em ,
+    slash-symbol-font   = lmr
+  }
+
+\DeclareInstance {xfrac} {chemmacros-frac-lmr-text} {text}
+  {
+    slash-left-kern     = -.2em ,
+    slash-right-kern    = -.2em ,
+    slash-symbol-font   = lmr
+  }
+
+% --------------------------------------------------------------------------

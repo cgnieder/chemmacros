@@ -1,0 +1,185 @@
+% --------------------------------------------------------------------------
+%
+% the CHEMMACROS package -- module: `reactions'
+%
+% --------------------------------------------------------------------------
+% Clemens Niederberger
+% --------------------------------------------------------------------------
+% https://github.org/cgnieder/chemmacros/
+% contact@mychemistry.eu
+% --------------------------------------------------------------------------
+% If you have any ideas, questions, suggestions or bugs to report, please
+% feel free to contact me.
+% --------------------------------------------------------------------------
+% Copyright 2011-2015 Clemens Niederberger
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Clemens Niederberger.
+% --------------------------------------------------------------------------
+\ChemModule{reactions}{2015/07/14 reaction environments}
+
+\chemmacros_load_module:n {chemformula}
+
+\RequirePackage{mathtools}
+
+% --------------------------------------------------------------------------
+\cs_new_protected:Npn \__chemmacros_record_for_lor:nnnnn #1#2#3#4#5
+  {
+    \tl_if_eq:nnT { #1 } { reaction }
+      {
+        \group_begin:
+          % we need to prevent \Hy@make@anchor from being written to the lor
+          % file:
+          \bool_if:NT \l__chemmacros_hyperref_bool
+            { \cs_set:Npn \Hy@make@anchor {} }
+          \addcontentsline { lor } { reaction }
+            {
+              \tl_use:N \l__chemmacros_reaction_lorname_tl
+              \tl_use:N \c_space_tl
+              #2 #3 #4 #5
+              \tl_use:N \g__chemmacros_reaction_description_tl
+            }
+          \tl_gclear:N \g__chemmacros_reaction_description_tl
+        \group_end:
+      }
+  }
+
+% redefine mathtools' command \MT_define_tagform:nwnn to ensure we add an
+% entry to the list of reactions even if the user redefines the reaction tag
+% this should probably be done via patching...
+\AfterPackage* { mathtools }
+  {
+    \cs_set_protected:Npn \MT_define_tagform:nwnn #1[#2]#3#4
+      {
+        \@namedef{MT_tagform_#1:n}##1
+          {
+            % this is the original part:
+            \maketag@@@{#3\ignorespaces#2{##1}\unskip\@@italiccorr#4}
+            % this is added => this disturbs hyperref:
+            \__chemmacros_record_for_lor:nnnnn
+              { #1 } { #3 } { #2 } { ##1 } { #4 }
+          }
+      }
+  }
+
+\tl_new:N \g__chemmacros_reaction_description_tl
+
+\cs_new_protected:Npn \chemmacros_add_reaction_description:n #1
+  {
+    \tl_if_blank:nF { #1 }
+      { \tl_gset:Nn \g__chemmacros_reaction_description_tl { : ~ #1 } }
+  }
+
+\NewDocumentCommand \AddRxnDesc { m }
+  { \chemmacros_add_reaction_description:n { #1 } }
+
+% define \listofreactions
+\tl_new:N  \l__chemmacros_reaction_lorname_tl
+\tl_new:N  \reactionlistname
+\tl_new:N  \l__chemmacros_reaction_heading_tl
+
+\cs_if_exist:NTF \chapter
+  { \tl_set:Nn \l__chemmacros_reaction_heading_tl { \chapter* } }
+  { \tl_set:Nn \l__chemmacros_reaction_heading_tl { \section* } }
+
+\tl_set:Nn \l__chemmacros_reaction_lorname_tl { \chemmacros_translate:n {reaction} }
+\tl_set:Nn \reactionlistname { \chemmacros_translate:n {list-of-reactions} }
+
+\cs_new:Npn \__chemmacros_reaction_heading:n #1
+  { \l__chemmacros_reaction_heading_tl { #1 } }
+\cs_generate_variant:Nn \__chemmacros_reaction_heading:n { V }
+
+\cs_new_protected:Npn \listofreactions
+  {
+    \__chemmacros_reaction_heading:V \reactionlistname
+    \@starttoc { lor }
+  }
+
+\cs_new_protected:Npn \l@reaction #1#2
+  { \@dottedtocline { 1 } { 1.5em } { 2.3em } { #1 } { #2 } }
+
+% create new tagform
+\newtagform {reaction} {\{} {\}}
+\newcounter {chemmacros_save_reaction}
+\newcounter {reaction}
+
+\cs_new_protected:Npn \__chemmacros_begin_reaction:
+  {
+    % create individual names for `hyperref':
+    \bool_if:NT \l__chemmacros_hyperref_bool
+      {
+        \cs_set:Npn \theHequation
+          { R . \theHsection . \arabic {reaction} }
+      }
+    % enable labelformat `reaction':
+    \bool_if:NT \l__chemmacros_varioref_bool
+      { \cs_set_eq:NN \p@equation \p@reaction }
+    \setcounter {chemmacros_save_reaction} { \value {equation} }
+    \setcounter {equation} { \value {reaction} }
+    \usetagform {reaction}
+  }
+
+% switch back to equation tags
+\cs_new_protected:Npn \__chemmacros_end_reaction:
+  {
+    \setcounter {reaction} { \value {equation} }
+    \setcounter {equation} { \value {chemmacros_save_reaction} }
+  }
+
+\tl_new:N \l__chemmacros_reactions_args_tl
+
+\cs_new_protected:Npn \__chemmacros_reactions_build_args:n #1
+  { \tl_put_right:Nn \l__chemmacros_reactions_args_tl { {## #1} } }
+
+\cs_new_protected:Npn \chemmacros_define_reaction:nnn #1#2#3
+  {
+    \int_compare:nNnT {#3+0} > {0}
+      {
+        \tl_clear:N \l__chemmacros_reactions_args_tl
+        \int_step_function:nnnN {2} {1} {#3+1} \__chemmacros_reactions_build_args:n
+      }
+    \chemmacros_reaction_env:nnnV {#1} {#2} {#3} \l__chemmacros_reactions_args_tl
+  }
+
+% #1: chem
+% #2: math
+% #3: args number
+% #4: argument list ({#2}{#3}...)
+\cs_new_protected:Npn \chemmacros_reaction_env:nnnn #1#2#3#4
+  {
+    \exp_args:Nnx \DeclareDocumentEnvironment {#1} { O{} \prg_replicate:nn {#3+0} {m} }
+      {
+        \chemmacros_add_reaction_description:n {##1}
+        \__chemmacros_begin_reaction:
+        \chemmacros_reaction_read:nnw {#2} {#4}
+      }
+      { \__chemmacros_end_reaction: }
+  }
+\cs_generate_variant:Nn \chemmacros_reaction_env:nnnn {nnnV}
+  
+\cs_new_protected:Npn \chemmacros_reaction_read:nnw #1#2#3 \end
+  {
+    \begin{#1}#2
+      \chemformula_ch:nn {} {#3}
+    \end{#1}
+    \end
+  }
+
+\chemmacros_new_environment_macroset:nnn {Reaction} {mO{}m}
+  { \chemmacros_define_reaction:nnn {#1} {#3} {#2} }
+
+\NewChemReaction {reaction}   {equation}
+\NewChemReaction {reaction*}  {equation*}
+\NewChemReaction {reactions}  {align}
+\NewChemReaction {reactions*} {align*}
+
+% --------------------------------------------------------------------------

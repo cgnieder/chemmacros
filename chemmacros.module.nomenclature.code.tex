@@ -1,0 +1,592 @@
+% --------------------------------------------------------------------------
+%
+% the CHEMMACROS package -- module: `nomenclature'
+%
+% --------------------------------------------------------------------------
+% Clemens Niederberger
+% --------------------------------------------------------------------------
+% https://github.org/cgnieder/chemmacros/
+% contact@mychemistry.eu
+% --------------------------------------------------------------------------
+% If you have any ideas, questions, suggestions or bugs to report, please
+% feel free to contact me.
+% --------------------------------------------------------------------------
+% Copyright 2011-2015 Clemens Niederberger
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Clemens Niederberger.
+% --------------------------------------------------------------------------
+\ChemModule{nomenclature}{2015/07/22 chemical names}
+
+\RequirePackage{scrlfile}
+
+\chemmacros_load_module:n {tikz}
+
+\bool_new:N      \l__chemmacros_iupac_restricted_bool
+\bool_new:N      \l__chemmacros_iupac_strict_bool
+
+\msg_new:nnn {chemmacros} {new-iupac}
+  {
+    You've~ tried~ to~ define~ a~ iupac~ naming~ command~ with~
+    \token_to_str:N \NewChemIUPAC ,~ but~ the~ iupac~ command~
+    \token_to_str:N #1 \c_space_tl already~ exists.~ Choose~ another~ name~
+    or~ use~ \token_to_str:N \RenewChemIUPAC .
+  }
+
+\msg_new:nnn {chemmacros} {renew-iupac}
+  {
+    You've~ tried~ to~ renew~ the~ iupac~ command~ \token_to_str:N #1 ,~ but~
+    it~ doesn't~ exist.~ Use~ \token_to_str:N \NewChemIUPAC \c_space_tl
+    instead.
+  }
+
+\msg_new:nnn {chemmacros} {let-iupac}
+  {
+    You've~ tried~ to~ let~ the~ iupac~ command~ \token_to_str:N #1 ~ to~ the~
+    iupac~ command~ \token_to_str:N #2 ,~ but~ the~ latter~ doesn't~ exist.~
+    Use~ \token_to_str:N \NewChemIUPAC \c_space_tl instead~ or~declare~
+    \token_to_str:N #2 \c_space_tl first.
+  }
+
+\msg_new:nnn {chemmacros} {new-iupac-shorthand}
+  {
+    You've~ tried~ to~ define~ a~ iupac~ shorthand~ with~ \token_to_str:N
+    \NewChemIUPACShorthand ,~ but~ the~ shorthand~ \token_to_str:N #1
+    \c_space_tl already~ exists.~ Please~ choose~ another~ token.
+  }
+
+\msg_new:nnn {chemmacros} {renew-iupac-shorthand}
+  {
+    You've~ tried~ to~ renew~ the~ iupac~ shorthand~ \token_to_str:N #1 ,~
+    but~ this~ shorthand~ doesn't~ exist,~ yet.
+  }
+
+\prop_new:N \l__chemmacros_iupac_prop
+
+\cs_new_protected:Npn \chemmacros_new_iupac:Nn #1#2
+  {
+    \tl_set:Nx \l__chemmacros_tmpa_tl
+      { \chemmacros_remove_backslash:N #1 }
+    \prop_if_in:NVTF \l__chemmacros_iupac_prop \l__chemmacros_tmpa_tl
+      { \msg_error:nnn {chemmacros} {new-iupac} {#1} }
+      {
+        \prop_put:NVn \l__chemmacros_iupac_prop
+          \l__chemmacros_tmpa_tl
+          {#2}
+      }
+    \chemmacros_make_iupac:
+  }
+
+\cs_new_protected:Npn \chemmacros_provide_iupac:Nn #1#2
+  {
+    \tl_set:Nx \l__chemmacros_tmpa_tl
+      { \chemmacros_remove_backslash:N #1 }
+    \prop_if_in:NVF \l__chemmacros_iupac_prop \l__chemmacros_tmpa_tl
+      {
+        \prop_put:NVn \l__chemmacros_iupac_prop
+          \l__chemmacros_tmpa_tl
+          {#2}
+      }
+    \chemmacros_make_iupac:
+  }
+
+\cs_new_protected:Npn \chemmacros_define_iupac:Nn #1#2
+  {
+    \tl_set:Nx \l__chemmacros_tmpa_tl
+      { \chemmacros_remove_backslash:N #1 }
+    \prop_put:NVn \l__chemmacros_iupac_prop
+      \l__chemmacros_tmpa_tl
+      {#2}
+    \chemmacros_make_iupac:
+  }
+
+\cs_new_protected:Npn \chemmacros_renew_iupac:Nn #1#2
+  {
+    \tl_set:Nx \l__chemmacros_tmpa_tl
+      { \chemmacros_remove_backslash:N #1 }
+    \prop_if_in:NVTF \l__chemmacros_iupac_prop \l__chemmacros_tmpa_tl
+      {
+        \prop_put:NVn \l__chemmacros_iupac_prop
+          \l__chemmacros_tmpa_tl
+          {#2}
+      }
+      { \msg_error:nnn {chemmacros} {renew-iupac} {#1} }
+    \chemmacros_make_iupac:
+  }
+
+\cs_new_protected:Npn \chemmacros_let_iupac:NN #1#2
+  {
+    \tl_set:Nx \l__chemmacros_tmpa_tl
+      { \chemmacros_remove_backslash:N #1 }
+    \tl_set:Nx \l__chemmacros_tmpb_tl
+      { \chemmacros_remove_backslash:N #2 }
+    \prop_get:NVNTF \l__chemmacros_iupac_prop
+      \l__chemmacros_tmpb_tl
+      \l__chemmacros_tmpc_tl
+      {
+        \prop_put:NVV \l__chemmacros_iupac_prop
+          \l__chemmacros_tmpa_tl
+          \l__chemmacros_tmpc_tl
+      }
+      { \msg_error:nnnn {chemmacros} {let-iupac} {#1} {#2} }
+    \chemmacros_make_iupac:
+  }
+
+\cs_new_protected:Npn \chemmacros_make_iupac:
+  {
+    \bool_if:NT \l__chemmacros_in_document_bool
+      {
+        \bool_if:NTF \l__chemmacros_inside_iupac_bool
+          {
+            \prop_map_inline:Nn \l__chemmacros_iupac_prop
+              { \cs_set_protected:cpn {##1} {##2} }
+          }
+          {
+            \bool_if:NF \l__chemmacros_iupac_restricted_bool
+              {
+                \bool_if:NTF \l__chemmacros_iupac_strict_bool
+                  {
+                    \prop_map_inline:Nn \l__chemmacros_iupac_prop
+                      { \cs_set_protected:cpn {##1} {##2} }
+                  }
+                  {
+                    \prop_map_inline:Nn \l__chemmacros_iupac_prop
+                      {
+                        \cs_if_exist:cF {##1}
+                          { \cs_set_protected:cpn {##1} {##2} }
+                      }
+                  }
+              }
+          }
+      }    
+  }
+
+\AtBeginDocument { \chemmacros_make_iupac: }
+
+\NewDocumentCommand \DeclareChemIUPAC { mm }
+  { \chemmacros_define_iupac:Nn #1 { #2 } }
+
+\NewDocumentCommand \NewChemIUPAC { mm }
+  { \chemmacros_new_iupac:Nn #1 { #2 } }
+
+\NewDocumentCommand \RenewChemIUPAC { mm }
+  { \chemmacros_renew_iupac:Nn #1 { #2 } }
+
+\NewDocumentCommand \ProvideChemIUPAC { mm }
+  { \chemmacros_provide_iupac:Nn #1 { #2 } }
+
+\NewDocumentCommand \LetChemIUPAC { mm }
+  { \chemmacros_let_iupac:NN #1 #2 }
+
+\keys_define:nn {chemmacros/nomenclature}
+  {
+    iupac              .choice: ,
+    iupac / restricted .code:n     =
+      \bool_set_true:N \l__chemmacros_iupac_restricted_bool
+      \bool_set_false:N \l__chemmacros_iupac_strict_bool ,
+    iupac / auto       .code:n     =
+      \bool_set_false:N \l__chemmacros_iupac_restricted_bool
+      \bool_set_false:N \l__chemmacros_iupac_strict_bool ,
+    iupac / strict     .code:n     =
+      \bool_set_false:N \l__chemmacros_iupac_restricted_bool
+      \bool_set_true:N \l__chemmacros_iupac_strict_bool ,
+  }
+
+% stereo descriptors and other nomenclature commands
+% Cahn-Ingold-Prelog
+\dim_new:N  \l__chemmacros_cip_kern_dim
+\dim_set:Nn \l__chemmacros_cip_kern_dim { .075em }
+
+\keys_define:nn {chemmacros/nomenclature}
+  { cip-kern .dim_set:N = \l__chemmacros_cip_kern_dim }
+
+\NewDocumentCommand \cip { m }
+  { \chemmacros_cip:n { #1 } }
+
+\cs_new_protected:Npn \chemmacros_cip:n #1
+  { ( \textit{#1} \tex_kern:D \l__chemmacros_cip_kern_dim ) }
+
+% remember: TikZ needs : to be other
+\cs_new_protected:Npn \chemmacros_sconf:n #1
+  {
+    \group_begin:
+      \chemmacros_tikz:nn
+        { baseline,text~ height=1.5ex,text~ depth=.25ex }
+        {
+          \chemmacros_tikz_node:n {anchor=base} (chemmacros@@Sconf) {#1} ;
+          \chemmacros_tikz_draw:n {->,thick,rotate=90}
+            ($(chemmacros@@Sconf.center)+(20\c_chemmacros_other_colon_tl.8em)$)
+            arc (20\c_chemmacros_other_colon_tl340\c_chemmacros_other_colon_tl.8em);
+        }
+    \group_end:
+  }
+
+\cs_new_protected:Npn \chemmacros_rconf:n #1
+  {
+    \group_begin:
+      \tikz[baseline,text~ height=1.5ex,text~ depth=.25ex]
+        {
+          \chemmacros_tikz_node:n {anchor=base} (chemmacros@@Rconf) {#1} ;
+          \chemmacros_tikz_draw:n {<-,thick,rotate=90}
+            ($(chemmacros@@Rconf.center)+(20\c_chemmacros_other_colon_tl.8em)$)
+            arc (20\c_chemmacros_other_colon_tl340\c_chemmacros_other_colon_tl.8em) ;
+        }
+    \group_end:
+  }
+
+\NewDocumentCommand \Sconf { O{S} } { \chemmacros_sconf:n {#1} }
+\NewDocumentCommand \Rconf { O{R} } { \chemmacros_rconf:n {#1} }
+
+% coordination chemistry
+\bool_new:N \l__chemmacros_bridge_super_bool
+
+\keys_define:nn { chemmacros / nomenclature }
+  {
+    bridge-number         .choice: ,
+    bridge-number / sub   .code:n     =
+      \bool_set_false:N \l__chemmacros_bridge_super_bool ,
+    bridge-number / super .code:n     =
+      \bool_set_true:N \l__chemmacros_bridge_super_bool ,
+    coord-use-hyphen      .bool_set:N = \l__chemmacros_coord_use_hyphen_bool ,
+    coord-use-hyphen      .initial:n  = true
+  }
+
+\cs_new_protected:Npn \chemformula_hapto:n #1
+  {
+    \chemmacros_chemformula:n { \chemeta ^{#1} }
+    \bool_if:NT \l__chemmacros_coord_use_hyphen_bool
+      { \chemmacros_break_point_hyphen: }
+  }
+
+\cs_new_protected:Npn \chemformula_dento:n #1
+  {
+    \chemmacros_chemformula:n { \chemkappa ^{#1} }
+    \bool_if:NT \l__chemmacros_coord_use_hyphen_bool
+      { \chemmacros_break_point_hyphen: }
+  }
+
+\cs_new_protected:Npn \chemformula_bridge:n #1
+  {
+    \chemmacros_chemformula:n {\chemmu}
+    \tl_if_blank:nF { #1 }
+      {
+        \bool_if:NTF \l__chemmacros_bridge_super_bool
+          { \chemmacros_chemformula:n { {}^{#1} } }
+          { \chemmacros_chemformula:n { {}_{#1} } }
+      }
+    \bool_if:NT \l__chemmacros_coord_use_hyphen_bool
+      { \chemmacros_break_point_hyphen: }
+  }
+
+% \iupac (basically the same as bpchem's \IUPAC)
+% - allows multiple breaking points as compound names can get really long and
+%   especially in multicolumn documents can span more than two lines
+% - add a (very) little space before the hyphen and a little negative space
+%   after it
+% - add a little space at breaking points if not broken
+% - enables all naming commands regardless if they're definied otherwise or not
+\cs_new_protected:Nn \chemmacros_allow_hyphens:
+  {
+    \chemmacros_nobreak:
+    \skip_horizontal:N \c_zero_dim
+  }
+
+\dim_new:N  \l__chemmacros_iupac_hyphen_pre_dim
+\dim_set:Nn \l__chemmacros_iupac_hyphen_pre_dim { .01em }
+\dim_new:N  \l__chemmacros_iupac_hyphen_post_dim
+\dim_set:Nn \l__chemmacros_iupac_hyphen_post_dim { -.03em }
+\dim_new:N  \l__chemmacros_iupac_break_dim
+\dim_set:Nn \l__chemmacros_iupac_break_dim { .03em }
+
+\keys_define:nn { chemmacros / nomenclature }
+  {
+    hyphen-pre-space  .dim_set:N = \l__chemmacros_iupac_hyphen_pre_dim ,
+    hyphen-post-space .dim_set:N = \l__chemmacros_iupac_hyphen_post_dim ,
+    break-space       .dim_set:N = \l__chemmacros_iupac_break_dim
+  }
+
+\cs_new_protected:Nn \chemmacros_break_point_hyphen:
+  {
+    \chemmacros_nobreak:
+    \tex_discretionary:D { - } { }
+      {
+        \tex_kern:D \l__chemmacros_iupac_hyphen_pre_dim
+        -
+        \tex_kern:D \l__chemmacros_iupac_hyphen_post_dim
+      }
+    \chemmacros_allow_hyphens:
+  }
+
+\cs_new_protected:Npn \chemmacros_break_point:
+  {
+    \chemmacros_nobreak:
+    \tex_discretionary:D { - } { }
+      { \tex_kern:D \l__chemmacros_iupac_break_dim }
+    \chemmacros_allow_hyphens:
+  }
+
+\cs_new_protected:Npn \chemmacros_superscript:n #1
+  { \mode_if_math:TF { \sb {#1} } { \textsuperscript {#1} } }
+  
+\bool_new:N \l__chemmacros_inside_iupac_bool
+
+\seq_new:N   \l__chemmacros_iupac_shorthands_seq
+
+\group_begin:
+\char_set_catcode_active:N \~
+
+\cs_new_protected:Npn \chemmacros_define_iupac_shorthand:Npn #1
+  {
+    \seq_if_in:NnF \l__chemmacros_iupac_shorthands_seq {#1}
+      { \seq_put_right:Nn \l__chemmacros_iupac_shorthands_seq {#1} }
+    \group_begin:
+    \__chemmacros_define_iupac_shorthand_aux_i:np {#1}
+  }
+
+\cs_new_protected:Npn \__chemmacros_define_iupac_shorthand_aux_i:np #1#2#{
+    \char_set_lccode:nn {`~} {`#1}
+    \__chemmacros_define_iupac_shorthand_aux_ii:nn {#2}
+  }
+
+\cs_new_protected:Npn \__chemmacros_define_iupac_shorthand_aux_ii:nn #1#2
+  { \tl_to_lowercase:n { \group_end: \cs_set:Npn ~ } #1 {#2} }
+\group_end:
+
+\cs_new_protected:Npn \chemmacros_remove_shorthand:N #1
+  {
+    \chemmacros_define_iupac_shorthand:Npn #1 {}
+    \seq_remove_all:Nn \l__chemmacros_iupac_shorthands_seq {#1}
+  }
+
+\cs_new_protected:Npn \chemmacros_activate_iupac_shorthands:n #1
+  {
+    \tl_map_inline:nn {#1}
+      {
+        \seq_if_in:NnT \l__chemmacros_iupac_shorthands_seq {##1}
+          { \char_set_catcode_active:N ##1 }
+      }
+  }
+\cs_new_protected:Npn \chemmacros_activate_all_iupac_shorthands:
+  {
+    \seq_map_inline:Nn \l__chemmacros_iupac_shorthands_seq
+     { \char_set_catcode_active:N ##1 }
+  }
+      
+\NewDocumentCommand \DeclareChemIUPACShorthand {mlm} 
+  { \chemmacros_define_iupac_shorthand:Npn #1#2 {#3} }
+
+\NewDocumentCommand \NewChemIUPACShorthand {mlm} 
+  {
+    \seq_if_in:NnTF \l__chemmacros_iupac_shorthands_seq {#1}
+      { \msg_error:nnn {chemmacros} {new-iupac-shorthand} {#1} }
+      { \chemmacros_define_iupac_shorthand:Npn #1#2 {#3} }
+  }
+
+\NewDocumentCommand \RenewChemIUPACShorthand {mlm} 
+  {
+    \seq_if_in:NnTF \l__chemmacros_iupac_shorthands_seq {#1}
+      { \chemmacros_define_iupac_shorthand:Npn #1#2 {#3} }
+      { \msg_error:nnn {chemmacros} {renew-iupac-shorthand} {#1} }
+  }
+
+\NewDocumentCommand \RemoveChemIUPACShorthand {m} 
+  { \chemmacros_remove_shorthand:N #1 }
+
+\group_begin:
+\chemmacros_activate_all_iupac_shorthands:
+
+\cs_new_protected:Npn \chemmacros_iupac:n #1
+  {
+    \group_begin:
+      \bool_set_true:N \l__chemmacros_inside_iupac_bool
+      \chemmacros_make_iupac:
+      \chemmacros_ignore_spaces:
+      \cs_set_eq:NN \- \chemmacros_break_point_hyphen:
+      \tl_set_rescan:Nnn \l__chemmacros_tmpa_tl
+        { \chemmacros_activate_all_iupac_shorthands: }
+        {#1}
+      \l__chemmacros_tmpa_tl
+    \group_end:
+  }
+\group_end:
+
+\NewChemIUPACShorthand | { \chemmacros_break_point: }
+\NewChemIUPACShorthand ^ #1 { \chemmacros_superscript:n {#1} }
+
+% Thanks to Joseph Wright and Enrico Gregorio for the help on the curious
+% redefinition of \- and the end of the compilation
+% see http://tex.stackexchange.com/q/42405/5049 for reference
+\cs_set_protected:Npx \- { \exp_not:o { \- } }
+\cs_set_eq:NN \@dischyph \-
+
+\NewDocumentCommand \iupac {m} { \chemmacros_iupac:n {#1} }
+
+% --------------------------------------------------------------------------
+% R(ectus)/S(inister):
+\NewChemIUPAC \rectus   { \cip {R} }
+\NewChemIUPAC \sinister { \cip {S} }
+
+\LetChemIUPAC \R \rectus
+\LetChemIUPAC \S \sinister
+
+% E(ntgegen)/Z(usammen)
+\NewChemIUPAC \entgegen { \cip {E} }
+\NewChemIUPAC \zusammen { \cip {Z} }
+
+\LetChemIUPAC \E \entgegen
+\LetChemIUPAC \Z \zusammen
+
+% cis/trans
+\NewChemIUPAC \cis   { \textit {cis} }
+\NewChemIUPAC \trans { \textit {trans} }
+
+% fac/mer
+\NewChemIUPAC \fac { \textit {fac} }
+\NewChemIUPAC \mer { \textit {mer} }
+
+% tert
+\NewChemIUPAC \tert  { \textit {tert} }
+
+% Italian descriptors - I forgot what they mean
+\NewChemIUPAC \sin { \textit {sin} }
+\NewChemIUPAC \ter { \textit {ter} }
+
+% Fischer
+\NewChemIUPAC \dexter { \textsc {d} }
+\NewChemIUPAC \laevus { \textsc {l} }
+
+\LetChemIUPAC \D \dexter
+\LetChemIUPAC \L \laevus
+
+% ortho/meta/para
+\NewChemIUPAC \ortho { \textit {o} }
+\NewChemIUPAC \meta  { \textit {m} }
+\NewChemIUPAC \para  { \textit {p} }
+
+% syn/anti
+\NewChemIUPAC \syn  { \textit {syn} }
+\NewChemIUPAC \anti { \textit {anti} }
+
+% coordination chemistry:
+\NewChemIUPAC \hapto  { \chemformula_hapto:n }
+\NewChemIUPAC \dento  { \chemformula_dento:n }
+\NewChemIUPAC \bridge { \chemformula_bridge:n }
+
+% attachments to heteroatoms / added hydrogen
+\NewChemIUPAC \hydrogen   { \textit {H} }
+\NewChemIUPAC \oxygen     { \textit {O} }
+\NewChemIUPAC \nitrogen   { \textit {N} }
+\NewChemIUPAC \sulfur     { \textit {S} }
+\NewChemIUPAC \phosphorus { \textit {P} }
+
+% atoms:
+\LetChemIUPAC \H  \hydrogen
+\LetChemIUPAC \O  \oxygen
+\LetChemIUPAC \N  \nitrogen
+\LetChemIUPAC \Sf \sulfur
+\LetChemIUPAC \P  \phosphorus
+
+% greek letters
+\NewChemIUPAC \a { \chemalpha }
+\NewChemIUPAC \b { \chembeta }
+\NewChemIUPAC \g { \chemgamma }
+\NewChemIUPAC \d { \chemdelta }
+\NewChemIUPAC \k { \chemkappa }
+\NewChemIUPAC \m { \chemmu }
+\NewChemIUPAC \n { \chemeta }
+\NewChemIUPAC \w { \chemomega }
+
+% --------------------------------------------------------------------------
+% latin phrases
+\tl_new:N  \l__chemmacros_latin_format_tl
+\tl_set:Nn \l__chemmacros_latin_format_tl { \itshape }
+
+\keys_define:nn { chemmacros / nomenclature }
+  {
+    latin-format .tl_set:N  = \l__chemmacros_latin_format_tl ,
+    latin-format .initial:n = \textit
+  }
+
+\cs_new_protected:Npn \chemmacros_latin:n #1
+  { { \l__chemmacros_latin_format_tl {#1} } }
+
+\cs_new_protected:Npn \chemmacros_define_latin:Nn #1#2
+  { \cs_set_protected:Npn #1 { \chemmacros_latin:n {#2} } }
+
+\chemmacros_new_macroset:nnn {Latin} {mm}
+  { \chemmacros_define_latin:Nn #1 {#2} }
+
+\AtBeginDocument
+  {
+    % if chemstyle is loaded use chemstyle's definition:
+    \chemmacros_if_package_loaded:nTF {chemstyle}
+      {
+        \AfterPackage* {chemstyle}
+          {
+            \cs_undefine:N \invacuo
+            \cs_set_eq:NN \chemmacros_latin:n \cst@latin
+          }
+      }
+      { \cs_new_eq:NN  \latin \chemmacros_latin:n }
+    \NewChemLatin \insitu   {in~situ}
+    \NewChemLatin \abinitio {ab~initio}
+    \NewChemLatin \invacuo  {in~vacuo}
+  }
+
+% --------------------------------------------------------------------------
+% hyperref support
+% ?? unsure about adding IUPAC commands
+\AfterPackage* { hyperref }
+  {
+    \pdfstringdefDisableCommands
+      {
+        % \cs_set:Npn \- { - } % maybe not a good idea...
+        \cs_set:Npn \| { }
+        % \cs_set:Npn \pH { pH }
+        % \cs_set:Npn \pOH { pOH }
+        \cs_set:Npn \iupac #1 {#1}
+        \cs_set:Npn \cip   #1 {(#1)}
+        \cs_set:Npn \cis   {cis}
+        \cs_set:Npn \trans {trans}
+        \cs_set:Npn \tert  {tert}
+        \cs_set:Npn \ortho {o}
+        \cs_set:Npn \meta  {m}
+        \cs_set:Npn \para  {p}
+        \cs_set:Npn \syn   {syn}
+        \cs_set:Npn \anti  {anti}
+        \cs_set:Npn \R     {(R)}
+        \cs_set:Npn \S     {(S)}
+        \cs_set:Npn \E     {(E)}
+        \cs_set:Npn \Z     {(Z)}
+        \cs_set:Npn \D     {D}
+        \cs_set:Npn \L     {L}
+        \cs_set:Npn \H     {H}
+        \cs_set:Npn \O     {O}
+        \cs_set:Npn \N     {N}
+        \cs_set:Npn \Sf    {S}
+        \cs_set:Npn \P     {P}
+        \cs_set:Npn \dexter     {D}
+        \cs_set:Npn \laevus     {L}
+        \cs_set:Npn \rectus     {(R)}
+        \cs_set:Npn \sinister   {(S)}
+        \cs_set:Npn \entgegen   {(E)}
+        \cs_set:Npn \zusammen   {(Z)}
+        \cs_set:Npn \hydrogen   {H}
+        \cs_set:Npn \oxygen     {O}
+        \cs_set:Npn \nitrogen   {N}
+        \cs_set:Npn \sulfur     {S}
+        \cs_set:Npn \phosphorus {P}
+      }
+  }
+  
+% --------------------------------------------------------------------------
+\tex_endinput:D

@@ -1,0 +1,72 @@
+% --------------------------------------------------------------------------
+%
+% the CHEMMACROS package -- module: `greek'
+%
+% --------------------------------------------------------------------------
+% Clemens Niederberger
+% --------------------------------------------------------------------------
+% https://github.org/cgnieder/chemmacros/
+% contact@mychemistry.eu
+% --------------------------------------------------------------------------
+% If you have any ideas, questions, suggestions or bugs to report, please
+% feel free to contact me.
+% --------------------------------------------------------------------------
+% Copyright 2011-2015 Clemens Niederberger
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Clemens Niederberger.
+% --------------------------------------------------------------------------
+\ChemModule{greek}{2015/06/09 upright greek symbols}
+
+\RequirePackage{chemgreek}[2015/04/09]
+
+\msg_new:nnn {chemmacros} {no-greek}
+  {
+    You~ haven't~ loaded~ any~ package~ for~ upright~ Greek~ letters~ or~ no~
+    unique~ choice~ was~ possible.~ Either~ load~ one~ of~ packages~
+    specified~ in~ the~ manual~ or~ select~ a~ chemgreek~ mapping~ manually.
+  }
+
+\msg_new:nnn {chemmacros} {greek-undefined}
+  {
+    The~ chemgreek~ mapping~ `#1'~ you~ chose~ \msg_line_context: \c_space_tl
+    is~ not~ defined.~ Please~ choose~ another~ one.
+  }
+
+% chemgreek selects a mapping if an unambiguous choice is possible, otherwise
+% selects `default'. Warn the user in this case:
+\AtBeginDocument{
+  \bool_if:nT
+    {
+      \chemgreek_if_mapping_active_p:n {default} ||
+      \chemgreek_if_mapping_active_p:n {var-default}
+    }
+    { \msg_warning:nn {chemmacros} {no-greek} }
+}
+
+% an option for manual selection:
+\keys_define:nn {chemmacros}
+  {
+    greek .code:n = \chemmacros_choose_chemgreek_mapping:n {#1}
+  }
+
+\cs_new_protected:Npn \chemmacros_choose_chemgreek_mapping:n #1
+  {
+    \chemgreek_if_mapping_exists:nTF {#1}
+      {
+        \chemgreek_load_mapping_package:n {#1}
+        \chemgreek_activate_mapping:n {#1}
+      }
+      { \msg_warning:nnn {chemmacros} {greek-undefined} {#1} }
+  }
+
+% --------------------------------------------------------------------------

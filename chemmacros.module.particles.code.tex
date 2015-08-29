@@ -1,0 +1,118 @@
+% --------------------------------------------------------------------------
+%
+% the CHEMMACROS package -- module: `particles'
+%
+% --------------------------------------------------------------------------
+% Clemens Niederberger
+% --------------------------------------------------------------------------
+% https://github.org/cgnieder/chemmacros/
+% contact@mychemistry.eu
+% --------------------------------------------------------------------------
+% If you have any ideas, questions, suggestions or bugs to report, please
+% feel free to contact me.
+% --------------------------------------------------------------------------
+% Copyright 2011-2015 Clemens Niederberger
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Clemens Niederberger.
+% --------------------------------------------------------------------------
+\ChemModule{particles}{2015/07/15 particles}
+  
+\chemmacros_load_modules:n {charges,chemformula}
+
+% --------------------------------------------------------------------------
+% particles
+\cs_new_protected:Nn \chemmacros_define_particle:Nn
+  { \cs_set_protected:Npn #1 { \chemformula_chcpd:nn {} {#2} } }
+
+\chemmacros_new_macroset:nnn {Particle} {mm}
+  { \chemmacros_define_particle:Nn #1 {#2} }
+
+% --------------------------------------------------------------------------
+% nucleophiles
+\cs_new_protected:Npn \chemmacros_elpair:n #1
+  {
+    \bool_if:NTF \l__chemmacros_elpair_dots_bool
+      { \chlewis { 0: } {#1} }
+      { \chlewis { 0| } {#1} }
+  }
+
+\bool_new:N \l__chemmacros_nucleophile_elpair_bool
+\bool_new:N \l__chemmacros_elpair_dots_bool
+
+\keys_define:nn {chemmacros/particles}
+  {
+    elpair         .choice: ,
+    elpair / false .code:n    =
+      { \bool_set_false:N \l__chemmacros_nucleophile_elpair_bool } ,
+    elpair / dots  .code:n    =
+      {
+        \bool_set_true:N \l__chemmacros_nucleophile_elpair_bool
+        \bool_set_true:N \l__chemmacros_elpair_dots_bool
+      } ,
+    elpair / dash  .code:n    =
+      {
+        \bool_set_true:N \l__chemmacros_nucleophile_elpair_bool
+        \bool_set_false:N \l__chemmacros_elpair_dots_bool
+      } ,
+    elpair         .default:n = dots
+  }
+
+\cs_new_protected:Npn \chemmacros_declare_nucleophile:Nn #1#2
+  {
+    \cs_set_protected:cpn {__chemmacros_ \chemmacros_remove_backslash:N #1:}
+      {
+        \bool_if:NTF \l__chemmacros_nucleophile_elpair_bool
+          { \chemmacros_elpair:n { #2 } \chemmacros_chemformula:n { {}- } }
+          { \chemmacros_chemformula:n { #2- } }
+      }
+    \DeclareDocumentCommand #1 {o}
+      {
+        \group_begin:
+          \IfNoValueF {##1}
+            { \keys_set:nn {chemmacros/particles} {##1} }
+          \use:c {__chemmacros_ \chemmacros_remove_backslash:N #1:}
+        \group_end:
+      }
+  }
+
+\chemmacros_new_macroset:nnn {Nucleophile} {mm}
+  { \chemmacros_declare_nucleophile:Nn #1 {#2} }
+
+
+
+% --------------------------------------------------------------------------
+% particles:
+\NewChemParticle \el  { e- }
+\NewChemParticle \prt { p+ }
+\NewChemParticle \ntr { n^0 }
+
+% ions, molecules
+% proton, hydroxide, hydronium/oxonium, water:
+\NewChemParticle \Hpl { H+ }
+\NewChemParticle \Hyd { OH- }
+\NewChemParticle \Oxo { H3O+ }
+\NewChemParticle \water { H2O }
+
+% electrophile:
+\NewChemParticle \El  { E+ }
+
+% nucleophiles:
+\NewChemNucleophile \Nuc {Nu}
+\NewChemNucleophile \ba  {ba}
+
+\ChemCompatibilityTo{5.2}
+  \DeclareChemDeprecated \Hto \Oxo
+  \DeclareChemDeprecated \Nu \Nuc
+\EndChemCompatibility
+
+% --------------------------------------------------------------------------

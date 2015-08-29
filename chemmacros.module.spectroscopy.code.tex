@@ -1,0 +1,469 @@
+% --------------------------------------------------------------------------
+%
+% the CHEMMACROS package -- module: `spectroscopy'
+%
+% --------------------------------------------------------------------------
+% Clemens Niederberger
+% --------------------------------------------------------------------------
+% https://github.org/cgnieder/chemmacros/
+% contact@mychemistry.eu
+% --------------------------------------------------------------------------
+% If you have any ideas, questions, suggestions or bugs to report, please
+% feel free to contact me.
+% --------------------------------------------------------------------------
+% Copyright 2011-2015 Clemens Niederberger
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Clemens Niederberger.
+% --------------------------------------------------------------------------
+\ChemModule{spectroscopy}{2015/06/09 environment for spectroscopic data}
+
+\chemmacros_load_modules:n {chemformula}
+\RequirePackage{siunitx}
+
+% spectroscopy
+\tl_new:N  \g__chemmacros_nmr_isotope_tl
+\tl_new:N  \l__chemmacros_nmr_isotope_default_tl
+\tl_set:Nn \l__chemmacros_nmr_isotope_default_tl { 1 }
+\tl_new:N  \l__chemmacros_nmr_coupling_nuclei_tl
+\tl_new:N  \l__chemmacros_nmr_coupling_nuclei_pre_tl
+\tl_set:Nn \l__chemmacros_nmr_coupling_nuclei_pre_tl { ( }
+\tl_new:N  \l__chemmacros_nmr_coupling_nuclei_post_tl
+\tl_set:Nn \l__chemmacros_nmr_coupling_nuclei_post_tl { ) }
+\tl_new:N  \l__chemmacros_nmr_coupling_bonds_tl
+\tl_new:N  \l__chemmacros_nmr_coupling_bonds_pre_tl
+\tl_set:Nn \l__chemmacros_nmr_coupling_bonds_pre_tl { }
+\tl_set:Nn \l__chemmacros_nmr_coupling_bonds_post_tl { \! }
+\tl_new:N  \l__chemmacros_nmr_coupling_symbol_tl
+\tl_set:Nn \l__chemmacros_nmr_coupling_symbol_tl { J }
+\tl_new:N  \g__chemmacros_nmr_element_coupled_tl
+\tl_new:N  \g__chemmacros_nmr_element_tl
+\tl_new:N  \l__chemmacros_nmr_element_default_tl
+\tl_set:Nn \l__chemmacros_nmr_element_default_tl { H }
+\tl_new:N  \l__chemmacros_nmr_format_tl
+\tl_new:N  \l__chemmacros_nmr_delta_tl
+\tl_new:N  \l__chemmacros_nmr_coupling_unit_tl
+\tl_set:Nn \l__chemmacros_nmr_coupling_unit_tl { \hertz }
+\tl_new:N  \l__chemmacros_nmr_unit_tl
+\tl_set:Nn \l__chemmacros_nmr_unit_tl { \mega\hertz }
+\tl_new:N  \l__chemmacros_nmr_list_setup_tl
+\tl_set:Nn \l__chemmacros_nmr_list_setup_tl
+  {
+    \topsep\z@skip \partopsep\z@skip 
+    \itemsep\z@ \parsep\z@ \itemindent\z@
+    \leftmargin\z@
+  }
+\tl_new:N  \l__chemmacros_nmr_position_tl
+\tl_new:N  \l__chemmacros_nmr_element_method_connector_tl
+\tl_set:Nn \l__chemmacros_nmr_element_method_connector_tl {-}
+\tl_new:N  \l__chemmacros_nmr_method_tl
+\tl_set:Nn \l__chemmacros_nmr_method_tl {NMR}
+
+\bool_new:N      \l__chemmacros_nmr_coupling_nuclei_sub_bool
+\bool_new:N      \l__chemmacros_nmr_frequency_bool
+\bool_new:N      \l__chemmacros_nmr_solvent_bool
+\bool_new:N      \l__chemmacros_nmr_delimiters_bool
+\bool_new:N      \l__chemmacros_nmr_comma_bool
+\bool_new:N      \l__chemmacros_nmr_inner_bool
+\bool_new:N      \l__chemmacros_nmr_position_side_bool
+\bool_new:N      \l__chemmacros_nmr_parse_bool
+\bool_set_true:N \l__chemmacros_nmr_parse_bool
+\bool_new:N      \l__chemmacros_nmr_list_bool
+\bool_new:N      \l__chemmacros_nmr_use_equal_bool
+\bool_new:N      \l__chemmacros_nmr_custom_command_active_bool
+\bool_new:N      \l__chemmacros_nmr_custom_command_used_bool
+
+\cs_new_protected:Npn \__chemmacros_nmr_nucleus:nn #1#2
+  {
+    \tl_gset:Nn \g__chemmacros_nmr_isotope_tl {#1}
+    \tl_if_in:nnTF {#2} {[} % ]
+      { \__chemmacros_nmr_element:w #2 \q_stop }
+      {
+        \tl_gset:No \g__chemmacros_nmr_element_tl {#2}
+        \tl_gclear:N \g__chemmacros_nmr_element_coupled_tl
+      }
+  }
+\cs_generate_variant:Nn \__chemmacros_nmr_nucleus:nn { VV }
+
+\cs_new_protected:Npn \__chemmacros_nmr_nucleus:w #1,#2 \q_stop
+  {
+    \tl_gset:Nn \g__chemmacros_nmr_isotope_tl {#1}
+    \tl_if_in:nnTF {#2} {[} % ]
+      { \__chemmacros_nmr_element:w #2 \q_stop }
+      {
+        \tl_gset:No \g__chemmacros_nmr_element_tl {#2}
+        \tl_gclear:N \g__chemmacros_nmr_element_coupled_tl
+      }
+  }
+
+\cs_new_protected:Npn \__chemmacros_nmr_element:w #1[#2] \q_stop
+  {
+    \tl_gset:Nn \g__chemmacros_nmr_element_tl {#1}
+    \tl_gset:Nn \g__chemmacros_nmr_element_coupled_tl {#2}
+  }
+
+\cs_new_protected:Npn \__chemmacros_nmr_default_nucleus:w #1,#2 \q_stop
+  {
+    \tl_set:Nn \l__chemmacros_nmr_isotope_default_tl {#1}
+    \tl_set:Nn \l__chemmacros_nmr_element_default_tl {#2}
+  }
+
+\cs_new_protected:Npn \__chemmacros_nmr_base:nn #1#2
+  {
+    \tl_if_blank:VF \g__chemmacros_nmr_element_coupled_tl
+      {
+        \tl_put_left:Nn \g__chemmacros_nmr_element_coupled_tl { \{ }
+        \tl_put_right:Nn \g__chemmacros_nmr_element_coupled_tl { \} }
+      }
+    \tl_put_left:Nn \g__chemmacros_nmr_element_coupled_tl {#2}
+    \chemmacros_chemformula:n { ^{#1} }
+    \bool_if:NTF \l__chemmacros_nmr_parse_bool
+      { \chemformula_ch:nV {} \g__chemmacros_nmr_element_coupled_tl }
+      { \chemmacros_chemformula:V \g__chemmacros_nmr_element_coupled_tl }
+    \tl_use:N \l__chemmacros_nmr_element_method_connector_tl
+    \tl_use:N \l__chemmacros_nmr_method_tl
+  }
+\cs_generate_variant:Nn \__chemmacros_nmr_base:nn { VV }
+
+\cs_new_protected:Npn \__chemmacros_nmr_frequency:n #1
+  {
+    \tl_if_in:nnTF {#1} {,}
+      { \__chemmacros_nmr_frequency_aux_i:w #1 \q_stop }
+      { \__chemmacros_nmr_frequency_aux_ii:n {#1} }
+  }
+
+\cs_new_protected:Npn \__chemmacros_nmr_frequency_aux_i:w #1,#2 \q_stop
+  { \SI {#1} {#2} }
+
+\cs_new_protected:Npn \__chemmacros_nmr_frequency_aux_ii:n #1
+  { \SI {#1} { \tl_use:N \l__chemmacros_nmr_unit_tl } }
+
+\cs_new_eq:NN \__chemmacros_nmr_number:n \use:n
+\cs_new_eq:NN \__chemmacros_nmr_position:n \use:n
+
+\keys_define:nn { chemmacros / spectroscopy }
+  {
+    unit          .tl_set:N      = \l__chemmacros_nmr_unit_tl ,
+    unit          .default:n     = \mega\hertz ,
+    nucleus       .code:n        =
+      { \__chemmacros_nmr_default_nucleus:w #1 \q_stop } ,
+    nucleus       .default:n     = {1,H} ,
+    format        .tl_set:N      = \l__chemmacros_nmr_format_tl ,
+    method        .tl_set:N      = \l__chemmacros_nmr_method_tl ,
+    connector     .tl_set:N      = \l__chemmacros_nmr_element_method_connector_tl ,
+    pos-number    .choice: ,
+    pos-number / sub  .code:n =
+      \tl_set:Nn \l__chemmacros_nmr_position_tl {_}
+      \bool_set_false:N \l__chemmacros_nmr_position_side_bool ,
+    pos-number / super .code:n =
+      \tl_set:Nn \l__chemmacros_nmr_position_tl {^}
+      \bool_set_false:N \l__chemmacros_nmr_position_side_bool ,
+    pos-number / side .code:n =
+      \tl_set:Nn \l__chemmacros_nmr_position_tl {-}
+      \bool_set_true:N \l__chemmacros_nmr_position_side_bool ,
+    coupling-unit .tl_set:N   = \l__chemmacros_nmr_coupling_unit_tl ,
+    coupling-pos  .choice: ,
+    coupling-pos / sub .code:n =
+      \bool_set_true:N \l__chemmacros_nmr_coupling_nuclei_sub_bool ,
+    coupling-pos / side .code:n =
+      \bool_set_false:N \l__chemmacros_nmr_coupling_nuclei_sub_bool ,
+    coupling-nuclei-pre  .tl_set:N =
+      \l__chemmacros_nmr_coupling_nuclei_pre_tl ,
+    coupling-nuclei-post .tl_set:N =
+      \l__chemmacros_nmr_coupling_nuclei_post_tl ,
+    coupling-bonds-pre   .tl_set:N =
+      \l__chemmacros_nmr_coupling_bonds_pre_tl ,
+    coupling-bonds-post  .tl_set:N =
+      \l__chemmacros_nmr_coupling_bonds_post_tl ,
+    coupling-symbol .tl_set:N    =
+      \l__chemmacros_nmr_coupling_symbol_tl ,
+    atom-number-cs .code:n       =
+      \cs_set_eq:NN \__chemmacros_nmr_number:n #1 ,
+    coupling-pos-cs .code:n      =
+      \cs_set_eq:NN \__chemmacros_nmr_position:n #1 ,
+    parse         .bool_set:N    = \l__chemmacros_nmr_parse_bool ,
+    delta         .code:n        =
+      \tl_set:Nn \l__chemmacros_nmr_delta_tl {\,#1} ,
+    list          .bool_set:N    = \l__chemmacros_nmr_list_bool ,
+    list          .default:n     = true ,
+    list-setup    .tl_set:N      = \l__chemmacros_nmr_list_setup_tl ,
+    use-equal     .bool_set:N    = \l__chemmacros_nmr_use_equal_bool ,
+    use-equal     .default:n     = true
+  }
+
+\cs_new_protected:Npn \chemmacros_define_nmr:Nn #1#2
+  {
+    \cs_if_exist:NTF #1
+      {
+        \RenewDocumentCommand #1 { s }
+          { \IfBooleanTF {##1} { \NMR*{#2} } { \NMR{#2} } }
+      }
+      {
+        \NewDocumentCommand #1 { s }
+          { \IfBooleanTF {##1} { \NMR*{#2} } { \NMR{#2} } }
+      }
+  }
+
+\chemmacros_new_macroset:nnn {NMR} {mm} { \chemmacros_define_nmr:Nn #1 {#2} }
+
+\NewDocumentCommand \NMR { sG{}D(){}O{} }
+  {
+    \IfBooleanTF {#1}
+      { \chemmacros_nmr:nnnn {*} {#2} {#3} {#4} }
+      { \chemmacros_nmr:nnnn { } {#2} {#3} {#4} }
+  }
+
+\AtBeginDocument
+  {
+    % \NMR{<num>,<elem>}(<num>,<unit>)[<solvent>] ALL arguments are optional
+    % \NMR* same but without ": $\delta$" at end
+    \cs_new_protected:Npn \chemmacros_nmr:nnnn #1#2#3#4
+      {
+        \bool_if:NT \l__chemmacros_nmr_list_bool { \item \scan_stop: }
+        \group_begin:
+          \chemmacros_leave_vmode:
+          \bool_set_false:N \l__chemmacros_nmr_frequency_bool
+          \bool_set_false:N \l__chemmacros_nmr_solvent_bool
+          \tl_if_empty:nF {#3}
+            { \bool_set_true:N \l__chemmacros_nmr_frequency_bool }
+          \tl_if_empty:nF {#4}
+            { \bool_set_true:N \l__chemmacros_nmr_solvent_bool }
+          \bool_if:nT
+            {
+              \l__chemmacros_nmr_frequency_bool
+              ||
+              \l__chemmacros_nmr_solvent_bool
+            }
+            { \bool_set_true:N \l__chemmacros_nmr_delimiters_bool }
+          \bool_if:nT
+            {
+              \l__chemmacros_nmr_frequency_bool
+              &&
+              \l__chemmacros_nmr_solvent_bool
+            }
+            { \bool_set_true:N \l__chemmacros_nmr_comma_bool }
+          \tl_if_empty:nTF {#2}
+            {
+              \__chemmacros_nmr_nucleus:VV
+                \l__chemmacros_nmr_isotope_default_tl
+                \l__chemmacros_nmr_element_default_tl
+            }
+            { \__chemmacros_nmr_nucleus:w #2 \q_stop }
+          \mode_if_math:TF
+            {
+              \text
+                {
+                  \group_begin:
+                    \tl_use:N \l__chemmacros_nmr_format_tl
+                    \__chemmacros_nmr_base:VV
+                      \g__chemmacros_nmr_isotope_tl
+                      \g__chemmacros_nmr_element_tl
+                    \bool_if:NT \l__chemmacros_nmr_delimiters_bool
+                      { ~ ( }
+                    \bool_if:NT \l__chemmacros_nmr_frequency_bool
+                      { \__chemmacros_nmr_frequency:n {#3} }
+                    \bool_if:NT \l__chemmacros_nmr_comma_bool
+                      { , ~ }
+                    \bool_if:NT \l__chemmacros_nmr_solvent_bool
+                      { \chemmacros_chemformula:n {#4} }
+                    \bool_if:NT \l__chemmacros_nmr_delimiters_bool
+                      { ) }
+                    \tl_if_blank:nT {#1} {:~}
+                  \group_end:
+                }
+              \tl_if_blank:nT {#1}
+                {
+                  \delta
+                  \text { \l__chemmacros_nmr_delta_tl }
+                  \bool_if:NT \l__chemmacros_nmr_use_equal_bool {=}
+                }
+            }
+            {
+              \group_begin:
+                \tl_use:N \l__chemmacros_nmr_format_tl
+                \__chemmacros_nmr_base:VV
+                  \g__chemmacros_nmr_isotope_tl
+                  \g__chemmacros_nmr_element_tl
+                \bool_if:NT \l__chemmacros_nmr_delimiters_bool
+                  {~(}
+                \bool_if:NT \l__chemmacros_nmr_frequency_bool
+                  { \__chemmacros_nmr_frequency:n {#3} }
+                \bool_if:NT \l__chemmacros_nmr_comma_bool
+                  {,~}
+                \bool_if:NT \l__chemmacros_nmr_solvent_bool
+                  {
+                    \bool_if:NTF \l__chemmacros_nmr_parse_bool
+                      { \chemformula_ch:nn { } {#4} }
+                      {#4}
+                  }
+                \bool_if:NT \l__chemmacros_nmr_delimiters_bool
+                  {)}
+                \tl_if_blank:nT {#1} {:}
+              \group_end:
+              \tl_if_blank:nT {#1}
+                {
+                  \tl_use:N \c_space_tl
+                  \c_math_toggle_token
+                    \delta
+                  \c_math_toggle_token
+                  \l__chemmacros_nmr_delta_tl
+                  \bool_if:NT \l__chemmacros_nmr_use_equal_bool {~=}
+                }
+            }
+        \group_end:
+      }
+  }
+
+\NewDocumentCommand \chemmacros_data:w { smo }
+  {
+    \bool_if:NT \l__chemmacros_nmr_list_bool { \item }
+    {
+      \tl_use:N \l__chemmacros_nmr_format_tl #2
+      \IfNoValueF {#3} { ~ ( #3 ) }
+      \IfBooleanT {#1} { \bool_if:NT \l__chemmacros_nmr_use_equal_bool { : } }
+    }
+    \IfBooleanF {#1} { \bool_if:NT \l__chemmacros_nmr_use_equal_bool { ~ = } }
+  }
+
+\cs_new_protected:Npn \chemmacros_val:n #1
+  {
+    \tl_if_in:nnTF {#1} {--}
+      { \chemmacros_val_aux:w #1 \q_nil }
+      { \num {#1} }
+  }
+
+\cs_new_protected:Npn \chemmacros_val_aux:w #1--#2 \q_nil
+  { \numrange {#1} {#2} }
+
+\NewDocumentEnvironment {experimental} {o}
+  {
+    \group_begin:
+    \IfNoValueF {#1} { \keys_set:nn {chemmacros/spectroscopy} {#1} }
+    \bool_set_true:N \l__chemmacros_nmr_inner_bool
+    \cs_set_eq:NN \#    \chemmacros_nmr_number:n
+    \cs_set_eq:NN \pos  \chemmacros_nmr_position:n
+    \cs_set_eq:NN \J    \chemmacros_nmr_coupling:w
+    \cs_set_eq:NN \data \chemmacros_data:w
+    \cs_set_eq:NN \val  \chemmacros_val:n
+    \bool_if:NT \l__chemmacros_nmr_list_bool
+      { \list {} { \l__chemmacros_nmr_list_setup_tl } }
+  }
+  {
+    \bool_if:NT \l__chemmacros_nmr_list_bool
+      { \endlist }
+    \group_end:
+    \chemmacros_ignore_spaces:
+  }
+
+\cs_new_protected:Npn \chemmacros_nmr_number:n #1
+  {
+    \__chemmacros_nmr_number:n {#1} \,
+    \chemmacros_chemformula:V \g__chemmacros_nmr_element_tl
+  }
+
+\cs_new_protected:Npn \chemmacros_nmr_position:n #1
+  {
+    \chemmacros_chemformula:x
+      {
+        \exp_not:V \g__chemmacros_nmr_element_tl
+        \bool_if:NF \l__chemmacros_nmr_position_side_bool
+          {
+            \exp_not:V \l__chemmacros_nmr_position_tl
+            \exp_not:n { {#1} }
+          }
+      }
+    \bool_if:NT \l__chemmacros_nmr_position_side_bool
+      {
+        \tl_use:N \l__chemmacros_nmr_position_tl
+        \__chemmacros_nmr_position:n {#1}
+      }
+  }
+
+\cs_new_protected:Npn \chemmacros_nmr_coupling:w
+  {
+    \tl_clear:N \l__chemmacros_nmr_coupling_nuclei_tl
+    \tl_clear:N \l__chemmacros_nmr_coupling_bonds_tl
+    \peek_meaning:NTF (
+      { \__chemmacros_nmr_coupling:w }
+      { \__chemmacros_nmr_coupling_aux_i:w }
+  }
+
+\cs_new_protected:Npn \__chemmacros_nmr_coupling:w (#1;#2)
+  {
+    \tl_set:Nn \l__chemmacros_nmr_coupling_bonds_tl
+      {
+        \l__chemmacros_nmr_coupling_bonds_pre_tl
+        #1
+        \l__chemmacros_nmr_coupling_bonds_post_tl
+      }
+    \bool_if:NTF \l__chemmacros_nmr_coupling_nuclei_sub_bool
+      {
+        \tl_set:Nn \l__chemmacros_nmr_coupling_nuclei_tl
+          {
+            \c_math_subscript_token
+              { \chemmacros_chemformula:n {#2} }
+          }
+      }
+      {
+        \tl_set:Nn \l__chemmacros_nmr_coupling_nuclei_tl
+          {
+            \l__chemmacros_nmr_coupling_nuclei_pre_tl
+            \chemmacros_chemformula:n {#2}
+            \l__chemmacros_nmr_coupling_nuclei_post_tl
+          }
+      }
+    \__chemmacros_nmr_coupling_aux_i:w
+  }
+
+\cs_new_protected:Npn \__chemmacros_nmr_coupling_aux_i:w
+  {
+    \peek_meaning:NTF [
+      { \__chemmacros_nmr_coupling_aux_ii:w }
+      { \__chemmacros_nmr_coupling_aux_iii:n }
+  }
+
+\cs_new_protected:Npn \__chemmacros_nmr_coupling_aux_ii:w [#1]#2
+  {
+    \group_begin:
+      \sisetup
+        {
+          list-final-separator={,~},
+          list-pair-separator={,~},
+          list-units=single
+        }
+      \c_math_toggle_token
+        ^{ \l__chemmacros_nmr_coupling_bonds_tl }
+        \l__chemmacros_nmr_coupling_symbol_tl
+        \l__chemmacros_nmr_coupling_nuclei_tl = \SIlist {#2} {#1}
+      \c_math_toggle_token
+    \group_end:
+  }
+
+\cs_new_protected:Npn \__chemmacros_nmr_coupling_aux_iii:n #1
+  {
+    \group_begin:
+      \sisetup
+        {
+          list-final-separator={,~},
+          list-pair-separator={,~},
+          list-units=single
+        }
+      \c_math_toggle_token
+         ^{ \l__chemmacros_nmr_coupling_bonds_tl }
+         \l__chemmacros_nmr_coupling_symbol_tl
+         \l__chemmacros_nmr_coupling_nuclei_tl
+         = \exp_args:Nno \SIlist {#1} { \l__chemmacros_nmr_coupling_unit_tl }
+      \c_math_toggle_token
+    \group_end:
+  }
+
+% --------------------------------------------------------------------------

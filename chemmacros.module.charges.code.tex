@@ -1,0 +1,152 @@
+% --------------------------------------------------------------------------
+%
+% the CHEMMACROS package -- module: `charges'
+%
+% --------------------------------------------------------------------------
+% Clemens Niederberger
+% --------------------------------------------------------------------------
+% https://github.org/cgnieder/chemmacros/
+% contact@mychemistry.eu
+% --------------------------------------------------------------------------
+% If you have any ideas, questions, suggestions or bugs to report, please
+% feel free to contact me.
+% --------------------------------------------------------------------------
+% Copyright 2011-2015 Clemens Niederberger
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Clemens Niederberger.
+% --------------------------------------------------------------------------
+\ChemModule{charges}{2015/07/30 charges}
+
+\chemmacros_load_module:n {chemformula}
+
+% --------------------------------------------------------------------------
+% circled charge signs: they are defined in the `chemformula' package:
+% use directly:
+\cs_new_protected:Npn \fplus  { { \chemformula_fplus:  } }
+\cs_new_protected:Npn \fminus { { \chemformula_fminus: } }
+
+% change output depending on circled-option
+\bool_new:N      \l__chemmacros_circled_bool
+\bool_set_true:N \l__chemmacros_circled_bool
+\bool_new:N      \l__chemmacros_circled_formal_bool
+\bool_set_true:N \l__chemmacros_circled_formal_bool
+\bool_new:N      \l__chemmacros_circled_chem_bool
+\bool_set_true:N \l__chemmacros_circled_chem_bool
+
+
+\keys_define:nn { chemmacros / charges }
+  {
+    circletype         .choice: ,
+    circletype / math  .code:n  =
+      {
+        \bool_set_false:N \l__chemmacros_circled_chem_bool
+        \bool_set_false:N \l_chemformula_formal_chem_bool
+      } ,
+    circletype / chem  .code:n  =
+      {
+        \bool_set_true:N \l__chemmacros_circled_chem_bool
+        \bool_set_true:N \l_chemformula_formal_chem_bool
+      } ,
+    circletype         .value_required:n = true ,
+    circled            .choice: ,
+    circled / none     .code:n =
+      {
+        \bool_set_false:N \l__chemmacros_circled_bool
+        \bool_set_false:N \l__chemmacros_circled_formal_bool
+        \bool_set_false:N \l_chemformula_formal_charges_bool
+      } ,
+    circled / formal   .code:n =
+      {
+        \bool_set_true:N \l__chemmacros_circled_bool
+        \bool_set_true:N \l__chemmacros_circled_formal_bool
+        \bool_set_false:N \l_chemformula_formal_charges_bool
+      } ,
+    circled / all      .code:n =
+      {
+        \bool_set_true:N \l__chemmacros_circled_bool
+        \bool_set_false:N \l__chemmacros_circled_formal_bool
+        \bool_set_true:N \l_chemformula_formal_charges_bool
+      } ,
+    circled            .default:n  = all
+  }
+
+\cs_new_protected:Npn \chemmacros_plus:  { \chemformula_plus: }
+\cs_new_protected:Npn \chemmacros_minus: { \chemformula_minus: }
+
+\cs_new_protected:Npn \chemmacros_formal_plus: { \chemformula_formal_plus: }
+\cs_new_protected:Npn \chemmacros_formal_minus: { \chemformula_formal_minus: }
+
+\cs_new_protected:Npn \chemmacros_charge:n #1
+  { \chemmacros_chemformula:n { {}^{#1} } }
+
+\cs_new_protected:Npn \chemmacros_new_charge_command:Nn #1#2
+  {
+    \DeclareDocumentCommand #1 {o}
+      {
+        \IfNoValueTF {##1}
+          { \chemmacros_charge:n {#2} }
+          { \chemmacros_charge:n {##1#2} }
+      }
+  }
+
+\tl_new:N  \l__chemmacros_partial_charge_format_tl
+\tl_set:Nn \l__chemmacros_partial_charge_format_tl { \tiny }
+
+\cs_new_protected:Npn \chemmacros_new_partial_charge_command:Nn #1#2
+  {
+    \cs_new_protected:Npn #1
+      {
+        \mbox {
+          \l__chemmacros_partial_charge_format_tl
+          \c_math_toggle_token \delta #2 \c_math_toggle_token
+        }
+      }
+  }
+
+\chemmacros_new_macroset:nnn {Charge} {mm}
+  { \chemmacros_new_charge_command:Nn #1 {#2} }
+  
+\chemmacros_new_macroset:nnn {PartialCharge} {mm}
+  { \chemmacros_new_partial_charge_command:Nn #1 {#2} }
+
+\cs_new_protected:Npn \scrm
+  { \ensuremath { \scriptstyle \chemmacros_minus: } }
+\cs_new_protected:Npn \scrp
+  { \ensuremath { \scriptstyle \chemmacros_plus: } }
+\cs_new_protected:Npn \fscrm
+  { \ensuremath { \scriptstyle \chemmacros_formal_minus: } }
+\cs_new_protected:Npn \fscrp
+  { \ensuremath { \scriptstyle \chemmacros_formal_plus: } }
+\cs_new_protected:Npn \fsscrm
+  { \ensuremath { \scriptscriptstyle \chemmacros_formal_minus: } }
+\cs_new_protected:Npn \fsscrp
+  { \ensuremath { \scriptscriptstyle \chemmacros_formal_plus: } }
+
+\keys_define:nn {chemmacros/charges}
+  {
+    partial-format .tl_set:N = \l__chemmacros_partial_charge_format_tl
+  }
+
+% --------------------------------------------------------------------------
+\NewChemCharge \mch  { \chemmacros_minus: }
+\NewChemCharge \pch  { \chemmacros_plus: }
+\NewChemCharge \fmch { \chemmacros_formal_minus: }
+\NewChemCharge \fpch { \chemmacros_formal_plus: }
+
+% partial charges:
+\NewChemPartialCharge \delm  { \chemmacros_minus: }
+\NewChemPartialCharge \delp  { \chemmacros_plus: }
+\NewChemPartialCharge \fdelm { \chemmacros_formal_minus: }
+\NewChemPartialCharge \fdelp { \chemmacros_formal_plus: }
+
+% --------------------------------------------------------------------------
