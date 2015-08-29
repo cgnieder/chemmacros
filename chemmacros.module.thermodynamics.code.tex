@@ -30,6 +30,7 @@
 \RequirePackage {siunitx}
 
 \tl_new:N \l__chemmacros_state_pre_tl
+\tl_new:N \l__chemmacros_state_post_tl
 \tl_new:N \l__chemmacros_state_sp_left_tl
 \tl_new:N \l__chemmacros_state_sb_left_tl
 \tl_new:N \l__chemmacros_state_sp_right_tl
@@ -45,6 +46,7 @@
 \keys_define:nn {chemmacros/thermodynamics}
   {
     pre               .tl_set:N   = \l__chemmacros_state_pre_tl ,
+    post              .tl_set:N   = \l__chemmacros_state_post_tl ,
     superscript-left  .tl_set:N   = \l__chemmacros_state_sp_left_tl ,
     superscript-right .tl_set:N   = \l__chemmacros_state_sp_right_tl ,
     superscript       .meta:n     = { superscript-right = #1 } ,
@@ -58,6 +60,7 @@
 \cs_new_protected:Npn \chemmacros_state:nn #1#2
   {
     % pre (\Delta)
+    % post
     % superscript-left
     % superscript-right (\standardstate)
     % subscript-left
@@ -76,6 +79,7 @@
             { \chemmacros_text:V \l__chemmacros_state_sp_right_tl }
           \c_math_subscript_token
             { \chemmacros_text:V \l__chemmacros_state_sb_right_tl }
+          \chemmacros_text:V \l__chemmacros_state_post_tl
         }
     \group_end:
   }
