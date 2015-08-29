@@ -2759,6 +2759,8 @@ These options are available:
 \begin{options}
   \keyval{pre}{text}\Module{thermodynamics}\Default{\cs{changestate}}
     The symbol before the variable. Inserted in text mode.
+  \keyval{post}{text}\Module{thermodynamics}\Default
+    The symbol after the variable. Inserted in text mode.
   \keyval{superscript-left}{text}\Module{thermodynamics}\Default
     The left superscript. Inserted in text mode.
   \keyval{superscript-right}{text}\Module{thermodynamics}\Default{\cs{standardstate}}
@@ -2801,24 +2803,26 @@ number and unit:
 
 \begin{options}
   \keyval{pre}{text}\Module{thermodynamics}\Default{\cs{changestate}}
-    The symbol before the variable. Inserted in text mode.
+    The symbol before the variable.  Inserted in text mode.
+  \keyval{post}{text}\Module{thermodynamics}\Default
+    The symbol after the variable.  Inserted in text mode.
   \keyval{superscript-left}{text}\Module{thermodynamics}\Default
-    The left superscript. Inserted in text mode.
+    The left superscript.  Inserted in text mode.
   \keyval{superscript-right}{text}\Module{thermodynamics}\Default{\cs{standardstate}}
     The right superscript. Inserted in text mode.
   \keyval{superscript}{text}\Module{thermodynamics}
     An alias of \option{superscript-right}.
   \keyval{subscript-left}{text}\Module{thermodynamics}\Default
-    The left subscript. Inserted in text mode.
+    The left subscript.  Inserted in text mode.
   \keyval{subscript-right}{text}\Module{thermodynamics}\Default
-    The right subscript. Inserted in text mode.
+    The right subscript.  Inserted in text mode.
   \keyval{subscript}{text}\Module{thermodynamics}
     An alias of \option{subscript-left}.
   \keychoice{subscript-pos}{left,right}\Module{thermodynamics}\Default{left}
     Determines wether the subscript given in \darg{subscript} is placed to the
     left or the right of the variable.
   \keyval{symbol}{symbol}\Module{thermodynamics}\Default
-    The symbol of the variable. Inserted in math mode.
+    The symbol of the variable.  Inserted in math mode.
   \keyval{unit}{unit}\Module{thermodynamics}\Default
     A valid \pkg{siunitx} unit.
 \end{options}
@@ -2859,17 +2863,19 @@ its settings:
 The argument \meta{options} is a comma separated list of key/value options:
 \begin{options}
   \keyval{pre}{text}\Module{thermodynamics}\Default{\cs{changestate}}
-    The symbol before the variable.
+    The symbol before the variable.  Inserted in text mode.
+  \keyval{post}{text}\Module{thermodynamics}\Default
+    The symbol after the variable.  Inserted in text mode.
   \keyval{superscript-left}{text}\Module{thermodynamics}\Default
-    The left superscript.
+    The left superscript.  Inserted in text mode.
   \keyval{superscript-right}{text}\Module{thermodynamics}\Default{\cs{standardstate}}
     The right superscript.
   \keyval{superscript}{text}\Module{thermodynamics}
     An alias of \option{superscript-right}.
   \keyval{subscript-left}{text}\Module{thermodynamics}\Default
-    The left subscript.
+    The left subscript.  Inserted in text mode.
   \keyval{subscript-right}{text}\Module{thermodynamics}\Default
-    The right subscript.
+    The right subscript.  Inserted in text mode.
   \keyval{subscript}{text}\Module{thermodynamics}
     An alias of \option{subscript-left}.
   \keychoice{subscript-pos}{left,right}\Module{thermodynamics}\Default{left}
