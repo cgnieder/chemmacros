@@ -1,11 +1,12 @@
 --------------------------------------------------------------------------
-the CHEMMACROS package v4.7 2015/02/08
+the CHEMMACROS package v5.0 2015/08/29
 
-  macros and commands for chemists
+  comprehensive support for typesetting chemistry documents
 
 --------------------------------------------------------------------------
 Clemens Niederberger
 Web:    https://github.com/cgnieder/chemmacros/
+        http://www.mychemistry.eu/forums/forum/2430/
 E-Mail: contact@mychemistry.eu
 --------------------------------------------------------------------------
 Copyright 2011-2015 Clemens Niederberger
@@ -23,8 +24,10 @@ This work has the LPPL maintenance status `maintained'.
 The Current Maintainer of this work is Clemens Niederberger.
 --------------------------------------------------------------------------
 The chemmacros package consists of the following files
- - chemmacros.sty,
+ - chemmacros.sty, chemmacros4.sty, chemmacros5.sty,
  - chemmacros_en.tex, chemmacros_en.pdf,
+ - quite a number of module files following the naming scheme
+   chemmacros.module.*.code.tex
  - README
 --------------------------------------------------------------------------
 If you have any ideas, questions, suggestions or bugs to report, please
