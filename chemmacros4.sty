@@ -1283,16 +1283,9 @@
   
 \bool_new:N \l__chemmacros_inside_iupac_bool
 
-\group_begin:
-\char_set_catcode_active:N \~
-\char_set_lccode:nn {`~} {`|}
-\tl_to_lowercase:n { \group_end: \cs_set_eq:NN ~ } \chemmacros_break_point:
+\char_set_active_eq:NN | \chemmacros_break_point:
 
-\group_begin:
-\char_set_catcode_active:N \~
-\char_set_lccode:nn {`~} {`^}
-\tl_to_lowercase:n { \group_end: \cs_set_protected:Npn ~ }
-  { \chemmacros_superscript: }
+\char_set_active_eq:NN ^ \chemmacros_superscript:
 
 \group_begin:
 \char_set_catcode_active:N \|
