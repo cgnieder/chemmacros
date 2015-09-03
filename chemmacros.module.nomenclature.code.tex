@@ -391,6 +391,12 @@
       { \chemmacros_define_iupac_shorthand:Npn #1#2 {#3} }
   }
 
+\NewDocumentCommand \ProvideChemIUPACShorthand {mlm} 
+  {
+    \seq_if_in:NnF \l__chemmacros_iupac_shorthands_seq {#1}
+      { \chemmacros_define_iupac_shorthand:Npn #1#2 {#3} }
+  }
+
 \NewDocumentCommand \RenewChemIUPACShorthand {mlm} 
   {
     \seq_if_in:NnTF \l__chemmacros_iupac_shorthands_seq {#1}

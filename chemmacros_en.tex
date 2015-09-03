@@ -56,9 +56,9 @@
       CNMR,
     data, DeclareChemArrow, DeclareChemBond, DeclareChemBondAlias,
       declarechemgreekmapping, DeclareChemCharge, DeclareChemIUPAC,
-      DeclareChemLatin, DeclareChemNMR, DeclareChemNucleophile,
-      DeclareChemPartialCharge, DeclareChemParticle, DeclareChemPhase,
-      DeclareChemReaction, DeclareChemState,
+      DeclareChemIUPACShorthand, DeclareChemLatin, DeclareChemNMR,
+      DeclareChemNucleophile, DeclareChemPartialCharge, DeclareChemParticle,
+      DeclareChemPhase, DeclareChemReaction, DeclareChemState,
       delm, delp, Delta, Dfi,
     el, ElPot, endo, Enthalpy, enthalpy, entropy,
     fdelm, fdelp, fmch, fminus, fpch, fplus, fscrm, fscrp,
@@ -70,15 +70,20 @@
     Lfi, listofreactions, lqd,
     mch, mega, meta, mhName,
     NewChemArrow, NewChemBond, NewChemBondAlias,
-      newchemgreekmapping, NewChemCharge, NewChemIUPAC, NewChemLatin,
-      NewChemNMR, NewChemNucleophile, NewChemPartialCharge, NewChemParticle,
-      NewChemPhase, NewChemReaction, NewChemState,
+      newchemgreekmapping, NewChemCharge, NewChemIUPAC, NewChemIUPACShorthand,
+      NewChemLatin, NewChemNMR, NewChemNucleophile, NewChemPartialCharge,
+      NewChemParticle, NewChemPhase, NewChemReaction, NewChemState,
       newman, nitrogen, NMR, Nu, Nuc,
     orbital, ortho, ox, OX, oxygen,
     para, pch, per, pH, phase, phosphorus, photon, pKa, pKb, pOH, pos,
-      positron, Pot, prt,
-    Rad, redox, RenewChemArrow, RenewChemBond, renewchemgreekmapping,
-      renewChemCharge, RenewChemIUPAC, RenewChemLatin, RenewChemNMR,
+      positron, Pot, ProvideChemArrow, ProvideChemBond, ProvideChemCharge,
+      ProvideChemIUPAC, ProvideChemIUPACShorthand, ProvideChemLatin,
+      ProvideChemNMR, ProvideChemNucleophile, ProvideChemPartialCharge,
+      ProvideChemParticle, ProvideChemPhase, ProvideChemReaction,
+      ProvideChemState, prt,
+    Rad, redox, RemoveChemIUPACShorthand, RenewChemArrow, RenewChemBond,
+      renewchemgreekmapping, renewChemCharge, RenewChemIUPAC,
+      RenewChemIUPACShorthand, RenewChemLatin, RenewChemNMR,
       RenewChemNucleophile, RenewChemPartialCharge, RenewChemParticle,
       RenewChemPhase, RenewChemState,
     Sf, scrm, scrp, second, selectchemgreekmapping, setchemformula,
@@ -1158,7 +1163,7 @@ Two options allow customization:
   \iupac{1,3\-Di|methyl|benzene}
 \end{example}
 
-\subsubsection{Own \cs*{iupac} Macros}
+\subsubsection{Own \cs*{iupac} Macros And Shorthands}
 
 If you find any commands missing you can define them using
 \begin{commands}
@@ -1198,6 +1203,34 @@ commands.
   \RenewChemIUPAC\meta{\textup{m}}
   \iupac{\meta\-Xylol}
 \end{example}
+
+There's also a way for defining new \ac{iupac} shorthands or changing the
+existing ones:
+\begin{commands}
+  \command{NewChemIUPACShorthand}[\meta{shorthand token}\meta{arg
+    spec}\marg{code}]
+    Defines a new \ac{iupac} shorthand.  This throws an error if
+    \meta{shorthand token} is already defined.  The syntax is similar to
+    \cs*{def}, \ie, you can define shorthands with arguments:
+
+    \verbcode+\NewChemIUPACShorthand*#1{something with #1}+
+  \command{RenewChemIUPACShorthand}[\meta{shorthand token}\meta{arg
+    spec}\marg{code}]
+    Redefines an existing \ac{iupac} shorthand.  This throws an error if
+    \meta{shorthand token} is not defined, yet.  The syntax is the same as for
+    \cs{NewChemIUPACShorthand}.
+  \command{DeclareChemIUPACShorthand}[\meta{shorthand token}\meta{arg
+    spec}\marg{code}]
+    Defines a new \ac{iupac} shorthand or redefines an existing one.  The
+    syntax is the same as for \cs{NewChemIUPACShorthand}.
+  \command{ProvideChemIUPACShorthand}[\meta{shorthand token}\meta{arg
+    spec}\marg{code}]
+    Provides a new \ac{iupac} shorthand.  Does nothing if \meta{shorthand
+      token} is already defined.  The syntax is the same as for
+    \cs{NewChemIUPACShorthand}.
+  \command{RemoveChemIUPACShorthand}[\meta{shorthand token}]
+    Deletes an existing \ac{iupac} shorthand.
+\end{commands}
 
 \subsubsection{Latin Phrases}
 
@@ -2758,9 +2791,9 @@ This macro can be used to write the thermodynamic state variables.
 These options are available:
 \begin{options}
   \keyval{pre}{text}\Module{thermodynamics}\Default{\cs{changestate}}
-    The symbol before the variable. Inserted in text mode.
+    Code inserted before the variable.  Inserted in text mode.
   \keyval{post}{text}\Module{thermodynamics}\Default
-    The symbol after the variable. Inserted in text mode.
+    Code inserted after the variable. Inserted in text mode.
   \keyval{superscript-left}{text}\Module{thermodynamics}\Default
     The left superscript. Inserted in text mode.
   \keyval{superscript-right}{text}\Module{thermodynamics}\Default{\cs{standardstate}}
@@ -2803,9 +2836,9 @@ number and unit:
 
 \begin{options}
   \keyval{pre}{text}\Module{thermodynamics}\Default{\cs{changestate}}
-    The symbol before the variable.  Inserted in text mode.
+    Code inserted before the variable.  Inserted in text mode.
   \keyval{post}{text}\Module{thermodynamics}\Default
-    The symbol after the variable.  Inserted in text mode.
+    Code inserted after the variable.  Inserted in text mode.
   \keyval{superscript-left}{text}\Module{thermodynamics}\Default
     The left superscript.  Inserted in text mode.
   \keyval{superscript-right}{text}\Module{thermodynamics}\Default{\cs{standardstate}}
@@ -2863,9 +2896,9 @@ its settings:
 The argument \meta{options} is a comma separated list of key/value options:
 \begin{options}
   \keyval{pre}{text}\Module{thermodynamics}\Default{\cs{changestate}}
-    The symbol before the variable.  Inserted in text mode.
+    Code inserted before the variable.  Inserted in text mode.
   \keyval{post}{text}\Module{thermodynamics}\Default
-    The symbol after the variable.  Inserted in text mode.
+    Code inserted after the variable.  Inserted in text mode.
   \keyval{superscript-left}{text}\Module{thermodynamics}\Default
     The left superscript.  Inserted in text mode.
   \keyval{superscript-right}{text}\Module{thermodynamics}\Default{\cs{standardstate}}
@@ -3061,7 +3094,7 @@ Let's take a look at an example where both instances are used:
 \end{example}
 
 If you define instances for other families please feel free to submit them to
-me (see section) so they can be added to the
+me (see section~\ref{sec:submitting-module}) so they can be added to the
 \chemmodule{xfrac} module.
 
 \appendix
