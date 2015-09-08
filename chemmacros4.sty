@@ -45,7 +45,6 @@
 \cs_generate_variant:Nn \tl_set_rescan:Nnn { NnV }
 \cs_generate_variant:Nn \tl_if_eq:nnTF     { V }
 \cs_generate_variant:Nn \tl_const:cn       { cV }
-\cs_generate_variant:Nn \tl_to_lowercase:n { f }
 
 % --------------------------------------------------------------------------
 % load required packages
@@ -1283,16 +1282,9 @@
   
 \bool_new:N \l__chemmacros_inside_iupac_bool
 
-\group_begin:
-\char_set_catcode_active:N \~
-\char_set_lccode:nn {`~} {`|}
-\tl_to_lowercase:n { \group_end: \cs_set_eq:NN ~ } \chemmacros_break_point:
+\char_set_active_eq:NN | \chemmacros_break_point:
 
-\group_begin:
-\char_set_catcode_active:N \~
-\char_set_lccode:nn {`~} {`^}
-\tl_to_lowercase:n { \group_end: \cs_set_protected:Npn ~ }
-  { \chemmacros_superscript: }
+\char_set_active_eq:NN ^ \chemmacros_superscript:
 
 \group_begin:
 \char_set_catcode_active:N \|
