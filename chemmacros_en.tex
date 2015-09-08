@@ -1207,27 +1207,18 @@ commands.
 There's also a way for defining new \ac{iupac} shorthands or changing the
 existing ones:
 \begin{commands}
-  \command{NewChemIUPACShorthand}[\meta{shorthand token}\meta{arg
-    spec}\marg{code}]
-    Defines a new \ac{iupac} shorthand.  This throws an error if
-    \meta{shorthand token} is already defined.  The syntax is similar to
-    \cs*{def}, \ie, you can define shorthands with arguments:
-
-    \verbcode+\NewChemIUPACShorthand*#1{something with #1}+
-  \command{RenewChemIUPACShorthand}[\meta{shorthand token}\meta{arg
-    spec}\marg{code}]
+  \command{NewChemIUPACShorthand}[\meta{shorthand token}\meta{control sequence}]
+    Defines a new \ac{iupac} shorthand.  Inside \cs{iupac} it will be equal to
+    using \meta{control sequence}.  This throws an error if \meta{shorthand
+      token} is already defined.
+  \command{RenewChemIUPACShorthand}[\meta{shorthand token}\meta{control sequence}]
     Redefines an existing \ac{iupac} shorthand.  This throws an error if
-    \meta{shorthand token} is not defined, yet.  The syntax is the same as for
-    \cs{NewChemIUPACShorthand}.
-  \command{DeclareChemIUPACShorthand}[\meta{shorthand token}\meta{arg
-    spec}\marg{code}]
-    Defines a new \ac{iupac} shorthand or redefines an existing one.  The
-    syntax is the same as for \cs{NewChemIUPACShorthand}.
-  \command{ProvideChemIUPACShorthand}[\meta{shorthand token}\meta{arg
-    spec}\marg{code}]
+    \meta{shorthand token} is not defined, yet.
+  \command{DeclareChemIUPACShorthand}[\meta{shorthand token}\meta{control sequence}]
+    Defines a new \ac{iupac} shorthand or redefines an existing one.
+  \command{ProvideChemIUPACShorthand}[\meta{shorthand token}\meta{control sequence}]
     Provides a new \ac{iupac} shorthand.  Does nothing if \meta{shorthand
-      token} is already defined.  The syntax is the same as for
-    \cs{NewChemIUPACShorthand}.
+      token} is already defined.
   \command{RemoveChemIUPACShorthand}[\meta{shorthand token}]
     Deletes an existing \ac{iupac} shorthand.
 \end{commands}
