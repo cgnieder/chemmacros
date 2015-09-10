@@ -1,7 +1,7 @@
 % arara: pdflatex
 % !arara: biber
 % arara: pdflatex
-% !arara: pdflatex
+% arara: pdflatex
 % --------------------------------------------------------------------------
 % the CHEMMACROS package
 %
@@ -305,7 +305,7 @@
 \usetikzlibrary{calc,positioning,decorations.pathmorphing,patterns}
 
 % \newpackagename\chemmacros{chemmacros}
-\newcommand*\chemmacrosversion{\csname c_chemmacros_version_tl\endcsname}
+\newcommand*\chemmacrosversion{\csname c_chemmacros_version_number_tl\endcsname}
 \newpackagename\chemformula{chemformula}
 \newpackagename\ghsystem{ghsystem}
 \newpackagename\chemgreek{chemgreek}
@@ -475,13 +475,13 @@ or
   \chemsetup{modules=all}
 \end{sourcecode}
 which will load all modules which are part of \chemmacros\ (also see
-section~\ref{sec:all-module}). Own modules (see
+section~\vref{sec:all-module}). Own modules (see
 section~\vref{sec:own-modules}) are \emph{not} loaded through this, though,
 and still have to be loaded additionally.
 
-In part~\ref{part:preloaded-modules} the preloaded modules are described,
+In part~\vref{part:preloaded-modules} the preloaded modules are described,
 first the user modules then the internal ones, in
-part~\ref{part:additional-modules} the other available modules are described,
+part~\vref{part:additional-modules} the other available modules are described,
 again the user modules first.  In each section the modules are described in
 an alphabetical order.
 
@@ -562,6 +562,8 @@ important and \emph{breaking} differences:
     your document this is the most likely source.
   \item The command family \cs*{NewChem\ldots}, \cs*{RenewChem\ldots} and
     \cs*{DeclareChem\ldots} has a new member \cs*{ProvideChem\ldots}.
+  \item In \cs{iupac} the macro \cs*{-} no longer gives a dash with breaking
+    point.  Instead \sym*{-} can be used directly.
   \item The macro \cs{ox} has another default behaviour (\keyis{pos}{super})
     and the starred version has another effect (\keyis{pos}{top}) than the
     same macro in earlier versions.  Now the default behaviour follows
@@ -701,11 +703,11 @@ Easy representation of \pH, \pKa \ldots
   \command{pH} \pH
   \command{pOH} \pOH
   \command{Ka} \Ka, depends on language settings, see
-    section~\ref{sec:lang-module}.  The translations can be adapted.
+    section~\vref{sec:lang-module}.  The translations can be adapted.
   \command{Kb} \Kb
   \command{Kw} \Kw
   \command{pKa}[\oarg{num}] \cs{pKa}: \pKa, \cs{pKa}\Oarg{1}: \pKa[1], depends
-    on language settings, see  section~\ref{sec:lang-module}.  The translations
+    on language settings, see  section~\vref{sec:lang-module}.  The translations
     can be adapted.
   \command{pKb}[\oarg{num}] \cs{pKb}: \pKb, \cs{pKb}\Oarg{1}: \pKb[1]
   \command{p}[\marg{anything}] \eg\ \cs{p}\Marg{\cs{Kw}} \p{\Kw}
@@ -807,7 +809,7 @@ The next ones probably are seldomly needed but nevertheless useful:
 \end{commands}
 
 These macros for example can be used with the \cs{ox} command (see
-section~\ref{sec:redox-module}) or with the \pkg{chemfig} package:
+section~\vref{sec:redox-module}) or with the \pkg{chemfig} package:
 \begin{example}
   \chemsetup{
     charges/circled = all,
@@ -832,13 +834,13 @@ section~\ref{sec:redox-module}) or with the \pkg{chemfig} package:
     \verbcode+$\oplus$+ $\oplus$/\verbcode+$\ominus$+ $\ominus$ (\code{math}).
   \keyval{partial-format}{\LaTeX\ code}\Module{charges}\Default{\cs*{tiny}}
     Code which formats the macros defined with \cs{NewChemPartialCharge} (see
-    section~\ref{sec:own-charge-macros}).
+    section~\vref{sec:own-charge-macros}).
 \end{options}
 
 \subsubsection{Own Charge Macros}\label{sec:own-charge-macros}
 Just in case the existing macros don't fit you needs there are commands for
 defining new ones or modifying the existing ones.  These commands define
-macros like those described in section~\ref{sec:ion-charges}.
+macros like those described in section~\vref{sec:ion-charges}.
 
 \begin{commands}
   \command{NewChemCharge}[\marg{cs}\marg{charge symbol}]
@@ -859,7 +861,7 @@ An example of usage is the definition of the existing ion charge macros:
 \end{sourcecode}
 
 These commands define macros like those described in
-section~\ref{sec:part-charg-simil}. 
+section~\vref{sec:part-charg-simil}. 
 \begin{commands}
   \command{NewChemPartialCharge}[\marg{cs}\marg{charge symbol}]
     Defines a new macro \meta{cs}. Raises an error if \meta{cs} already
@@ -895,7 +897,7 @@ must be allowed to be broken more than one time.  This is what the following
 command does.
 \begin{commands}
   \command{iupac}[\marg{IUPAC name}]
-    Inside this command use \sym{\textbar} and \cs{-} to indicate a breaking
+    Inside this command use \sym{\textbar} and \sym{-} to indicate a breaking
     point or a breaking dash.  Use \sym{\textasciicircum} as a shortcut for
     \cs*{textsuperscript}.
 \end{commands}
@@ -903,30 +905,36 @@ command does.
 \begin{example}
   \begin{minipage}{.4\linewidth}
     \iupac{%
-      Tetra|cyclo[2.2.2.1^{1,4}]\-un|decane-2\-dodecyl\-%
-      5\-(hepta|decyl|iso|dodecyl|thio|ester)%
+      Tetra|cyclo[2.2.2.1^{1,4}]-un|decane-2-dodecyl-%
+      5-(hepta|decyl|iso|dodecyl|thio|ester)%
     }
   \end{minipage}
 \end{example}
 The \cs{iupac} command is more of a semantic command.  Most times you can
-achieve (nearly) the same thing by using \cs{-} instead of \sym{\textbar},
-\code{-} instead of \cs{-} and \cs*{textsuperscript} instead of
-\sym{\textasciicircum} without \cs{iupac}.
+achieve (nearly) the same thing by using \sym{-} instead of \sym{\textbar},
+and \cs*{textsuperscript} instead of \sym{\textasciicircum} without
+\cs{iupac}.
 
-There are some subtleties: \cs{-} inserts a small space before the hyphen and
-removes a small space after it.  The character \sym{\textbar} not only
-prevents ligatures but also inserts a small space.
+There are some subtleties:
+\begin{itemize}
+  \item \sym{-} inserts a small space before the hyphen and removes a small
+    space after it.  Also usually words with hyphens are only allowed to break
+    at the hyphen.  Inside \cs{iupac} the hyphen will not prevent further
+    hyphenation.  The amount of inserted space can be customized.
+  \item The character \sym{\textbar} not only prevents ligatures but also
+    inserts a small space.  The amount of inserted space can be customized.
+\end{itemize}
 \begin{example}[side-by-side]
-  \huge\iupac{2,4\-Di|chlor|pentan} \par
+  \huge\iupac{2,4-Di|chlor|pentan} \par
   2,4-Dichlorpentan
 \end{example}
 
-The spaces inserted by \cs{-} and \sym{\textbar} can be customized.
+The spaces inserted by \sym{-} and \sym{\textbar} can be customized.
 \begin{options}
   \keyval{hyphen-pre-space}{dim}\Module{nomenclature}\Default{.01em}
-    Set the space that is inserted before the hyphen set with \cs{-}.
+    Set the space that is inserted before the hyphen set with \sym{-}.
   \keyval{hyphen-post-space}{dim}\Module{nomenclature}\Default{-.03em}
-    Set the space that is inserted after the hyphen set with \cs{-}.
+    Set the space that is inserted after the hyphen set with \sym{-}.
   \keyval{break-space}{dim}\Module{nomenclature}\Default{.01em}
     Set the space inserted by \sym{\textbar}.
 \end{options}
@@ -936,7 +944,7 @@ the setting of the \option{iupac} option (see below) all the commands
 presented in this section are always defined \emph{inside} \cs{iupac}.  Quite
 a number of the naming commands have very general names: \cs{meta}, \cs{D},
 \cs{E}, \cs{L}, \cs{R}, \cs{S}, \cs{trans} and so forth\footnote{Please read
-  section~\ref{sec:one-letter-commands} before you consider using the
+  section~\vref{sec:one-letter-commands} before you consider using the
   one-letter commands}.  This means they either are predefined already (\cs{L}
 \L) or are easily defined by another package or class (the \pkg{cool} package
 defines both \cs{D} and \cs{E}, for example).  In order to give you control
@@ -986,7 +994,7 @@ collaboration more difficult than it needs to be and are a source for package
 conflicts.  \chemmacros\ solves the latter problem by only providing them
 inside the argument of \cs{iupac}.  The one exception \chemmacros\ makes is
 the command \cs{p} (for things like \pH) which is and will remain an official
-command (see section~\ref{sec:acid-base-module}).  For all other one-letter
+command (see section~\vref{sec:acid-base-module}).  For all other one-letter
 macros alternatives with more meaningful names exist.
 
 \paragraph{Greek Letters}\label{par:greek_letters}
@@ -1006,7 +1014,7 @@ for the existing macros:
 There exist two commands for each of the twenty-four Greek letters: a
 lowercase and an uppercase version (\cs{chemalpha} and \cs{chemAlpha}).  Those
 commands are actually provided by the \chemgreek\ package.  For more details
-read section~\ref{sec:greek-module} and also refer to \chemgreek's
+read section~\vref{sec:greek-module} and also refer to \chemgreek's
 documentation.
 
 There are a number of one-letter commands that some people may find convenient
@@ -1031,9 +1039,9 @@ to use which use above mentioned commands to print Greek letters inside
 \end{table}
 
 \begin{example}
-  \iupac{5\chemalpha\-androstan\-3\chembeta\-ol} \par
-  \iupac{\chemalpha\-(tri|chloro|methyl)\-\chemomega
-    \-chloro|poly(1,4\-phenylene|methylene)}
+  \iupac{5\chemalpha-androstan-3\chembeta-ol} \par
+  \iupac{\chemalpha-(tri|chloro|methyl)-\chemomega
+    -chloro|poly(1,4-phenylene|methylene)}
 \end{example}
 
 \paragraph{Hetero Atoms and added Hydrogen}
@@ -1054,11 +1062,11 @@ most common ones.
     The italic P for phosphorus.  (An alias for this command is \cs{P}.)
 \end{commands}
 \begin{example}[side-by-side]
-  \iupac{\nitrogen\-methyl|benz|amide}
+  \iupac{\nitrogen-methyl|benz|amide}
   
-  \iupac{3\hydrogen\-pyrrole}
+  \iupac{3\hydrogen-pyrrole}
   
-  \iupac{\oxygen\-ethyl hexanethioate}
+  \iupac{\oxygen-ethyl hexanethioate}
 \end{example}
 
 \paragraph{Cahn-Ingold-Prelog}\label{par:cip}
@@ -1138,7 +1146,7 @@ Although these commands are provided I like to cite
 \end{commands}
 \begin{example}
   Ferrocene = \iupac{bis(\hapto{5}cyclo|penta|dienyl)iron} \par
-  \iupac{tetra\-\bridge{3}iodido\-tetrakis[tri|methyl|platinum(IV)]}
+  \iupac{tetra-\bridge{3}iodido-tetrakis[tri|methyl|platinum(IV)]}
 \end{example}
 
 Two options allow customization:
@@ -1152,15 +1160,15 @@ Two options allow customization:
 
 \paragraph{Examples}
 \begin{example}
-  \iupac{\dexter\-Wein|s\"aure} =
-  \iupac{\cip{2S,3S}\-Wein|s\"aure} \par
-  \iupac{\dexter\-($-$)\-Threose} =
-  \iupac{\cip{2S,3R}\-($-$)\-2,3,4\-Tri|hydroxy|butanal} \par
-  \iupac{\cis\-2\-Butene} =
-  \iupac{\zusammen\-2\-Butene}, \par
-  \iupac{\cip{2E,4Z}\-Hexa|diene} \par
-  \iupac{\meta\-Xylol} =
-  \iupac{1,3\-Di|methyl|benzene}
+  \iupac{\dexter-Wein|s\"aure} =
+  \iupac{\cip{2S,3S}-Wein|s\"aure} \par
+  \iupac{\dexter-($-$)-Threose} =
+  \iupac{\cip{2S,3R}-($-$)-2,3,4-Tri|hydroxy|butanal} \par
+  \iupac{\cis-2-Butene} =
+  \iupac{\zusammen-2-Butene}, \par
+  \iupac{\cip{2E,4Z}-Hexa|diene} \par
+  \iupac{\meta-Xylol} =
+  \iupac{1,3-Di|methyl|benzene}
 \end{example}
 
 \subsubsection{Own \cs*{iupac} Macros And Shorthands}
@@ -1193,15 +1201,15 @@ overwrite an existing \ac{iupac} command.
 \begin{example}
   \NewChemIUPAC\endo{\textsc{endo}}
   \RenewChemIUPAC\anti{\textsc{anti}}
-  \iupac{(2\-\endo,7\-\anti)\-2\-bromo\-7\-fluoro|bicyclo[2.2.1]heptane}
+  \iupac{(2-\endo,7-\anti)-2-bromo-7-fluoro|bicyclo[2.2.1]heptane}
 \end{example}
 
 \cs{RenewChemIUPAC} allows you to redefine the existing \ac{iupac} naming
 commands.
 \begin{example}[side-by-side]
-  \iupac{\meta\-Xylol} \par
+  \iupac{\meta-Xylol} \par
   \RenewChemIUPAC\meta{\textup{m}}
-  \iupac{\meta\-Xylol}
+  \iupac{\meta-Xylol}
 \end{example}
 
 There's also a way for defining new \ac{iupac} shorthands or changing the
@@ -1276,7 +1284,7 @@ which doesn't mean that they can't be used there, of course:
   \cs{water} \water\ \cs{El} \El\ \cs{Nuc} \Nuc\ \cs{ba} \ba
 \end{center}
 All of these macros are defined using \pkg{chemformula}'s \cs{chcpd}.  The
-details are explained in section~\ref{sec:defin-own-part}.
+details are explained in section~\vref{sec:defin-own-part}.
 
 The macros \cs{Nuc} and \cs{ba} are special:  they have an optional argument
 for the following option:
@@ -1401,19 +1409,19 @@ Depending on the subject of your document you might need to indicate other
 states of aggregation.  You can easily define them.
 \begin{commands}
   \command{NewChemPhase}[\marg{cs}\marg{symbol}]
-    Define a new phase command.  See section~\ref{sec:lang-depend} for a way
+    Define a new phase command.  See section~\vref{sec:lang-depend} for a way
     to define language dependent settings.  Gives an error if \meta{cs}
     already exists.
   \command{DeclareChemPhase}[\marg{cs}\marg{symbol}]
-    Define a new phase command. See section~\ref{sec:lang-depend} for a way to
+    Define a new phase command. See section~\vref{sec:lang-depend} for a way to
     define language dependent settings.  Overwrites previous definitions of
     \meta{cs}.
   \command{RenewChemPhase}[\marg{cs}\marg{symbol}]
-    Redefine an existing phase command.  See section~\ref{sec:lang-depend} for
+    Redefine an existing phase command.  See section~\vref{sec:lang-depend} for
     a way to define language dependent settings.  Gives an error if \meta{cs}
     is not defined.
   \command{ProvideChemPhase}[\marg{cs}\marg{symbol}]
-    Define a new phase command.  See section~\ref{sec:lang-depend} for a way
+    Define a new phase command.  See section~\vref{sec:lang-depend} for a way
     to define language dependent settings.  Does nothing if \meta{cs} is
     already defined.
 \end{commands}
@@ -1446,7 +1454,7 @@ package \pkg{translations}~\cite{pkg:translations} is used.  The \acs{id}
 always is \code{phase-\meta{csname}} where \meta{csname} is the name of the
 phase command you defined without leading backslash.
 
-See section~\ref{sec:lang-module} for predefined translations and general
+See section~\vref{sec:lang-module} for predefined translations and general
 language options of \chemmacros.
 
 \subsection{The \chemmodule*{symbols} Module}\label{sec:symbols-module}
@@ -1468,7 +1476,7 @@ then.  It loads the package \pkg{amstext}~\cite{pkg:amstext}.
 The \chemmodule{base} module is the core module of \chemmacros. It defines
 some tools which can (and should) be used in other modules.  This means this
 section is only interesting for you if you plan to write a module yourself
-(see section~\ref{sec:own-modules} for details).
+(see section~\vref{sec:own-modules} for details).
 
 This module requires the packages \pkg{bm}~\cite{pkg:bm} and
 \pkg{amstext}~\cite{pkg:amstext}.
@@ -1610,7 +1618,7 @@ strings in different places all over \chemmacros.  They are mentioned in the
 places when the corresponding function of \chemmacros\ is explained.
 
 Translation is done with the help of the \pkg{translations} package, available
-translation keys are listed in section~\ref{sec:avail-transl-keys}.
+translation keys are listed in section~\vref{sec:avail-transl-keys}.
 
 \subsubsection{Available Translation Keys}\label{sec:avail-transl-keys}
 
@@ -2077,10 +2085,10 @@ The output of this list can be modified by two options:
   \keyval{list-name}{name of the list}\Module{reaction}\Default{List of
     reactions}
     Let's you set the name of the list manually.  The default name is language
-    dependent, see section~\ref{sec:lang-module}.
+    dependent, see section~\vref{sec:lang-module}.
   \keyval{list-entry}{prefix to each entry}\Module{reaction}\Default{Reaction}
     Let's you set a prefix to each list entry.  The default name is language
-    dependent, see section~\ref{sec:lang-module}.
+    dependent, see section~\vref{sec:lang-module}.
 \end{options}
 Instead of using the option \option{list-name} you also could redefine
 \cs{reactionlistname}.
@@ -2210,7 +2218,7 @@ Sometimes one might want to use formal oxidation numbers like \num{.5} or
 
 The fraction is displayed with the help of the \pkg{xfrac}
 package~\cite{bnd:l3packages}.  For more details on how \chemmacros\ uses it
-read section~\ref{sec:xfrac-module}.
+read section~\vref{sec:xfrac-module}.
 
 \subsubsection{Redox Reactions}\label{sec:redox-reactions}
 
@@ -2349,7 +2357,7 @@ different available float defining methods, in \emph{this} order:
 
 The list name and the caption name both are translated to the language
 specified according to the \option{lang} option and the provided translations,
-see section~\ref{sec:lang-module} for details. If you want to manually change
+see section~\vref{sec:lang-module} for details. If you want to manually change
 them then redefine these macros after begin document:
 \begin{commands}
   \command{listschemename}
@@ -3085,7 +3093,7 @@ Let's take a look at an example where both instances are used:
 \end{example}
 
 If you define instances for other families please feel free to submit them to
-me (see section~\ref{sec:submitting-module}) so they can be added to the
+me (see section~\vref{sec:submitting-module}) so they can be added to the
 \chemmodule{xfrac} module.
 
 \appendix
@@ -3128,7 +3136,7 @@ following way:
   }
 \end{sourcecode}
 Also (especially if you consider submitting the module, see
-section~\ref{sec:submitting-module}) please follow the expl3 naming
+section~\vref{sec:submitting-module}) please follow the expl3 naming
 conventions for variables and functions, \ie, use \code{chemmacros} as expl3
 module name:
 \begin{sourcecode}

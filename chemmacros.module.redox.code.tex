@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{redox}{2015/07/22 oxidation numbers, redox reactions}
+\ChemModule{redox}{2015/09/09 oxidation numbers, redox reactions}
 
 \chemmacros_load_modules:n {tikz,xfrac}
 
@@ -120,8 +120,7 @@
 
 \cs_new_protected:Npn \__chemmacros_ox_is_integer:n #1
   {
-    \fp_set:Nn \l__chemmacros_tmpa_fp { round(#1 + 1 , 0 ) - 1 }
-    \fp_compare:nNnTF { \l__chemmacros_tmpa_fp } = {#1}
+    \fp_compare:nNnTF {#1} = { round((#1) + 1 , 0 ) - 1 }
       { \bool_set_true:N \l__chemmacros_ox_integer_bool }
       {
         \bool_set_false:N \l__chemmacros_ox_integer_bool
@@ -132,23 +131,22 @@
 \cs_new_protected:Npn \__chemmacros_fp_to_Roman:n #1
   {
     \group_begin:
-      \fp_compare:nTF { \l__chemmacros_tmpa_fp = 0 }
+      \fp_compare:nNnTF {#1} = { 0 }
         {0}
-        { \int_to_Roman:n { \fp_to_int:N \l__chemmacros_tmpa_fp } }
+        { \int_to_Roman:n { \fp_to_int:n {#1} } }
     \group_end:
   }
 
 \cs_new_protected:Npn \__chemmacros_fp_to_arabic:n #1
   {
     \group_begin:
-      \fp_set:Nn \l__chemmacros_tmpa_fp {#1}
       \bool_if:NTF \l__chemmacros_ox_decimal_marker_comma_bool
         {
-          \tl_set:Nx \l__chemmacros_tmpa_tl { \fp_to_decimal:N \l__chemmacros_tmpa_fp }
+          \tl_set:Nx \l__chemmacros_tmpa_tl { \fp_to_decimal:n {#1} }
           \tl_replace_once:Nnn \l__chemmacros_tmpa_tl {.} { {,} }
           \tl_use:N \l__chemmacros_tmpa_tl
         }
-        { \fp_to_decimal:N \l__chemmacros_tmpa_fp }
+        { \fp_to_decimal:n {#1} }
     \group_end:
   }
 

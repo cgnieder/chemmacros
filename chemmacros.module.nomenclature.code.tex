@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{nomenclature}{2015/07/22 chemical names}
+\ChemModule{nomenclature}{2015/09/09 chemical names}
 
 \RequirePackage{scrlfile}
 
@@ -294,7 +294,7 @@
 %   after it
 % - add a little space at breaking points if not broken
 % - enables all naming commands regardless if they're definied otherwise or not
-\cs_new_protected:Nn \chemmacros_allow_hyphens:
+\cs_new_protected:Npn \chemmacros_allow_hyphens:
   {
     \chemmacros_nobreak:
     \skip_horizontal:N \c_zero_dim
@@ -314,24 +314,30 @@
     break-space       .dim_set:N = \l__chemmacros_iupac_break_dim
   }
 
-\cs_new_protected:Nn \chemmacros_break_point_hyphen:
+\cs_new_protected:Npn \__chemmacros_break_point_insert:n #1
   {
     \chemmacros_nobreak:
-    \tex_discretionary:D { - } { }
-      {
-        \tex_kern:D \l__chemmacros_iupac_hyphen_pre_dim
-        -
-        \tex_kern:D \l__chemmacros_iupac_hyphen_post_dim
-      }
+    \tex_discretionary:D { - } { } {#1}
     \chemmacros_allow_hyphens:
+  }
+\cs_new_protected:Npn \chemmacros_break_point_hyphen:
+  {
+    \mode_if_math:TF
+      { - }
+      {
+        \__chemmacros_break_point_insert:n
+          {
+            \tex_kern:D \l__chemmacros_iupac_hyphen_pre_dim
+            -
+            \tex_kern:D \l__chemmacros_iupac_hyphen_post_dim
+          }
+      }
   }
 
 \cs_new_protected:Npn \chemmacros_break_point:
   {
-    \chemmacros_nobreak:
-    \tex_discretionary:D { - } { }
+    \__chemmacros_break_point_insert:n
       { \tex_kern:D \l__chemmacros_iupac_break_dim }
-    \chemmacros_allow_hyphens:
   }
 
 \cs_new_protected:Npn \chemmacros_superscript:n #1
@@ -405,7 +411,8 @@
       \bool_set_true:N \l__chemmacros_inside_iupac_bool
       \chemmacros_make_iupac:
       \chemmacros_ignore_spaces:
-      \cs_set_eq:NN \- \chemmacros_break_point_hyphen:
+      \chemmacros_if_compatiblity:nnT {<=} {5.2}
+        { \chemmacros_define_deprecated:NN \- - }
       \tl_set_rescan:Nnn \l__chemmacros_tmpa_tl
         { \chemmacros_activate_all_iupac_shorthands: }
         {#1}
@@ -415,6 +422,7 @@
 \group_end:
 
 \NewChemIUPACShorthand | \chemmacros_break_point:
+\NewChemIUPACShorthand - \chemmacros_break_point_hyphen:
 \NewChemIUPACShorthand ^ \chemmacros_superscript:n
 
 % Thanks to Joseph Wright and Enrico Gregorio for the help on the curious

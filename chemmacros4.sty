@@ -1277,14 +1277,13 @@
     \chemmacros_allow_hyphens:
   }
 
-\cs_new_protected:Npn \chemmacros_superscript:
-  { \mode_if_math:TF { \sb } { \textsuperscript } }
+\cs_new_protected:Npn \chemmacros_superscript:n #1
+  { \mode_if_math:TF { \sb {#1} } { \textsuperscript {#1} } }
   
 \bool_new:N \l__chemmacros_inside_iupac_bool
 
 \char_set_active_eq:NN | \chemmacros_break_point:
-
-\char_set_active_eq:NN ^ \chemmacros_superscript:
+\char_set_active_eq:NN ^ \chemmacros_superscript:n
 
 \group_begin:
 \char_set_catcode_active:N \|
@@ -1309,11 +1308,6 @@
     \group_end:
   }
 
-% \cs_new_protected:Npn \chemmacros_iupac_aux:n #1
-%   {
-%       #1
-%     \group_end:
-%   }
 \group_end:
 
 % Thanks to Joseph Wright and Enrico Gregorio for the help on the curious
@@ -4096,6 +4090,7 @@ Version history
 2015/08/29 - version 5.0  - integration as v4.7 into v5.0 of chemmacros for
                             backwards compatibility
                           - fix typo in \l_chemformula_formal_charges_bool
+                          - remove \tl_to_lowercase:n
 
 % --------------------------------------------------------------------------- %
 % TODO:
