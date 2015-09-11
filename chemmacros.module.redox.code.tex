@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{redox}{2015/09/09 oxidation numbers, redox reactions}
+\ChemModule{redox}{2015/09/11 oxidation numbers, redox reactions}
 
 \chemmacros_load_modules:n {tikz,xfrac}
 
@@ -38,16 +38,16 @@
 % --------------------------------------------------------------------------
 % oxidation numbers
 % \ox{<number>,<atom>}
-\bool_new:N       \l__chemmacros_ox_sign_bool
-\bool_new:N       \l__chemmacros_ox_integer_bool
-\bool_new:N       \l__chemmacros_ox_explicit_sign_bool
-\bool_new:N       \l__chemmacros_ox_format_roman_bool
-\bool_new:N       \l__chemmacros_ox_decimal_marker_comma_bool
-\bool_new:N       \l__chemmacros_ox_parse_bool
-\bool_new:N       \l__chemmacros_ox_side_bool
-\bool_new:N       \l__chemmacros_ox_super_bool
-\bool_new:N       \l__chemmacros_ox_top_bool
-\bool_new:N       \l__chemmacros_ox_align_center_bool
+\bool_new:N \l__chemmacros_ox_sign_bool
+\bool_new:N \l__chemmacros_ox_integer_bool
+\bool_new:N \l__chemmacros_ox_explicit_sign_bool
+\bool_new:N \l__chemmacros_ox_format_roman_bool
+\bool_new:N \l__chemmacros_ox_decimal_marker_comma_bool
+\bool_new:N \l__chemmacros_ox_parse_bool
+\bool_new:N \l__chemmacros_ox_side_bool
+\bool_new:N \l__chemmacros_ox_super_bool
+\bool_new:N \l__chemmacros_ox_top_bool
+\bool_new:N \l__chemmacros_ox_align_center_bool
 
 \int_new:N \l__chemmacros_ox_number_int
 \fp_new:N  \l__chemmacros_ox_number_fp
@@ -175,7 +175,7 @@
           {
             \chemmacros_text:n
               {
-                #2
+                \box_use:N \l__chemmacros_tmpb_box
                 \tl_use:N \l__chemmacros_ox_side_connect_tl
                 ( \__chemmacros_ox_process_number:n {#1} )
               }

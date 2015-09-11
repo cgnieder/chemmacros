@@ -42,7 +42,7 @@
 % #2: tokenlist variable
 \cs_new_protected:Npn \chemmacros_get_atom_number:nN #1#2
   {
-    \chemmacros_is_int:nTF {#1}
+    \chemmacros_if_is_int:nTF {#1}
       { \tl_set:Nn #2 {#1} }
       {
         \cs_if_exist:cTF { @elements@atom@number@ \str_lower_case:n {#1} }

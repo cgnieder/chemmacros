@@ -314,32 +314,55 @@
     break-space       .dim_set:N = \l__chemmacros_iupac_break_dim
   }
 
-\cs_new_protected:Npn \__chemmacros_break_point_insert:n #1
+% #1: pre break
+% #2: post break
+% #3: no break
+\cs_new_protected:Npn \__chemmacros_break_point_insert:nnn #1#2#3
   {
-    \chemmacros_nobreak:
-    \tex_discretionary:D { - } { } {#1}
-    \chemmacros_allow_hyphens:
+    \mode_if_math:TF
+      {#3}
+      {
+        \chemmacros_nobreak:
+        \tex_discretionary:D {#1} {#2} {#3}
+        \chemmacros_allow_hyphens:
+      }
   }
 \cs_new_protected:Npn \chemmacros_break_point_hyphen:
   {
-    \mode_if_math:TF
-      { - }
+    \__chemmacros_break_point_insert:nnn
+      {-}
+      { }
       {
-        \__chemmacros_break_point_insert:n
-          {
-            \tex_kern:D \l__chemmacros_iupac_hyphen_pre_dim
-            -
-            \tex_kern:D \l__chemmacros_iupac_hyphen_post_dim
-          }
+        \tex_kern:D \l__chemmacros_iupac_hyphen_pre_dim
+        -
+        \tex_kern:D \l__chemmacros_iupac_hyphen_post_dim
       }
   }
 
 \cs_new_protected:Npn \chemmacros_break_point:
   {
-    \__chemmacros_break_point_insert:n
-      { \tex_kern:D \l__chemmacros_iupac_break_dim }
+    \__chemmacros_break_point_insert:nnn
+      {-}
+      { }
+      {
+        \mode_if_math:TF
+          { | }
+          { \tex_kern:D \l__chemmacros_iupac_break_dim }
+      }
   }
 
+\cs_new_protected:Npn \chemmacros_break_point_opening_paren:
+  { \__chemmacros_break_point_insert:nnn { - } { ( } { ( } }
+
+\cs_new_protected:Npn \chemmacros_break_point_closing_paren:
+  { \__chemmacros_break_point_insert:nnn { )- } { } { ) } }
+
+\cs_new_protected:Npn \chemmacros_break_point_opening_bracket:
+  { \__chemmacros_break_point_insert:nnn { - } { [ } { [ } }
+
+\cs_new_protected:Npn \chemmacros_break_point_closing_bracket:
+  { \__chemmacros_break_point_insert:nnn { ]- } { } { ] } }
+  
 \cs_new_protected:Npn \chemmacros_superscript:n #1
   { \mode_if_math:TF { \sp {#1} } { \textsuperscript {#1} } }
   
@@ -423,6 +446,10 @@
 
 \NewChemIUPACShorthand | \chemmacros_break_point:
 \NewChemIUPACShorthand - \chemmacros_break_point_hyphen:
+\NewChemIUPACShorthand ( \chemmacros_break_point_opening_paren:
+\NewChemIUPACShorthand ) \chemmacros_break_point_closing_paren:
+\NewChemIUPACShorthand [ \chemmacros_break_point_opening_bracket:
+\NewChemIUPACShorthand ] \chemmacros_break_point_closing_bracket:
 \NewChemIUPACShorthand ^ \chemmacros_superscript:n
 
 % Thanks to Joseph Wright and Enrico Gregorio for the help on the curious

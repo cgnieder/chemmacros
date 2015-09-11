@@ -426,29 +426,33 @@ package:
 \begin{itemize}
   \item Intuitive usage as far as the syntax of the commands is concerned.
   \item A comprehensive set of macros! If there are any needs you might have
-    with respect to typeseeting of chemistry which is not supported by this
+    with respect to typesetting of chemistry which is not supported by this
     package\footnote{Not including needs already solved by other packages such
       as \pkg{chemnum} or \pkg{chemfig}.} then let me know so \chemmacros\ can
     be extended.
   \item The commands shall not only make typesetting easier and faster but
     also the document source more readable with respect to semantics
     (\code{\cs{ortho}-dichlorobenzene} is easier to read and understand than
-    \code{\cs*{textit}\Marg{o}-dichlorobenzene}); the latter in my opinion
-    also is more in the spirit of \LaTeXe.
+    \code{\cs*{textit}\Marg{o}-dichlorobenzene}); the first variant in my
+    opinion also is more in the spirit of \LaTeXe.
   \item As much customizability as I could think of so every user can adapt
-    the commands to his or her own wishes.
+    the commands to his or her own wishes.  Every now an then users have
+    wishes which can't be solved with the available options.  Almost always
+    I'll add options then.  If you find something please contact me, see
+    section~\vref{sec:sugg-bug-reports}.
   \item Default settings that are compliant with the recommendations of the
     \acf{iupac}.
 \end{itemize}
-Especially the last point needed some pushing from users to get things right
-in many places.  If you find anything not compliant with \ac{iupac}
-recommendations I would welcome an email\footnote{See
-  section~\vref{sec:sugg-bug-reports}.}  very much!
+Especially the last point in the past needed some pushing from users to get
+things right in many places.  If you find anything not compliant with
+\ac{iupac} recommendations please contact me, see
+section~\vref{sec:sugg-bug-reports}.  Don't forget to add references for the
+corresponding \ac{iupac} recommendation.
 
 \section{The Structure of \chemmacros}\label{sec:structure-chemmacros}
 \subsection{General Structure}
 Since version~5.0 the \chemmacros\ package has a strictly modular
-structure\sinceversion{5.0}.  One the one hand this eases maintenance but it
+structure\sinceversion{5.0}.  On the one hand this eases maintenance but it
 will also allow for easy and quick extension in the future.  In a way it is a
 logical consequence from \chemmacros' history: since version~2.0, \ie, since
 the fall of~2011 \chemmacros\ already had modular options.
@@ -456,14 +460,16 @@ the fall of~2011 \chemmacros\ already had modular options.
 The different modules of \chemmacros\ are divided into two groups:
 \begin{enumerate}
   \item Internal modules which provide underlying functionality or basic
-    functionality which is not of direct interest from a user perspective.
+    functionality which is not of direct interest from a user perspective but
+    might be if you plan to write a module yourself (see
+    section~\ref{sec:own-modules} for details).
   \item User modules which provide all the stuff for typesetting.
 \end{enumerate}
 Both groups each are subdivided into two groups: preloaded modules and modules
 which have to be loaded by the programmer (internal modules) or by the
 document author (user modules).  Those modules are described in
-parts~\ref{part:preloaded-modules} and~\ref{part:additional-modules} of this
-manual.
+parts~\ref{part:preloaded-modules} (preloaded modules)
+and~\ref{part:additional-modules} (additional modules) of this manual.
 
 The above means that not all functionality is available per default.  If you
 want to load \emph{all} modules no matter what then you can say:
@@ -533,8 +539,8 @@ The second way allows to set options belonging to different modules with one
 call of \cs{chemsetup}.
 
 \subsection{Support Package \chemformula}
-\chemformula\ provides means of typesetting chemical formul\ae\ and reactions.
-You'll will see its macros \cs{ch} and \cs{chcpd} every now and then in this
+\chemformula\ provides means of typesetting chemical formulas and reactions.
+You will see its macros \cs{ch} and \cs{chcpd} every now and then in this
 manual.  When using \chemmacros\ you can consider the \chemformula\
 package~\cite{pkg:chemformula} to be loaded as \chemmacros\ makes use of it in
 various places.  \chemmacros\ and \chemformula\ are tightly intertwined.  In
@@ -553,17 +559,20 @@ know from earlier versions is the same in versions $\geq5.0$.  But there are
 important and \emph{breaking} differences:
 \begin{itemize}
   \item \chemmacros\ has no package options any more, all options are set via
-    \cs{chemsetup}. 
+    \cs{chemsetup}, also see section~\vref{sec:using-chemm-opti}.
   \item Not all of the features are available per default any more, for some
-    the corresponding module has to be loaded explicitly.  If suddenly some
-    commands or environments seem to be undefined this may be the reason.
+    the corresponding module has to be loaded explicitly, see
+    section~\ref{sec:general-options}.  If suddenly some commands or
+    environments seem to be undefined this is the most likely reason.
   \item Some option modules have been renamed (\eg, \module*{iupac} is now
     \module{nomenclature}).  If you experience strange errors when you upgrade
     your document this is the most likely source.
   \item The command family \cs*{NewChem\ldots}, \cs*{RenewChem\ldots} and
     \cs*{DeclareChem\ldots} has a new member \cs*{ProvideChem\ldots}.
   \item In \cs{iupac} the macro \cs*{-} no longer gives a dash with breaking
-    point.  Instead \sym*{-} can be used directly.
+    point.  Instead \sym*{-} can be used directly\footnote{\cs*{-} will be
+      provided a bit longer for easing the upgrade step but will be dropped
+      eventually.}.
   \item The macro \cs{ox} has another default behaviour (\keyis{pos}{super})
     and the starred version has another effect (\keyis{pos}{top}) than the
     same macro in earlier versions.  Now the default behaviour follows
@@ -590,15 +599,21 @@ It is actually not true that \chemmacros' has no package options any more.  It
 has one very important package option:
 \begin{options}
   \keyval{compatibility}{num}\Default{\chemmacrosversion}
-    Let's you specify the version of \chemmacros\ you want to use.  Any number
-    smaller than $5.0$ will load v4.7. \ie, the last version before
-    \chemmacros\ got its modular structure.  Not using the option will always
-    load the newest version.  Please note that you only can specify the
-    \emph{number} of the version.  For a version \enquote{5.2c} you can only
-    set compatibility mode \enquote{5.2} but not specify the subversion.
+    Let's you specify the version number of \chemmacros\ you want to use.  Any
+    version earlier than 5.0 will load v4.7. \ie, the last version before
+    \chemmacros\ got its modular structure\footnote{Mostly: the loaded v4.7
+      has got a few fixes}.  Not using the option will always load the newest
+    version.  Please note that you only can specify the \emph{number} of the
+    version.  For a version \enquote{5.2c} you can only set compatibility mode
+    \enquote{5.2} but not specify the subrelease.
 \end{options}
 
-In your document you can check for the compatibility mode:
+In your document you can check for the compatibility mode.  For the following
+functions it is important to understand the rules: \emph{greater} means
+\emph{newer}.  The version number is \emph{not} a usual decimal number!  The
+syntax for \meta{num} is \meta{major}\code{.}\meta{minor}.  This means that a
+version 5.11 is \emph{newer} than a version 5.7!  In the same way \emph{less}
+means \emph{older}.  As last example: 5.10 is \emph{newer} (greater) than 5.1.
 \begin{commands}
   \command{IfChemCompatibilityTF}[\marg{comp}\marg{num}\marg{true}\marg{false}]
     Checks the value given through the option \option{compatibility} against
@@ -617,7 +632,7 @@ In your document you can check for the compatibility mode:
     \code{<=}, \code{=}, \code{>=} or \code{>}.
 \end{commands}
 
-A possible check:
+A possible usage:
 \begin{sourcecode}
   \IfChemCompatibilityT{>=}{5.0}{\usechemmodule{all}}
 \end{sourcecode}
@@ -662,6 +677,31 @@ In modules one can try adding code for a certain version or range of versions:
   \command{EndChemCompatibility}
     This macro \emph{must} end each of the \cs*{ChemCompatibility\ldots}
     macros.
+\end{commands}
+
+You may refer to the current version of \chemmacros\ with the following
+tokenlists:
+\begin{commands}
+  \command*{c_chemmacros_date_tl}
+    The current release date: \enquote{\csname
+      c_chemmacros_date_tl\endcsname}.
+  \command*{c_chemmacros_version_major_number_tl}
+    The current major version: \enquote{\csname
+    c_chemmacros_version_major_number_tl\endcsname}.
+  \command*{c_chemmacros_version_minor_number_tl}
+    The current minor version: \enquote{\csname
+    c_chemmacros_version_minor_number_tl\endcsname}.
+  \command*{c_chemmacros_version_number_tl}
+    The current version number: \enquote{\csname
+    c_chemmacros_version_number_tl\endcsname}.
+  \command*{c_chemmacros_version_subrelease_tl}
+    The current sub-release: \enquote{\csname
+    c_chemmacros_version_subrelease_tl\endcsname}.
+  \command*{c_chemmacros_version_tl}
+    The current version: \enquote{\csname c_chemmacros_version_tl\endcsname}.
+  \command*{c_chemmacros_info_tl}
+    The package information: \enquote{\csname
+      c_chemmacros_info_tl\endcsname}.
 \end{commands}
 
 \section{General Options}\label{sec:general-options}
@@ -763,18 +803,18 @@ The \chemmodule{charges} module loads the module \chemmodule{chemformula}.
 \begin{commands}
   \command{fplus} \fplus\ formal positive charge
   \command{fminus} \fminus\ formal negative charge
-  \command{scrp} \scrp\ scriptstyle positive charge for usage in
-    \pkg{chemfig}'s~\cite{pkg:chemfig} formulas.
-  \command{scrm} \scrm\ scriptstyle negative charge for usage in
-    \pkg{chemfig}'s formulas.
-  \command{fscrp} \fscrp\ scriptstyle formal positive charge for usage in
-    \pkg{chemfig}'s formulas.
-  \command{fscrm} \fscrm\ scriptstyle formal negative charge for usage in
-    \pkg{chemfig}'s formulas.
-  \command{fsscrp} \fsscrp\ scriptscriptstyle formal positive charge for
-    usage in \pkg{chemfig}'s formulas.
-  \command{fsscrm} \fsscrm\ scriptscriptstyle formal negative charge for
-    usage in \pkg{chemfig}'s formulas.
+  \command{scrp} \scrp\ scriptstyle positive charge (\eg, for usage in
+    \pkg{chemfig}'s~\cite{pkg:chemfig} formulas).
+  \command{scrm} \scrm\ scriptstyle negative charge (\eg, for usage in
+    \pkg{chemfig}'s formulas).
+  \command{fscrp} \fscrp\ scriptstyle formal positive charge (\eg, for usage
+    in \pkg{chemfig}'s formulas).
+  \command{fscrm} \fscrm\ scriptstyle formal negative charge (\eg, for usage
+    in \pkg{chemfig}'s formulas).
+  \command{fsscrp} \fsscrp\ scriptscriptstyle formal positive charge (\eg, for
+    usage in \pkg{chemfig}'s formulas).
+  \command{fsscrm} \fsscrm\ scriptscriptstyle formal negative charge (\eg, for
+    usage in \pkg{chemfig}'s formulas).
 \end{commands}
 
 \subsubsection{Ion Charges}\label{sec:ion-charges}
@@ -834,7 +874,7 @@ section~\vref{sec:redox-module}) or with the \pkg{chemfig} package:
     \verbcode+$\oplus$+ $\oplus$/\verbcode+$\ominus$+ $\ominus$ (\code{math}).
   \keyval{partial-format}{\LaTeX\ code}\Module{charges}\Default{\cs*{tiny}}
     Code which formats the macros defined with \cs{NewChemPartialCharge} (see
-    section~\vref{sec:own-charge-macros}).
+    section~\ref{sec:own-charge-macros}).
 \end{options}
 
 \subsubsection{Own Charge Macros}\label{sec:own-charge-macros}
@@ -897,9 +937,10 @@ must be allowed to be broken more than one time.  This is what the following
 command does.
 \begin{commands}
   \command{iupac}[\marg{IUPAC name}]
-    Inside this command use \sym{\textbar} and \sym{-} to indicate a breaking
-    point or a breaking dash.  Use \sym{\textasciicircum} as a shortcut for
-    \cs*{textsuperscript}.
+    Inside this command use \sym{\textbar} indicate a breaking point
+    \sym{\textasciicircum} as a shortcut for \cs*{textsuperscript}. \sym{-},
+    \sym{(} and \sym{)} allow words to be broken while still allow the rest of
+    word to be hyphenated, likewise \sym{[} and \sym{]}.
 \end{commands}
 
 \begin{example}
@@ -910,19 +951,21 @@ command does.
     }
   \end{minipage}
 \end{example}
-The \cs{iupac} command is more of a semantic command.  Most times you can
-achieve (nearly) the same thing by using \sym{-} instead of \sym{\textbar},
-and \cs*{textsuperscript} instead of \sym{\textasciicircum} without
-\cs{iupac}.
 
-There are some subtleties:
+The \cs{iupac} command is more of a semantic command.  In many cases you can
+achieve (nearly) the same thing by using \cs*{-} instead of \sym{\textbar},
+and \cs*{textsuperscript} instead of \sym{\textasciicircum} without
+\cs{iupac}.  There are some important differences, though:
 \begin{itemize}
-  \item \sym{-} inserts a small space before the hyphen and removes a small
-    space after it.  Also usually words with hyphens are only allowed to break
-    at the hyphen.  Inside \cs{iupac} the hyphen will not prevent further
-    hyphenation.  The amount of inserted space can be customized.
+  \item The character \sym{-} inserts a small space before the hyphen and
+    removes a small space after it.  Also usually words with hyphens are only
+    allowed to break at the hyphen.  Inside \cs{iupac} the hyphen will not
+    prevent further hyphenation.  The amount of inserted space can be
+    customized.
   \item The character \sym{\textbar} not only prevents ligatures but also
     inserts a small space.  The amount of inserted space can be customized.
+  \item The characters \sym{(} and \sym{)} allow the word to be hyphenated and
+    don't prevent further hyphenation, likewise \sym{[} and \sym{]}.
 \end{itemize}
 \begin{example}[side-by-side]
   \huge\iupac{2,4-Di|chlor|pentan} \par
@@ -1152,11 +1195,13 @@ Although these commands are provided I like to cite
 Two options allow customization:
 \begin{options}
   \keychoice{bridge-number}{sub,super}\Module{nomenclature}\Default{sub}
-    Appends the number as a subscript or superscript.  \ac{iupac}
-    recommendation is the subscript~\cite{iupac:redbook}.
+    Appends the number as a subscript or superscript, depending on the choice.
+    The \ac{iupac} recommendation is the subscript~\cite{iupac:redbook}.
   \keybool{coord-use-hyphen}\Module{nomenclature}\Default{true}
     Append a hyphen to \cs{hapto}, \cs{dent} and \cs{bridge} or don't.
 \end{options}
+
+\pagebreak
 
 \paragraph{Examples}
 \begin{example}
@@ -1488,16 +1533,21 @@ modules. In the macro descriptions below \TF\ denotes that a \code{T}, an
 \code{F} and a \code{TF} variant exist.  In case of an expandable conditional
 (\expandablesymbol) also the predicate variant is available.
 \begin{commands}
-  \expandable\command*{chemmacros_is_int:n}[\TF{} \marg{number}]
+  \expandable\command*{chemmacros_is_int:n}[\TF\ \marg{number} \marg{true}
+  \marg{false}]
     Checks if \meta{number} is an integer or not.
-  \expandable\command*{chemmacros_if_loaded:nn}[\TF{}
-  \Marg{\meta{package}|\meta{class}}\marg{name}]
+  \expandable\command*{chemmacros_if_loaded:nn}[\TF\
+  \Marg{\meta{package}|\meta{class}} \marg{name} \marg{true} \marg{false}]
     Checks if package (or class) \meta{name} has been loaded. Also works after
     begin document.
-  \expandable\command*{chemmacros_if_package_loaded:n}[\TF{} \marg{name}]
-    Checks if package \meta{name} has been loaded. Also works after begin document.
-  \expandable\command*{chemmacros_if_class_loaded:n}[\TF{} \marg{name}]
-    Checks if class \meta{name} has been loaded. Also works after begin document.
+  \expandable\command*{chemmacros_if_package_loaded:n}[\TF\ \marg{name}
+  \marg{true} \marg{false}]
+    Checks if package \meta{name} has been loaded. Also works after begin
+    document.
+  \expandable\command*{chemmacros_if_class_loaded:n}[\TF\ \marg{name}
+  \marg{true} \marg{false}]
+    Checks if class \meta{name} has been loaded. Also works after begin
+    document.
   \command*{chemmacros_leave_vmode:}
     Equivalent of \cs*{leavevmode}.
   \command*{chemmacros_nobreak:}
@@ -1506,11 +1556,14 @@ modules. In the macro descriptions below \TF\ denotes that a \code{T}, an
     Inserts a penalty of \num{0}.
   \command*{chemmacros_skip_nobreak:N}[ \meta{skip/length variable}]
     Insert a horizontal skip while linebreak is disallowed.
-  \command*{chemmacros_if_bold:}[\TF]
+  \command*{chemmacros_if_is_int:n}[\TF\ \marg{input} \marg{true} \marg{false}]
+    Checks if \meta{input} is an integer or something else.
+  \command*{chemmacros_if_bold:}[\TF\ \marg{true} \marg{false}]
     Checks if the current font weight is one of \chemboldchecks{or}.
   \command*{chemmacros_bold:n}[ \marg{text}]
     Checks if the current font weight is bold and if yes places \meta{text} in
-    \cs*{textbf} if in text mode or in \cs*{bm} if in math mode.
+    \cs*{textbf} if in text mode or in \cs*{bm} if in math mode.  If false
+    \meta{text} simply is placed in the input stream as is.
   \command*{chemmacros_text:n}[ \marg{text}]
     Ensures that \meta{text} is placed in text mode.
   \command*{chemmacros_math:n}[ \marg{text}]

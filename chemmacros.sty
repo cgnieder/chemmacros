@@ -31,13 +31,16 @@
 
 % --------------------------------------------------------------------------
 % package information:
-\tl_const:Nn \c_chemmacros_date_tl    {2015/09/02}
-\tl_const:Nn \c_chemmacros_version_number_tl {5.0}
-\tl_const:Nn \c_chemmacros_version_suffix_tl {beta}
+\tl_const:Nn \c_chemmacros_date_tl {2015/09/11}
+\tl_const:Nn \c_chemmacros_version_major_number_tl {5}
+\tl_const:Nn \c_chemmacros_version_minor_number_tl {0}
+\tl_const:Nn \c_chemmacros_version_subrelease_tl   {}
+\tl_const:Nx \c_chemmacros_version_number_tl
+  {\c_chemmacros_version_major_number_tl.\c_chemmacros_version_minor_number_tl}
 \tl_const:Nx \c_chemmacros_version_tl
-  { \c_chemmacros_version_number_tl \c_chemmacros_version_suffix_tl }
+  { \c_chemmacros_version_number_tl \c_chemmacros_version_subrelease_tl }
 \tl_const:Nn \c_chemmacros_info_tl
-  {comprehensive support for typesetting chemistry documents}
+  {comprehensive~ support~ for~ typesetting~ chemistry~ documents}
 
 \ProvidesExplPackage
   {chemmacros}
@@ -76,6 +79,34 @@
 \ProcessKeysPackageOptions {chemmacros/compatibility}
 
 % --------------------------------------------------------------------------
+% compare version numbers
+% #1: number
+% #2: relation
+% #3: number
+% #4: true
+% #5: false
+\prg_new_conditional:Npnn \chemmacros_if_version:nnn #1#2#3 {p,T,F,TF}
+  {
+    \fp_compare:nTF { floor(#1) = floor(#3) }
+      {
+        \fp_compare:nTF
+          { (\chemmacros_get_minor:f {#1}) #2 (\chemmacros_get_minor:f {#3}) }
+          { \prg_return_true: }
+          { \prg_return_false: }
+      }
+      {
+        \fp_compare:nTF { (#1) #2 (#3) }
+          { \prg_return_true: }
+          { \prg_return_false: }
+      }
+  }
+
+\cs_new:Npn \__chemmacros_get_minor:w #1.#2.#3 \q_stop
+  { \tl_if_blank:nTF {#2} {0} {#2} }
+\cs_new:Npn \chemmacros_get_minor:n #1
+  { \__chemmacros_get_minor:w #1.. \q_stop }
+\cs_generate_variant:Nn \chemmacros_get_minor:n {f}
+
 % check compatibility
 % #1: relation
 % #2: number
@@ -83,10 +114,14 @@
 % #4: false
 \prg_new_conditional:Npnn \chemmacros_if_compatiblity:nn #1#2 {p,T,F,TF}
   {
-    \fp_compare:nTF { \l__chemmacros_compatibility_version_fp #1#2 }
+    \chemmacros_if_version:nnnTF
+      { \fp_to_decimal:N \l__chemmacros_compatibility_version_fp }
+      {#1}
+      {#2}
       { \prg_return_true: }
       { \prg_return_false: }
   }
+\cs_generate_variant:Nn \chemmacros_if_compatiblity:nnT {nV}
 
 % user checks:
 \NewDocumentCommand \IfChemCompatibilityTF {mm+m+m}
@@ -123,7 +158,7 @@
 \chemmacros_if_compatiblity:nnT {>} { \c_chemmacros_version_number_tl }
   {
     \fp_set:Nn \l__chemmacros_compatibility_version_fp
-      {\c_chemmacros_version_number_tl}
+      { \c_chemmacros_version_number_tl }
   }
 
 % --------------------------------------------------------------------------
@@ -412,7 +447,7 @@ Version history
                           - allow \NewChemPhase and friends after \begin{document}
                           - new optional argument to phase commands
                           - new options `nmr/method' and `nmr/connector'
-2015/08/31 - version 5.0  - the former chemmacros.sty is now chemmacros4.sty
+2015/09/11 - version 5.0  - the former chemmacros.sty is now chemmacros4.sty
                             and can be loaded through the `compatibility'
                             option
                           - chemmacros is now organized in separate modules
