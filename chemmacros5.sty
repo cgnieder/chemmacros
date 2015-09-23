@@ -143,24 +143,26 @@
       {
         \chemmacros_if_module_exist:nTF {#1}
           {
+            \__chemmacros_use_module_hook:nn {before} {#1}
             \msg_log:nnn {chemmacros} {loading-module} {#1}
             \@onefilewithoptions
               {\c__chemmacros_module_prefix_tl.#1}[][]
               \c__chemmacros_module_extension_tl
+            \__chemmacros_use_module_hook:nn {after} {#1}
           }
           { \msg_error:nnn {chemmacros} {module-missing} {#1} }
       }
   }
 \cs_generate_variant:Nn \__chemmacros_load_module:n { V }
 
-\prg_new_conditional:Npnn \chemmacros_if_module_loaded:n #1 {T,F,TF}
+\prg_new_conditional:Npnn \chemmacros_if_module_loaded:n #1 {p,T,F,TF}
   {
     \cs_if_exist:cTF  {chemmacros-module-#1-loaded}
       { \prg_return_true: }
       { \prg_return_false: }
   }
 
-\prg_new_conditional:Npnn \chemmacros_if_module_exist:n #1 {T,F,TF}
+\prg_new_conditional:Npnn \chemmacros_if_module_exist:n #1 {p,T,F,TF}
   {
     \file_if_exist:nTF
       {\c__chemmacros_module_prefix_tl.#1.\c__chemmacros_module_extension_tl}
@@ -168,6 +170,50 @@
       { \prg_return_false: }
   }
 
+% --------------------------------------------------------------------------
+% module hooks:
+% #1: module
+% #2: code
+\ChemCompatibilityFrom{5.1}
+\cs_new_protected:Npn \chemmacros_after_module:nn #1#2
+  {
+    \chemmacros_if_module_loaded:nTF {#1}
+      {#2}
+      { \__chemmacros_add_to_module_hook:nnn {#1} {after} {#2} }
+  }
+
+% #1: module
+% #2: code
+\cs_new_protected:Npn \chemmacros_before_module:nn #1#2
+  {
+    \chemmacros_if_module_loaded:nF {#1}
+      { \__chemmacros_add_to_module_hook:nnn {#1} {before} {#2} }
+  }
+\EndChemCompatibility
+
+% #1: module
+% #2: hook name
+% #3: code
+\cs_new_protected:Npn \__chemmacros_add_to_module_hook:nnn #1#2#3
+  {
+    \chemmacros_if_module_loaded:nF {#1}
+      {
+        \tl_if_exist:cF {g__chemmacros_module_#1_#2_hook_tl}
+          { \tl_new:c {g__chemmacros_module_#1_#2_hook_tl} }
+        \tl_gput_right:cn {g__chemmacros_module_#1_#2_hook_tl} {#3}
+      }
+  }
+
+\cs_new_protected:Npn \__chemmacros_use_module_hook:nn #1#2
+  {
+    \tl_if_exist:cT {g__chemmacros_module_#1_#2_hook_tl}
+      {
+        \tl_use:c {g__chemmacros_module_#1_#2_hook_tl}
+        \tl_gclear:c {g__chemmacros_module_#1_#2_hook_tl}
+      }
+  }
+
+% --------------------------------------------------------------------------
 \cs_new_protected:Npn \chemmacros_module:nnn #1#2#3
   {
     \cs_new:cpn {chemmacros-module-#2-loaded} {chemmacros:~module~`#2'}
@@ -182,8 +228,7 @@
       ]
     \bool_if:nF {#1} { \ExplSyntaxOn }
   }
-
-% --------------------------------------------------------------------------
+  
 % define a chemmacros module:
 % standard modules are written in the expl3 programming environment, the
 % starred version only uses a 2e programming environment, i.e., with @ as a
@@ -239,5 +284,5 @@ Modules: (* = preloaded)
 
 % --------------------------------------------------------------------------
 Version history
-2015/08/29 v5.0  - major update of chemmacros; please refer to the end of file
-                   chemmacros4.sty for the earlier history
+2015/08/29 - initial release v5.0
+2015/09/23 - add module hooks `before' and `after'

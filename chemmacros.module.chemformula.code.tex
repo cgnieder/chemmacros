@@ -25,13 +25,52 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{chemformula}{2015/07/25 chemformula integration}
-
-\chemmacros_load_module:n {charges}
-
-\chemmacros_integrate_package:nn {chemformula} {2015/08/19}
+\ChemModule{chemformula}{2015/09/19 integration of chemical formulas}
 
 \RequirePackage{amstext}
+\chemmacros_load_module:n {charges}
+
+\msg_new:nnn {chemmacros} {unknown-formula-method}
+  {
+    You~ chose~ the~ formula~ method~ `#1'~ which~ is~ not~ available.~ Valid~
+    methods~ are~ (the~ recommended~ choice)~ `chemformula'~ and~ `mhchem'.~
+    I'm~ falling~ back~ to~ `chemformula'~ now.
+  }
+
+\bool_new:N \l__chemmacros_formula_method_set_bool
+
+\tl_new:N \g_chemmacros_formula_method_tl
+\tl_gset:Nn \g_chemmacros_formula_method_tl {chemformula}
+
+\cs_new_protected:Npn \chemmacros_set_formula_method:n #1
+  {
+    \str_case:nnTF {#1}
+      {
+        {chemformula} {
+          \chemmacros_integrate_package:nnn {} {chemformula} {2015/09/08}
+          \tl_gset:Nn \g_chemmacros_formula_method_tl {chemformula}
+        }
+        {mhchem} {
+          \chemmacros_integrate_package:nnn {version=4} {mhchem} {}
+          \cs_set_protected:Npn \chemmacros_chemformula:n ##1 { \ce {##1} }
+          \cs_set_protected:Npn \chemmacros_reaction:n ##1 { \ce {##1} }
+          \chemmacros_after_module:nn {charges}
+            {
+              \cs_set_protected:Npn \chemmacros_elpair:n ##1 { \ce{##1} : }
+              \cs_set_protected:Npn \chemmacros_plus:  { + }
+              \cs_set_protected:Npn \chemmacros_minus: { - }
+              \cs_set_protected:Npn \chemmacros_formal_plus: { \ensuremath{\oplus} }
+              \cs_set_protected:Npn \chemmacros_formal_minus: { \ensuremath{\ominus} }
+              \cs_set_protected:Npn \fplus  { \ensuremath{\oplus} }
+              \cs_set_protected:Npn \fminus { \ensuremath{\ominus} }
+            }
+          \tl_gset:Nn \g_chemmacros_formula_method_tl {mhchem}
+        }
+      }
+      { \bool_set_true:N \l__chemmacros_formula_method_set_bool }
+      { \bool_set_false:N \l__chemmacros_formula_method_set_bool }
+  }
+\cs_generate_variant:Nn \chemmacros_set_formula_method:n {V}
 
 % --------------------------------------------------------------------------
 % let's make use of `chemformula' inside some of `chemmacros' commands:
@@ -39,4 +78,35 @@
   { \chemformula_chcpd:nn {} {#1} }
 \cs_generate_variant:Nn \chemmacros_chemformula:n { x,V }
 
+\cs_new_protected:Npn \chemmacros_reaction:n #1
+  { \chemformula_ch:nn {} {#1} }
+
+% for module writes prefering traditional 2e programming:
+\cs_new_protected:Npn \chemmacros@formula #1 { \chemmacros_chemformula:n {#1} }
+\cs_new_protected:Npn \chemmacros@reaction #1 { \chemmacros_reaction:n {#1} }
+
 % --------------------------------------------------------------------------
+\ChemCompatibilityFrom{5.1}
+\keys_define:nn {chemmacros}
+  {
+    formula          .choices:nn =
+      { chemformula , mhchem }
+      { \chemmacros_set_formula_method:V \l_keys_choice_tl } ,
+    formula / unknown .code:n  =
+      \msg_warning:nnn {chemmacros} {unknown-formula-method} {#1}
+      \tl_gset:Nn \g_chemmacros_formula_method_tl {chemformula}
+  }
+\EndChemCompatibility
+
+\AtEndPreamble
+  {
+    \bool_if:NF \l__chemmacros_formula_method_set_bool
+      { \chemmacros_set_formula_method:V \g_chemmacros_formula_method_tl }
+  }
+
+% --------------------------------------------------------------------------
+\tex_endinput:D
+
+2015/09/22 - new general option `method' which allows a choice between
+             `chemformula' and `mhchem'
+

@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{reactions}{2015/07/14 reaction environments}
+\ChemModule{reactions}{2015/09/15 reaction environments}
 
 \chemmacros_load_module:n {chemformula}
 
@@ -169,7 +169,7 @@
 \cs_new_protected:Npn \chemmacros_reaction_read:nnw #1#2#3 \end
   {
     \begin{#1}#2
-      \chemformula_ch:nn {} {#3}
+      \chemmacros_reaction:n {#3}
     \end{#1}
     \end
   }
@@ -183,3 +183,7 @@
 \NewChemReaction {reactions*} {align*}
 
 % --------------------------------------------------------------------------
+\tex_endinput:D
+
+2015/09/15 - adapt to `method' option => do not use chemformula's macros
+             directly

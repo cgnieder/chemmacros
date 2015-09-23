@@ -50,12 +50,14 @@
     circletype / math  .code:n  =
       {
         \bool_set_false:N \l__chemmacros_circled_chem_bool
-        \bool_set_false:N \l_chemformula_formal_chem_bool
+        \chemmacros_if_package_loaded:nT {chemformula}
+          { \bool_set_false:N \l_chemformula_formal_chem_bool }
       } ,
     circletype / chem  .code:n  =
       {
         \bool_set_true:N \l__chemmacros_circled_chem_bool
-        \bool_set_true:N \l_chemformula_formal_chem_bool
+        \chemmacros_if_package_loaded:nT {chemformula}
+          { \bool_set_true:N \l_chemformula_formal_chem_bool }
       } ,
     circletype         .value_required:n = true ,
     circled            .choice: ,
@@ -63,19 +65,22 @@
       {
         \bool_set_false:N \l__chemmacros_circled_bool
         \bool_set_false:N \l__chemmacros_circled_formal_bool
-        \bool_set_false:N \l_chemformula_formal_charges_bool
+        \chemmacros_if_package_loaded:nT {chemformula}
+          { \bool_set_false:N \l_chemformula_formal_charges_bool }
       } ,
     circled / formal   .code:n =
       {
         \bool_set_true:N \l__chemmacros_circled_bool
         \bool_set_true:N \l__chemmacros_circled_formal_bool
-        \bool_set_false:N \l_chemformula_formal_charges_bool
+        \chemmacros_if_package_loaded:nT {chemformula}
+          { \bool_set_false:N \l_chemformula_formal_charges_bool }
       } ,
     circled / all      .code:n =
       {
         \bool_set_true:N \l__chemmacros_circled_bool
         \bool_set_false:N \l__chemmacros_circled_formal_bool
-        \bool_set_true:N \l_chemformula_formal_charges_bool
+        \chemmacros_if_package_loaded:nT {chemformula}
+          { \bool_set_true:N \l_chemformula_formal_charges_bool }
       } ,
     circled            .default:n  = all
   }

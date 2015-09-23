@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{scheme}{2015/06/09 a scheme floating environment}
+\ChemModule{scheme}{2015/09/19 a scheme floating environment}
 
 \RequirePackage {chemnum}
 
@@ -43,7 +43,7 @@
     \seq_put_right:Nn \l__chemmacros_float_methods_seq {#1}
     \prop_put:Nnn \l__chemmacros_float_methods_prop {#1} {#2}
     \prop_put:Nnn \l__chemmacros_float_definitions_prop {#1}
-      { \cs_set_protected:Npn \__chemmacros_define_float:n ##1 {#3} }
+      { \cs_set_protected:Npn \__chemmacros_define_float:nn ##1##2 {#3} }
   }
 
 % the order in which the methods are defined determines in which order the
@@ -57,28 +57,28 @@
       float ,
       name = \chemmacros_translate:n {#1-name} ,
       listname = {\exp_not:N \chemmacros_translate:n {#1-list}}
-    ]{los}
+    ]{#2}
   }
 
 \chemmacros_define_float_method:nnn {memoir}
   { \chemmacros_if_class_loaded_p:n {memoir} }
   {
-    \newfloat [chapter] {scheme} {los} {\chemmacros_translate:n {#1-name}}
-    \cs_set:Npn \thescheme {\thechapter.\@arabic\c@scheme}
-    \newlistof {listofschemes} {los} {\chemmacros_translate:n {#1-list}}
-    \newlistentry [chapter] {scheme} {los} {0}
-    \cftsetindents {scheme} {0em} {2.3em}
+    \newfloat [chapter] {#1} {#2} {\chemmacros_translate:n {#1-name}}
+    \cs_set:cpn {the#1} {\thechapter.\arabic {#1}}
+    \newlistof {listof#1s} {#2} {\chemmacros_translate:n {#1-list}}
+    \newlistentry [chapter] {#1} {#2} {0}
+    \cftsetindents {#1} {0em} {2.3em}
     \tl_put_right:Nn \@memfront@floats
-      { \counterwithout {scheme} {chapter} }
+      { \counterwithout {#1} {chapter} }
     \tl_put_right:Nn \@memmain@floats
-      { \counterwithin {scheme} {chapter} }
+      { \counterwithin {#1} {chapter} }
     \tl_put_right:Nn \@memback@floats
       {
-        \counterwithin {scheme} {chapter}
-        \setcounter {scheme} {0}
+        \counterwithin {#1} {chapter}
+        \setcounter {#1} {0}
       }
     \chemmacros_tex_if:nT {artopt}
-      { \counterwithout {scheme} {chapter} }
+      { \counterwithout {#1} {chapter} }
   }
 
 \chemmacros_define_float_method:nnn {tocbasic}
@@ -90,26 +90,40 @@
       float ,
       name = \chemmacros_translate:n {#1-name} ,
       listname = {\exp_not:N \chemmacros_translate:n {#1-list}}
-    ]{los}
+    ]{#2}
   }
 
 \chemmacros_define_float_method:nnn {newfloat}
   { \chemmacros_if_package_loaded_p:n {newfloat} }
   {
     \DeclareFloatingEnvironment[{
-      fileext = los ,
+      fileext = #2 ,
       listname = {\exp_not:N \chemmacros_translate:n {#1-list}} ,
       name = #2
     }]{#1}
   }
 
+\ChemCompatibilityFrom{5.1}
+\chemmacros_define_float_method:nnn {floatrow}
+  { \chemmacros_if_package_loaded_p:n {floatrow} }
+  {
+    \DeclareNewFloatType{#1}{%
+      fileext   = #2,
+      placement = htp,
+      name      = \chemmacros_translate:n {#1-name}
+    }
+    \cs_new_protected:cpn {listof#1s}
+      { \listof {#1} {\chemmacros_translate:n {#1-list}} }
+  }
+\EndChemCompatibility
+
 \chemmacros_define_float_method:nnn {float}
   { \chemmacros_if_package_loaded_p:n {float} }
   {
-    \newfloat {scheme} {htp} {los}
-    \floatname {scheme} {\chemmacros_translate:n {#1-name}}
-    \cs_new_protected:Npn \listofschemes
-      { \listof {scheme} {\chemmacros_translate:n {#1-list}} }
+    \newfloat {#1} {htp} {#2}
+    \floatname {#1} {\chemmacros_translate:n {#1-name}}
+    \cs_new_protected:cpn {listof#1s}
+      { \listof {#1} {\chemmacros_translate:n {#1-list}} }
   }
 
 % --------------------------------------------------------------------------
@@ -134,15 +148,15 @@
       \chemmacros_check_float_method:n
   }
 
-\AtBeginDocument
+\AtEndPreamble
   {
     \chemmacros_check_float_methods:
-    \chemmacros_define_float:n {scheme}
+    \chemmacros_define_float:nn {scheme} {los}
   }
 
 % --------------------------------------------------------------------------
 % #1: env name
-\cs_new_protected:Npn \chemmacros_define_float:n #1
+\cs_new_protected:Npn \chemmacros_define_float:nn #1#2
   {
     \bool_if:nT
       { !\cs_if_exist_p:c {#1} && !\cs_if_exist_p:c {#1} }
@@ -153,22 +167,25 @@
               \l__chemmacros_float_method_tl
               \l__chemmacros_tmpa_tl
             \tl_use:N \l__chemmacros_tmpa_tl
-            \__chemmacros_define_float:n {#1}
+            \__chemmacros_define_float:nn {#1} {#2}
           }
           {
-            \newcounter {scheme}
-            \cs_set:Npn \thescheme      {\@arabic\c@scheme}
-            \cs_new:Npn \fps@scheme     {tbp}
-            \cs_new:Npn \ftype@scheme   {8}
-            \cs_new:Npn \ext@scheme     {los}
-            \cs_new:Npn \fnum@scheme    {\schemename\nobreakspace\thescheme}
-            \cs_new:Npn \schemename     {\chemmacros_translate:n {#1-name}}
-            \cs_new:Npn \listschemename {\chemmacros_translate:n {#1-list}}
-            \newenvironment {scheme}
-              {\@float{scheme}}
+            \newcounter {#1}
+            \cs_set:cpn {the#1}      {\arabic{#1}}
+            \cs_new:cpn {fps@#1}     {tbp}
+            \cs_new:cpn {ftype@#1}   {8}
+            \cs_new:cpn {ext@#1}     {#2}
+            \cs_new:cpx {fnum@#1}    {
+              \exp_not:c {#1name}
+              \exp_not:N \nobreakspace
+              \exp_not:c {the#1}}
+            \cs_new:cpn {#1name}     {\chemmacros_translate:n {#1-name}}
+            \cs_new:cpn {list#1name} {\chemmacros_translate:n {#1-list}}
+            \newenvironment {#1}
+              {\@float{#1}}
               {\end@float}
-            \newenvironment {scheme*}
-              {\@dblfloat{scheme}}
+            \newenvironment {#1*}
+              {\@dblfloat{#1}}
               {\end@dblfloat}
             \bool_if:nTF
               {
@@ -176,38 +193,38 @@
                 \chemmacros_if_class_loaded_p:n {report}
               }
               {
-                \cs_new_protected:Npn \listofschemes
+                \cs_new_protected:cpn {listof#1s}
                   {
                     \chemmacros_tex_if:nTF {@twocolumn}
                       { \@restonecoltrue\onecolumn }
                       { \@restonecolfalse }
-                    \chapter* {\listschemename}
+                    \exp_args:NNx \chapter* {\exp_not:c {list#1name}}
                     \@mkboth
-                      {\MakeUppercase\listschemename}
-                      {\MakeUppercase\listschemename}
-                    \@starttoc {los}
+                      { \MakeUppercase \use:c {list#1name} }
+                      { \MakeUppercase \use:c {list#1name} }
+                    \@starttoc {#2}
                     \chemmacros_tex_if:nT {@restonecol}
                       { \twocolumn }
                   }
               }
               {
-                \cs_new_protected:Npn \listofschemes
+                \cs_new_protected:cpn {listof#1s}
                   {
-                     \section* {\listschemename}
+                     \exp_args:NNx \section* {\exp_not:c {list#1name}}
                      \@mkboth
-                       {\MakeUppercase\listschemename}
-                       {\MakeUppercase\listschemename}
-                    \@starttoc {los}
+                      { \MakeUppercase \use:c {list#1name} }
+                      { \MakeUppercase \use:c {list#1name} }
+                    \@starttoc {#2}
                   }
               }
-            \cs_new_eq:NN \l@scheme \l@figure
-            \chemmacros_if_package_loaded:nT
-              {floatrow}
-              { \flrow@restyle {scheme} }
+            \cs_new_eq:cN {l@#1} \l@figure
           }
       }
     \cs_set:Npn \schemename     {\chemmacros_translate:n {#1-name}}
     \cs_set:Npn \listschemename {\chemmacros_translate:n {#1-list}}
   }
 
+\tex_endinput:D
 % --------------------------------------------------------------------------
+2015/09/19 - make the module compatible with floatrow
+  

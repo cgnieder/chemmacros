@@ -194,9 +194,10 @@
 \chemsetup{
   modules = all ,
   greek = newtx ,
-%  chemformula/format = \libertineLF
+  formula = chemformula ,
+  chemformula/format = \libertineLF
 }
-\setchemformula{format = \libertineLF}
+% \setchemformula{format = \libertineLF}
 
 \usepackage{siunitx}
 
@@ -543,10 +544,11 @@ call of \cs{chemsetup}.
 You will see its macros \cs{ch} and \cs{chcpd} every now and then in this
 manual.  When using \chemmacros\ you can consider the \chemformula\
 package~\cite{pkg:chemformula} to be loaded as \chemmacros\ makes use of it in
-various places.  \chemmacros\ and \chemformula\ are tightly intertwined.  In
-fact: \emph{when using \chemmacros\ you should prefer \chemformula\ over
-  \pkg{mhchem} (which provides very similar functionality) for having
-  consistent typesetting}.
+various places.  \chemmacros\ and \chemformula\ are tightly intertwined.
+Nevertheless you should be able to use the \pkg{mhchem}~\cite{pkg:mhchem}
+package with \chemmacros. Please see section~\vref{sec:using-mhchem} for
+details and \latin{caveat}s.  \emph{The recommendation is to use
+  \chemformula.}
 
 A historical note: \chemformula\ started as a part of \chemmacros\ in
 January~2012.  Since July~2013 it is a completely independent package -- from
@@ -1587,6 +1589,33 @@ This is how the macros \cs{NewChemParticle}, \cs{RenewChemParticle},
     { \chemmacros_define_particle:Nn #1 {#2} }
 \end{sourcecode}
 
+The following macros strictly speaking are not provided by the
+\chemmodule{base} module but this place fits best for their description.
+\begin{commands}
+  \expandable\command*{chemmacros_if_module_exist:n}[\TF\ \marg{module}
+  \marg{true} \marg{false}]
+    Checks if a file with the correct name for a module \meta{module} can be
+    found.
+  \expandable\command*{chemmacros_if_module_loaded:n}[\TF\ \marg{module}
+  \marg{true} \marg{false}]
+    Checks if the module \meta{module} has already been loaded or not.
+  \command*{chemmacros_load_module:n}[ \marg{module}]
+    Loads module \meta{module} if it hasn't been loaded, yet.
+  \command*{chemmacros_load_modules:n}[ \marg{csv list of modules}]
+    Loads every module in \meta{csv list of modules} if they haven't been
+    loaded, yet. This is the code level variant of \cs{usechemmodule}.
+  \command*{chemmacros_before_module:nn}[ \marg{module} \marg{code}]
+    Saves\sinceversion{5.1} \meta{code} and inserts it right before
+    \meta{module} is loaded.  If \meta{module} is never loaded then
+    \meta{code} is never inserted.  If \meta{module} already is loaded when
+    the command is used then \meta{code} also is never inserted.
+  \command*{chemmacros_after_module:nn}[ \marg{module} \marg{code}]
+    Saves\sinceversion{5.1} \meta{code} and inserts it right after
+    \meta{module} is loaded.  If \meta{module} is never loaded then
+    \meta{code} is never inserted.  If \meta{module} already is loaded when
+    the command is used then \meta{code} is inserted immediately.
+\end{commands}
+
 \subsection{The \chemmodule*{chemformula} Module}\label{sec:chemformula-module}
 
 The \chemmodule{chemformula} module loads the \pkg{chemformula}
@@ -1594,23 +1623,72 @@ package~\cite{pkg:chemformula} and the \pkg{amstext}
 package~\cite{pkg:amstext}.  It also loads the \chemmodule{charges} module.
 
 \subsubsection{For Users}
-The \chemmodule{chemformula} module makes it possible that you can set all
-\chemformula\ options via the \cs{chemsetup} command using the module
-\module{chemformula}, for example:
+
+This module provides a general option:
+\begin{options}
+  \keychoice{formula}{chemformula,mhchem}\Default{chemformula}
+    This\sinceversion{5.1} option let's you choose if chemical formula's are
+    typeset using \pkg{chemformula}'s \cs{ch} and \cs{chcpd} or \pkg{mhchem}'s
+    \cs{ce}.  The corresponding package is loaded.
+\end{options}
+If you explicitly set this option the corresponding package is loaded
+immediately.  Otherwise the option is set at the end of the preamble.
+
+\paragraph{Using the \pkg*{chemformula} Package}
+If you set \keyis{formula}{chemformula} the \chemmodule{chemformula} module
+makes it possible that you can set all \chemformula\ options via the
+\cs{chemsetup} command using the module \module{chemformula}, for example:
 \begin{sourcecode}
   \chemsetup[chemformula]{format=\sffamily}
 \end{sourcecode}
 
+Everywhere where \chemmacros\ typesets chemical formulas \chemformula's macros
+\cs{chcpd} or \cs{ch} are used, for example in the reaction environments
+provided by the \chemmodule{reactions} module.
+
+\paragraph{Using the \pkg*{mhchem} Package}\label{sec:using-mhchem}
+If you set \keyis{formula}{mhchem} the \chemmodule{chemformula} module makes
+it possible that you can set all of \pkg{mhchem}'s options via the
+\cs{chemsetup} command using the module \module{mhchem}, for example:
+\begin{sourcecode}
+  \chemsetup[mhchem]{format=\sffamily}
+\end{sourcecode}
+
+Everywhere where \chemmacros\ typesets chemical formulas \pkg{mhchem}'s macro
+\cs{ce} is used, for example in the reaction environments provided by the
+\chemmodule{reactions} module.
+
+There are a few \latin{caveat}s if you use this method:
+\begin{itemize}
+  \item This method has not been extensively tested, yet.  There may be errors
+     and wrong output at unexpected places.
+  \item Using this method effectively disables the different values of the
+    \module{particles} option \option{elpair} (see
+    section~\ref{sec:particles-module}).
+  \item The different kinds of formal charges provided by the
+    \chemmodule{charges} module (see section~\ref{sec:ion-charges}) are
+    disabled.  Formal charges always use the math method now.
+  \item There may also be other incompatibilities (\eg, \pkg{mhchem} has it's
+    own method of setting upright Greek letters so it may or may not disable
+    \chemmacros' mechanism).
+\end{itemize}
+
 \subsubsection{For Module Writers}
 
-There's only one macro for module writers:
+There's are two macros for module writers:
 \begin{commands}
   \command*{chemmacros_chemformula:n}[ \marg{formula}]
-    This is only a wrapper for \cs{chcpd}.  It is recommended that module
-    writers use this macro (or a variant thereof) inside of \chemmacros's
-    macros whenever they want to display a chemical formula.  Writers who
-    prefer traditional \LaTeXe\ programming over expl3 should use \cs{chcpd}
-    directly.
+    This is only a wrapper for \cs{chcpd} or \cs{ce}.  It is recommended that
+    module writers use this macro (or a variant thereof) inside of
+    \chemmacros's macros whenever they want to display a chemical formula.
+    Writers who prefer traditional \LaTeXe\ programming over expl3 should use
+    \cs*{chemmacros@formula}.
+  \command*{chemmacros_reaction:n}[ \marg{reaction}]
+    This is only a wrapper for \cs{ch} or \cs{ce}.  It is recommended that
+    module writers use this macro (or a variant thereof) inside of
+    \chemmacros's macros whenever they want to display a chemical reaction.
+    Writers who prefer traditional \LaTeXe\ programming over expl3 should use
+    \cs*{chemmacros@reaction}.
 \end{commands}
 
 \subsection{The \chemmodule*{greek} Module}\label{sec:greek-module}
@@ -2389,10 +2467,11 @@ The default length of the vertical lines can be customized with the option
 
 \subsection{The \chemmodule*{scheme} Module}\label{sec:scheme-module}
 
-The \chemmodule{scheme} module defines a floating environment
+The \chemmodule{scheme} module loads the \pkg{chemnum}
+package~\cite{pkg:chemnum} and defines a floating environment
 \showenv{scheme}.  That is, it \emph{only} defines this float if no
-environment \env{scheme} exists at begin document.  The module checks for
-different available float defining methods, in \emph{this} order:
+environment \env{scheme} exists at the end of the preamble.  The module checks
+for different available float defining methods, in \emph{this} order:
 \begin{itemize}
   \item If the current class is a \KOMAScript\ class \cs*{DeclareNewTOC} will
     be used.
@@ -2401,6 +2480,8 @@ different available float defining methods, in \emph{this} order:
     be used.
   \item If the package \pkg{newfloat} has been loaded
     \cs*{DeclareFloatingEnvironment} will be used.
+  \item \sinceversion{5.1}If the package \pkg{floatrow} has been loaded its
+    method will be used.
   \item If the package \pkg{float} has been loaded its method will be used.
   \item If neither of the above the \enquote{manual} method is used.  This
     means the environment is defined the same way like \env*{figure} is
@@ -3157,7 +3238,7 @@ me (see section~\vref{sec:submitting-module}) so they can be added to the
 If you have additional functionality which you think might be useful as a
 \chemmacros\ module then you can easily write one yourself.  The module must
 be a file in a path where \TeX\ can find it following a certain naming
-scheme.  The file for a module \chemmodule*{foo} must be named
+scheme.  The file for a module \chemmodule*{foo} \emph{must be named}
 \code{chemmacros.module.foo.code.tex}.
 
 The first line in the file then should look similar to this:
@@ -3205,6 +3286,10 @@ which most likely is available on your system:
 \begin{bash}
   texdoc interface3
 \end{bash}
+If you haven't read section~\vref{sec:base-module} about the \chemmodule{base}
+module, yet, please have a look.  There some macros for module writers are
+described.  Also other modules define macros for module writers which may be
+useful.
 
 \subsection{Submitting a Module}\label{sec:submitting-module}
 
