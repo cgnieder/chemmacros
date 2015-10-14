@@ -41,6 +41,9 @@
 \bool_new:N \l__chemmacros_ox_sign_bool
 \bool_new:N \l__chemmacros_ox_integer_bool
 \bool_new:N \l__chemmacros_ox_explicit_sign_bool
+\ChemCompatibilityFrom{5.2}
+\bool_new:N \l__chemmacros_ox_explicit_zero_sign_bool
+\EndChemCompatibility
 \bool_new:N \l__chemmacros_ox_format_roman_bool
 \bool_new:N \l__chemmacros_ox_decimal_marker_comma_bool
 \bool_new:N \l__chemmacros_ox_parse_bool
@@ -79,6 +82,7 @@
     \group_end:
   }
 
+\ChemCompatibilityTo{5.1}
 \cs_new_protected:Npn \__chemmacros_ox_sign:n #1
   {
     \bool_if:nT
@@ -87,15 +91,36 @@
         \l__chemmacros_ox_explicit_sign_bool
       }
       { \c_math_toggle_token + \c_math_toggle_token }
-    \bool_if:nT
-      {
-        \fp_compare_p:n { #1 = 0 } &&
-        \l__chemmacros_ox_explicit_sign_bool
-      }
-      { \c_math_toggle_token \pm \c_math_toggle_token }
+      \bool_if:nT
+        {
+          \fp_compare_p:n { #1 = 0 } &&
+          \l__chemmacros_ox_explicit_sign_bool
+        }
+        { \c_math_toggle_token \pm \c_math_toggle_token }
     \fp_compare:nT { #1 < 0 }
       { \c_math_toggle_token - \c_math_toggle_token }
   }
+\EndChemCompatibility
+\ChemCompatibilityFrom{5.2}
+\cs_new_protected:Npn \__chemmacros_ox_sign:n #1
+  {
+    \bool_if:nT
+      {
+        \fp_compare_p:n { #1 > 0 } &&
+        \l__chemmacros_ox_explicit_sign_bool
+      }
+      { \c_math_toggle_token + \c_math_toggle_token }
+      \bool_if:nT
+        {
+          \fp_compare_p:n { #1 = 0 } &&
+          \l__chemmacros_ox_explicit_sign_bool &&
+          \l__chemmacros_ox_explicit_zero_sign_bool
+        }
+        { \c_math_toggle_token \pm \c_math_toggle_token }
+    \fp_compare:nT { #1 < 0 }
+      { \c_math_toggle_token - \c_math_toggle_token }
+  }
+\EndChemCompatibility
 
 \cs_new_protected:Npn \__chemmacros_ox_value:n #1
   {
@@ -258,6 +283,14 @@
     align          .initial:n = center
   }
 
+\ChemCompatibilityFrom{5.4}
+\keys_define:nn {chemmacros/redox}
+  {
+    explicit-zero-sign .bool_set:N \l__chemmacros_ox_explicit_zero_sign_bool ,
+    explicit-zero-sign .default:n  = true
+  }
+\EndChemCompatibility
+
 % \ox[<keyval>]{<num>,<atom>}
 % \ox*[<keyval>]{<num>,<atom>} => always number on the top
 \cs_new_protected:Npn \chemmacros_ox:nnnn #1#2#3#4
@@ -401,3 +434,6 @@
   }
 
 % --------------------------------------------------------------------------
+\tex_endinput:D
+2015/09/30 - new option `explicit-zero-sign'
+

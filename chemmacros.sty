@@ -31,9 +31,9 @@
 
 % --------------------------------------------------------------------------
 % package information:
-\tl_const:Nn \c_chemmacros_date_tl {2015/09/23}
+\tl_const:Nn \c_chemmacros_date_tl {2015/10/14}
 \tl_const:Nn \c_chemmacros_version_major_number_tl {5}
-\tl_const:Nn \c_chemmacros_version_minor_number_tl {1}
+\tl_const:Nn \c_chemmacros_version_minor_number_tl {2}
 \tl_const:Nn \c_chemmacros_version_subrelease_tl   {}
 \tl_const:Nx \c_chemmacros_version_number_tl
   {\c_chemmacros_version_major_number_tl.\c_chemmacros_version_minor_number_tl}
@@ -49,29 +49,24 @@
   {\c_chemmacros_info_tl \c_space_tl (CN)}
 
 % --------------------------------------------------------------------------
-% messages:
-\msg_new:nnn {chemmacros} {too-low-compatibility}
-  {
-    Compatibility~ for~ versions~ below~ v4.7~ is~ not~ supported!~ You~
-    requested~ version~ v #1.~ Loading~ v4.7~ instead.
-  }
-
-\msg_new:nnn {chemmacros} {low-compatibility}
-  {
-    You~ requested~ compatibility~ mode~ v #1~ while~ the~ current~ version~
-    of~ chemmacros~ is~ v \c_chemmacros_version_number_tl .~ Not~ all~ features~
-    will~ be~ available!
-  }
-
-% --------------------------------------------------------------------------
-% compatibility
+% set compatibility
 \fp_new:N \l__chemmacros_compatibility_version_fp
 \fp_set:Nn \l__chemmacros_compatibility_version_fp {\c_chemmacros_version_number_tl}
 
 \keys_define:nn {chemmacros/compatibility}
   {
-    compatibility .fp_set:N = \l__chemmacros_compatibility_version_fp ,
-    unknown       .code:n   =
+    compatibility .code:n =
+      \str_case:nnTF {#1}
+        {
+          {newest} {}
+          {latest} {}
+        }
+        {
+          \fp_set:Nn \l__chemmacros_compatibility_version_fp
+            { \c_chemmacros_version_number_tl }
+        }
+        { \fp_set:Nn \l__chemmacros_compatibility_version_fp {#1} } ,
+    unknown       .code:n =
       \PassOptionsToPackage{\CurrentOption}{chemmacros4}
       \PassOptionsToPackage{\CurrentOption}{chemmacros5}
   }
@@ -154,6 +149,29 @@
       {#3}
   }
 
+% --------------------------------------------------------------------------
+% messages:
+\msg_new:nnn {chemmacros} {too-low-compatibility}
+  {
+    Compatibility~ for~ versions~ below~ v4.7~ is~ not~ supported!~ You~
+    requested~ version~ v #1.~ Loading~ v4.7~ instead.
+  }
+
+\msg_new:nnn {chemmacros} {too-high-compatibility}
+  {
+    You~ requested~ compatibility~ mode~ v #1~ while~ the~ current~ version~
+    of~ chemmacros~ is~ v \c_chemmacros_version_number_tl .~ Falling~ back~
+    to~ v \c_chemmacros_version_number_tl !
+  }
+
+\msg_new:nnn {chemmacros} {low-compatibility}
+  {
+    You~ requested~ compatibility~ mode~ v #1~ while~ the~ current~ version~
+    of~ chemmacros~ is~ v \c_chemmacros_version_number_tl .~ Not~ all~ features~
+    will~ be~ available!
+  }
+
+% --------------------------------------------------------------------------
 % let's see that the max number is the newest (=current) version
 \chemmacros_if_compatiblity:nnT {>} { \c_chemmacros_version_number_tl }
   {
@@ -460,3 +478,15 @@ Version history
 2015/09/23 - version 5.1  - add option `method' to `chemformula' module
                           - make module `scheme' compatible with `floatrow'
                           - add module hooks `before' and `after'
+2015/10/14 - version 5.2  - warn if compatibility version requested is higher
+                            than the current version number
+                          - enable to specify a minimal compatibility version
+                            for a module
+                          - add info message to `all' module
+                          - add values `newest' and `latest' to the
+                            compatibility option
+                          - check for mhchem and chemformula and choose the
+                            formula method accordingly
+                          - fixes in the module hook mechanism
+                          - fix in \chemmacros_if_module_loaded:n
+                          - new internal module `errorcheck'

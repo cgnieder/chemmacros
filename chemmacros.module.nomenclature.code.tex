@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{nomenclature}{2015/09/09 chemical names}
+\ChemModule{nomenclature}{2015/09/23 chemical names}
 
 \RequirePackage{scrlfile}
 
@@ -141,6 +141,7 @@
     \chemmacros_make_iupac:
   }
 
+\ChemCompatibilityTo{5.1}
 \cs_new_protected:Npn \chemmacros_make_iupac:
   {
     \bool_if:NT \l__chemmacros_in_document_bool
@@ -169,8 +170,40 @@
           }
       }    
   }
-
 \AtBeginDocument { \chemmacros_make_iupac: }
+\EndChemCompatibility
+
+\ChemCompatibilityFrom{5.2}
+\cs_new_protected:Npn \chemmacros_make_iupac:
+  {
+    \chemmacros_if_document:T
+      {
+        \bool_if:NTF \l__chemmacros_inside_iupac_bool
+          {
+            \prop_map_inline:Nn \l__chemmacros_iupac_prop
+              { \cs_set_protected:cpn {##1} {##2} }
+          }
+          {
+            \bool_if:NF \l__chemmacros_iupac_restricted_bool
+              {
+                \bool_if:NTF \l__chemmacros_iupac_strict_bool
+                  {
+                    \prop_map_inline:Nn \l__chemmacros_iupac_prop
+                      { \cs_set_protected:cpn {##1} {##2} }
+                  }
+                  {
+                    \prop_map_inline:Nn \l__chemmacros_iupac_prop
+                      {
+                        \cs_if_exist:cF {##1}
+                          { \cs_set_protected:cpn {##1} {##2} }
+                      }
+                  }
+              }
+          }
+      }    
+  }
+\AfterEndPreamble { \chemmacros_make_iupac: }
+\EndChemCompatibility
 
 \NewDocumentCommand \DeclareChemIUPAC { mm }
   { \chemmacros_define_iupac:Nn #1 { #2 } }
@@ -209,11 +242,33 @@
 \keys_define:nn {chemmacros/nomenclature}
   { cip-kern .dim_set:N = \l__chemmacros_cip_kern_dim }
 
+\ChemCompatibilityTo{5.1}
+\cs_new_protected:Npn \chemmacros_cip:n #1
+  { \textit{#1} \tex_kern:D \l__chemmacros_cip_kern_dim }
+
 \NewDocumentCommand \cip { m }
   { \chemmacros_cip:n { #1 } }
+\EndChemCompatibility
 
+\ChemCompatibilityFrom{5.2}
 \cs_new_protected:Npn \chemmacros_cip:n #1
-  { ( \textit{#1} \tex_kern:D \l__chemmacros_cip_kern_dim ) }
+  {
+    \int_zero:N \l__chemmacros_tmpa_int
+    \textup{(}
+    \clist_map_inline:nn
+      {#1}
+      {
+        \int_incr:N \l__chemmacros_tmpa_int
+        \textit{##1}
+        \int_compare:nT
+          { \l__chemmacros_tmpa_int < \clist_count:n {#1} }
+          { \textup{,} }
+      }
+    \textup{)}
+    \tex_kern:D \l__chemmacros_cip_kern_dim
+  }
+\DeclareChemIUPAC \cip { \chemmacros_cip:n }
+\EndChemCompatibility
 
 % remember: TikZ needs : to be other
 \cs_new_protected:Npn \chemmacros_sconf:n #1
@@ -300,6 +355,32 @@
     \skip_horizontal:N \c_zero_dim
   }
 
+% #1: pre break
+% #2: post break
+% #3: no break
+\ChemCompatibilityTo{5.0}
+\cs_new_protected:Npn \__chemmacros_break_point_insert:nnn #1#2#3
+  {
+    \chemmacros_nobreak:
+    \tex_discretionary:D { - } { } {#3}
+    \chemmacros_allow_hyphens:
+  }
+\EndChemCompatibility
+
+\ChemCompatibilityFrom{5.1}
+\cs_new_protected:Npn \__chemmacros_break_point_insert:nnn #1#2#3
+  {
+    \mode_if_math:TF
+      {#3}
+      {
+        \chemmacros_nobreak:
+        \tex_discretionary:D {#1} {#2} {#3}
+        \chemmacros_allow_hyphens:
+      }
+  }
+\EndChemCompatibility
+
+
 \dim_new:N  \l__chemmacros_iupac_hyphen_pre_dim
 \dim_set:Nn \l__chemmacros_iupac_hyphen_pre_dim { .01em }
 \dim_new:N  \l__chemmacros_iupac_hyphen_post_dim
@@ -314,19 +395,7 @@
     break-space       .dim_set:N = \l__chemmacros_iupac_break_dim
   }
 
-% #1: pre break
-% #2: post break
-% #3: no break
-\cs_new_protected:Npn \__chemmacros_break_point_insert:nnn #1#2#3
-  {
-    \mode_if_math:TF
-      {#3}
-      {
-        \chemmacros_nobreak:
-        \tex_discretionary:D {#1} {#2} {#3}
-        \chemmacros_allow_hyphens:
-      }
-  }
+\ChemCompatibilityTo{5.1}
 \cs_new_protected:Npn \chemmacros_break_point_hyphen:
   {
     \__chemmacros_break_point_insert:nnn
@@ -350,6 +419,33 @@
           { \tex_kern:D \l__chemmacros_iupac_break_dim }
       }
   }
+\EndChemCompatibility
+
+\ChemCompatibilityFrom{5.2}
+\cs_new_protected:Npn \chemmacros_break_point_hyphen:
+  {
+    \__chemmacros_break_point_insert:nnn
+      { \tex_kern:D \l__chemmacros_iupac_hyphen_pre_dim - }
+      { }
+      {
+        \tex_kern:D \l__chemmacros_iupac_hyphen_pre_dim
+        -
+        \tex_kern:D \l__chemmacros_iupac_hyphen_post_dim
+      }
+  }
+
+\cs_new_protected:Npn \chemmacros_break_point:
+  {
+    \__chemmacros_break_point_insert:nnn
+      {-}
+      { }
+      {
+        \mode_if_math:TF
+          { | }
+          { \tex_kern:D \l__chemmacros_iupac_break_dim }
+      }
+  }
+\EndChemCompatibility
 
 \cs_new_protected:Npn \chemmacros_break_point_opening_paren:
   { \__chemmacros_break_point_insert:nnn { - } { ( } { ( } }
@@ -381,7 +477,7 @@
 
 \cs_new_protected:Npn \chemmacros_remove_shorthand:N #1
   {
-    \chemmacros_define_iupac_shorthand:Npn #1 {}
+    \chemmacros_define_iupac_shorthand:NN #1 \c_empty_tl
     \seq_remove_all:Nn \l__chemmacros_iupac_shorthands_seq {#1}
   }
 
@@ -425,6 +521,16 @@
 \NewDocumentCommand \RemoveChemIUPACShorthand {m} 
   { \chemmacros_remove_shorthand:N #1 }
 
+\NewChemIUPACShorthand | \chemmacros_break_point:
+\NewChemIUPACShorthand - \chemmacros_break_point_hyphen:
+\ChemCompatibilityFrom{5.1}
+\NewChemIUPACShorthand ( \chemmacros_break_point_opening_paren:
+\NewChemIUPACShorthand ) \chemmacros_break_point_closing_paren:
+\NewChemIUPACShorthand [ \chemmacros_break_point_opening_bracket:
+\NewChemIUPACShorthand ] \chemmacros_break_point_closing_bracket:
+\EndChemCompatibility
+\NewChemIUPACShorthand ^ \chemmacros_superscript:n
+
 \group_begin:
 \chemmacros_activate_all_iupac_shorthands:
 
@@ -444,19 +550,13 @@
   }
 \group_end:
 
-\NewChemIUPACShorthand | \chemmacros_break_point:
-\NewChemIUPACShorthand - \chemmacros_break_point_hyphen:
-\NewChemIUPACShorthand ( \chemmacros_break_point_opening_paren:
-\NewChemIUPACShorthand ) \chemmacros_break_point_closing_paren:
-\NewChemIUPACShorthand [ \chemmacros_break_point_opening_bracket:
-\NewChemIUPACShorthand ] \chemmacros_break_point_closing_bracket:
-\NewChemIUPACShorthand ^ \chemmacros_superscript:n
-
 % Thanks to Joseph Wright and Enrico Gregorio for the help on the curious
 % redefinition of \- and the end of the compilation
 % see http://tex.stackexchange.com/q/42405/5049 for reference
+\ChemCompatibilityTo{5.2}
 \cs_set_protected:Npx \- { \exp_not:o { \- } }
 \cs_set_eq:NN \@dischyph \-
+\EndChemCompatibility
 
 \NewDocumentCommand \iupac {m} { \chemmacros_iupac:n {#1} }
 
@@ -620,3 +720,8 @@
   
 % --------------------------------------------------------------------------
 \tex_endinput:D
+
+2015/10/01 - use new function \chemmacros_if_document:TF for
+             \chemmacros_make_iupac:
+           - \cip only italicizes elements of csv list
+           - fix bug in \RemoveChemIUPACShorthand

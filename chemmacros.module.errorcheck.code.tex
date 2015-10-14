@@ -1,0 +1,115 @@
+% --------------------------------------------------------------------------
+%
+% the CHEMMACROS package -- module: `errorcheck'
+%
+% --------------------------------------------------------------------------
+% Clemens Niederberger
+% --------------------------------------------------------------------------
+% https://github.org/cgnieder/chemmacros/
+% contact@mychemistry.eu
+% --------------------------------------------------------------------------
+% If you have any ideas, questions, suggestions or bugs to report, please
+% feel free to contact me.
+% --------------------------------------------------------------------------
+% Copyright 2011-2015 Clemens Niederberger
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Clemens Niederberger.
+% --------------------------------------------------------------------------
+\ChemModule{errorcheck}{2015/10/14 error checking for unloaded modules}[5.2]
+
+\msg_new:nnn {chemmacros} {undefined}
+  { The~ #1~ `#2'~ is~ undefined.~ You~ need~ to~ load~ the~ `#3'~ module. }
+
+\cs_generate_variant:Nn \msg_error:nnnnn {nnnx}
+
+\cs_new_protected:Npn \chemmacros_command_requires_module:Nn #1#2
+  {
+    \chemmacros_if_module_loaded:nF {#2}
+      {
+        \cs_set:Npn #1
+          {
+            \msg_error:nnnxn {chemmacros} {undefined}
+              {command}
+              { \token_to_str:N #1 }
+              {#2}
+          }
+      }
+    \chemmacros_before_module:nn {#2} { \cs_undefine:N #1 }
+  }
+
+\cs_new_protected:Npn \chemmacros_environment_requires_module:nn #1#2
+  {
+    \chemmacros_if_module_loaded:nF {#2}
+      {
+        \cs_set:cpn {#1}
+          {
+            \msg_error:nnnnn {chemmacros} {undefined}
+              {environment}
+              {#1}
+              {#2}
+          }
+      }
+    \chemmacros_before_module:nn {#2} { \cs_undefine:c {#1} }
+  }
+
+% --------------------------------------------------------------------------
+% add checking for the most common user commands and environments:
+% isotopes module
+\chemmacros_command_requires_module:Nn \isotope {isotopes}
+
+% mechanisms module
+\chemmacros_command_requires_module:Nn \mech {mechanisms}
+
+% newman module
+\chemmacros_command_requires_module:Nn \newman {newman}
+
+% orbital module
+\chemmacros_command_requires_module:Nn \orbital {orbital}
+
+% reactions module
+\chemmacros_environment_requires_module:nn {reaction} {reactions}
+\chemmacros_environment_requires_module:nn {reaction*} {reactions}
+\chemmacros_environment_requires_module:nn {reactions} {reactions}
+\chemmacros_environment_requires_module:nn {reactions*} {reactions}
+\chemmacros_command_requires_module:Nn \listofreactions {reactions}
+\chemmacros_command_requires_module:Nn \AddRxnDesc {reactions}
+
+% redox module
+\chemmacros_command_requires_module:Nn \ox {redox}
+\chemmacros_command_requires_module:Nn \OX {redox}
+\chemmacros_command_requires_module:Nn \redox {redox}
+
+% scheme module
+\chemmacros_environment_requires_module:nn {scheme} {scheme}
+\chemmacros_command_requires_module:Nn \listschemename {scheme}
+\chemmacros_command_requires_module:Nn \schemename {scheme}
+\chemmacros_command_requires_module:Nn \listofschemes {scheme}
+
+% spectroscopy module
+\chemmacros_command_requires_module:Nn \NMR {spectroscopy}
+\chemmacros_environment_requires_module:nn {experimental} {spectroscopy}
+
+% thermodynamics module
+\chemmacros_command_requires_module:Nn \state {thermodynamics}
+\chemmacros_command_requires_module:Nn \enthalpy {thermodynamics}
+\chemmacros_command_requires_module:Nn \entropy {thermodynamics}
+\chemmacros_command_requires_module:Nn \gibbs {thermodynamics}
+
+% xfrac module
+\chemmacros_command_requires_module:Nn \chemfrac {xfrac}
+
+% --------------------------------------------------------------------------
+
+\tex_endinput:D
+
+2015/10/14 - first version

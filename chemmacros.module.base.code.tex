@@ -25,7 +25,12 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{base}{2015/07/25 basic chemmacros module}
+\ChemModule{base}{2015/10/14 basic chemmacros module}
+
+% for the document hooks
+\ChemCompatibilityFrom{5.1}
+\RequirePackage {etoolbox}
+\EndChemCompatibility
 
 % --------------------------------------------------------------------------
 \msg_new:nnn {chemmacros} {command-deprecated}
@@ -171,14 +176,36 @@
       { \prg_return_false: }
   }
 
+\ChemCompatibilityFrom{5.2}
+% this is still true \AtBeginDocument:
+\prg_new_conditional:Npnn \chemmacros_if_preamble: {p,T,F,TF}
+  {
+    \cs_if_eq:NNTF \@onlypreamble \@notprerr
+      { \prg_return_false: }
+      { \prg_return_true: }
+  }
+
+% this is still false \AtBeginDocument:
+\prg_new_conditional:Npnn \chemmacros_if_document: {p,T,F,TF}
+  {
+    \bool_if:NTF \l__chemmacros_in_document_bool
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+\EndChemCompatibility
+
 % --------------------------------------------------------------------------
 % some checks at begin document:
 \bool_new:N \l__chemmacros_in_document_bool
 \bool_new:N \l__chemmacros_chemstyle_bool
 
+\chemmacros_if_compatiblity:nnTF {>=} {5.2}
+  { \AfterEndPreamble }
+  { \AtBeginDocument }
+  { \bool_set_true:N \l__chemmacros_in_document_bool }
+
 \AtBeginDocument
   {
-    \bool_set_true:N \l__chemmacros_in_document_bool
     \@ifpackageloaded { chemstyle }
       { \bool_set_true:N \l__chemmacros_chemstyle_bool }
       { \bool_set_false:N \l__chemmacros_chemstyle_bool }
@@ -270,3 +297,13 @@
 
 % --------------------------------------------------------------------------
 
+\chemmacros_if_compatiblity:nnT {>=} {5.2}
+  { \chemmacros_load_module:n {errorcheck} }
+
+% --------------------------------------------------------------------------
+
+\tex_endinput:D
+
+2015/09/23 - new conditionals \chemmacros_if_preamble:TF and
+             \chemmacros_if_document:TF
+2015/10/14 - load `errorcheck' module

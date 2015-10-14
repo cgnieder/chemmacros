@@ -50,6 +50,13 @@
     Unknown~ option~ `#1'!~ Since~ v5.0~ chemmacros~ has~ no~ package~
     options~ any~ more!
   }
+
+\msg_new:nnn {chemmacros} {module-not-available}
+  {
+    The~ module~ `#1'~ is~ only~ available~ in~ compatibility~ mode~ #2~ or~
+    higher.
+  }
+
 \cs_generate_variant:Nn \msg_warning:nnn { nnV }
 
 \keys_define:nn {chemmacros/package-options}
@@ -128,6 +135,9 @@
 \tl_const:Nn \c__chemmacros_module_extension_tl {code.tex}
 \tl_const:Nn \c__chemmacros_module_prefix_tl    {chemmacros.module}
 
+\seq_new:N \g__chemmacros_loaded_modules_seq
+\prop_new:N \g__chemmacros_loaded_modules_prop
+
 \cs_new_protected:Npn \chemmacros_load_modules:n #1
   { \clist_map_inline:nn {#1} { \chemmacros_load_module:n {##1} } }
 
@@ -143,12 +153,12 @@
       {
         \chemmacros_if_module_exist:nTF {#1}
           {
-            \__chemmacros_use_module_hook:nn {before} {#1}
+            \__chemmacros_use_module_hook:nn {#1} {before}
             \msg_log:nnn {chemmacros} {loading-module} {#1}
             \@onefilewithoptions
               {\c__chemmacros_module_prefix_tl.#1}[][]
               \c__chemmacros_module_extension_tl
-            \__chemmacros_use_module_hook:nn {after} {#1}
+            \__chemmacros_use_module_hook:nn {#1} {after}
           }
           { \msg_error:nnn {chemmacros} {module-missing} {#1} }
       }
@@ -157,7 +167,7 @@
 
 \prg_new_conditional:Npnn \chemmacros_if_module_loaded:n #1 {p,T,F,TF}
   {
-    \cs_if_exist:cTF  {chemmacros-module-#1-loaded}
+    \seq_if_in:NnTF \g__chemmacros_loaded_modules_seq {#1}
       { \prg_return_true: }
       { \prg_return_false: }
   }
@@ -171,10 +181,10 @@
   }
 
 % --------------------------------------------------------------------------
+\ChemCompatibilityFrom{5.1}
 % module hooks:
 % #1: module
 % #2: code
-\ChemCompatibilityFrom{5.1}
 \cs_new_protected:Npn \chemmacros_after_module:nn #1#2
   {
     \chemmacros_if_module_loaded:nTF {#1}
@@ -204,6 +214,8 @@
       }
   }
 
+% #1: module
+% #2: hook name
 \cs_new_protected:Npn \__chemmacros_use_module_hook:nn #1#2
   {
     \tl_if_exist:cT {g__chemmacros_module_#1_#2_hook_tl}
@@ -214,9 +226,15 @@
   }
 
 % --------------------------------------------------------------------------
-\cs_new_protected:Npn \chemmacros_module:nnn #1#2#3
+\cs_new_protected:Npn \__chemmacros_module:nnnn #1#2#3#4
   {
-    \cs_new:cpn {chemmacros-module-#2-loaded} {chemmacros:~module~`#2'}
+    \chemmacros_if_compatiblity:nnF {>=} {#4}
+      {
+        \msg_warning:nnnn {chemmacros} {module-not-available} {#2} {#4}
+        \tex_endinput:D
+      }
+    \seq_gput_right:Nn \g__chemmacros_loaded_modules_seq {#2}
+    \prop_gput:Nnn \g__chemmacros_loaded_modules_prop {#2} {#3}
     \ProvidesFile
       {\c__chemmacros_module_prefix_tl.#2.\c__chemmacros_module_extension_tl}
       [
@@ -236,8 +254,8 @@
 % #1: boolean
 % #2: name
 % #3: description
-\NewDocumentCommand \ChemModule {smm}
-  { \chemmacros_module:nnn {#1} {#2} {#3} }
+\NewDocumentCommand \ChemModule {smmO{5.0}}
+  { \__chemmacros_module:nnnn {#1} {#2} {#3} {#4} }
 
 % --------------------------------------------------------------------------
 % command for loading modules:
@@ -247,7 +265,7 @@
 % load default modules:
 \chemmacros_load_modules:n
   {
-    base, lang, greek, chemformula, % <= those need to be present for all modules
+    base, errorcheck, lang, greek, chemformula, % <= those need to be present for all modules
     acid-base, symbols, charges, particles, phases , nomenclature
   }
 
@@ -258,6 +276,7 @@
 Modules: (* = preloaded)
  - internal modules:
    - base *
+   - errorcheck *
    - lang *
    - greek *
    - chemformula *
@@ -286,3 +305,11 @@ Modules: (* = preloaded)
 Version history
 2015/08/29 - initial release v5.0
 2015/09/23 - add module hooks `before' and `after'
+           - allow to give minimal compatibility version to a module: this
+             should be the first version when a module is published and
+             shouldn't be changed any more; loading the corresponding module
+             will abort when compatibility is too low
+           - store loaded modules in a seq and in a prop
+2015/10/14 - bug fix in the module hook mechanism
+           - bug fix in \chemmacros_if_module_loaded:n
+           - new `errorcheck' module

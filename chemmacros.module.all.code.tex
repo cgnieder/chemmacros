@@ -25,11 +25,21 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{all}{2015/06/09 load all libraries}
+\ChemModule{all}{2015/10/14 load all libraries}
+
+\msg_new:nnn {chemmacros} {all-modules}
+  {
+    You~ are~ loading~ *all*~ of~ chemmacros'~ module~ through~ the~ `all'~
+    module!~ This~ is~ fine~ but~ not~ really~ encouraged.~ Do~ really~ need~
+    all~ of~ `isotopes' ,~ `mechanisms' ,~ `newman' ,~ `nomenclature' ,~
+    `orbital' ,~ `particles' ,~ `phases' ,~ `reactions' ,~ `redox' ,~ `scheme'
+    ,~ `spectroscopy' ,~ `symbols' ,~ `thermodynamics' ,~ `units' ...?
+  }
 
 \chemmacros_load_modules:n
   {
      base ,
+     errorcheck ,
      lang ,
      greek ,
      chemformula ,
@@ -53,4 +63,10 @@
      xfrac
   }
 
+\msg_info:nn {chemmacros} {all-modules}
+
 % --------------------------------------------------------------------------
+\tex_endinput:D
+
+2015/10/14 - add info message discouraging the usage of this module
+           - add `errorcheck' module

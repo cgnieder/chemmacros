@@ -33,7 +33,7 @@
 % --------------------------------------------------------------------------
 \documentclass[load-preamble+]{cnltx-doc}
 \usepackage[utf8]{inputenc}
-\usepackage{chemmacros}
+\usepackage[compatibility=newest]{chemmacros}
 \setcnltx{
   package  = {chemmacros},
   info     = {comprehensive support for typesetting chemistry documents},
@@ -59,15 +59,15 @@
       DeclareChemIUPACShorthand, DeclareChemLatin, DeclareChemNMR,
       DeclareChemNucleophile, DeclareChemPartialCharge, DeclareChemParticle,
       DeclareChemPhase, DeclareChemReaction, DeclareChemState,
-      delm, delp, Delta, Dfi,
-    el, ElPot, endo, Enthalpy, enthalpy, entropy,
+      delm, delp, Delta, descter, Dfi,
+    el, ElPot, endo, entgegen, Enthalpy, enthalpy, entropy,
     fdelm, fdelp, fmch, fminus, fpch, fplus, fscrm, fscrp,
     gas, ghs, ghslistall, ghspic, gibbs, gram,
     hapto, HNMR, Helmholtz, hydrogen,
     IfChemCompatibilityF, IfChemCompatibilityT, IfChemCompatibilityTF, insitu,
       invacuo, isotope, iupac,
     Ka, Kb, Kw,
-    Lfi, listofreactions, lqd,
+    laevus, Lfi, listofreactions, lqd,
     mch, mega, meta, mhName,
     NewChemArrow, NewChemBond, NewChemBondAlias,
       newchemgreekmapping, NewChemCharge, NewChemIUPAC, NewChemIUPACShorthand,
@@ -90,7 +90,8 @@
       ShowChemArrow, ShowChemBond, sld, Sod, state, sulfur,
     trans,
     usechemmodule,
-    val
+    val,
+    zusammen
   } ,
   add-silent-cmds = {
     addplot,
@@ -437,7 +438,7 @@ package:
     \code{\cs*{textit}\Marg{o}-dichlorobenzene}); the first variant in my
     opinion also is more in the spirit of \LaTeXe.
   \item As much customizability as I could think of so every user can adapt
-    the commands to his or her own wishes.  Every now an then users have
+    the commands to his or her own wishes.  Every now and then users have
     wishes which can't be solved with the available options.  Almost always
     I'll add options then.  If you find something please contact me, see
     section~\vref{sec:sugg-bug-reports}.
@@ -494,7 +495,7 @@ an alphabetical order.
 
 \subsection{Using \chemmacros' Options}\label{sec:using-chemm-opti}
 Prior to v5.0 \chemmacros\ had quite a number of package options.
-\chemmacros\ v5.0 or higher has none!  All of \chemmacros's options are set
+\chemmacros\ v5.0 or higher has none!  All of \chemmacros' options are set
 using the command
 \begin{commands}
   \command{chemsetup}[\oarg{module}\marg{option list}]
@@ -600,7 +601,7 @@ important and \emph{breaking} differences:
 It is actually not true that \chemmacros' has no package options any more.  It
 has one very important package option:
 \begin{options}
-  \keyval{compatibility}{num}\Default{\chemmacrosversion}
+  \keychoice{compatibility}{\meta{num},newest,latest}\Default{\chemmacrosversion}
     Let's you specify the version number of \chemmacros\ you want to use.  Any
     version earlier than 5.0 will load v4.7. \ie, the last version before
     \chemmacros\ got its modular structure\footnote{Mostly: the loaded v4.7
@@ -608,6 +609,9 @@ has one very important package option:
     version.  Please note that you only can specify the \emph{number} of the
     version.  For a version \enquote{5.2c} you can only set compatibility mode
     \enquote{5.2} but not specify the subrelease.
+
+    Both values \code{newest} and \code{latest} will choose the latest version
+    available.
 \end{options}
 
 In your document you can check for the compatibility mode.  For the following
@@ -932,11 +936,11 @@ also loads the package \pkg{scrlfile} which is part of the
 
 Similar to the \pkg{bpchem} package~\cite{pkg:bpchem} \chemmacros\ provides a
 command\footnote{The idea and initial implementation is shamelessly borrowed
-  from \pkg{bpchem} by \pedersen.} to typeset \ac{iupac} names.  Why is that
-useful?  \ac{iupac} names can get very long.  So long indeed that they span
-over more than two lines, especially in two-column documents.  This means they
-must be allowed to be broken more than one time.  This is what the following
-command does.
+  from \pkg{bpchem} by \pedersen.} for typesetting \ac{iupac} names.  Why is
+that useful?  \ac{iupac} names can get very long.  So long indeed that they
+span over more than two lines, especially in two-column documents.  This means
+they must be allowed to be broken more than one time.  This is what the
+following command does.
 \begin{commands}
   \command{iupac}[\marg{IUPAC name}]
     Inside this command use \sym{\textbar} indicate a breaking point
@@ -974,13 +978,14 @@ and \cs*{textsuperscript} instead of \sym{\textasciicircum} without
   2,4-Dichlorpentan
 \end{example}
 
-The spaces inserted by \sym{-} and \sym{\textbar} can be customized.
+The spaces inserted by \sym{-} and \sym{\textbar} can be
+customized.\changedversion{5.2}
 \begin{options}
-  \keyval{hyphen-pre-space}{dim}\Module{nomenclature}\Default{.01em}
+  \keyval{hyphen-pre-space}{skip}\Module{nomenclature}\Default{.01em}
     Set the space that is inserted before the hyphen set with \sym{-}.
-  \keyval{hyphen-post-space}{dim}\Module{nomenclature}\Default{-.03em}
+  \keyval{hyphen-post-space}{skip}\Module{nomenclature}\Default{-.03em}
     Set the space that is inserted after the hyphen set with \sym{-}.
-  \keyval{break-space}{dim}\Module{nomenclature}\Default{.01em}
+  \keyval{break-space}{skip}\Module{nomenclature}\Default{.01em}
     Set the space inserted by \sym{\textbar}.
 \end{options}
 
@@ -1117,7 +1122,8 @@ most common ones.
 \paragraph{Cahn-Ingold-Prelog}\label{par:cip}
 \begin{commands}
   \command{cip}[\marg{conf}]
-    Typeset Cahn-Ingol-Prelog descriptors, \eg: \cs{cip}\Marg{R,S} \cip{R,S}
+    Typeset Cahn-Ingol-Prelog descriptors, \eg: \cs{cip}\Marg{R,S}
+    \cip{R,S}. \meta{conf} may be a csv list of entries.
   \command{rectus}[\quad\iupac{\rectus}]
     Typeset rectus descriptor.  (An alias for this command is \cs{R}.)
   \command{sinister}[\quad\iupac{\sinister}]
@@ -1525,8 +1531,8 @@ some tools which can (and should) be used in other modules.  This means this
 section is only interesting for you if you plan to write a module yourself
 (see section~\vref{sec:own-modules} for details).
 
-This module requires the packages \pkg{bm}~\cite{pkg:bm} and
-\pkg{amstext}~\cite{pkg:amstext}.
+This module requires the packages \pkg{bm}~\cite{pkg:bm}, 
+\pkg{amstext}~\cite{pkg:amstext}, and \pkg{etoolbox}~\cite{pkg:etoolbox}.
 
 This module also provides \cs{chemsetup} and the option \option{modules}.
 
@@ -1619,8 +1625,9 @@ The following macros strictly speaking are not provided by the
 \subsection{The \chemmodule*{chemformula} Module}\label{sec:chemformula-module}
 
 The \chemmodule{chemformula} module loads the \pkg{chemformula}
-package~\cite{pkg:chemformula} and the \pkg{amstext}
-package~\cite{pkg:amstext}.  It also loads the \chemmodule{charges} module.
+package~\cite{pkg:chemformula} or the \pkg{mhchem} package~\cite{pkg:mhchem}
+and the \pkg{amstext} package~\cite{pkg:amstext}.  It also loads the
+\chemmodule{charges} module.
 
 \subsubsection{For Users}
 
@@ -1633,6 +1640,12 @@ This module provides a general option:
 \end{options}
 If you explicitly set this option the corresponding package is loaded
 immediately.  Otherwise the option is set at the end of the preamble.
+
+If\sinceversion{5.2} you load either \pkg{mhchem} or \pkg{chemformula} and
+haven't set \option{formula} \chemmacros\ will choose the corresponding
+package.  If you have loaded both \pkg{mhchem} and \pkg{chemformula}
+\chemmacros\ will raise a warning and choose \pkg{chemformula}.  \emph{All
+  automatic choices only happen at the end of the preamble}.
 
 \paragraph{Using the \pkg*{chemformula} Package}
 If you set \keyis{formula}{chemformula} the \chemmodule{chemformula} module
@@ -1680,16 +1693,21 @@ There's are two macros for module writers:
   \command*{chemmacros_chemformula:n}[ \marg{formula}]
     This is only a wrapper for \cs{chcpd} or \cs{ce}.  It is recommended that
     module writers use this macro (or a variant thereof) inside of
-    \chemmacros's macros whenever they want to display a chemical formula.
+    \chemmacros' macros whenever they want to display a chemical formula.
     Writers who prefer traditional \LaTeXe\ programming over expl3 should use
     \cs*{chemmacros@formula}.
   \command*{chemmacros_reaction:n}[ \marg{reaction}]
     This is only a wrapper for \cs{ch} or \cs{ce}.  It is recommended that
     module writers use this macro (or a variant thereof) inside of
-    \chemmacros's macros whenever they want to display a chemical reaction.
+    \chemmacros' macros whenever they want to display a chemical reaction.
     Writers who prefer traditional \LaTeXe\ programming over expl3 should use
     \cs*{chemmacros@reaction}.
 \end{commands}
+
+\subsection{The \chemmodule*{errorcheck} Module}\label{sec:errorcheck-module}
+The\sinceversion{5.2} \chemmodule{errorcheck} module provides some rudimentary
+support for giving users more meaningful messages when they use a command or
+environment provided by a module that they haven't loaded.
 
 \subsection{The \chemmodule*{greek} Module}\label{sec:greek-module}
 
@@ -1767,7 +1785,7 @@ in the preamble:
     This command can only be used in the preamble and is defined by the
     \pkg{translations} package.
 \end{commands}
-f you send me an email (see section~\vref{sec:sugg-bug-reports}) with the
+If you send me an email (see section~\vref{sec:sugg-bug-reports}) with the
 translations for your language I'll gladly add them to the next release of
 \chemmacros!
 
@@ -1808,7 +1826,7 @@ translations for your language I'll gladly add them to the next release of
 \begin{commands}
   \expandable\command*{chemmacros_translate:n}[ \marg{translation key}]
     Translates the given key to the language which is detected automatically
-    or given by the user.  Should be used in \chemmacros's macros instead of
+    or given by the user.  Should be used in \chemmacros' macros instead of
     \pkg{translations}' \cs*{GetTranslation}.
   \command*{l_chemmacros_language_tl}
     A token list variable that holds the language which is used by
@@ -3240,6 +3258,15 @@ If you have additional functionality which you think might be useful as a
 be a file in a path where \TeX\ can find it following a certain naming
 scheme.  The file for a module \chemmodule*{foo} \emph{must be named}
 \code{chemmacros.module.foo.code.tex}.
+
+\begin{commands}
+  \command{ChemModule}[\sarg\marg{name}\marg{description}\oarg{minimal
+    compatibility version}]
+    Register module \meta{name}.  The optional argument \meta{minimal
+      compatibility version} ensures that this module is only loaded if the
+    option \option{compatibility} has a high enough version number.  If it is
+    omitted the module can be loaded in each version~5.0 or higher.
+\end{commands}
 
 The first line in the file then should look similar to this:
 \begin{sourcecode}

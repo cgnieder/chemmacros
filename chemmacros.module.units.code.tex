@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{units}{2015/07/22 chemical units}
+\ChemModule{units}{2015/09/28 chemical units}
 
 \RequirePackage{siunitx}
 
@@ -39,7 +39,7 @@
 \DeclareSIUnit {\normal    } {\textsc{n}}
 \DeclareSIUnit {\torr      } {torr}
 
-\AtBeginDocument
+\AtEndPreamble
   {
     \chemmacros_if_package_loaded:nF {chemstyle}
       {
@@ -50,3 +50,7 @@
   }
 
 % --------------------------------------------------------------------------
+\tex_endinput:D
+
+2015/09/28 - change \AtBeginDocument into \AtEndPreamble
+
