@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{reactions}{2015/09/15 reaction environments}
+\ChemModule{reactions}{2015/10/14 reaction environments}
 
 \chemmacros_load_module:n {chemformula}
 
@@ -87,21 +87,40 @@
 \tl_new:N  \reactionlistname
 \tl_new:N  \l__chemmacros_reaction_heading_tl
 
-\cs_if_exist:NTF \chapter
-  { \tl_set:Nn \l__chemmacros_reaction_heading_tl { \chapter* } }
-  { \tl_set:Nn \l__chemmacros_reaction_heading_tl { \section* } }
-
-\tl_set:Nn \l__chemmacros_reaction_lorname_tl { \chemmacros_translate:n {reaction} }
-\tl_set:Nn \reactionlistname { \chemmacros_translate:n {list-of-reactions} }
-
 \cs_new:Npn \__chemmacros_reaction_heading:n #1
   { \l__chemmacros_reaction_heading_tl { #1 } }
 \cs_generate_variant:Nn \__chemmacros_reaction_heading:n { V }
 
+\tl_set:Nn \l__chemmacros_reaction_lorname_tl { \chemmacros_translate:n {reaction} }
+\tl_set:Nn \reactionlistname { \chemmacros_translate:n {list-of-reactions} }
+
+\keys_define:nn {chemmacros/reactions}
+  {
+    list-name .tl_set:N = \reactionlistname ,
+    list-entry .tl_set:N = \l__chemmacros_reaction_lorname_tl ,
+  }
+\ChemCompatibilityFrom{5.2}
+\keys_define:nn {chemmacros/reactions}
+  {
+    list-heading-cmd .code:n =
+      \cs_set_protected:Npn \__chemmacros_reaction_heading:n ##1 {#1}
+  }
+\EndChemCompatibility
+
+\cs_if_exist:NTF \chapter
+  {
+    \keys_set:nn {chemmacros/reactions}
+      { list-heading-cmd = \chapter* {#1} }
+  }
+  {
+    \keys_set:nn {chemmacros/reactions}
+      { list-heading-cmd = \section* {#1} }
+  }
+
 \cs_new_protected:Npn \listofreactions
   {
     \__chemmacros_reaction_heading:V \reactionlistname
-    \@starttoc { lor }
+    \@starttoc {lor}
   }
 
 \cs_new_protected:Npn \l@reaction #1#2
@@ -187,3 +206,4 @@
 
 2015/09/15 - adapt to `method' option => do not use chemformula's macros
              directly
+2015/10/14 - new option `list-heading-cmd'

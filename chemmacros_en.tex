@@ -198,7 +198,6 @@
   formula = chemformula ,
   chemformula/format = \libertineLF
 }
-% \setchemformula{format = \libertineLF}
 
 \usepackage{siunitx}
 
@@ -408,6 +407,8 @@
     \seq_use:Nnnn \l_tmpa_seq {,~} {,~} {~#1~}
   }
 \ExplSyntaxOff
+
+\AtBeginDocument{\renewcommand*\reftextfaraway[1]{from page~\pageref{#1}}}
 
 \begin{document}
 
@@ -979,13 +980,13 @@ and \cs*{textsuperscript} instead of \sym{\textasciicircum} without
 \end{example}
 
 The spaces inserted by \sym{-} and \sym{\textbar} can be
-customized.\changedversion{5.2}
+customized.
 \begin{options}
-  \keyval{hyphen-pre-space}{skip}\Module{nomenclature}\Default{.01em}
+  \keyval{hyphen-pre-space}{dim}\Module{nomenclature}\Default{.01em}
     Set the space that is inserted before the hyphen set with \sym{-}.
-  \keyval{hyphen-post-space}{skip}\Module{nomenclature}\Default{-.03em}
+  \keyval{hyphen-post-space}{dim}\Module{nomenclature}\Default{-.03em}
     Set the space that is inserted after the hyphen set with \sym{-}.
-  \keyval{break-space}{skip}\Module{nomenclature}\Default{.01em}
+  \keyval{break-space}{dim}\Module{nomenclature}\Default{.01em}
     Set the space inserted by \sym{\textbar}.
 \end{options}
 
@@ -2091,22 +2092,32 @@ You can use these environments for numbered\ldots
 \begin{environments}
   \environment{reaction}
     A single reaction where \chemformula\ code is placed directly in the
-    environment body.  A wrapper around the \env*{equation} environment.
+    environment body.  A wrapper around the \env*{equation} environment.  The
+    environment body is parsed with \cs{ch} or \cs{ce} depending on the value
+    of the \option{formula} option, see
+    section~\vref{sec:chemformula-module}.
   \environment{reactions}
     Several aligned reactions.  A wrapper around \pkg{amsmath}'s \env*{align}
-    environment.
+    environment.  The environment body is parsed with \cs{ch} or \cs{ce}
+    depending on the value of the \option{formula} option, see
+    section~\vref{sec:chemformula-module}.
 \end{environments}
 
 \ldots and their starred versions for unnumbered reactions.
 \begin{environments}
   \environment{reaction*}
-    A wrapper around the \env*{equation*} environment.
+    A wrapper around the \env*{equation*} environment.  The environment body
+    is parsed with \cs{ch} or \cs{ce} depending on the value of the
+    \option{formula} option, see section~\vref{sec:chemformula-module}.
   \environment{reactions*}
-    A wrapper around \pkg{amsmath}'s \env*{align*} environment.
+    A wrapper around \pkg{amsmath}'s \env*{align*} environment.  The
+    environment body is parsed with \cs{ch} or \cs{ce} depending on the value
+    of the \option{formula} option, see
+    section~\vref{sec:chemformula-module}.
 \end{environments}
 
-With them you can create (un)numbered reaction equations similar to
-mathematical equations.
+With those environments you can create (un)numbered reaction equations similar
+to mathematical equations.
 
 Theses environments use the \env*{equation}/\env*{equation*} environments or
 the \env*{align}/\env*{align*} environments, respectively, to display the
@@ -2231,13 +2242,19 @@ the reactions created with the \env{reaction} environment.
 
 The output of this list can be modified by two options:
 \begin{options}
-  \keyval{list-name}{name of the list}\Module{reaction}\Default{List of
-    reactions}
+  \keyval{list-name}{name of the
+    list}\Module{reactions}\Default{\cs*{ChemTranslate}\Marg{{list-of-reactions}}}
     Let's you set the name of the list manually.  The default name is language
     dependent, see section~\vref{sec:lang-module}.
-  \keyval{list-entry}{prefix to each entry}\Module{reaction}\Default{Reaction}
+  \keyval{list-entry}{prefix to each
+    entry}\Module{reactions}\Default{\cs*{ChemTranslate}\Marg{reaction}}
     Let's you set a prefix to each list entry.  The default name is language
     dependent, see section~\vref{sec:lang-module}.
+  \keyval{list-heading-cmd}{code}\Module{reactions}\Default{\cs*{section}\sarg\Marg{\#1}}
+    The\sinceversion{5.2} macro that is called at the beginning of the list.
+    Inside of \meta{code} \code{\#1} refers to the actual heading of the list.
+    The default setting is not entirely true: if a macro \cs*{chapter} is
+    defined \code{\cs*{chapter}\sarg\Marg{\#1}} is used.
 \end{options}
 Instead of using the option \option{list-name} you also could redefine
 \cs{reactionlistname}.
@@ -3282,6 +3299,14 @@ module using traditional \LaTeXe\ methods then use the starred variant:
   \ChemModule*{foo}{2015/07/14 description of foo}
 \end{sourcecode}
 In both variants \code{@} has category code~11 (letter).
+
+Since new modules very likely might rely on code provided first in a certain
+version of \chemmacros\ you might want to make sure that your module only is
+loaded when the compatibility mode is high enough to provide the features you
+want:
+\begin{sourcecode}
+  \ChemModule{foo}{2015/10/14 description of foo}[5.2]
+\end{sourcecode}
 
 You should be aware that your module \emph{will not be loaded} with
 \verbcode+\usechemmodule{all}+! The pseudo-module \chemmodule{all} contains a
