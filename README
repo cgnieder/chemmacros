@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------
-the CHEMMACROS package v5.2 2015/10/14
+the CHEMMACROS package v5.3 2016/01/13
 
   comprehensive support for typesetting chemistry documents
 
@@ -9,7 +9,7 @@ Web:    https://github.com/cgnieder/chemmacros/
         http://www.mychemistry.eu/forums/forum/2430/
 E-Mail: contact@mychemistry.eu
 --------------------------------------------------------------------------
-Copyright 2011-2015 Clemens Niederberger
+Copyright 2011-2016 Clemens Niederberger
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3

@@ -11,7 +11,7 @@
 % If you have any ideas, questions, suggestions or bugs to report, please
 % feel free to contact me.
 % --------------------------------------------------------------------------
-% Copyright 2011-2015 Clemens Niederberger
+% Copyright 2011-2016 Clemens Niederberger
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{scheme}{2015/09/19 a scheme floating environment}
+\ChemModule{scheme}{2015/10/23 a scheme floating environment}
 
 \RequirePackage {chemnum}
 
@@ -34,6 +34,9 @@
 \seq_new:N  \l__chemmacros_float_methods_seq
 \prop_new:N \l__chemmacros_float_methods_prop
 \prop_new:N \l__chemmacros_float_definitions_prop
+
+\msg_new:nnn {chemmacros} {float-method}
+  { Detected~ float~ defining~ method~ `#1'. }
 
 % --------------------------------------------------------------------------
 % #1: name
@@ -138,6 +141,7 @@
       {
         \bool_set_true:N \l__chemmacros_float_def_bool
         \tl_set:Nn \l__chemmacros_float_method_tl {#1}
+        \msg_info:nnn {chemmacros} {float-method} {#1}
       }
   }
 
@@ -227,4 +231,4 @@
 \tex_endinput:D
 % --------------------------------------------------------------------------
 2015/09/19 - make the module compatible with floatrow
-  
+2015/10/23 - add info message to float method detection

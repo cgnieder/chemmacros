@@ -1,5 +1,5 @@
 % arara: pdflatex
-% !arara: biber
+% arara: biber
 % arara: pdflatex
 % arara: pdflatex
 % --------------------------------------------------------------------------
@@ -17,7 +17,7 @@
 % If you have any ideas, questions, suggestions or bugs to report, please
 % feel free to contact me.
 % --------------------------------------------------------------------------
-% Copyright 2015 Clemens Niederberger
+% Copyright 2011-2016 Clemens Niederberger
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -59,7 +59,7 @@
       DeclareChemIUPACShorthand, DeclareChemLatin, DeclareChemNMR,
       DeclareChemNucleophile, DeclareChemPartialCharge, DeclareChemParticle,
       DeclareChemPhase, DeclareChemReaction, DeclareChemState,
-      delm, delp, Delta, descter, Dfi,
+      delm, delp, Delta, dexter, Dfi,
     el, ElPot, endo, entgegen, Enthalpy, enthalpy, entropy,
     fdelm, fdelp, fmch, fminus, fpch, fplus, fscrm, fscrp,
     gas, ghs, ghslistall, ghspic, gibbs, gram,
@@ -325,6 +325,7 @@
 % \undef\module
 % \undef\moduleidx
 \newidxcmd\chemmodule{\code{#1}}[ (module)]
+\newidxcmd\tikzdecoration{\code{#1}}[ (\TikZ\ decoration)]
 \AtEndPreamble{%
   \pdfstringdefDisableCommands{%
     \def\chemmodule*#1{\textquotedblleft#1\textquotedblright}%
@@ -408,7 +409,7 @@
   }
 \ExplSyntaxOff
 
-\AtBeginDocument{\renewcommand*\reftextfaraway[1]{from page~\pageref{#1}}}
+\AtBeginDocument{\renewcommand*\reftextfaraway[1]{starting on page~\pageref{#1}}}
 
 \begin{document}
 
@@ -973,11 +974,17 @@ and \cs*{textsuperscript} instead of \sym{\textasciicircum} without
     inserts a small space.  The amount of inserted space can be customized.
   \item The characters \sym{(} and \sym{)} allow the word to be hyphenated and
     don't prevent further hyphenation, likewise \sym{[} and \sym{]}.
+  \item \sinceversion{5.3}The character \sym{'} is printed as \cs{chemprime}.
 \end{itemize}
 \begin{example}[side-by-side]
   \huge\iupac{2,4-Di|chlor|pentan} \par
   2,4-Dichlorpentan
 \end{example}
+\begin{commands}
+  \command{chemprime}
+    Prints\sinceversion{5.3} a prime character in superscript position.  It is
+    defined as \verbcode+\ensuremath{{}^{\prime}}+.
+\end{commands}
 
 The spaces inserted by \sym{-} and \sym{\textbar} can be
 customized.
@@ -1210,8 +1217,6 @@ Two options allow customization:
     Append a hyphen to \cs{hapto}, \cs{dent} and \cs{bridge} or don't.
 \end{options}
 
-\pagebreak
-
 \paragraph{Examples}
 \begin{example}
   \iupac{\dexter-Wein|s\"aure} =
@@ -1341,12 +1346,16 @@ All of these macros are defined using \pkg{chemformula}'s \cs{chcpd}.  The
 details are explained in section~\vref{sec:defin-own-part}.
 
 The macros \cs{Nuc} and \cs{ba} are special:  they have an optional argument
-for the following option:
+for the following options:
 \begin{options}
   \keychoice{elpair}{dots,dash,false}\Module{particles}\Default{false}
     Determine how the electron pair of the nucleophiles is displayed.  The
     electron pair is drawn using \chemformula's \cs{chlewis} macro.
+  \keyval{space}{dim}\Module{particles}\Default{.1em}
+    Sets\sinceversion{5.3} the space that is inserted between the electron
+    pair and the negative charge sign.
 \end{options}
+Both options can of course also be set with \cs{chemsetup}.
 
 \begin{example}[side-by-side]
   \ba[elpair=dots] \Nuc[elpair=dash]
@@ -2700,6 +2709,9 @@ number of options.  For historical reasons they all belong to the module
   \keyval{atom-number-cs}{cs}\Module{spectroscopy}\Default{\cs*{@firstofone}}
     Set the macro that prints the number set with the \cs{\#} macro.  This
     needs to be a command with one mandatory argument.
+  \keyval{atom-number-space}{dim}\Module{spectroscopy}\Default{.16667em}
+    Horizontal\sinceversion{5.3} space inserted between number and atom
+    (printed by \cs{\#}).
   \keybool{parse}\Module{spectroscopy}\Default{true}
     Treat the solvent as \chemformula\ formula or not.
   \keyval{delta}{tokens}\Module{spectroscopy}\Default
@@ -3109,7 +3121,7 @@ So -- for following thermodynamic conventions -- one could define a molar and
 an absolute variable:
 \begin{example}
   \RenewChemState\enthalpy{symbol=h,superscript=,unit=\kilo\joule\per\mole}% molar
-  \RenewChemState\Enthalpy{symbol=H,superscript=,unit=\kilo\joule}% absolute
+  \NewChemState\Enthalpy{symbol=H,superscript=,unit=\kilo\joule}% absolute
   \enthalpy{-12.3} \Enthalpy{-12.3}
 \end{example}
 
@@ -3167,6 +3179,15 @@ The \chemmodule{tikz} module defines a few arrow tips:
     An arrow tip: \verbcode+\tikz\draw[-right el](0,0)--(1,0);+
     \tikz\draw[-right el](0,0)--(1,0);
 \end{tikzcode}
+
+The\sinceversion{5.3} \chemmodule{tikz} module also loads the libraries
+\code{calc} and \code{decorations.pathmorphing}.  It uses those libraries for
+defining a new decoration \tikzdecoration{wave}.
+\begin{example}[side-by-side]
+  \begin{tikzpicture}
+    \draw[decorate,decoration=wave] (0,0) -- (2,0) ;
+  \end{tikzpicture}
+\end{example}
 
 \subsubsection{For Module Writers}
 The \chemmodule{tikz} module provides some macros for common \TikZ\

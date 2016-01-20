@@ -11,7 +11,7 @@
 % If you have any ideas, questions, suggestions or bugs to report, please
 % feel free to contact me.
 % --------------------------------------------------------------------------
-% Copyright 2011-2015 Clemens Niederberger
+% Copyright 2011-2016 Clemens Niederberger
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{lang}{2015/07/21 language settings for chemmacros}
+\ChemModule{lang}{2015/11/17 language settings for chemmacros}
 
 \RequirePackage{translations}
 
@@ -44,19 +44,40 @@
 % language is either chosen automatically or by option it is only available at
 % begin document
 \tl_new:N        \l_chemmacros_language_tl
-\tl_set:Nn       \l_chemmacros_language_tl { english }
+\tl_set:Nn       \l_chemmacros_language_tl {english}
 \tl_new:N        \l__chemmacros_current_language_tl
 
 % translate the key #1
 \cs_new:Npn \chemmacros_translate:n #1
   {
     \bool_if:NTF \l__chemmacros_language_auto_bool
-      { \GetTranslation{#1} }
-      { \GetTranslationFor{\l_chemmacros_language_tl}{#1} }
+      { \GetTranslation {#1} }
+      { \GetTranslationFor {\l_chemmacros_language_tl} {#1} }
   }
 
 \DeclareExpandableDocumentCommand \ChemTranslate {m}
   { \chemmacros_translate:n {#1} }
+
+\keys_define:nn {chemmacros}
+  {
+    language .value_required:n = true ,
+    language .code:n =
+      \tl_if_eq:nnTF {#1} {auto}
+        { \bool_set_true:N \l__chemmacros_language_auto_bool }
+        {
+          \bool_set_false:N \l__chemmacros_language_auto_bool
+          \tl_set:Nn \l__chemmacros_current_language_tl {#1}
+        } ,
+    language .initial:n = auto
+  }
+
+\ChemCompatibilityTo{5.2}
+\keys_define:nn {chemmacros}
+  {
+    german   .meta:n = { language = german } ,
+    ngerman  .meta:n = { language = ngerman }
+  }
+\EndChemCompatibility
 
 \AtBeginDocument{
   \bool_if:NTF \l__chemmacros_language_auto_bool
@@ -68,58 +89,60 @@
       \tl_set_eq:NN
         \l_chemmacros_language_tl
         \l__chemmacros_current_language_tl
-    }
+    }   
 }
 
-\keys_define:nn {chemmacros}
-  {
-    language .value_required:n = true ,
-    language .code:n =
-      \tl_if_eq:nnTF { #1 } { auto }
-        { \bool_set_true:N \l__chemmacros_language_auto_bool }
-        {
-          \bool_set_false:N \l__chemmacros_language_auto_bool
-          \tl_set:Nn \l__chemmacros_current_language_tl { #1 }
-        } ,
-    % do we still need these?
-    german   .meta:n = { language = german } ,
-    german   .meta:n = { language = ngerman } ,
-    language .initial:n = auto
-  }
+% --------------------------------------------------------------------------
+\DeclareTranslationFallback   {scheme-name} {Scheme}
+\DeclareTranslation {English} {scheme-name} {Scheme}
+\DeclareTranslation {German}  {scheme-name} {Schema}
+
+\DeclareTranslationFallback   {scheme-list} {List~ of~ Schemes}
+\DeclareTranslation {English} {scheme-list} {List~ of~ Schemes}
+\DeclareTranslation {German}  {scheme-list} {Verzeichnis~ der~ Schemata}
 
 % --------------------------------------------------------------------------
-\DeclareTranslationFallback  {scheme-name} {Scheme}
-\DeclareTranslation {German} {scheme-name} {Schema}
+\DeclareTranslationFallback   {K-acid}  {\mathrm{a}}
+\DeclareTranslation {English} {K-acid}  {\mathrm{a}}
+\DeclareTranslation {German}  {K-acid}  {\mathrm{s}}
+\DeclareTranslation {Dutch}   {K-acid}  {\mathrm{z}}
 
-\DeclareTranslationFallback  {scheme-list} {List~ of~ Schemes}
-\DeclareTranslation {German} {scheme-list} {Verzeichnis~ der~ Schemata}
+\DeclareTranslationFallback   {K-base}  {\mathrm{b}}
+\DeclareTranslation {English} {K-base}  {\mathrm{b}}
 
-% --------------------------------------------------------------------------
-\DeclareTranslationFallback {K-acid}  {\mathrm{a}}
-\DeclareTranslation{German} {K-acid}  {\mathrm{s}}
-\DeclareTranslation{Dutch}  {K-acid}  {\mathrm{z}}
-
-\DeclareTranslationFallback {K-base}  {\mathrm{b}}
-
-\DeclareTranslationFallback {K-water} {\mathrm{w}}
+\DeclareTranslationFallback   {K-water} {\mathrm{w}}
+\DeclareTranslation {English} {K-water} {\mathrm{w}}
 
 % --------------------------------------------------------------------------
-\DeclareTranslation{German}{phase-sld}{ f }
-\DeclareTranslation{German}{phase-lqd}{ f\/l }
+\DeclareTranslation {English} {phase-sld} {s}
+\DeclareTranslation {German}  {phase-sld} {f}
+
+\DeclareTranslation {English} {phase-lqd} {l}
+\DeclareTranslation {German}  {phase-lqd} {f\/l}
+
+\DeclareTranslation {English} {phase-gas} {g}
+\DeclareTranslation {German}  {phase-gas} {g}
+
+\DeclareTranslation {English} {phase-aq} {aq}
+\DeclareTranslation {German}  {phase-aq} {aq}
 
 % --------------------------------------------------------------------------
-\DeclareTranslationFallback  {list-of-reactions} { List~ of~ Reactions }
-\DeclareTranslation{English} {list-of-reactions} { List~ of~ Reactions }
-\DeclareTranslation{German}  {list-of-reactions} { Reaktionsverzeichnis }
-\DeclareTranslation{Italian} {list-of-reactions} { Elenco~ delle~ reazioni }
-\DeclareTranslation{French}  {list-of-reactions} { Table~ des~ r\'eactions }
-\DeclareTranslation{Dutch}   {list-of-reactions} { Lijst~ van~ reacties }
-%
-\DeclareTranslationFallback  {reaction} { Reaction }
-\DeclareTranslation{English} {reaction} { Reaction }
-\DeclareTranslation{German}  {reaction} { Reaktion }
-\DeclareTranslation{Italian} {reaction} { Reazione }
-\DeclareTranslation{French}  {reaction} { R\'eaction }
-\DeclareTranslation{Dutch}   {reaction} { Reactie }
+\DeclareTranslationFallback   {list-of-reactions} {List~ of~ Reactions}
+\DeclareTranslation {English} {list-of-reactions} {List~ of~ Reactions}
+\DeclareTranslation {German}  {list-of-reactions} {Reaktionsverzeichnis}
+\DeclareTranslation {Italian} {list-of-reactions} {Elenco~ delle~ reazioni}
+\DeclareTranslation {French}  {list-of-reactions} {Table~ des~ r\'eactions}
+\DeclareTranslation {Dutch}   {list-of-reactions} {Lijst~ van~ reacties}
+
+\DeclareTranslationFallback   {reaction} {Reaction}
+\DeclareTranslation {English} {reaction} {Reaction}
+\DeclareTranslation {German}  {reaction} {Reaktion}
+\DeclareTranslation {Italian} {reaction} {Reazione}
+\DeclareTranslation {French}  {reaction} {R\'eaction}
+\DeclareTranslation {Dutch}   {reaction} {Reactie}
+
 % --------------------------------------------------------------------------
 
+\tex_endinput:D
+
+2015/11/17 - remove options `german' and `ngerman', starting with v5.3

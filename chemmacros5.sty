@@ -265,8 +265,18 @@
 % load default modules:
 \chemmacros_load_modules:n
   {
-    base, errorcheck, lang, greek, chemformula, % <= those need to be present for all modules
-    acid-base, symbols, charges, particles, phases , nomenclature
+    % required modules:
+    base,
+    errorcheck,
+    lang, greek,
+    chemformula,
+    % preloaded modules:
+    acid-base,
+    symbols,
+    charges,
+    particles,
+    phases ,
+    nomenclature
   }
 
 % --------------------------------------------------------------------------
