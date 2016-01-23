@@ -464,7 +464,8 @@
   
 \bool_new:N \l__chemmacros_inside_iupac_bool
 
-\seq_new:N   \l__chemmacros_iupac_shorthands_seq
+\seq_new:N  \l__chemmacros_iupac_shorthands_seq
+\prop_new:N \l__chemmacros_iupac_shorthands_prop
 
 % #1: token
 % #2: arg spec
@@ -472,48 +473,64 @@
   {
     \seq_if_in:NnF \l__chemmacros_iupac_shorthands_seq {#1}
       { \seq_put_right:Nn \l__chemmacros_iupac_shorthands_seq {#1} }
-    \char_set_active_eq:NN #1#2
+    \prop_put:Nnn \l__chemmacros_iupac_shorthands_prop {#1}
+      { \char_set_active_eq:NN #1#2 }
   }
 
 \cs_new_protected:Npn \chemmacros_remove_shorthand:N #1
   {
     \chemmacros_define_iupac_shorthand:NN #1 \c_empty_tl
     \seq_remove_all:Nn \l__chemmacros_iupac_shorthands_seq {#1}
+    \prop_remove:Nn \l__chemmacros_iupac_shorthands_prop {#1}
   }
 
-\cs_new_protected:Npn \chemmacros_activate_iupac_shorthands:n #1
+\prg_new_conditional:Npnn \chemmacros_if_shorthand:N #1 {p,T,F,TF}
   {
-    \tl_map_inline:nn {#1}
-      {
-        \seq_if_in:NnT \l__chemmacros_iupac_shorthands_seq {##1}
-          { \char_set_catcode_active:N ##1 }
-      }
+    \seq_if_in:NnTF \l__chemmacros_iupac_shorthands_seq {#1}
+      { \prg_return_true: }
+      { \prg_return_false: }
   }
+
+\cs_new_protected:Npn \chemmacros_for_all_shorthands_do:n #1
+  { \seq_map_inline:Nn \l__chemmacros_iupac_shorthands_seq {#1} }
+
+\cs_new_protected:Npn \chemmacros_activate_iupac_shorthand:N #1
+  { \chemmacros_if_shorthand:NT #1 { \char_set_catcode_active:N #1 } }
+
+\cs_new_protected:Npn \chemmacros_activate_iupac_shorthands:n #1
+  { \tl_map_inline:nn {#1} { \chemmacros_activate_iupac_shorthand:N ##1 } }
+
 \cs_new_protected:Npn \chemmacros_activate_all_iupac_shorthands:
   {
-    \seq_map_inline:Nn \l__chemmacros_iupac_shorthands_seq
-     { \char_set_catcode_active:N ##1 }
+    \chemmacros_for_all_shorthands_do:n
+      { \chemmacros_activate_iupac_shorthand:N ##1 }
   }
-      
+
+\cs_new_protected:Npn \chemmacros_make_shorthands:
+  {
+    \chemmacros_for_all_shorthands_do:n
+      { \prop_item:Nn \l__chemmacros_iupac_shorthands_prop {##1} }
+  }
+
 \NewDocumentCommand \DeclareChemIUPACShorthand {mm} 
   { \chemmacros_define_iupac_shorthand:NN #1#2 }
 
 \NewDocumentCommand \NewChemIUPACShorthand {mm} 
   {
-    \seq_if_in:NnTF \l__chemmacros_iupac_shorthands_seq {#1}
+    \chemmacros_if_shorthand:NTF #1
       { \msg_error:nnn {chemmacros} {new-iupac-shorthand} {#1} }
       { \chemmacros_define_iupac_shorthand:NN #1#2 }
   }
 
 \NewDocumentCommand \ProvideChemIUPACShorthand {mm} 
   {
-    \seq_if_in:NnF \l__chemmacros_iupac_shorthands_seq {#1}
+    \chemmacros_if_shorthand:NTF #1
       { \chemmacros_define_iupac_shorthand:NN #1#2 }
   }
 
 \NewDocumentCommand \RenewChemIUPACShorthand {mm} 
   {
-    \seq_if_in:NnTF \l__chemmacros_iupac_shorthands_seq {#1}
+    \chemmacros_if_shorthand:NTF #1
       { \chemmacros_define_iupac_shorthand:NN #1#2 }
       { \msg_error:nnn {chemmacros} {renew-iupac-shorthand} {#1} }
   }
@@ -543,6 +560,7 @@
     \group_begin:
       \bool_set_true:N \l__chemmacros_inside_iupac_bool
       \chemmacros_make_iupac:
+      \chemmacros_make_shorthands:
       \chemmacros_ignore_spaces:
       \chemmacros_if_compatiblity:nnT {<=} {5.2}
         { \chemmacros_define_deprecated:NN \- - }
@@ -684,7 +702,7 @@
     \pdfstringdefDisableCommands
       {
         % \cs_set:Npn \- { - } % maybe not a good idea...
-        \cs_set:Npn \| { }
+        % \cs_set:Npn \| { }
         % \cs_set:Npn \pH { pH }
         % \cs_set:Npn \pOH { pOH }
         \cs_set:Npn \iupac #1 {#1}
@@ -719,6 +737,7 @@
         \cs_set:Npn \nitrogen   {N}
         \cs_set:Npn \sulfur     {S}
         \cs_set:Npn \phosphorus {P}
+        \cs_set:Npn \chemprime {'}
       }
   }
   
@@ -730,3 +749,4 @@
            - \cip only italicizes elements of csv list
            - fix bug in \RemoveChemIUPACShorthand
 2016/01/02 - \chemprime
+2016/01/23 - give shorthand definitions only inside \iupac

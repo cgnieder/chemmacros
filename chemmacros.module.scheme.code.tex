@@ -154,8 +154,13 @@
 
 \AtEndPreamble
   {
-    \chemmacros_check_float_methods:
-    \chemmacros_define_float:nn {scheme} {los}
+    % the check is there since v5.3a -- let's wait and see if we actually need
+    % a compatibility check here:
+    \chemmacros_if_package_loaded:nF {chemscheme}
+      {
+        \chemmacros_check_float_methods:
+        \chemmacros_define_float:nn {scheme} {los}
+      }
   }
 
 % --------------------------------------------------------------------------
@@ -232,3 +237,4 @@
 % --------------------------------------------------------------------------
 2015/09/19 - make the module compatible with floatrow
 2015/10/23 - add info message to float method detection
+2016/01/23 - make the module compatible with chemscheme
