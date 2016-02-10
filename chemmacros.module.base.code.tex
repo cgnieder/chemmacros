@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{base}{2015/10/14 basic chemmacros module}
+\ChemModule{base}{2016/02/09 basic chemmacros module}
 
 % for the document hooks
 \ChemCompatibilityFrom{5.1}
@@ -60,20 +60,45 @@
 % #3: internal command call
 \cs_new_protected:Npn \chemmacros_new_macroset:nnn #1#2#3
   {
-    \exp_args:Nc \NewDocumentCommand {NewChem#1} {#2}
+    \exp_args:Nc \NewDocumentCommand
+      {
+        NewChem
+        \str_upper_case:f { \tl_head:n {#1} }
+        \tl_tail:n {#1}
+      }
+      {#2}
       {
         \cs_if_free:NTF ##1
           { #3 }
           { \msg_error:nnn {chemmacros} {new-#1} {##1} }
       }
-    \exp_args:Nc \NewDocumentCommand {RenewChem#1} {#2}
+    \exp_args:Nc \NewDocumentCommand
+      {
+        RenewChem
+        \str_upper_case:f { \tl_head:n {#1} }
+        \tl_tail:n {#1}
+      }
+      {#2}
       {
         \cs_if_free:NTF ##1
           { \msg_error:nnn {chemmacros} {renew-#1} {##1} }
           { #3 }
       }
-    \exp_args:Nc \NewDocumentCommand {DeclareChem#1} {#2} {#3}
-    \exp_args:Nc \NewDocumentCommand {ProvideChem#1} {#2}
+    \exp_args:Nc \NewDocumentCommand
+      {
+        DeclareChem
+        \str_upper_case:f { \tl_head:n {#1} }
+        \tl_tail:n {#1}
+      }
+      {#2}
+      {#3}
+    \exp_args:Nc \NewDocumentCommand
+      {
+        ProvideChem
+        \str_upper_case:f { \tl_head:n {#1} }
+        \tl_tail:n {#1}
+      }
+      {#2}
       { \cs_if_free:NT ##1 { #3 } }
     \msg_new:nnn {chemmacros} {new-#1}
       {
@@ -87,9 +112,6 @@
         it~ doesn't~ exist.
       }
   }
-
-\NewDocumentCommand \NewChemMacroset {mmm}
-  { \cs_new_protected:Npn \chemmacros_new_macroset:nnn {#1} {#2} {#3} }
 
 \cs_new_protected:Npn \chemmacros_new_environment_macroset:nnn #1#2#3
   {
@@ -119,6 +141,13 @@
       }
     \msg_new:nnn {chemmacros} {renew-#1}
       { You've~ tried~ to~ renew~ the~ #1~ ##1,~ but~ it~ doesn't~ exist. }
+  }
+
+\NewDocumentCommand \NewChemMacroset {smmm}
+  {
+    \IfBooleanTF {#1}
+      { \chemmacros_new_environment_macroset:nnn {#2} {#3} {#4} }
+      { \chemmacros_new_macroset:nnn {#2} {#3} {#4} }
   }
   
 % --------------------------------------------------------------------------
@@ -307,3 +336,4 @@
 2015/09/23 - new conditionals \chemmacros_if_preamble:TF and
              \chemmacros_if_document:TF
 2015/10/14 - load `errorcheck' module
+2016/02/09 - starred version of \NewChemMacroset

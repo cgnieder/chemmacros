@@ -41,7 +41,8 @@
     space      .dim_set:N = \l__chemmacros_phases_space_dim
   }
 
-\chemmacros_new_macroset:nnn {Phase} {mm} { \chemmacros_define_phase:Nn #1 {#2} }
+\NewChemMacroset {Phase} {mm}
+  { \chemmacros_define_phase:Nn #1 {#2} }
 
 \cs_new_protected:Npn \chemmacros_define_phase:Nn #1#2
   {

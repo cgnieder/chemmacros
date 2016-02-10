@@ -25,18 +25,74 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{acid-base}{2015/06/09 acid/base}
+\ChemModule{acid-base}{2016/02/04 acid/base}
 
 \chemmacros_load_modules:n {charges}
 
 % --------------------------------------------------------------------------
-\tl_new:N  \l__chemmacros_k_acid_tl
-\tl_new:N  \l__chemmacros_k_base_tl
-\tl_new:N  \l__chemmacros_k_water_tl
+% equilibrium constants:
 
-\tl_set:Nn \l__chemmacros_k_acid_tl  { \chemmacros_translate:n {K-acid} }
-\tl_set:Nn \l__chemmacros_k_base_tl  { \chemmacros_translate:n {K-base} }
-\tl_set:Nn \l__chemmacros_k_water_tl { \chemmacros_translate:n {K-water} }
+\tl_new:N  \l__chemmacros_equilibrium_constant_tl
+\tl_set:Nn \l__chemmacros_equilibrium_constant_tl {K}
+\prop_new:N \l__chemmacros_eq_constants_prop
+
+\prg_new_conditional:Npnn \chemmacros_if_eq_constant:Nn #1#2 {T,F,TF}
+  {
+    \cs_if_exist:NTF #1
+      {
+        \tl_if_eq:xnTF
+          { \prop_item:Nn \l__chemmacros_eq_constants_prop {#1} }
+          {#2}
+          { \prg_return_true: }
+          { \prg_return_false: }
+      }
+      { \prg_return_false: }
+  }
+\cs_generate_variant:Nn \tl_if_eq:nnTF {x}
+
+% #1: cs
+% #2: translation id and option name
+% #3: default translation
+\cs_new_protected:Npn \chemmacros_define_eq_constant:Nnn #1#2#3
+  {
+    \chemmacros_if_eq_constant:NnF {#1} {#2}
+      {
+        \cs_new_protected:Npn #1 {}
+        \prop_put:Nnn \l__chemmacros_eq_constants_prop {#1} {#2}
+        \tl_new:c {l__chemmacros_#2_tl}
+        \keys_define:nn {chemmacros/acid-base}
+          { #2 .tl_set:c = l__chemmacros_#2_tl }
+      }
+    \tl_set:cn
+      {l__chemmacros_#2_tl}
+      { \chemmacros_translate:n {#2} }
+    \DeclareTranslationFallback {#2} {#3}
+    \cs_set_protected:Npn #1
+      {
+        \ensuremath
+          {
+            \chemmacros_bold:n
+              {
+                \l__chemmacros_equilibrium_constant_tl
+                \c_math_subscript_token
+                  { \tl_use:c {l__chemmacros_#2_tl} }
+              }
+          }
+      }
+  }
+
+\NewChemMacroset {EqConstant} {mmm}
+  { \chemmacros_define_eq_constant:Nnn #1 {#2} {#3} }
+
+\NewChemEqConstant \Ka {K-acid}  { \mathrm{a} }
+\NewChemEqConstant \Kb {K-base}  { \mathrm{b} }
+\NewChemEqConstant \Kw {K-water} { \mathrm{w} }
+
+\chemmacros_if_compatiblity:nnT {>=} {5.4}
+  {
+    \keys_define:nn {chemmacros/acid-base}
+      { eq-constant .tl_set:N = \l__chemmacros_equilibrium_constant_tl }
+  }
 
 \keys_define:nn {chemmacros/acid-base}
   {
@@ -44,50 +100,7 @@
     p-style / slanted .code:n   = \cs_set_eq:NN \chemmacros_p_style:n \textsl ,
     p-style / italics .code:n   = \cs_set_eq:NN \chemmacros_p_style:n \textit ,
     p-style / upright .code:n   = \cs_set_eq:NN \chemmacros_p_style:n \textup ,
-    K-acid            .tl_set:N = \l__chemmacros_k_acid_tl ,
-    K-base            .tl_set:N = \l__chemmacros_k_base_tl ,
-    K-water           .tl_set:N = \l__chemmacros_k_water_tl
-  }
-
-\cs_new_eq:NN \chemmacros_p_style:n \textup
-
-\cs_new_protected:Npn \Ka
-  {
-    \ensuremath
-      {
-        \chemmacros_bold:n
-          {
-            K
-            \c_math_subscript_token
-              { \l__chemmacros_k_acid_tl }
-          }
-      }
-  }
-
-\cs_new_protected:Npn \Kb
-  {
-    \ensuremath
-      {
-        \chemmacros_bold:n
-          {
-            K
-            \c_math_subscript_token
-              { \l__chemmacros_k_base_tl }
-          }
-      }
-  }
-
-\cs_new_protected:Npn \Kw
-  {
-    \ensuremath
-      {
-        \chemmacros_bold:n
-          {
-            K
-            \c_math_subscript_token
-              { \l__chemmacros_k_water_tl }
-          }
-      }
+    p-style           .initial:n = upright
   }
 
 \cs_new_protected:Npn \chemmacros_p:n #1
@@ -95,37 +108,34 @@
     \group_begin:
       \mbox
         {
-          \chemmacros_p_style:n { p }
-          \ensuremath { #1 }
+          \chemmacros_p_style:n {p}
+          \ensuremath {#1}
         }
     \group_end:
   }
 
-\NewDocumentCommand \p { m }
-  { \chemmacros_p:n { #1 } }
+\NewDocumentCommand \p  {m} { \chemmacros_p:n {#1} }
+\NewDocumentCommand \pH  {} { \chemmacros_p:n { \chemmacros_chemformula:n {H} } }
+\NewDocumentCommand \pOH {} { \chemmacros_p:n { \chemmacros_chemformula:n {OH} } }
 
-\cs_new_protected:Npn \pH
-  { \chemmacros_p:n { \chemmacros_chemformula:n {H} } }
-
-\cs_new_protected:Npn \pOH
-  { \chemmacros_p:n { \chemmacros_chemformula:n {OH} } }
-
-\NewDocumentCommand \pKa { o }
+\NewDocumentCommand \pKa {o}
   {
     \chemmacros_p:n
       {
-        \Ka \IfNoValueF { #1 }
-          { {} \c_math_subscript_token { \chemmacros_bold:n { #1 } } }
+        \Ka \IfNoValueF {#1}
+          { {} \c_math_subscript_token { \chemmacros_bold:n {#1} } }
       }
   }
 
-\NewDocumentCommand \pKb { o }
+\NewDocumentCommand \pKb {o}
   {
     \chemmacros_p:n
       {
-        \Kb \IfNoValueF { #1 }
-          { {} \c_math_subscript_token { \chemmacros_bold:n { #1 } } }
+        \Kb \IfNoValueF {#1}
+          { {} \c_math_subscript_token { \chemmacros_bold:n {#1} } }
       }
   }
 
 % --------------------------------------------------------------------------
+\tex_endinput:D
+2016/02/04 - \NewChemEqConstant and family, new option `eq-constant'

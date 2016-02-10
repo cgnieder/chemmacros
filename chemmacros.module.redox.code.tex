@@ -82,7 +82,7 @@
     \group_end:
   }
 
-\ChemCompatibilityTo{5.1}
+\ChemCompatibilityTo{5.3}
 \cs_new_protected:Npn \__chemmacros_ox_sign:n #1
   {
     \bool_if:nT
@@ -101,7 +101,7 @@
       { \c_math_toggle_token - \c_math_toggle_token }
   }
 \EndChemCompatibility
-\ChemCompatibilityFrom{5.2}
+\ChemCompatibilityFrom{5.4}
 \cs_new_protected:Npn \__chemmacros_ox_sign:n #1
   {
     \bool_if:nT
@@ -286,7 +286,7 @@
 \ChemCompatibilityFrom{5.4}
 \keys_define:nn {chemmacros/redox}
   {
-    explicit-zero-sign .bool_set:N \l__chemmacros_ox_explicit_zero_sign_bool ,
+    explicit-zero-sign .bool_set:N = \l__chemmacros_ox_explicit_zero_sign_bool ,
     explicit-zero-sign .default:n  = true
   }
 \EndChemCompatibility

@@ -118,10 +118,10 @@
       }
   }
 
-\chemmacros_new_macroset:nnn {Charge} {mm}
+\NewChemMacroset {Charge} {mm}
   { \chemmacros_new_charge_command:Nn #1 {#2} }
   
-\chemmacros_new_macroset:nnn {PartialCharge} {mm}
+\NewChemMacroset {PartialCharge} {mm}
   { \chemmacros_new_partial_charge_command:Nn #1 {#2} }
 
 \cs_new_protected:Npn \scrm

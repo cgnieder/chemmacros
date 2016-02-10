@@ -34,7 +34,7 @@
 \cs_new_protected:Nn \chemmacros_define_particle:Nn
   { \cs_set_protected:Npn #1 { \chemmacros_chemformula:n {#2} } }
 
-\chemmacros_new_macroset:nnn {Particle} {mm}
+\NewChemMacroset {Particle} {mm}
   { \chemmacros_define_particle:Nn #1 {#2} }
 
 % --------------------------------------------------------------------------
@@ -100,10 +100,8 @@
       }
   }
 
-\chemmacros_new_macroset:nnn {Nucleophile} {mm}
+\NewChemMacroset {Nucleophile} {mm}
   { \chemmacros_declare_nucleophile:Nn #1 {#2} }
-
-
 
 % --------------------------------------------------------------------------
 % particles:

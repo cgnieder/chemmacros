@@ -31,10 +31,10 @@
 
 % --------------------------------------------------------------------------
 % package information:
-\tl_const:Nn \c_chemmacros_date_tl {2016/01/23}
+\tl_const:Nn \c_chemmacros_date_tl {2016/02/10}
 \tl_const:Nn \c_chemmacros_version_major_number_tl {5}
-\tl_const:Nn \c_chemmacros_version_minor_number_tl {3}
-\tl_const:Nn \c_chemmacros_version_subrelease_tl   {a}
+\tl_const:Nn \c_chemmacros_version_minor_number_tl {4}
+\tl_const:Nn \c_chemmacros_version_subrelease_tl   {}
 \tl_const:Nx \c_chemmacros_version_number_tl
   {\c_chemmacros_version_major_number_tl.\c_chemmacros_version_minor_number_tl}
 \tl_const:Nx \c_chemmacros_version_tl
@@ -498,3 +498,10 @@ Version history
                           - TikZ decoration `wave' (tikz)
 2016/01/23 - version 5.3a - compatibility with chemscheme package (scheme)
                           - IUPAC shorthands only defined within \iupac (nomenclature)
+2016/02/10 - version 5.4  - \NewChemEqConstant and family, new option
+                            `eq-constant' (acid-base)
+                          - added \ignorespacesafterend to environments
+                            (reactions)
+                          - fixed erroneous definition of \NewChemMacroset
+                            (base)
+                          - new option `explicit-zero-sign' (redox)

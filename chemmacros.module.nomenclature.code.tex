@@ -484,32 +484,35 @@
     \prop_remove:Nn \l__chemmacros_iupac_shorthands_prop {#1}
   }
 
-\prg_new_conditional:Npnn \chemmacros_if_shorthand:N #1 {p,T,F,TF}
+\prg_new_conditional:Npnn \chemmacros_if_iupac_shorthand:N #1 {p,T,F,TF}
   {
     \seq_if_in:NnTF \l__chemmacros_iupac_shorthands_seq {#1}
       { \prg_return_true: }
       { \prg_return_false: }
   }
 
-\cs_new_protected:Npn \chemmacros_for_all_shorthands_do:n #1
+\cs_new_protected:Npn \chemmacros_for_all_iupac_shorthands_do:n #1
   { \seq_map_inline:Nn \l__chemmacros_iupac_shorthands_seq {#1} }
 
 \cs_new_protected:Npn \chemmacros_activate_iupac_shorthand:N #1
-  { \chemmacros_if_shorthand:NT #1 { \char_set_catcode_active:N #1 } }
+  { \chemmacros_if_iupac_shorthand:NT #1 { \char_set_catcode_active:N #1 } }
 
 \cs_new_protected:Npn \chemmacros_activate_iupac_shorthands:n #1
   { \tl_map_inline:nn {#1} { \chemmacros_activate_iupac_shorthand:N ##1 } }
 
 \cs_new_protected:Npn \chemmacros_activate_all_iupac_shorthands:
   {
-    \chemmacros_for_all_shorthands_do:n
+    \chemmacros_for_all_iupac_shorthands_do:n
       { \chemmacros_activate_iupac_shorthand:N ##1 }
   }
 
 \cs_new_protected:Npn \chemmacros_make_shorthands:
   {
-    \chemmacros_for_all_shorthands_do:n
-      { \prop_item:Nn \l__chemmacros_iupac_shorthands_prop {##1} }
+    \chemmacros_if_document:T
+      {
+        \chemmacros_for_all_iupac_shorthands_do:n
+          { \prop_item:Nn \l__chemmacros_iupac_shorthands_prop {##1} }
+      }
   }
 
 \NewDocumentCommand \DeclareChemIUPACShorthand {mm} 
@@ -517,20 +520,20 @@
 
 \NewDocumentCommand \NewChemIUPACShorthand {mm} 
   {
-    \chemmacros_if_shorthand:NTF #1
+    \chemmacros_if_iupac_shorthand:NTF #1
       { \msg_error:nnn {chemmacros} {new-iupac-shorthand} {#1} }
       { \chemmacros_define_iupac_shorthand:NN #1#2 }
   }
 
 \NewDocumentCommand \ProvideChemIUPACShorthand {mm} 
   {
-    \chemmacros_if_shorthand:NTF #1
+    \chemmacros_if_iupac_shorthand:NTF #1
       { \chemmacros_define_iupac_shorthand:NN #1#2 }
   }
 
 \NewDocumentCommand \RenewChemIUPACShorthand {mm} 
   {
-    \chemmacros_if_shorthand:NTF #1
+    \chemmacros_if_iupac_shorthand:NTF #1
       { \chemmacros_define_iupac_shorthand:NN #1#2 }
       { \msg_error:nnn {chemmacros} {renew-iupac-shorthand} {#1} }
   }
@@ -552,8 +555,8 @@
 \NewChemIUPACShorthand ' \chemprime
 \EndChemCompatibility
 
-\group_begin:
-\chemmacros_activate_all_iupac_shorthands:
+% \group_begin:
+% \chemmacros_activate_all_iupac_shorthands:
 
 \cs_new_protected:Npn \chemmacros_iupac:n #1
   {
@@ -561,6 +564,7 @@
       \bool_set_true:N \l__chemmacros_inside_iupac_bool
       \chemmacros_make_iupac:
       \chemmacros_make_shorthands:
+      % what's this vvv in here for?
       \chemmacros_ignore_spaces:
       \chemmacros_if_compatiblity:nnT {<=} {5.2}
         { \chemmacros_define_deprecated:NN \- - }
@@ -570,12 +574,12 @@
       \l__chemmacros_tmpa_tl
     \group_end:
   }
-\group_end:
+% \group_end:
 
+\ChemCompatibilityTo{5.2}
 % Thanks to Joseph Wright and Enrico Gregorio for the help on the curious
 % redefinition of \- and the end of the compilation
 % see http://tex.stackexchange.com/q/42405/5049 for reference
-\ChemCompatibilityTo{5.2}
 \cs_set_protected:Npx \- { \exp_not:o { \- } }
 \cs_set_eq:NN \@dischyph \-
 \EndChemCompatibility
@@ -674,7 +678,7 @@
 \cs_new_protected:Npn \chemmacros_define_latin:Nn #1#2
   { \cs_set_protected:Npn #1 { \chemmacros_latin:n {#2} } }
 
-\chemmacros_new_macroset:nnn {Latin} {mm}
+\NewChemMacroset {Latin} {mm}
   { \chemmacros_define_latin:Nn #1 {#2} }
 
 \AtBeginDocument
@@ -737,7 +741,7 @@
         \cs_set:Npn \nitrogen   {N}
         \cs_set:Npn \sulfur     {S}
         \cs_set:Npn \phosphorus {P}
-        \cs_set:Npn \chemprime {'}
+        \cs_set:Npn \chemprime  {'}
       }
   }
   
@@ -750,3 +754,4 @@
            - fix bug in \RemoveChemIUPACShorthand
 2016/01/02 - \chemprime
 2016/01/23 - give shorthand definitions only inside \iupac
+2016/01/25 - small improvements (?) of the shorthand code

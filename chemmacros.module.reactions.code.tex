@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{reactions}{2015/10/14 reaction environments}
+\ChemModule{reactions}{2016/02/09 reaction environments}
 
 \chemmacros_load_module:n {chemformula}
 
@@ -181,7 +181,10 @@
         \__chemmacros_begin_reaction:
         \chemmacros_reaction_read:nnw {#2} {#4}
       }
-      { \__chemmacros_end_reaction: }
+      {
+        \__chemmacros_end_reaction:
+        \ignorespacesafterend
+      }
   }
 \cs_generate_variant:Nn \chemmacros_reaction_env:nnnn {nnnV}
   
@@ -193,7 +196,7 @@
     \end
   }
 
-\chemmacros_new_environment_macroset:nnn {Reaction} {mO{}m}
+\NewChemMacroset* {Reaction} {mO{}m}
   { \chemmacros_define_reaction:nnn {#1} {#3} {#2} }
 
 \NewChemReaction {reaction}   {equation}
@@ -207,3 +210,4 @@
 2015/09/15 - adapt to `method' option => do not use chemformula's macros
              directly
 2015/10/14 - new option `list-heading-cmd'
+2016/02/09 - added \ignorespacesafterend to environments

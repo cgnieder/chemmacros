@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{lang}{2015/11/17 language settings for chemmacros}
+\ChemModule{lang}{2016/02/03 language settings for chemmacros}
 
 \RequirePackage{translations}
 
@@ -102,15 +102,12 @@
 \DeclareTranslation {German}  {scheme-list} {Verzeichnis~ der~ Schemata}
 
 % --------------------------------------------------------------------------
-\DeclareTranslationFallback   {K-acid}  {\mathrm{a}}
 \DeclareTranslation {English} {K-acid}  {\mathrm{a}}
 \DeclareTranslation {German}  {K-acid}  {\mathrm{s}}
 \DeclareTranslation {Dutch}   {K-acid}  {\mathrm{z}}
 
-\DeclareTranslationFallback   {K-base}  {\mathrm{b}}
 \DeclareTranslation {English} {K-base}  {\mathrm{b}}
 
-\DeclareTranslationFallback   {K-water} {\mathrm{w}}
 \DeclareTranslation {English} {K-water} {\mathrm{w}}
 
 % --------------------------------------------------------------------------
@@ -146,3 +143,4 @@
 \tex_endinput:D
 
 2015/11/17 - remove options `german' and `ngerman', starting with v5.3
+2016/02/03 - adapt to changes in `acid-base' module

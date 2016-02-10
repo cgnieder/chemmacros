@@ -218,7 +218,8 @@
       }
   }
 
-\chemmacros_new_macroset:nnn {NMR} {mm} { \chemmacros_define_nmr:Nn #1 {#2} }
+\NewChemMacroset {NMR} {mm}
+  { \chemmacros_define_nmr:Nn #1 {#2} }
 
 \NewDocumentCommand \NMR { sG{}D(){}O{} }
   {

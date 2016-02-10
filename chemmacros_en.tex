@@ -55,10 +55,11 @@
       chemomega, chemphi, chemPhi, chemsetup, chlewis, chname , cip, cis, ch,
       CNMR,
     data, DeclareChemArrow, DeclareChemBond, DeclareChemBondAlias,
-      declarechemgreekmapping, DeclareChemCharge, DeclareChemIUPAC,
-      DeclareChemIUPACShorthand, DeclareChemLatin, DeclareChemNMR,
-      DeclareChemNucleophile, DeclareChemPartialCharge, DeclareChemParticle,
-      DeclareChemPhase, DeclareChemReaction, DeclareChemState,
+      DeclareChemCharge, DeclareChemEqConstant, declarechemgreekmapping,
+      DeclareChemIUPAC, DeclareChemIUPACShorthand, DeclareChemLatin,
+      DeclareChemNMR, DeclareChemNucleophile, DeclareChemPartialCharge,
+      DeclareChemParticle, DeclareChemPhase, DeclareChemReaction,
+      DeclareChemState,
       delm, delp, Delta, dexter, Dfi,
     el, ElPot, endo, entgegen, Enthalpy, enthalpy, entropy,
     fdelm, fdelp, fmch, fminus, fpch, fplus, fscrm, fscrp,
@@ -70,20 +71,22 @@
     laevus, Lfi, listofreactions, lqd,
     mch, mega, meta, mhName,
     NewChemArrow, NewChemBond, NewChemBondAlias,
-      newchemgreekmapping, NewChemCharge, NewChemIUPAC, NewChemIUPACShorthand,
-      NewChemLatin, NewChemNMR, NewChemNucleophile, NewChemPartialCharge,
-      NewChemParticle, NewChemPhase, NewChemReaction, NewChemState,
+      NewChemCharge, NewChemEqConstant, newchemgreekmapping, NewChemIUPAC,
+      NewChemIUPACShorthand, NewChemLatin, NewChemMacroset, NewChemNMR,
+      NewChemNucleophile, NewChemPartialCharge, NewChemParticle, NewChemPhase,
+      NewChemReaction, NewChemState,
       newman, nitrogen, NMR, Nu, Nuc,
     orbital, ortho, ox, OX, oxygen,
     para, pch, per, pH, phase, phosphorus, photon, pKa, pKb, pOH, pos,
       positron, Pot, ProvideChemArrow, ProvideChemBond, ProvideChemCharge,
-      ProvideChemIUPAC, ProvideChemIUPACShorthand, ProvideChemLatin,
-      ProvideChemNMR, ProvideChemNucleophile, ProvideChemPartialCharge,
-      ProvideChemParticle, ProvideChemPhase, ProvideChemReaction,
+      ProvideChemEqConstant, ProvideChemIUPAC, ProvideChemIUPACShorthand,
+      ProvideChemLatin, ProvideChemNMR, ProvideChemNucleophile,
+      ProvideChemPartialCharge, ProvideChemParticle, ProvideChemPhase,
+      ProvideChemReaction,
       ProvideChemState, prt,
     Rad, redox, RemoveChemIUPACShorthand, RenewChemArrow, RenewChemBond,
-      renewchemgreekmapping, renewChemCharge, RenewChemIUPAC,
-      RenewChemIUPACShorthand, RenewChemLatin, RenewChemNMR,
+      RenewChemCharge, RenewChemEqConstant, renewchemgreekmapping,
+      RenewChemIUPAC, RenewChemIUPACShorthand, RenewChemLatin, RenewChemNMR,
       RenewChemNucleophile, RenewChemPartialCharge, RenewChemParticle,
       RenewChemPhase, RenewChemState,
     Sf, scrm, scrp, second, selectchemgreekmapping, setchemformula,
@@ -575,9 +578,8 @@ important and \emph{breaking} differences:
   \item The command family \cs*{NewChem\ldots}, \cs*{RenewChem\ldots} and
     \cs*{DeclareChem\ldots} has a new member \cs*{ProvideChem\ldots}.
   \item In \cs{iupac} the macro \cs*{-} no longer gives a dash with breaking
-    point.  Instead \sym*{-} can be used directly\footnote{\cs*{-} will be
-      provided a bit longer for easing the upgrade step but will be dropped
-      eventually.}.
+    point.  Instead \sym*{-} can be used directly\footnote{\cs*{-} is provided
+      up to and including v5.2 but is dropped in higher versions.}.
   \item The macro \cs{ox} has another default behaviour (\keyis{pos}{super})
     and the starred version has another effect (\keyis{pos}{top}) than the
     same macro in earlier versions.  Now the default behaviour follows
@@ -780,6 +782,8 @@ allow to change the subscript of the constants:
     The subscript to \cs{Kb} and \cs{pKb}.
   \keyval{K-water}{text}\Module{acid-base}\Default{\cs{ChemTranslate}\Marg{K-water}}
     The subscript to \cs{Kw}.
+  \keyval{eq-constant}{text}\Module{acid-base}\Default{K}
+    The\sinceversion{5.4} symbol of the constants.
 \end{options}
 \begin{example}
   \pH, \pKa \par
@@ -802,6 +806,29 @@ this you have two possibilities:
   \chemsetup{acid-base/K-acid=\mathrm{A}}% overwrites language dependent settings
   \pKa
 \end{example}
+
+The\sinceversion{5.4} constants \Ka, \Kb, and \Kw\ were defined using the
+following commands:
+\begin{commands}
+  \command{NewChemEqConstant}\marg{cs}\marg{name}\marg{subscript}
+    Define the constant \meta{cs} with the name \meta{name} and the subscript
+    \meta{subscript}.  This also defines the default translation with the key
+    \meta{name} using \meta{subscript} as fallback translation (see
+    section~\vref{sec:lang-module} for details).  It also defines the option
+    \meta{name} for setting the subscript.
+  \command{RenewChemEqConstant}\marg{cs}\marg{name}\marg{default appearance}
+    The same as \cs{NewChemEqConstant} but renews an existing command.
+  \command{DeclareChemEqConstant}\marg{cs}\marg{name}\marg{default appearance}
+    The same as \cs{NewChemEqConstant} but overwrites existing commands.
+  \command{ProvideChemEqConstant}\marg{cs}\marg{name}\marg{default appearance}
+    The same as \cs{NewChemEqConstant} but doesn't throw an error if \meta{cs}
+    already exists.
+\end{commands}
+
+This is how \cs{Ka} is defined:
+\begin{sourcecode}
+  \NewChemEqConstant \Ka {K-acid}  { \mathrm{a} }
+\end{sourcecode}
 
 \subsection{The \chemmodule*{charges} Module}\label{sec:charges-module}
 
@@ -1551,9 +1578,6 @@ modules. In the macro descriptions below \TF\ denotes that a \code{T}, an
 \code{F} and a \code{TF} variant exist.  In case of an expandable conditional
 (\expandablesymbol) also the predicate variant is available.
 \begin{commands}
-  \expandable\command*{chemmacros_is_int:n}[\TF\ \marg{number} \marg{true}
-  \marg{false}]
-    Checks if \meta{number} is an integer or not.
   \expandable\command*{chemmacros_if_loaded:nn}[\TF\
   \Marg{\meta{package}|\meta{class}} \marg{name} \marg{true} \marg{false}]
     Checks if package (or class) \meta{name} has been loaded. Also works after
@@ -1574,7 +1598,8 @@ modules. In the macro descriptions below \TF\ denotes that a \code{T}, an
     Inserts a penalty of \num{0}.
   \command*{chemmacros_skip_nobreak:N}[ \meta{skip/length variable}]
     Insert a horizontal skip while linebreak is disallowed.
-  \command*{chemmacros_if_is_int:n}[\TF\ \marg{input} \marg{true} \marg{false}]
+  \expandable\command*{chemmacros_if_is_int:n}[\TF\ \marg{input} \marg{true}
+  \marg{false}]
     Checks if \meta{input} is an integer or something else.
   \command*{chemmacros_if_bold:}[\TF\ \marg{true} \marg{false}]
     Checks if the current font weight is one of \chemboldchecks{or}.
@@ -1586,22 +1611,32 @@ modules. In the macro descriptions below \TF\ denotes that a \code{T}, an
     Ensures that \meta{text} is placed in text mode.
   \command*{chemmacros_math:n}[ \marg{text}]
     Ensures that \meta{text} is placed in math mode.
-  \command*{chemmacros_new_macroset:nnn}[ \marg{type} \marg{arg spec}
+  \command*{chemmacros_new_macroset:nnn}[ \marg{name} \marg{arg spec}
   \marg{internal command call}]
-    A command to define a set of macros \cs*{NewChem\meta{type}},
-    \cs*{RenewChem\meta{type}}, \cs*{DeclareChem\meta{type}} and
-    \cs*{ProvideChem\meta{type}}. \meta{arg spec} is any valid argument
-    specification for \pkg{xparse}'s \\
+    \changedversion{5.3b}A command to define a set of macros
+    \cs*{NewChem\meta{name}}, \cs*{RenewChem\meta{name}},
+    \cs*{DeclareChem\meta{name}} and \cs*{ProvideChem\meta{name}} where the
+    first letter of \meta{name} is converted to uppercase, other letters are
+    kept unchanged. \meta{arg spec} is any valid argument specification for
+    \pkg{xparse}'s \\
     \cs{DeclareDocumentCommand}~\cite{bnd:l3packages}. \meta{internal command
       call} should be a macro which makes definitions \emph{without} error
     checks, \ie, define new macros or redefine existing ones like \cs*{def}
     does.  This macro just should get the arguments passed on to.  Have a look
     at the example below.
+  \command*{chemmacros_new_environment_macroset:nnn}[ \marg{name} \marg{arg spec}
+  \marg{internal command call}]
+    Like \cs*{chemmacros_new_macroset:nnn} but for environments.
+  \command{NewChemMacroset}[\sarg\marg{name}\marg{arg spec}\marg{internal
+    command call}]
+    A non-expl3 version of \cs*{chemmacros_new_macroset:nnn} for \LaTeXe\
+    programmers.  The starred version calls
+    \cs*{chemmacros_new_environment_macroset:nnn}.
 \end{commands}
 This is how the macros \cs{NewChemParticle}, \cs{RenewChemParticle},
 \cs{DeclareChemParticle} and \cs{ProvideChemParticle} were defined:
 \begin{sourcecode}
-  \chemmacros_new_macroset:nnn {Particle} {mm}
+  \NewChemMacroset {Particle} {mm}
     { \chemmacros_define_particle:Nn #1 {#2} }
 \end{sourcecode}
 
@@ -1767,9 +1802,10 @@ This module defines the following option:
 \begin{options}
   \keychoice{language}{auto,\meta{language}}\Default{auto}
     If set to \code{auto} \chemmacros\ will detect the language used by
-    \pkg{babel}~\cite{pkg:babel} or \pkg{ployglossia}~\cite{pkg:polyglossia}
-    automatically, fallback is English.  Any language known to the
-    \pkg{translations} package is a valid value for \meta{language}.
+    \pkg{babel}~\cite{pkg:babel} or \pkg{polyglossia}~\cite{pkg:polyglossia}
+    automatically, the fallback translation is English and will be used if no 
+    translation for the actual language is available.  Any language known to
+    the \pkg{translations} package is a valid value for \meta{language}.
 \end{options}
 
 The language chosen via \option{language} is used for translation of certain
@@ -2336,6 +2372,10 @@ There are a number of options that can be used to modify the typeset result:
     recommendation, \code{top} does not!
   \keybool{explicit-sign}\Module{redox}\Default{false}
     Shows the $+$ for positiv numbers and the $\pm$ for $0$.
+  \keybool{explizit-zero-sign}\Module{redox}\Default{true}
+    Only\sinceversion{5.4} if both \option{explicit-sign} and
+    \option{explicit-zero-sign} are set to \code{true} $\pm0$ will be
+    printed.
   \keychoice{decimal-marker}{comma,point}\Module{redox}\Default{point}
     Choice for the decimal marker for formal oxidation numbers like \ox{1.2,X}.
   \keychoice{align}{center,right}\Module{redox}\Default{center}
