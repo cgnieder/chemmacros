@@ -94,13 +94,13 @@
 \tl_set:Nn \l__chemmacros_reaction_lorname_tl { \chemmacros_translate:n {reaction} }
 \tl_set:Nn \reactionlistname { \chemmacros_translate:n {list-of-reactions} }
 
-\keys_define:nn {chemmacros/reactions}
+\chemmacros_define_keys:nn {reactions}
   {
     list-name .tl_set:N = \reactionlistname ,
     list-entry .tl_set:N = \l__chemmacros_reaction_lorname_tl ,
   }
 \ChemCompatibilityFrom{5.2}
-\keys_define:nn {chemmacros/reactions}
+\chemmacros_define_keys:nn {reactions}
   {
     list-heading-cmd .code:n =
       \cs_set_protected:Npn \__chemmacros_reaction_heading:n ##1 {#1}
@@ -109,11 +109,11 @@
 
 \cs_if_exist:NTF \chapter
   {
-    \keys_set:nn {chemmacros/reactions}
+    \chemmacros_set_keys:nn {reactions}
       { list-heading-cmd = \chapter* {#1} }
   }
   {
-    \keys_set:nn {chemmacros/reactions}
+    \chemmacros_set_keys:nn {reactions}
       { list-heading-cmd = \section* {#1} }
   }
 

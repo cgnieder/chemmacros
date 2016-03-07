@@ -53,13 +53,13 @@
 \dim_new:N  \l__chemmacros_nucleophile_dim
 \dim_set:Nn \l__chemmacros_nucleophile_dim { .1em }
 
-\keys_define:nn {chemmacros/particles}
+\chemmacros_define_keys:nn {particles}
   {
     space .dim_set:N = \l__chemmacros_nucleophile_dim
   }
 \EndChemCompatibility
 
-\keys_define:nn {chemmacros/particles}
+\chemmacros_define_keys:nn {particles}
   {
     elpair         .choice: ,
     elpair / false .code:n    =
@@ -94,7 +94,7 @@
       {
         \group_begin:
           \IfNoValueF {##1}
-            { \keys_set:nn {chemmacros/particles} {##1} }
+            { \chemmacros_set_keys:nn {particles} {##1} }
           \use:c {__chemmacros_ \chemmacros_remove_backslash:N #1:}
         \group_end:
       }

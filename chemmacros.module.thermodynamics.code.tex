@@ -43,7 +43,7 @@
 \tl_set:Nn \l__chemmacros_state_sp_right_tl { \standardstate }
 \tl_set:Nn \l__chemmacros_state_sb_pos_tl {left}
 
-\keys_define:nn {chemmacros/thermodynamics}
+\chemmacros_define_keys:nn {thermodynamics}
   {
     pre               .tl_set:N   = \l__chemmacros_state_pre_tl ,
     post              .tl_set:N   = \l__chemmacros_state_post_tl ,
@@ -66,7 +66,7 @@
     % subscript-left
     % subscript-right
     \group_begin:
-      \keys_set:nn {chemmacros/thermodynamics} {#1}
+      \chemmacros_set_keys:nn {thermodynamics} {#1}
       \ensuremath
         {
           \chemmacros_text:V \l__chemmacros_state_pre_tl
@@ -90,7 +90,8 @@
 
 \cs_new_protected:Npn \chemmacros_declare_state:Nn #1#2
   {
-    \keys_define:xn {chemmacros/thermodynamics/\chemmacros_remove_backslash:N #1}
+    \chemmacros_define_keys:xn
+      {thermodynamics/\chemmacros_remove_backslash:N #1}
       {
         pre               .meta:nn = {chemmacros/thermodynamics} { pre = ##1 } ,
         post              .meta:nn = {chemmacros/thermodynamics} { post = ##1 } ,
@@ -109,16 +110,18 @@
     \DeclareDocumentCommand #1 { sO{}D(){}m }
       {
         \group_begin:
-          \keys_set:xn {chemmacros/thermodynamics/\chemmacros_remove_backslash:N #1} {#2}
+          \chemmacros_set_keys:xn
+            {thermodynamics/\chemmacros_remove_backslash:N #1}
+            {#2}
           \tl_if_blank:nF {##3}
             {
-              \keys_set:nx {chemmacros/thermodynamics}
+              \chemmacros_set_keys:nx {thermodynamics}
                 { subscript-\l__chemmacros_state_sb_pos_tl = \exp_not:n {##3} }
             }
           \ensuremath
             {
               \chemmacros_state:nV {##2} \l__chemmacros_state_symbol_tl
-              \keys_set_groups:nnn {chemmacros/thermodynamics} {variables} {##2}
+              \chemmacros_set_keys_groups:nnn {thermodynamics} {variables} {##2}
               \IfBooleanF {##1} { = \SI {##4} { \l__chemmacros_state_unit_tl } }
             }
         \group_end:

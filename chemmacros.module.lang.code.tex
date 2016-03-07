@@ -58,7 +58,7 @@
 \DeclareExpandableDocumentCommand \ChemTranslate {m}
   { \chemmacros_translate:n {#1} }
 
-\keys_define:nn {chemmacros}
+\chemmacros_define_global_keys:n
   {
     language .value_required:n = true ,
     language .code:n =
@@ -72,7 +72,7 @@
   }
 
 \ChemCompatibilityTo{5.2}
-\keys_define:nn {chemmacros}
+\chemmacros_define_global_keys:n
   {
     german   .meta:n = { language = german } ,
     ngerman  .meta:n = { language = ngerman }

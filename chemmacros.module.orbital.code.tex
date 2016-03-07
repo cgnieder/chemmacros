@@ -114,7 +114,7 @@
     \bool_set_false:N \l__chemmacros_orbital_type_spthree_bool
   }
 
-\keys_define:nn { chemmacros / orbital / s }
+\chemmacros_define_keys:nn {orbital/s}
   {
     phase .choice: ,
     phase / + .code:n =
@@ -127,7 +127,7 @@
 
 \cs_new_protected:Npn \__chemmacros_orbital_s_draw:n #1
   {
-    \keys_set:nn { chemmacros / orbital / s } { #1 }
+    \chemmacros_set_keys:nn {orbital/s} {#1}
     \bool_if:NTF \l__chemmacros_orbital_s_phase_bool
       {
         \tl_if_in:NnTF \l__chemmacros_orbital_s_color_tl { ! }
@@ -163,7 +163,7 @@
     \bool_set_false:N \l__chemmacros_orbital_type_spthree_bool
   }
 
-\keys_define:nn { chemmacros / orbital / p }
+\chemmacros_define_keys:nn {orbital/p}
   {
     phase .choice: ,
     phase / + .code:n =
@@ -179,7 +179,7 @@
 
 \cs_new_protected:Npn \__chemmacros_orbital_p_draw:n #1
   {
-    \keys_set:nn { chemmacros / orbital / p } { #1 }
+    \chemmacros_set_keys:nn {orbital/p} {#1}
     \bool_if:NTF \l__chemmacros_orbital_p_phase_bool
       {
         \tl_if_in:NnTF \l__chemmacros_orbital_p_color_tl { ! }
@@ -259,7 +259,7 @@
     \bool_set_false:N \l__chemmacros_orbital_type_spthree_bool
   }
 
-\keys_define:nn { chemmacros / orbital / sp }
+\chemmacros_define_keys:nn {orbital/sp}
   {
     phase .choice: ,
     phase / + .code:n =
@@ -273,7 +273,7 @@
 
 \cs_new_protected:Npn \__chemmacros_orbital_sp_draw:n #1
   {
-    \keys_set:nn { chemmacros / orbital / sp } { #1 }
+    \chemmacros_set_keys:nn {orbital/sp} {#1}
     \bool_if:NTF \l__chemmacros_orbital_sp_phase_bool
       {
         \tl_if_in:NnTF \l__chemmacros_orbital_sp_color_tl { ! }
@@ -350,7 +350,7 @@
     \bool_set_false:N \l__chemmacros_orbital_type_spthree_bool
   }
 
-\keys_define:nn { chemmacros / orbital / sp2 }
+\chemmacros_define_keys:nn {orbital/sp2}
   {
     phase .choice: ,
     phase / + .code:n =
@@ -364,7 +364,7 @@
 
 \cs_new_protected:Npn \__chemmacros_orbital_sptwo_draw:n #1
   {
-    \keys_set:nn { chemmacros / orbital / sp2 } { #1 }
+    \chemmacros_set_keys:nn {orbital/sp2} {#1}
     \bool_if:NTF \l__chemmacros_orbital_sptwo_phase_bool
       {
         \tl_if_in:NnTF \l__chemmacros_orbital_sptwo_color_tl { ! }
@@ -441,7 +441,7 @@
     \bool_set_true:N  \l__chemmacros_orbital_type_spthree_bool
   }
 
-\keys_define:nn { chemmacros / orbital / sp3 }
+\chemmacros_define_keys:nn {orbital/sp3}
   {
     phase .choice: ,
     phase / + .code:n =
@@ -455,7 +455,7 @@
 
 \cs_new_protected:Npn \__chemmacros_orbital_spthree_draw:n #1
   {
-    \keys_set:nn { chemmacros / orbital / sp3 } { #1 }
+    \chemmacros_set_keys:nn {orbital/sp3} {#1}
     \bool_if:NTF \l__chemmacros_orbital_spthree_phase_bool
       {
         \tl_if_in:NnTF \l__chemmacros_orbital_spthree_color_tl { ! }
@@ -523,7 +523,7 @@
 
 % --------------------------------------------------------------------------
 % main command
-\keys_define:nn { chemmacros / orbital }
+\chemmacros_define_keys:nn {orbital}
   {
     overlay .bool_set:N = \l__chemmacros_orbital_overlay_bool ,
     overlay .default:n  = true ,
@@ -536,7 +536,7 @@
       }
   }
 
-\keys_define:nn { chemmacros / orbital / type }
+\chemmacros_define_keys:nn {orbital/type}
   {
     s   .code:n = { \__chemmacros_orbital_type_s: } ,
     p   .code:n = { \__chemmacros_orbital_type_p: } ,
@@ -559,12 +559,12 @@
       { \__chemmacros_orbital_spthree_draw:n { #1 } }
   }
 
-\NewDocumentCommand \orbital { o m }
+\NewDocumentCommand \orbital {om}
   {
     \group_begin:
-      \keys_set:nn { chemmacros / orbital / type } { #2 }
-      \IfNoValueTF { #1 }
-        { \chemmacros_orbital:n {    } }
-        { \chemmacros_orbital:n { #1 } }
+      \chemmacros_set_keys:nn {orbital/type} {#2}
+      \IfNoValueTF {#1}
+        { \chemmacros_orbital:n {  } }
+        { \chemmacros_orbital:n {#1} }
     \group_end:
   }

@@ -44,7 +44,7 @@
 \bool_set_true:N \l__chemmacros_circled_chem_bool
 
 
-\keys_define:nn { chemmacros / charges }
+\chemmacros_define_keys:nn {charges}
   {
     circletype         .choice: ,
     circletype / math  .code:n  =
@@ -137,7 +137,7 @@
 \cs_new_protected:Npn \fsscrp
   { \ensuremath { \scriptscriptstyle \chemmacros_formal_plus: } }
 
-\keys_define:nn {chemmacros/charges}
+\chemmacros_define_keys:nn {charges}
   {
     partial-format .tl_set:N = \l__chemmacros_partial_charge_format_tl
   }

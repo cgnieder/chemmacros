@@ -60,7 +60,7 @@
         \cs_new_protected:Npn #1 {}
         \prop_put:Nnn \l__chemmacros_eq_constants_prop {#1} {#2}
         \tl_new:c {l__chemmacros_#2_tl}
-        \keys_define:nn {chemmacros/acid-base}
+        \chemmacros_define_keys:nn {acid-base}
           { #2 .tl_set:c = l__chemmacros_#2_tl }
       }
     \tl_set:cn
@@ -90,11 +90,11 @@
 
 \chemmacros_if_compatiblity:nnT {>=} {5.4}
   {
-    \keys_define:nn {chemmacros/acid-base}
+    \chemmacros_define_keys:nn {acid-base}
       { eq-constant .tl_set:N = \l__chemmacros_equilibrium_constant_tl }
   }
 
-\keys_define:nn {chemmacros/acid-base}
+\chemmacros_define_keys:nn {acid-base}
   {
     p-style           .choice: ,
     p-style / slanted .code:n   = \cs_set_eq:NN \chemmacros_p_style:n \textsl ,

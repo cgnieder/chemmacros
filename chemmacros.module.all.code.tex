@@ -25,15 +25,16 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{all}{2015/10/14 load all libraries}
+\ChemModule{all}{2016/03/07 load all libraries}
 
 \msg_new:nnn {chemmacros} {all-modules}
   {
     You~ are~ loading~ *all*~ of~ chemmacros'~ module~ through~ the~ `all'~
     module!~ This~ is~ fine~ but~ not~ really~ encouraged.~ Do~ really~ need~
     all~ of~ `isotopes' ,~ `mechanisms' ,~ `newman' ,~ `nomenclature' ,~
-    `orbital' ,~ `particles' ,~ `phases' ,~ `reactions' ,~ `redox' ,~ `scheme'
-    ,~ `spectroscopy' ,~ `symbols' ,~ `thermodynamics' ,~ `units' ...?
+    `orbital' ,~ `particles' ,~ `phases' ,~ `polymers' ,~ `reactions' ,~
+    `redox' ,~ `scheme' ,~ `spectroscopy' ,~ `symbols' ,~ `thermodynamics' ,~
+    `units' ...?
   }
 
 \chemmacros_load_modules:n
@@ -53,6 +54,7 @@
      orbital ,
      particles ,
      phases ,
+     polymers ,
      reactions ,
      redox ,
      scheme ,
@@ -70,3 +72,4 @@
 
 2015/10/14 - add info message discouraging the usage of this module
            - add `errorcheck' module
+2016/03/07 - add `polymer' module

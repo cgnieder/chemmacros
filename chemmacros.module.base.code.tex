@@ -151,6 +151,27 @@
   }
   
 % --------------------------------------------------------------------------
+\cs_new_protected:Npn \chemmacros_define_keys:nn #1#2
+  { \keys_define:nn {chemmacros/#1} {#2} }
+\cs_generate_variant:Nn \chemmacros_define_keys:nn {x}
+
+\cs_new_protected:Npn \chemmacros_set_keys:nn #1#2
+  { \keys_set:nn {chemmacros/#1} {#2} }
+\cs_generate_variant:Nn \chemmacros_set_keys:nn {x,nx}
+
+\cs_new_protected:Npn \chemmacros_set_keys_groups:nnn #1#2#3
+  { \keys_set_groups:nnn {chemmacros/#1} {#2} {#3} }
+
+\cs_new_protected:Npn \chemmacros_set_keys_filter:nnn #1#2#3
+  { \keys_set_filter:nnn {chemmacros/#1} {#2} {#3} }
+
+\cs_new_protected:Npn \chemmacros_define_global_keys:n #1
+  { \keys_define:nn {chemmacros} {#1} }
+
+\cs_new_protected:Npn \chemmacros_set_global_keys:n #1
+  { \keys_set:nn {chemmacros} {#1} }
+
+% --------------------------------------------------------------------------
 % basic tools:
 \cs_new:Npn \chemmacros_remove_backslash:N #1
   { \exp_after:wN \use_none:n \token_to_str:N #1 }
@@ -295,7 +316,7 @@
       { \keys_set:nn {chemmacros/#1} {#2} }
   }
 
-\keys_define:nn {chemmacros}
+\chemmacros_define_global_keys:n
   { modules .code:n = \chemmacros_load_modules:n {#1} }
 
 % --------------------------------------------------------------------------
@@ -316,7 +337,7 @@
           { \RequirePackage {#2} [#3] }
           { \RequirePackage [#1] {#2} [#3] }
       }
-    \keys_define:nn {chemmacros}
+    \chemmacros_define_global_keys:n
       {
         #2 .choice: ,
         #2 / unknown .code:n =
@@ -337,3 +358,4 @@
              \chemmacros_if_document:TF
 2015/10/14 - load `errorcheck' module
 2016/02/09 - starred version of \NewChemMacroset
+2016/03/07 - \chemmacros_define_keys:nn and friends

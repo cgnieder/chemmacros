@@ -196,7 +196,7 @@
 }
 
 \chemsetup{
-  modules = all ,
+  modules = {all,polymers} ,
   greek = newtx ,
   formula = chemformula ,
   chemformula/format = \libertineLF
@@ -324,6 +324,11 @@
 
 \newname\hensel{Martin Hensel}
 \newname\pedersen{Bj\o rn Pedersen}
+
+\newcommand*\iupaccs[3][]{%
+  \command{#2}[\quad\iupac{\csuse{#2}}]
+    #3\ifblank{#1}{}{\ifblank{#3}{}{ }An alias for this command is \cs{#1}.}%
+}
 
 % \undef\module
 % \undef\moduleidx
@@ -1135,16 +1140,11 @@ Attachments to hetero atoms and added hydrogen atoms are indicated by italic
 letters~\cite{iupac:greenbook}.  \chemmacros\ defines a few macros for the
 most common ones.
 \begin{commands}
-  \command{hydrogen}[\quad\iupac{\hydrogen}]
-    The italic H for hydrogen.  (An alias for this command is \cs{H}.)
-  \command{oxygen}[\quad\iupac{\oxygen}]
-    The italic O for oxygen.  (An alias for this command is \cs{O}.)
-  \command{nitrogen}[\quad\iupac{\nitrogen}]
-    The italic N for nitrogen.  (An alias for this command is \cs{N}.)
-  \command{sulfur}[\quad\iupac{\sulfur}]
-    The italic S for sulfur.  (An alias for this command is \cs{Sf}.)
-  \command{phosphorus}[\quad\iupac{\phosphorus}]
-    The italic P for phosphorus.  (An alias for this command is \cs{P}.)
+  \iupaccs[H]{hydrogen}{The italic H for hydrogen.}
+  \iupaccs[O]{oxygen}{The italic O for oxygen.}
+  \iupaccs[N]{nitrogen}{The italic N for nitrogen.}
+  \iupaccs[Sf]{sulfur}{The italic S for sulfur.}
+  \iupaccs[P]{phosphorus}{The italic P for phosphorus.}
 \end{commands}
 \begin{example}[side-by-side]
   \iupac{\nitrogen-methyl|benz|amide}
@@ -1159,10 +1159,8 @@ most common ones.
   \command{cip}[\marg{conf}]
     Typeset Cahn-Ingol-Prelog descriptors, \eg: \cs{cip}\Marg{R,S}
     \cip{R,S}. \meta{conf} may be a csv list of entries.
-  \command{rectus}[\quad\iupac{\rectus}]
-    Typeset rectus descriptor.  (An alias for this command is \cs{R}.)
-  \command{sinister}[\quad\iupac{\sinister}]
-    Typeset sinister descriptor.  (An alias for this command is \cs{S}.)
+  \iupaccs[R]{rectus}{The rectus descriptor.}
+  \iupaccs[S]{sinister}{The sinister descriptor.}
 \end{commands}
 
 Both these commands and the entgegen/zusammen descriptors get a small
@@ -1175,10 +1173,8 @@ be changed through the following option:
 
 \paragraph{Fischer}
 \begin{commands}
-  \command{dexter}[\quad\iupac{\dexter}]
-    Typeset dexter descriptor.  (An alias for this command is \cs{D}.)
-  \command{laevus}[\quad\iupac{\laevus}]
-    Typeset laevus descriptor.  (An alias for this command is \cs{L}.)
+  \iupaccs[D]{dexter}{The dexter descriptor.}
+  \iupaccs[L]{laevus}{The laevus descriptor.}
 \end{commands}
 
 \paragraph{cis/trans, zusammen/entgegen, syn/anti \& tert}
@@ -1579,7 +1575,7 @@ modules. In the macro descriptions below \TF\ denotes that a \code{T}, an
 (\expandablesymbol) also the predicate variant is available.
 \begin{commands}
   \expandable\command*{chemmacros_if_loaded:nn}[\TF\
-  \Marg{\meta{package}|\meta{class}} \marg{name} \marg{true} \marg{false}]
+  \Marg{package|class} \marg{name} \marg{true} \marg{false}]
     Checks if package (or class) \meta{name} has been loaded. Also works after
     begin document.
   \expandable\command*{chemmacros_if_package_loaded:n}[\TF\ \marg{name}
@@ -1597,7 +1593,7 @@ modules. In the macro descriptions below \TF\ denotes that a \code{T}, an
   \command*{chemmacros_allow_break:}
     Inserts a penalty of \num{0}.
   \command*{chemmacros_skip_nobreak:N}[ \meta{skip/length variable}]
-    Insert a horizontal skip while linebreak is disallowed.
+    Insert a horizontal skip where a linebreak is disallowed.
   \expandable\command*{chemmacros_if_is_int:n}[\TF\ \marg{input} \marg{true}
   \marg{false}]
     Checks if \meta{input} is an integer or something else.
@@ -1605,7 +1601,7 @@ modules. In the macro descriptions below \TF\ denotes that a \code{T}, an
     Checks if the current font weight is one of \chemboldchecks{or}.
   \command*{chemmacros_bold:n}[ \marg{text}]
     Checks if the current font weight is bold and if yes places \meta{text} in
-    \cs*{textbf} if in text mode or in \cs*{bm} if in math mode.  If false
+    \cs*{textbf} if in text mode or in \cs*{bm} if in math mode.  If no
     \meta{text} simply is placed in the input stream as is.
   \command*{chemmacros_text:n}[ \marg{text}]
     Ensures that \meta{text} is placed in text mode.
@@ -1822,8 +1818,8 @@ in \chemmacros.  A translation key is a key which is understood by the
 \pkg{translations} package and its commands like \cs*{GetTranslation}.  For
 each key at least the English fallback translation is provided, for most also
 the German translation is provided.  For a few keys also other translations
-are provided.  If you find that your translation is missing you can provide it
-in the preamble:
+are provided.  If you find that a translation for your language is missing you
+can provide it in the preamble:
 \begin{commands}
   \command*{DeclareTranslation}[\marg{language}\marg{key}\marg{translation}]
     Defines a translation of key \meta{key} for the language \meta{language}.
@@ -2126,6 +2122,37 @@ changed.
   }
   \vspace{1cm}
 \end{example}
+
+\subsection{The \chemmodule*{polymers} Module}\label{sec:polymers-module}
+The\sinceversion{5.5} \chemmodule{polymers} module loads the
+\chemmodule{nomenclature} module.
+
+It defines a number of \ac{iupac} macros for usage inside \cs{iupac} which are
+used in polymer chemistry.
+
+\subsubsection{Copolymers}
+\begin{commands}
+  \iupaccs[co]{copolymer}{unspecified copolymer.}
+  \iupaccs[stat]{statistical}{statistical copolymer.}
+  \iupaccs[ran]{random}{random copolymer.}
+  \iupaccs[alt]{alternating}{alternating copolymer.}
+  \iupaccs[per]{periodic}{periodic copolymer.}
+  \iupaccs{block}{block copolymer.}
+  \iupaccs{graft}{graft copolymer.}
+\end{commands}
+
+\subsubsection{Non-linear (Co)Polymers and Polymer Assemblies}
+\begin{commands}
+  \iupaccs{blend}{The blend qualifier.}
+  \iupaccs{comb}{The comb qualifier.}
+  \iupaccs[compl]{complex}{The complex qualifier.}
+  \iupaccs[cyclo]{cyclic}{The cyclic qualifier.}
+  \iupaccs{branch}{The branch qualifier.}
+  \iupaccs[net]{network}{The network qualifier.}
+  \iupaccs[ipn]{ipnetwork}{The interpenetrating network qualifier.}
+  \iupaccs[sipn]{sipnetwork}{The semi-interpenetrating network qualifier.}
+  \iupaccs{star}{The star qualifier.}
+\end{commands}
 
 \subsection{The \chemmodule*{reactions} Module}\label{sec:reactions-module}
 The \chemmodule{reactions} module loads the \chemmodule{chemformula} module
@@ -3375,15 +3402,19 @@ manually maintained list of the modules that are loaded by it.
 
 If you decide to write your module \chemmodule*{foo} using expl3 and add
 options you want to be able to set using
-\cs{chemsetup}\Oarg{foo}\marg{options} please make sure you define them the
-following way:
-\begin{sourcecode}
-  \keys_define:nn {chemmacros/foo} {
-    ...
-  }
-\end{sourcecode}
-Also (especially if you consider submitting the module, see
-section~\vref{sec:submitting-module}) please follow the expl3 naming
+\cs{chemsetup}\Oarg{foo}\marg{options} please make sure you define (and set)
+them with the following macros:
+\begin{commands}
+  \command*{chemmacros_define_keys:nn}[ \marg{module} \marg{key definitions}]
+    Define l3keys options for the module \meta{module}.  This is a wrapper for
+    \cs*{keys_define:nn} \Marg{chemmacros/\meta{module}} \marg{key
+      definitions}.
+  \command*{chemmacros_set_keys:nn}[ \marg{module} \marg{input}]
+    Sets l3keys options for the module \meta{module}.  This is a wrapper for
+    \cs*{keys_set:nn} \Marg{chemmacros/\meta{module}} \marg{input}.
+\end{commands}
+Also (\emph{especially if you consider submitting the module, see
+  section~\vref{sec:submitting-module}}) please follow the expl3 naming
 conventions for variables and functions, \ie, use \code{chemmacros} as expl3
 module name:
 \begin{sourcecode}

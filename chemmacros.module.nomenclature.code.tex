@@ -220,7 +220,7 @@
 \NewDocumentCommand \LetChemIUPAC { mm }
   { \chemmacros_let_iupac:NN #1 #2 }
 
-\keys_define:nn {chemmacros/nomenclature}
+\chemmacros_define_keys:nn {nomenclature}
   {
     iupac              .choice: ,
     iupac / restricted .code:n     =
@@ -239,7 +239,7 @@
 \dim_new:N  \l__chemmacros_cip_kern_dim
 \dim_set:Nn \l__chemmacros_cip_kern_dim { .075em }
 
-\keys_define:nn {chemmacros/nomenclature}
+\chemmacros_define_keys:nn {nomenclature}
   { cip-kern .dim_set:N = \l__chemmacros_cip_kern_dim }
 
 \ChemCompatibilityTo{5.1}
@@ -304,7 +304,7 @@
 % coordination chemistry
 \bool_new:N \l__chemmacros_bridge_super_bool
 
-\keys_define:nn { chemmacros / nomenclature }
+\chemmacros_define_keys:nn {nomenclature}
   {
     bridge-number         .choice: ,
     bridge-number / sub   .code:n     =
@@ -388,7 +388,7 @@
 \dim_new:N  \l__chemmacros_iupac_break_dim
 \dim_set:Nn \l__chemmacros_iupac_break_dim { .03em }
 
-\keys_define:nn { chemmacros / nomenclature }
+\chemmacros_define_keys:nn {nomenclature}
   {
     hyphen-pre-space  .dim_set:N = \l__chemmacros_iupac_hyphen_pre_dim ,
     hyphen-post-space .dim_set:N = \l__chemmacros_iupac_hyphen_post_dim ,
@@ -666,7 +666,7 @@
 \tl_new:N  \l__chemmacros_latin_format_tl
 \tl_set:Nn \l__chemmacros_latin_format_tl { \itshape }
 
-\keys_define:nn { chemmacros / nomenclature }
+\chemmacros_define_keys:nn {nomenclature}
   {
     latin-format .tl_set:N  = \l__chemmacros_latin_format_tl ,
     latin-format .initial:n = \textit

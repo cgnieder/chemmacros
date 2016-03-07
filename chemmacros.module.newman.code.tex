@@ -46,7 +46,7 @@
 
 \bool_new:N \l__chemmacros_newman_tikz_back_bool
 
-\keys_define:nn { chemmacros / newman }
+\chemmacros_define_keys:nn {newman}
   {
     ring       .tl_set:N  = \l__chemmacros_newman_tikz_ring_tl ,
     atoms      .tl_set:N  = \l__chemmacros_newman_tikz_front_tl ,
@@ -65,7 +65,7 @@
 \NewDocumentCommand \newman { o d() > { \SplitArgument { 5 } { , } } m }
   {
     \group_begin:
-      \IfNoValueF { #1 } { \keys_set:nn { chemmacros / newman } { #1 } }
+      \IfNoValueF { #1 } { \chemmacros_set_keys:nn {newman} { #1 } }
       \IfNoValueTF { #2 }
         { \chemmacros_newman_atoms:nnnnnnn {    } #3 }
         { \chemmacros_newman_atoms:nnnnnnn { #2 } #3 }

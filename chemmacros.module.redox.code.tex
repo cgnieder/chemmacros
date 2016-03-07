@@ -246,7 +246,7 @@
     \bool_set_true:N  \l__chemmacros_ox_side_bool
   }
 
-\keys_define:nn {chemmacros/redox}
+\chemmacros_define_keys:nn {redox}
   {
     pos            .choice: ,
     pos / top      .code:n     = \__chemmacros_ox_pos_top: ,
@@ -284,7 +284,7 @@
   }
 
 \ChemCompatibilityFrom{5.4}
-\keys_define:nn {chemmacros/redox}
+\chemmacros_define_keys:nn {redox}
   {
     explicit-zero-sign .bool_set:N = \l__chemmacros_ox_explicit_zero_sign_bool ,
     explicit-zero-sign .default:n  = true
@@ -296,7 +296,7 @@
 \cs_new_protected:Npn \chemmacros_ox:nnnn #1#2#3#4
   {
     \group_begin:
-      \keys_set:nn {chemmacros/redox} {#2}
+      \chemmacros_set_keys:nn {redox} {#2}
       \tl_if_blank:nF {#1} { \__chemmacros_ox_pos_top: }
       \__chemmacros_ox_write:nn {#3} {#4}
     \group_end:
@@ -425,7 +425,7 @@
   }
 
 % redox-keys
-\keys_define:nn {chemmacros/redox}
+\chemmacros_define_keys:nn {redox}
   {
     dist .dim_set:N = \l__chemmacros_redox_dist_dim ,
     dist .initial:n = {.6em} ,

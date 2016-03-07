@@ -153,7 +153,7 @@
 \cs_new_eq:NN \__chemmacros_nmr_number:n \use:n
 \cs_new_eq:NN \__chemmacros_nmr_position:n \use:n
 
-\keys_define:nn { chemmacros / spectroscopy }
+\chemmacros_define_keys:nn {spectroscopy}
   {
     unit          .tl_set:N      = \l__chemmacros_nmr_unit_tl ,
     unit          .default:n     = \mega\hertz ,
@@ -353,7 +353,7 @@
 \NewDocumentEnvironment {experimental} {o}
   {
     \group_begin:
-    \IfNoValueF {#1} { \keys_set:nn {chemmacros/spectroscopy} {#1} }
+    \IfNoValueF {#1} { \chemmacros_set_keys:nn {spectroscopy} {#1} }
     \bool_set_true:N \l__chemmacros_nmr_inner_bool
     \cs_set_eq:NN \#    \chemmacros_nmr_number:n
     \cs_set_eq:NN \pos  \chemmacros_nmr_position:n

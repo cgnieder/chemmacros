@@ -45,7 +45,7 @@
     \tl_set:Nn \l__chemmacros_mechanisms_ar_tl   { #3 }
   }
 
-\keys_define:nn {chemmacros/mechanisms}
+\chemmacros_define_keys:nn {mechanisms}
   {
     type      .choice: ,
     type /    .code:n    =
@@ -145,8 +145,8 @@
 \cs_new_protected:Npn \chemmacros_mechanisms:n #1
   {
     \tl_if_blank:nTF {#1}
-      { \keys_set:nn {chemmacros/mechanisms} { type } }
-      { \keys_set:nn {chemmacros/mechanisms} { type = #1 } }
+      { \chemmacros_set_keys:nn {mechanisms} { type } }
+      { \chemmacros_set_keys:nn {mechanisms} { type = #1 } }
     \mbox
       {
         \tl_use:N \l__chemmacros_mechanisms_ar_tl
