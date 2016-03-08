@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{errorcheck}{2015/10/14 error checking for unloaded modules}[5.2]
+\ChemModule{errorcheck}{2016/03/08 error checking for unloaded modules}[5.2]
 
 \msg_new:nnn {chemmacros} {undefined}
   { The~ #1~ `#2'~ is~ undefined.~ You~ need~ to~ load~ the~ `#3'~ module. }
@@ -76,6 +76,9 @@
 % orbital module
 \chemmacros_command_requires_module:Nn \orbital {orbital}
 
+% polymers module
+\chemmacros_command_requires_module:Nn \makepolymerdelims {polymers}
+
 % reactions module
 \chemmacros_environment_requires_module:nn {reaction}       {reactions}
 \chemmacros_environment_requires_module:nn {reaction*}      {reactions}
@@ -113,4 +116,5 @@
 \tex_endinput:D
 
 2015/10/14 - first version
+2016/03/08 - add `polymers' module
 
