@@ -27,7 +27,7 @@
 % --------------------------------------------------------------------------
 \ChemModule{polymers}{2016/03/07 polymers}
 
-\chemmacros_load_module:n {nomenclature}
+\chemmacros_load_modules:n {nomenclature,tikz}
 
 % --------------------------------------------------------------------------
 % copolymers
@@ -73,7 +73,94 @@
 \NewChemIUPAC \star { \textit {star} }
 
 % --------------------------------------------------------------------------
+
+\tl_new:N \l__chemmacros_polymer_delimiter_left_tl
+\tl_new:N \l__chemmacros_polymer_delimiter_right_tl
+
+\tl_new:N \l__chemmacros_polymer_subscript_tl
+\tl_new:N \l__chemmacros_polymer_superscript_tl
+
+\dim_new:N \l__chemmacros_polymer_delimiter_height_dim
+\dim_new:N \l__chemmacros_polymer_delimiter_depth_dim
+
+\cs_new_protected:Npn \__chemmacros_set_polymer_delimiters:NN #1#2
+  {
+    \tl_set:Nn \l__chemmacros_polymer_delimiter_left_tl  {#1}
+    \tl_set:Nn \l__chemmacros_polymer_delimiter_right_tl {#2}
+  }
+
+% #1: height
+% #2: depth
+% #3: opening node
+% #4: closing node
+% #5: subscript
+% #6: superscript 
+\cs_new_protected:Npn \chemmacros_make_polymer_braces:nnnnnn #1#2#3#4#5#6
+  {
+    \dim_set:Nn \l__chemmacros_polymer_delimiter_height_dim { (#1+#2)/2 }
+    \dim_set:Nn \l__chemmacros_polymer_delimiter_depth_dim  { (#1-#2)/2 }
+    \chemmacros_tikz_picture:nn {remember~ picture, overlay }
+      {
+        \chemmacros_tikz_node:n
+          { at = (#3) , yshift = \l__chemmacros_polymer_delimiter_depth_dim }
+          {
+            \c_math_toggle_token
+              \tex_left:D \l__chemmacros_polymer_delimiter_left_tl
+              \tex_vrule:D
+                height \l__chemmacros_polymer_delimiter_height_dim
+                depth \l__chemmacros_polymer_delimiter_height_dim
+                width \c_zero_dim
+              \tex_right:D .
+            \c_math_toggle_token
+          } ;
+        \chemmacros_tikz_node:n
+          { at = (#4) , yshift = \l__chemmacros_polymer_delimiter_depth_dim }
+          {
+            \c_math_toggle_token
+              \tex_left:D .
+              \tex_vrule:D
+                height \l__chemmacros_polymer_delimiter_height_dim
+                depth \l__chemmacros_polymer_delimiter_height_dim
+                width \c_zero_dim
+              \tex_right:D \l__chemmacros_polymer_delimiter_right_tl
+              \c_math_subscript_token   { \hbox_overlap_right:n {#5} }
+              \c_math_superscript_token { \hbox_overlap_right:n {#6} }
+            \c_math_toggle_token
+          } ;
+      }
+  }
+\cs_generate_variant:Nn \chemmacros_make_polymer_braces:nnnnnn {nnnnVV}
+
+\chemmacros_define_keys:nn {polymers}
+  {
+    delimiters  .code:n = \__chemmacros_set_polymer_delimiters:NN #1 ,
+    delimiters  .initial:n = [] ,
+    superscript .tl_set:N = \l__chemmacros_polymer_superscript_tl ,
+    subscript   .tl_set:N = \l__chemmacros_polymer_subscript_tl ,
+    subscript   .initial:n = $n$
+  }
+
+\NewDocumentCommand \makepolymerdelims {O{}momm}
+  {
+    \group_begin:
+      \chemmacros_set_keys:nn {polymers} {#1}
+      \IfNoValueTF {#3}
+        {
+          \chemmacros_make_polymer_braces:nnnnVV {#2} {#2} {#4} {#5}
+            \l__chemmacros_polymer_subscript_tl
+            \l__chemmacros_polymer_superscript_tl
+        }
+        {
+          \chemmacros_make_polymer_braces:nnnnVV {#2} {#3} {#4} {#5}
+            \l__chemmacros_polymer_subscript_tl
+            \l__chemmacros_polymer_superscript_tl
+        }
+    \group_end:
+  }
+  
+% --------------------------------------------------------------------------
 \tex_endinput:D
 
 2016/03/07 - first version
+2016/03/08 - \makepolymerdelims
 

@@ -69,7 +69,7 @@
       invacuo, isotope, iupac,
     Ka, Kb, Kw,
     laevus, Lfi, listofreactions, lqd,
-    mch, mega, meta, mhName,
+    makepolymerdelims, mch, mega, meta, mhName,
     NewChemArrow, NewChemBond, NewChemBondAlias,
       NewChemCharge, NewChemEqConstant, newchemgreekmapping, NewChemIUPAC,
       NewChemIUPACShorthand, NewChemLatin, NewChemMacroset, NewChemNMR,
@@ -2125,12 +2125,14 @@ changed.
 
 \subsection{The \chemmodule*{polymers} Module}\label{sec:polymers-module}
 The\sinceversion{5.5} \chemmodule{polymers} module loads the
-\chemmodule{nomenclature} module.
+\chemmodule{nomenclature} and the \chemmodule{tikz} modules.
 
-It defines a number of \ac{iupac} macros for usage inside \cs{iupac} which are
-used in polymer chemistry.
+\subsubsection{Nomenclature}
 
-\subsubsection{Copolymers}
+The \chemmodule{polymers} module defines a number of \ac{iupac} macros for
+usage inside \cs{iupac} which are used in polymer chemistry.
+
+\paragraph{Copolymers}
 \begin{commands}
   \iupaccs[co]{copolymer}{unspecified copolymer.}
   \iupaccs[stat]{statistical}{statistical copolymer.}
@@ -2141,7 +2143,7 @@ used in polymer chemistry.
   \iupaccs{graft}{graft copolymer.}
 \end{commands}
 
-\subsubsection{Non-linear (Co)Polymers and Polymer Assemblies}
+\paragraph{Non-linear (Co) Polymers and Polymer Assemblies}
 \begin{commands}
   \iupaccs{blend}{The blend qualifier.}
   \iupaccs{comb}{The comb qualifier.}
@@ -2153,6 +2155,37 @@ used in polymer chemistry.
   \iupaccs[sipn]{sipnetwork}{The semi-interpenetrating network qualifier.}
   \iupaccs{star}{The star qualifier.}
 \end{commands}
+
+\subsubsection{Polymer Denotations in \pkg*{chemfig}'s Molecules}
+The \pkg{chemfig} manual proposes some code defining the macros
+\cs*{setpolymerdelim} and \cs*{makebraces} which make it possible to add
+delimiters to \pkg{chemfig} molecules.  The \chemmodule{polymers} module
+implements the following macro based on the same idea:
+\begin{commands}
+  \command{makepolymerdelims}[\oarg{options}\marg{height}\oarg{depth}\marg{opening
+    node}\marg{closing node}]
+    The value of \meta{depth} is the same as \meta{height} unless it is
+    specified explicitly.  \meta{opening node} and \meta{closing node} are the
+    names of \TikZ' nodes where the delimites are placed.
+\end{commands}
+\begin{options}
+  \keychoice{delimiters}{\Marg{\meta{left}\meta{right}}}\Module{polymers}\Default{[]}
+    This option demands two tokens as argument, the first being the opening
+    brace, the second the closing brace.  A dot (\code{.}) denotes an empty
+    delimiter.
+  \keyval{subscript}{subscript}\Module{polymers}\Default{\$n\$}
+    Subscript to the right delimiter.
+  \keyval{superscript}{superscript}\Module{polymers}
+    Superscript to the right delimiter.
+\end{options}
+
+\begin{example}
+  \setatomsep{2em}
+  \chemfig{-[@{op,.75}]CH_2-CH(-[6]Cl)-[@{cl,0.25}]}
+  \makepolymerdelims{5pt}[27pt]{op}{cl}
+  \chemfig{-[@{op,.75}]CH_2-CH(-[6]Cl)-[@{cl,0.25}]}
+  \makepolymerdelims[delimiters=()]{5pt}[27pt]{op}{cl}
+\end{example}
 
 \subsection{The \chemmodule*{reactions} Module}\label{sec:reactions-module}
 The \chemmodule{reactions} module loads the \chemmodule{chemformula} module
