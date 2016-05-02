@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{acid-base}{2016/02/04 acid/base}
+\ChemModule{acid-base}{2016/04/27 acid/base}
 
 \chemmacros_load_modules:n {charges}
 
@@ -137,5 +137,41 @@
   }
 
 % --------------------------------------------------------------------------
+\ChemCompatibilityTo{5.5}
+\DeclareTranslation {English} {K-acid}  {\mathrm{a}}
+\DeclareTranslation {German}  {K-acid}  {\mathrm{s}}
+\DeclareTranslation {Dutch}   {K-acid}  {\mathrm{z}}
+
+\DeclareTranslation {English} {K-base}  {\mathrm{b}}
+
+\DeclareTranslation {English} {K-water} {\mathrm{w}}
+\EndChemCompatibility
+
+\ChemCompatibilityFrom{5.6}
+\chemmacros_declare_translations:nn {K-acid}
+  {
+    fallback = \mathrm {a} ,
+    English  = \mathrm {a} ,
+    German   = \mathrm {s} ,
+    Dutch    = \mathrm {z}
+  }
+
+\chemmacros_declare_translations:nn {K-base}
+  {
+    fallback = \mathrm {b} ,
+    English  = \mathrm {b} ,
+    German   = \mathrm {b}
+  }
+
+\chemmacros_declare_translations:nn {K-water}
+  {
+    fallback = \mathrm {w} ,
+    English  = \mathrm {w} ,
+    German   = \mathrm {w}
+  }
+\EndChemCompatibility
+% --------------------------------------------------------------------------
 \tex_endinput:D
+
 2016/02/04 - \NewChemEqConstant and family, new option `eq-constant'
+2016/04/27 - moved translations from lang module to acid-base module

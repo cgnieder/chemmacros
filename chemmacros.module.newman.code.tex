@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{newman}{2015/07/13 newman projections}
+\ChemModule{newman}{2016/04/23 newman projections}
 
 \chemmacros_load_module:n {tikz}
 
@@ -36,7 +36,7 @@
 \fp_new:N  \l__chemmacros_newman_abs_angle_fp
 \fp_zero:N \l__chemmacros_newman_abs_angle_fp
 \fp_new:N  \l__chemmacros_newman_scale_fp
-\fp_set:Nn \l__chemmacros_newman_scale_fp { 1 }
+\fp_set:Nn \l__chemmacros_newman_scale_fp {1}
 \fp_new:N  \l__chemmacros_newman_x_fp
 \fp_new:N  \l__chemmacros_newman_y_fp
 
@@ -62,68 +62,64 @@
   }
 
 % \newman[<keyval>](<angle>){<1>,<2>,<3>,<4>,<5>,<6>}
-\NewDocumentCommand \newman { o d() > { \SplitArgument { 5 } { , } } m }
+\NewDocumentCommand \newman {od()m}
   {
     \group_begin:
-      \IfNoValueF { #1 } { \chemmacros_set_keys:nn {newman} { #1 } }
-      \IfNoValueTF { #2 }
-        { \chemmacros_newman_atoms:nnnnnnn {    } #3 }
-        { \chemmacros_newman_atoms:nnnnnnn { #2 } #3 }
+      \IfNoValueF  {#1} { \chemmacros_set_keys:nn {newman} {#1} }
+      \IfNoValueTF {#2}
+        { \chemmacros_newman:nn {  } {#3} }
+        { \chemmacros_newman:nn {#2} {#3} }
     \group_end:
   }
+
+% #1: angle
+% #2: csv list of atoms
+\cs_new_protected:Npn \chemmacros_newman:nn #1#2
+  { \__chemmacros_newman_feed_atoms:nw {#1}#2 ,,,,,, \q_stop }
+
+\cs_new_protected:Npn \__chemmacros_newman_feed_atoms:nw #1#2,#3,#4,#5,#6,#7,#8 \q_stop
+  { \chemmacros_newman_atoms:nnnnnnn {#1} {#2} {#3} {#4} {#5} {#6} {#7} }
 
 % place atoms:
 % #1: angle
 % #2 - #7: atoms
 \cs_new_protected:Npn \chemmacros_newman_atoms:nnnnnnn #1#2#3#4#5#6#7
   {
-    \tl_if_blank:nTF { #1 }
+    \tl_if_blank:nTF {#1}
       {
         \fp_set_eq:NN
           \l__chemmacros_newman_rel_angle_fp
           \l__chemmacros_newman_abs_angle_fp
       }
-      { \fp_set:Nn \l__chemmacros_newman_rel_angle_fp { #1 } }
+      { \fp_set:Nn \l__chemmacros_newman_rel_angle_fp {#1} }
     \chemmacros_tikz_picture:xn
       {
         scale = \fp_to_decimal:N \l__chemmacros_newman_scale_fp ,
         chemmacros_newman_atom_front / .style =
           {
-            inner~sep=0pt,
-            outer~sep=0pt,
-            \tl_use:N \l__chemmacros_newman_tikz_front_tl
+            inner~sep = 0pt ,
+            outer~sep = 0pt ,
+            \exp_not:V \l__chemmacros_newman_tikz_front_tl
           },
         chemmacros_newman_atom_back / .style =
           {
-            inner~sep=0pt,
-            outer~sep=0pt,
+            inner~sep = 0pt ,
+            outer~sep = 0pt ,
             \bool_if:NTF \l__chemmacros_newman_tikz_back_bool
-              { \tl_use:N \l__chemmacros_newman_tikz_back_tl }
-              { \tl_use:N \l__chemmacros_newman_tikz_front_tl }
+              { \exp_not:V \l__chemmacros_newman_tikz_back_tl }
+              { \exp_not:V \l__chemmacros_newman_tikz_front_tl }
           }
       }
       {
         \chemmacros_tikz_draw:x
           { \exp_not:V \l__chemmacros_newman_tikz_ring_tl }
           (0pt,0pt) circle (\fp_to_dim:N \l__chemmacros_newman_scale_fp * 15) ;
-        \chemmacros_newman_back_node:nn
-          { 30 }
-          { \IfNoValueF { #6 } { #6 } }
-        \chemmacros_newman_back_node:nf
-          { 150 }
-          { \IfNoValueF { #7 } { #7 } }
-        \chemmacros_newman_back_node:nf
-          { 270 }
-          { \IfNoValueF { #5 } { #5 } }
-        \chemmacros_newman_front_node:nf
-          { 90 }
-          { \IfNoValueF { #2 } { #2 } }
-        \chemmacros_newman_front_node:nf
-          { 210 }
-          { \IfNoValueF { #3 } { #3 } }
-        \chemmacros_newman_front_node:nf
-          { 330 }
-          { \IfNoValueF { #4 } { #4 } }
+        \chemmacros_newman_back_node:nn  {30}  {#6}
+        \chemmacros_newman_back_node:nn  {150} {#7}
+        \chemmacros_newman_back_node:nn  {270} {#5}
+        \chemmacros_newman_front_node:nn {90}  {#2}
+        \chemmacros_newman_front_node:nn {210} {#3}
+        \chemmacros_newman_front_node:nn {330} {#4}
     }
   }
 
@@ -209,3 +205,8 @@
       { #2 } ;
   }
 \cs_generate_variant:Nn \chemmacros_newman_front_node:nn { nf }
+
+% --------------------------------------------------------------------------
+\tex_endinput:D
+
+2016/04/23 - some changes on how \newman is processed internally

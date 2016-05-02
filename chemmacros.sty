@@ -31,9 +31,9 @@
 
 % --------------------------------------------------------------------------
 % package information:
-\tl_const:Nn \c_chemmacros_date_tl {2016/03/08}
+\tl_const:Nn \c_chemmacros_date_tl {2016/05/02}
 \tl_const:Nn \c_chemmacros_version_major_number_tl {5}
-\tl_const:Nn \c_chemmacros_version_minor_number_tl {5}
+\tl_const:Nn \c_chemmacros_version_minor_number_tl {6}
 \tl_const:Nn \c_chemmacros_version_subrelease_tl   {}
 \tl_const:Nx \c_chemmacros_version_number_tl
   {\c_chemmacros_version_major_number_tl.\c_chemmacros_version_minor_number_tl}
@@ -85,7 +85,11 @@
     \fp_compare:nTF { floor(#1) = floor(#3) }
       {
         \fp_compare:nTF
-          { (\chemmacros_get_minor:f {#1}) #2 (\chemmacros_get_minor:f {#3}) }
+          {
+            ( \chemmacros_get_minor_version:f {#1} )
+            #2
+            ( \chemmacros_get_minor_version:f {#3} )
+          }
           { \prg_return_true: }
           { \prg_return_false: }
       }
@@ -96,11 +100,11 @@
       }
   }
 
-\cs_new:Npn \__chemmacros_get_minor:w #1.#2.#3 \q_stop
+\cs_new:Npn \__chemmacros_get_minor_version:w #1.#2.#3 \q_stop
   { \tl_if_blank:nTF {#2} {0} {#2} }
-\cs_new:Npn \chemmacros_get_minor:n #1
-  { \__chemmacros_get_minor:w #1.. \q_stop }
-\cs_generate_variant:Nn \chemmacros_get_minor:n {f}
+\cs_new:Npn \chemmacros_get_minor_version:n #1
+  { \__chemmacros_get_minor_version:w #1.. \q_stop }
+\cs_generate_variant:Nn \chemmacros_get_minor_version:n {f}
 
 % check compatibility
 % #1: relation
@@ -506,3 +510,11 @@ Version history
                             (base)
                           - new option `explicit-zero-sign' (redox)
 2016/03/08 - version 5.5  - new module `polymers'
+2016/04/25 - version 5.6  - generalization of the formula method concept, new
+                            methods `chemist' and `chemfig' (chemformula)
+                          - use `tocbasic' for the list of reactions if
+                            available (reactions)
+                          - fix reaction environments to obey \thereaction
+                            (reactions)
+                          - add cleveref and fancyref support (reactions)
+                          

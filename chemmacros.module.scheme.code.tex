@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{scheme}{2015/10/23 a scheme floating environment}
+\ChemModule{scheme}{2016/04/25 a scheme floating environment}
 
 \RequirePackage {chemnum}
 
@@ -164,6 +164,19 @@
   }
 
 % --------------------------------------------------------------------------
+\ChemCompatibilityFrom{5.6}
+\ChemCleverefSupport {scheme}
+  { \chemmacros_translate:n {scheme} }
+  [ \chemmacros_translate:n {Scheme} ]
+  { \chemmacros_translate:n {schemes} }
+  [ \chemmacros_translate:n {Schemes} ]
+
+\ChemFancyrefSupport {sch}
+  { \chemmacros_translate:n {scheme} }
+  [ \chemmacros_translate:n {Scheme} ]
+\EndChemCompatibility
+
+% --------------------------------------------------------------------------
 % #1: env name
 \cs_new_protected:Npn \chemmacros_define_float:nn #1#2
   {
@@ -229,12 +242,68 @@
             \cs_new_eq:cN {l@#1} \l@figure
           }
       }
-    \cs_set:Npn \schemename     {\chemmacros_translate:n {#1-name}}
-    \cs_set:Npn \listschemename {\chemmacros_translate:n {#1-list}}
+    \cs_set:cpn {#1name}     {\chemmacros_translate:n {#1-name}}
+    \cs_set:cpn {list#1name} {\chemmacros_translate:n {#1-list}}
   }
+
+% --------------------------------------------------------------------------
+\ChemCompatibilityTo{5.5}
+\DeclareTranslationFallback   {scheme-name} {Scheme}
+\DeclareTranslation {English} {scheme-name} {Scheme}
+\DeclareTranslation {German}  {scheme-name} {Schema}
+
+\DeclareTranslationFallback   {scheme-list} {List~ of~ Schemes}
+\DeclareTranslation {English} {scheme-list} {List~ of~ Schemes}
+\DeclareTranslation {German}  {scheme-list} {Verzeichnis~ der~ Schemata}
+\EndChemCompatibility
+
+\ChemCompatibilityFrom{5.6}
+\chemmacros_declare_translations:nn {scheme-name}
+  {
+    fallback = Scheme ,
+    English  = Scheme ,
+    German   = Schema
+  }
+
+\chemmacros_declare_translations:nn {scheme-list}
+  {
+    fallback = List~ of~ Schemes ,
+    English  = List~ of~ Schemes ,
+    German   = Verzeichnis~ der~ Schemata
+  }
+
+\chemmacros_declare_translations:nn {scheme}
+  {
+    fallback = scheme ,
+    English  = scheme ,
+    German   = Schema
+  }
+
+\chemmacros_declare_translations:nn {Scheme}
+  {
+    fallback = Scheme ,
+    English  = Scheme ,
+    German   = Schema
+  }
+
+\chemmacros_declare_translations:nn {schemes}
+  {
+    fallback = schemes ,
+    English  = schemes ,
+    German   = Schemata
+  }
+
+\chemmacros_declare_translations:nn {Schemes}
+  {
+    fallback = Schemes ,
+    English  = Schemes ,
+    German   = Schemata
+  }
+\EndChemCompatibility
 
 \tex_endinput:D
 % --------------------------------------------------------------------------
 2015/09/19 - make the module compatible with floatrow
 2015/10/23 - add info message to float method detection
 2016/01/23 - make the module compatible with chemscheme
+2016/04/25 - cleveref and fancyref support

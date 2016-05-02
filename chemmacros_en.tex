@@ -50,8 +50,8 @@
      abinitio, activatechemgreekmapping, AddRxnDesc, anti, aq, aqi,
      ba, bond, bridge,
     cd, ch, changechemgreeksymbol, charrow, chcpd, chemabove, chemalpha,
-      chembeta, chemgamma, chemdelta, chemDelta, chemformula@bondlength,
-      ChemModule,
+      chembeta, ChemCleverefSupport, chemdelta, chemDelta,
+      ChemFancyrefSupport, chemformula@bondlength, chemgamma, ChemModule,
       chemomega, chemphi, chemPhi, chemsetup, chlewis, chname , cip, cis, ch,
       CNMR,
     data, DeclareChemArrow, DeclareChemBond, DeclareChemBondAlias,
@@ -318,6 +318,13 @@
 \newcommand*\TikZ{Ti\textit{k}Z}
 \newcommand*\tablehead[1]{\textrm{\bfseries#1}}
 
+\providecommand*\XyM{%
+  X\kern-.30em
+  \smash{\raise.50ex\hbox{\char'7}}%
+  \kern-.30em M%
+}
+\providecommand*\XyMTeX{\XyM\kern-.1em\TeX}
+
 % \NewChemPhase{\aqi}{aq,$\infty$}% aqueous solution at infinite dilution
 % \NewChemPhase{\cd}{cd}% condensed phase
 % \NewChemPhase{\lc}{lc}% liquid crystal
@@ -392,10 +399,16 @@
 \newcommand*\TF{\textcolor{red}{\uline{\code{\textcolor{cs}{\textit{TF}}}}}}
 
 \makeatletter
+\newrobustcmd*\explcsformat[1]{%
+  \code{\textbackslash\textcolor{cs}{\detokenize{#1}}}%
+}
+\newidxcmd\explcs{\explcsformat{#1}}[ (expl3)]
+
+\cnltx@deflistitem{\cnltx@explcommand}{\explcs}
 \renewenvironment{commands}
   {%
-    \cnltx@set@catcode_{12}%
     \let\command\cnltx@command
+    \let\explcommand\cnltx@explcommand
     \cnltxlist
   }
   {\endcnltxlist}
@@ -589,7 +602,8 @@ important and \emph{breaking} differences:
     and the starred version has another effect (\keyis{pos}{top}) than the
     same macro in earlier versions.  Now the default behaviour follows
     \acs{iupac} recommendations.  A second change is that the atom is now
-    treated as a \chemformula\ formula.
+    treated as a \chemformula\ input (this depends on the setting of the
+    \option{formula} option, see~\vref{sec:chemformula-module}).
   \item The syntax of \cs{NewChemReaction} and friends is now different from
     what it used to be.  If you have defined your own reaction environments
     you need to adapt!
@@ -663,7 +677,7 @@ For future versions the aim is not to make such breaking changes again.  While
 we never know what the future actually will bring \chemmacros\ now has the
 tools for tying code to a version number:
 \begin{commands}
-  \expandable\command*{chemmacros_if_compatiblity:nn}[\TF\ \marg{comp}
+  \expandable\explcommand{chemmacros_if_compatiblity:nn}[\TF\ \marg{comp}
   \marg{num} \marg{true} \marg{false}]
     expl3 version of \cs{IfChemCompatibilityTF}.
 \end{commands}
@@ -697,24 +711,24 @@ In modules one can try adding code for a certain version or range of versions:
 You may refer to the current version of \chemmacros\ with the following
 tokenlists:
 \begin{commands}
-  \command*{c_chemmacros_date_tl}
+  \explcommand{c_chemmacros_date_tl}
     The current release date: \enquote{\csname
       c_chemmacros_date_tl\endcsname}.
-  \command*{c_chemmacros_version_major_number_tl}
+  \explcommand{c_chemmacros_version_major_number_tl}
     The current major version: \enquote{\csname
     c_chemmacros_version_major_number_tl\endcsname}.
-  \command*{c_chemmacros_version_minor_number_tl}
+  \explcommand{c_chemmacros_version_minor_number_tl}
     The current minor version: \enquote{\csname
     c_chemmacros_version_minor_number_tl\endcsname}.
-  \command*{c_chemmacros_version_number_tl}
+  \explcommand{c_chemmacros_version_number_tl}
     The current version number: \enquote{\csname
     c_chemmacros_version_number_tl\endcsname}.
-  \command*{c_chemmacros_version_subrelease_tl}
+  \explcommand{c_chemmacros_version_subrelease_tl}
     The current sub-release: \enquote{\csname
     c_chemmacros_version_subrelease_tl\endcsname}.
-  \command*{c_chemmacros_version_tl}
+  \explcommand{c_chemmacros_version_tl}
     The current version: \enquote{\csname c_chemmacros_version_tl\endcsname}.
-  \command*{c_chemmacros_info_tl}
+  \explcommand{c_chemmacros_info_tl}
     The package information: \enquote{\csname
       c_chemmacros_info_tl\endcsname}.
 \end{commands}
@@ -1394,16 +1408,24 @@ nucleophiles.
 \begin{commands}
   \command{NewChemParticle}[\marg{cs}\marg{formula}]
     Defines a new macro \meta{cs}. \meta{formula} is any valid \chemformula\
-    compound.  Raises an error if \meta{cs} already exists.
+    input (this depends on the setting of the \option{formula} option,
+    see~\vref{sec:chemformula-module}).  Raises an error if \meta{cs} already
+    exists.
   \command{RenewChemParticle}[\marg{cs}\marg{formula}]
     Redefines a new macro \meta{cs}. \meta{formula} is any valid \chemformula\
-    compound.  Raises an error if \meta{cs} doesn't exist.
+    input (this depends on the setting of the \option{formula} option,
+    see~\vref{sec:chemformula-module}).  Raises an error if \meta{cs} doesn't
+    exist.
   \command{DeclareChemParticle}[\marg{cs}\marg{formula}]
     Defines a macro \meta{cs}. \meta{formula} is any valid \chemformula\
-    compound.  Silently overwrites \meta{cs} if it exists.
+    input (this depends on the setting of the \option{formula} option,
+    see~\vref{sec:chemformula-module}).  Silently overwrites \meta{cs} if it
+    exists.
   \command{ProvideChemParticle}[\marg{cs}\marg{formula}]
     Defines a new macro \meta{cs}. \meta{formula} is any valid \chemformula\
-    compound.  Does nothing if \meta{cs} already exists.
+    input (this depends on the setting of the \option{formula} option,
+    see~\vref{sec:chemformula-module}).  Does nothing if \meta{cs} already
+    exists.
 \end{commands}
 An example of usage is the definition of the existing particle macros:
 \begin{sourcecode}
@@ -1416,20 +1438,24 @@ The following set defines macros like \cs{Nuc}
 \begin{commands}
   \command{NewChemNucleophile}[\marg{cs}\marg{formula}]
     Defines a new macro \meta{cs}. \meta{formula} is any valid \chemformula\
-    compound. Note that \meta{formula} will get a trailing negative charge!
-    Raises an error if \meta{cs} already exists.
+    input (this depends on the setting of the \option{formula} option,
+    see~\vref{sec:chemformula-module}). Note that \meta{formula} will get a
+    trailing negative charge! Raises an error if \meta{cs} already exists. 
   \command{RenewChemNucleophile}[\marg{cs}\marg{formula}]
     Redefines a new macro \meta{cs}. \meta{formula} is any valid \chemformula\
-    compound.  Note that \meta{formula} will get a trailing negative charge!
-    Raises an error if \meta{cs} doesn't exist.
+    (this depends on the setting of the \option{formula} option,
+    see~\vref{sec:chemformula-module}).  Note that \meta{formula} will get a
+    trailing negative charge! Raises an error if \meta{cs} doesn't exist.
   \command{DeclareChemNucleophile}[\marg{cs}\marg{formula}]
     Defines a macro \meta{cs}. \meta{formula} is any valid \chemformula\
-    compound.  Note that \meta{formula} will get a trailing negative charge!
-    Silently overwrites \meta{cs} if it exists.
+    (this depends on the setting of the \option{formula} option,
+    see~\vref{sec:chemformula-module}).  Note that \meta{formula} will get a
+    trailing negative charge!  Silently overwrites \meta{cs} if it exists. 
   \command{ProvideChemNucleophile}[\marg{cs}\marg{formula}]
     Defines a new macro \meta{cs}. \meta{formula} is any valid \chemformula\
-    compound.  Note that \meta{formula} will get a trailing negative charge!
-    Does nothing if \meta{cs} already exists.
+    (this depends on the setting of the \option{formula} option,
+    see~\vref{sec:chemformula-module}).  Note that \meta{formula} will get a
+    trailing negative charge!  Does nothing if \meta{cs} already exists.
 \end{commands}
 An example of usage is the definition of the existing nucleophile macros:
 \begin{sourcecode}
@@ -1574,40 +1600,40 @@ modules. In the macro descriptions below \TF\ denotes that a \code{T}, an
 \code{F} and a \code{TF} variant exist.  In case of an expandable conditional
 (\expandablesymbol) also the predicate variant is available.
 \begin{commands}
-  \expandable\command*{chemmacros_if_loaded:nn}[\TF\
+  \expandable\explcommand{chemmacros_if_loaded:nn}[\TF\
   \Marg{package|class} \marg{name} \marg{true} \marg{false}]
     Checks if package (or class) \meta{name} has been loaded. Also works after
     begin document.
-  \expandable\command*{chemmacros_if_package_loaded:n}[\TF\ \marg{name}
+  \expandable\explcommand{chemmacros_if_package_loaded:n}[\TF\ \marg{name}
   \marg{true} \marg{false}]
     Checks if package \meta{name} has been loaded. Also works after begin
     document.
-  \expandable\command*{chemmacros_if_class_loaded:n}[\TF\ \marg{name}
+  \expandable\explcommand{chemmacros_if_class_loaded:n}[\TF\ \marg{name}
   \marg{true} \marg{false}]
     Checks if class \meta{name} has been loaded. Also works after begin
     document.
-  \command*{chemmacros_leave_vmode:}
+  \explcommand{chemmacros_leave_vmode:}
     Equivalent of \cs*{leavevmode}.
-  \command*{chemmacros_nobreak:}
+  \explcommand{chemmacros_nobreak:}
     Inserts a penalty of \num{10000}.
-  \command*{chemmacros_allow_break:}
+  \explcommand{chemmacros_allow_break:}
     Inserts a penalty of \num{0}.
-  \command*{chemmacros_skip_nobreak:N}[ \meta{skip/length variable}]
+  \explcommand{chemmacros_skip_nobreak:N}[ \meta{skip/length variable}]
     Insert a horizontal skip where a linebreak is disallowed.
-  \expandable\command*{chemmacros_if_is_int:n}[\TF\ \marg{input} \marg{true}
+  \expandable\explcommand{chemmacros_if_is_int:n}[\TF\ \marg{input} \marg{true}
   \marg{false}]
     Checks if \meta{input} is an integer or something else.
-  \command*{chemmacros_if_bold:}[\TF\ \marg{true} \marg{false}]
+  \explcommand{chemmacros_if_bold:}[\TF\ \marg{true} \marg{false}]
     Checks if the current font weight is one of \chemboldchecks{or}.
-  \command*{chemmacros_bold:n}[ \marg{text}]
+  \explcommand{chemmacros_bold:n}[ \marg{text}]
     Checks if the current font weight is bold and if yes places \meta{text} in
     \cs*{textbf} if in text mode or in \cs*{bm} if in math mode.  If no
     \meta{text} simply is placed in the input stream as is.
-  \command*{chemmacros_text:n}[ \marg{text}]
+  \explcommand{chemmacros_text:n}[ \marg{text}]
     Ensures that \meta{text} is placed in text mode.
-  \command*{chemmacros_math:n}[ \marg{text}]
+  \explcommand{chemmacros_math:n}[ \marg{text}]
     Ensures that \meta{text} is placed in math mode.
-  \command*{chemmacros_new_macroset:nnn}[ \marg{name} \marg{arg spec}
+  \explcommand{chemmacros_new_macroset:nnn}[ \marg{name} \marg{arg spec}
   \marg{internal command call}]
     \changedversion{5.3b}A command to define a set of macros
     \cs*{NewChem\meta{name}}, \cs*{RenewChem\meta{name}},
@@ -1620,14 +1646,33 @@ modules. In the macro descriptions below \TF\ denotes that a \code{T}, an
     checks, \ie, define new macros or redefine existing ones like \cs*{def}
     does.  This macro just should get the arguments passed on to.  Have a look
     at the example below.
-  \command*{chemmacros_new_environment_macroset:nnn}[ \marg{name} \marg{arg spec}
+  \explcommand{chemmacros_new_environment_macroset:nnn}[ \marg{name} \marg{arg spec}
   \marg{internal command call}]
-    Like \cs*{chemmacros_new_macroset:nnn} but for environments.
+    Like \explcs{chemmacros_new_macroset:nnn} but for environments.
   \command{NewChemMacroset}[\sarg\marg{name}\marg{arg spec}\marg{internal
     command call}]
-    A non-expl3 version of \cs*{chemmacros_new_macroset:nnn} for \LaTeXe\
+    A non-expl3 version of \explcs{chemmacros_new_macroset:nnn} for \LaTeXe\
     programmers.  The starred version calls
-    \cs*{chemmacros_new_environment_macroset:nnn}.
+    \explcs{chemmacros_new_environment_macroset:nnn}.
+  \explcommand{chemmacros_add_cleveref_support:nnnnn}[ \marg{counter}
+    \marg{singular} \marg{plural} \marg{uppercase singular} \marg{uppercase
+      plural}]
+    A\sinceversion{5.6} command to add suiting names for a counter for the
+    \pkg{cleveref} package's \cs*{cref} commands.  This command acts at the
+    end of the preamble and only if a user hasn't provided definitions with
+    \cs*{crefname} already.
+  \command{ChemCleverefSupport}[\marg{counter}\marg{singular}\oarg{uppercase
+    singular}\marg{plural}\oarg{uppercase plural}]
+    \sinceversion{5.6}\LaTeXe-version of
+    \explcs{chemmacros_add_cleveref_support:nnnnn}.
+  \explcommand{chemmacros_add_fancyref_support:nnn}[ \marg{prefix} \marg{name}
+    \marg{uppercase name}]
+    A\sinceversion{5.6} command to add suiting names for a counter for the
+    \pkg{fancyref} package's \cs*{fref} commands.  This command acts at the
+    end of the preamble and doesn't override definitions made by the users.
+  \command{ChemFancyrefSupport}[\marg{prefix}\marg{name}\oarg{uppercase name}]
+    \sinceversion{5.6}\LaTeXe-version of
+    \explcs{chemmacros_add_fancyref_support:nnnnn}.
 \end{commands}
 This is how the macros \cs{NewChemParticle}, \cs{RenewChemParticle},
 \cs{DeclareChemParticle} and \cs{ProvideChemParticle} were defined:
@@ -1639,24 +1684,24 @@ This is how the macros \cs{NewChemParticle}, \cs{RenewChemParticle},
 The following macros strictly speaking are not provided by the
 \chemmodule{base} module but this place fits best for their description.
 \begin{commands}
-  \expandable\command*{chemmacros_if_module_exist:n}[\TF\ \marg{module}
+  \expandable\explcommand{chemmacros_if_module_exist:n}[\TF\ \marg{module}
   \marg{true} \marg{false}]
     Checks if a file with the correct name for a module \meta{module} can be
     found.
-  \expandable\command*{chemmacros_if_module_loaded:n}[\TF\ \marg{module}
+  \expandable\explcommand{chemmacros_if_module_loaded:n}[\TF\ \marg{module}
   \marg{true} \marg{false}]
     Checks if the module \meta{module} has already been loaded or not.
-  \command*{chemmacros_load_module:n}[ \marg{module}]
+  \explcommand{chemmacros_load_module:n}[ \marg{module}]
     Loads module \meta{module} if it hasn't been loaded, yet.
-  \command*{chemmacros_load_modules:n}[ \marg{csv list of modules}]
+  \explcommand{chemmacros_load_modules:n}[ \marg{csv list of modules}]
     Loads every module in \meta{csv list of modules} if they haven't been
     loaded, yet. This is the code level variant of \cs{usechemmodule}.
-  \command*{chemmacros_before_module:nn}[ \marg{module} \marg{code}]
+  \explcommand{chemmacros_before_module:nn}[ \marg{module} \marg{code}]
     Saves\sinceversion{5.1} \meta{code} and inserts it right before
     \meta{module} is loaded.  If \meta{module} is never loaded then
     \meta{code} is never inserted.  If \meta{module} already is loaded when
     the command is used then \meta{code} also is never inserted.
-  \command*{chemmacros_after_module:nn}[ \marg{module} \marg{code}]
+  \explcommand{chemmacros_after_module:nn}[ \marg{module} \marg{code}]
     Saves\sinceversion{5.1} \meta{code} and inserts it right after
     \meta{module} is loaded.  If \meta{module} is never loaded then
     \meta{code} is never inserted.  If \meta{module} already is loaded when
@@ -1665,28 +1710,51 @@ The following macros strictly speaking are not provided by the
 
 \subsection{The \chemmodule*{chemformula} Module}\label{sec:chemformula-module}
 
-The \chemmodule{chemformula} module loads the \pkg{chemformula}
-package~\cite{pkg:chemformula} or the \pkg{mhchem} package~\cite{pkg:mhchem}
-and the \pkg{amstext} package~\cite{pkg:amstext}.  It also loads the
-\chemmodule{charges} module.
+The \chemmodule{chemformula} module loads the \pkg{amstext}
+package~\cite{pkg:amstext} and the \chemmodule{charges} module.
 
 \subsubsection{For Users}
+There are different packages which provide means for typesetting chemical
+formulas:
+\begin{itemize}
+  \item \pkg{chemformula}~\cite{pkg:chemformula}.  This is probably well known
+    to users of \chemmacros.
+  \item \pkg{mhchem}~\cite{pkg:mhchem}.  This is the \enquote{older brother} of
+    \chemformula.
+  \item \pkg{chemfig}~\cite{pkg:chemfig}.  The easiest and most complete of the
+    packages for drawing skeletal formulas.
+  \item \XyMTeX~\cite{pkg:xymtex}.  A very comprehensive alternative for
+    typesetting chemistry.
+\end{itemize}
+In order to help authors getting a consistent layout \chemmacros\ does not
+make a choice which package to use for typesetting formulas.  Although
+\chemformula\ is well tested and preferred users can choose other packages if
+they like.
 
-This module provides a general option:
+this is done with the following general option:
 \begin{options}
-  \keychoice{formula}{chemformula,mhchem}\Default{chemformula}
-    This\sinceversion{5.1} option let's you choose if chemical formula's are
-    typeset using \pkg{chemformula}'s \cs{ch} and \cs{chcpd} or \pkg{mhchem}'s
-    \cs{ce}.  The corresponding package is loaded.
+  \keyval{formula}{method}\Default{chemformula}
+    This\sinceversion{5.1} option let's you choose how chemical formulas are
+    typeset.  Available methods are
+    \begin{itemize}
+      \item \pkg{chemformula}
+      \item \pkg{mhchem}
+      \item \pkg{chemist}\sinceversion{5.6} (from the \XyMTeX\ bundle)
+      \item \pkg{chemfig}\sinceversion{5.6}
+    \end{itemize}
+    The corresponding package with the same name is loaded.
 \end{options}
 If you explicitly set this option the corresponding package is loaded
-immediately.  Otherwise the option is set at the end of the preamble.
+immediately and the method is set up.  Otherwise the option will be set by
+\chemmacros\ at the end of the preamble.
 
-If\sinceversion{5.2} you load either \pkg{mhchem} or \pkg{chemformula} and
-haven't set \option{formula} \chemmacros\ will choose the corresponding
-package.  If you have loaded both \pkg{mhchem} and \pkg{chemformula}
-\chemmacros\ will raise a warning and choose \pkg{chemformula}.  \emph{All
-  automatic choices only happen at the end of the preamble}.
+If\sinceversion{5.2} you load a method package in a way that a unique choice
+is possible then \chemmacros\ will set the method accordingly if you haven't
+set the option by yourself.  If \emph{no} unique choice is possible
+\chemmacros\ will raise a warning and choose \pkg{chemformula} regardless if
+the package is loaded or not.  In this case if you want to use another method
+you'll have to choose manually. \emph{All automatic choices only happen at the
+  end of the preamble}.
 
 \paragraph{Using the \pkg*{chemformula} Package}
 If you set \keyis{formula}{chemformula} the \chemmodule{chemformula} module
@@ -1700,7 +1768,9 @@ Everywhere where \chemmacros\ typesets chemical formulas \chemformula's macros
 \cs{chcpd} or \cs{ch} are used, for example in the reaction environments
 provided by the \chemmodule{reactions} module.
 
-\paragraph{Using the \pkg*{mhchem} Package}\label{sec:using-mhchem}
+\emph{This method is the recommended choice!}
+
+\paragraph{Using the \pkg*{mhchem} Package}\sinceversion{5.1}\label{sec:using-mhchem}
 If you set \keyis{formula}{mhchem} the \chemmodule{chemformula} module makes
 it possible that you can set all of \pkg{mhchem}'s options via the
 \cs{chemsetup} command using the module \module{mhchem}, for example:
@@ -1712,7 +1782,7 @@ Everywhere where \chemmacros\ typesets chemical formulas \pkg{mhchem}'s macro
 \cs{ce} is used, for example in the reaction environments provided by the
 \chemmodule{reactions} module.
 
-There are a few \latin{caveat}s if you use this method:
+There are some \latin{caveat}s if you use this method:
 \begin{itemize}
   \item This method has not been extensively tested, yet.  There may be errors
      and wrong output at unexpected places.
@@ -1727,17 +1797,59 @@ There are a few \latin{caveat}s if you use this method:
     \chemmacros' mechanism).
 \end{itemize}
 
+\paragraph{Using the \pkg*{chemfig} Package}\sinceversion{5.6}\label{sec:using-chemfig}
+Everywhere where \chemmacros\ typesets chemical formulas \pkg{chemfig}'s macro
+\cs{printatom} is used, for example in the reaction environments provided by
+the \chemmodule{reactions} module.
+
+There are some \latin{caveat}s if you use this method:
+\begin{itemize}
+  \item This method has not been extensively tested, yet.  There may be errors
+     and wrong output at unexpected places.
+  \item Using this method effectively disables the different values of the
+    \module{particles} option \option{elpair} (see
+    section~\ref{sec:particles-module}).
+  \item The different kinds of formal charges provided by the
+    \chemmodule{charges} module (see section~\ref{sec:ion-charges}) are
+    disabled.  Formal charges always use the math method now.
+  \item The reaction environments by the \chemmodule{reactions} module may
+    work only to a limited respect.  If you plan to use them consider using
+    methods \pkg{chemformula} or \pkg{mhchem} instead.
+\end{itemize}
+
+\paragraph{Using the \pkg*{chemist} Package}\sinceversion{5.6}\label{sec:using-chemist}
+Everywhere where \chemmacros\ typesets chemical formulas \pkg{chemist}'s macro
+\cs{ChemForm} is used, for example in the reaction environments provided by
+the \chemmodule{reactions} module.
+
+There are some \latin{caveat}s if you use this method:
+\begin{itemize}
+  \item This method has not been extensively tested, yet.  There may be errors
+     and wrong output at unexpected places.
+  \item Using this method effectively disables the different values of the
+    \module{particles} option \option{elpair} (see
+    section~\ref{sec:particles-module}).
+  \item The different kinds of formal charges provided by the
+    \chemmodule{charges} module (see section~\ref{sec:ion-charges}) are
+    disabled.  Formal charges always use the math method now.
+  \item The reaction environments by the \chemmodule{reactions} module may
+    work only to a limited respect.  If you plan to use them consider using
+    methods \pkg{chemformula} or \pkg{mhchem} instead\footnote{On the other
+      hand \XyMTeX\ (and especially the \pkg{chemist} package) provides quite
+      a number of chemical reaction environments itself.}.
+\end{itemize}
+
 \subsubsection{For Module Writers}
 
-There's are two macros for module writers:
+There are two macros for module writers:
 \begin{commands}
-  \command*{chemmacros_chemformula:n}[ \marg{formula}]
+  \explcommand{chemmacros_chemformula:n}[ \marg{formula}]
     This is only a wrapper for \cs{chcpd} or \cs{ce}.  It is recommended that
     module writers use this macro (or a variant thereof) inside of
     \chemmacros' macros whenever they want to display a chemical formula.
     Writers who prefer traditional \LaTeXe\ programming over expl3 should use
     \cs*{chemmacros@formula}.
-  \command*{chemmacros_reaction:n}[ \marg{reaction}]
+  \explcommand{chemmacros_reaction:n}[ \marg{reaction}]
     This is only a wrapper for \cs{ch} or \cs{ce}.  It is recommended that
     module writers use this macro (or a variant thereof) inside of
     \chemmacros' macros whenever they want to display a chemical reaction.
@@ -1814,18 +1926,38 @@ translation keys are listed in section~\vref{sec:avail-transl-keys}.
 \subsubsection{Available Translation Keys}\label{sec:avail-transl-keys}
 
 Table~\vref{tab:translation-keys} lists (almost) all keys which are predefined
-in \chemmacros.  A translation key is a key which is understood by the
-\pkg{translations} package and its commands like \cs*{GetTranslation}.  For
-each key at least the English fallback translation is provided, for most also
-the German translation is provided.  For a few keys also other translations
-are provided.  If you find that a translation for your language is missing you
-can provide it in the preamble:
+in \chemmacros.  \emph{Some of the translations have changed in
+  version~5.6\changedversion{5.6}.} The \chemmodule{lang} doesn't provide the
+translations themselves -- they are provided by the corresponding modules.  A
+translation key is a key which is understood by the \pkg{translations} package
+and its commands like \cs*{GetTranslation}.  For each key at least the English
+fallback translation is provided, for most also the German translation is
+provided.  For a few keys also other translations are provided.  If you find
+that a translation for your language is missing you can provide it in the
+preamble:
 \begin{commands}
-  \command*{DeclareTranslation}[\marg{language}\marg{key}\marg{translation}]
+  \command{DeclareTranslation}[\marg{language}\marg{key}\marg{translation}]
     Defines a translation of key \meta{key} for the language \meta{language}.
     No error will be raised if a translation of \meta{key} already exists.
     This command can only be used in the preamble and is defined by the
     \pkg{translations} package.
+  \command{DeclareChemTranslation}[\marg{language}\marg{key}\marg{translation}]
+    \sinceversion{5.6}A command which makes an abstraction from the
+    \pkg{translations} package.  It should be used in documents for adding
+    missing translations that are needed.  This command can only be used in
+    the preamble.
+  \command{DeclareChemTranslations}[\marg{key}\Marg{\meta{language} =
+    \meta{translation}}]
+    \sinceversion{5.6}A command rather meant for module writers but can be
+    used by document authors as well, of course.  It gets a csv list of
+    key\slash value pairs of translations.  This command can only be used in
+    the preamble.
+  \explcommand{chemmacros_declare_translation:nnn}[\marg{language}\marg{key}%
+    \marg{translation}]
+    The expl3 version of \cs{DeclareChemTranslation}.
+  \explcommand{chemmacros_declare_translations:nn}[\marg{key}\Marg{\meta{language} =
+    \meta{translation}}]
+    The expl3 version of \cs{DeclareChemTranslations}.
 \end{commands}
 If you send me an email (see section~\vref{sec:sugg-bug-reports}) with the
 translations for your language I'll gladly add them to the next release of
@@ -1850,6 +1982,10 @@ translations for your language I'll gladly add them to the next release of
     \midrule
       \showtranslations{scheme-name} \\
       \showtranslations{scheme-list} \\
+      \showtranslations{Scheme} \\
+      \showtranslations{scheme} \\
+      \showtranslations{Schemes} \\
+      \showtranslations{schemes} \\
       \showtranslations{K-acid} \\
       \showtranslations{K-base} \\
       \showtranslations{K-water} \\
@@ -1858,7 +1994,10 @@ translations for your language I'll gladly add them to the next release of
       \showtranslations{phase-gas} \\
       \showtranslations{phase-aq} \\
       \showtranslations{list-of-reactions} \\
+      \showtranslations{Reaction} \\
       \showtranslations{reaction} \\
+      \showtranslations{Reactions} \\
+      \showtranslations{reactions} \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -1866,16 +2005,16 @@ translations for your language I'll gladly add them to the next release of
 \subsubsection{Information For Module Writers}
 
 \begin{commands}
-  \expandable\command*{chemmacros_translate:n}[ \marg{translation key}]
+  \expandable\explcommand{chemmacros_translate:n}[ \marg{translation key}]
     Translates the given key to the language which is detected automatically
     or given by the user.  Should be used in \chemmacros' macros instead of
     \pkg{translations}' \cs*{GetTranslation}.
-  \command*{l_chemmacros_language_tl}
+  \explcommand{l_chemmacros_language_tl}
     A token list variable that holds the language which is used by
-    \cs*{chemmacros_translate:n} for translation, \emph{after begin
+    \explcs{chemmacros_translate:n} for translation, \emph{after begin
       document}.
   \command{ChemTranslate}[\marg{translation key}]
-    A version of \cs*{chemmacros_translate:n} for those who prefer
+    A version of \explcs{chemmacros_translate:n} for those who prefer
     traditional \LaTeXe\ programming over expl3.
 \end{commands}
 
@@ -2283,8 +2422,9 @@ The use of \AmS math's \cs{intertext} is possible:
   See reaction~\ref{rxn:test}.
 \end{example}
 
-% \emph{You should not use \cs{mch} and its relatives inside the \env{reaction}
-%   environments.}
+If\sinceversion{5.6} you are using either \pkg{cleveref} or \pkg{fancyref} the
+\env{scheme} environment (or rather its captions) are supported already.  For
+\pkg{fancyref} use the prefix \code{rct}.
 
 \subsubsection{Own Reactions}
 You can create new types of reactions with the command:
@@ -2360,6 +2500,13 @@ The output of this list can be modified by two options:
     Inside of \meta{code} \code{\#1} refers to the actual heading of the list.
     The default setting is not entirely true: if a macro \cs*{chapter} is
     defined \code{\cs*{chapter}\sarg\Marg{\#1}} is used.
+  \keybool{tocbasic}\Module{reactions}\Default{false}
+    \sinceversion{5.6}If you use a \KOMAScript\ class \emph{or} if you load
+    the \pkg{tocbasic} package \emph{or} if you set this option to \code{true}
+    the list of reactions will be set up using the \pkg{tocbasic} package.
+    This \emph{disables} the \option{list-heading-cmd} option.  For a
+    \KOMAScript\ class this means that the list of reactions obeys
+    \KOMAScript's \option*{listof} option.
 \end{options}
 Instead of using the option \option{list-name} you also could redefine
 \cs{reactionlistname}.
@@ -2412,7 +2559,8 @@ The following command is provided to set oxidation numbers:
   \command{ox}[\sarg\oarg{options}\Marg{\meta{number},\meta{atom}}]
     Places \meta{number} as right superscript to \meta{atom}; \meta{number}
     has to be a (rational) number!  \meta{atom} is treated as a \chemformula\
-    formula, like it would be in \cs{chcpd}.
+    formula, like it would be in \cs{chcpd} (this depends on the setting of
+    the \option{formula} option, see~\vref{sec:chemformula-module}).
 \end{commands}
 
 \begin{example}
@@ -2648,6 +2796,10 @@ The list of schemes is printed as expected with
   \command{listofschemes}
 \end{commands}
 
+If\sinceversion{5.6} you are using either \pkg{cleveref} or \pkg{fancyref} the
+\env{scheme} environment (or rather its captions) are supported already.  For
+\pkg{fancyref} use the prefix \code{sch}.
+
 \subsection{The \chemmodule*{spectroscopy} Module}\label{sec:spectroscopy-module}
 
 The \chemmodule{spectroscopy} module loads the \chemmodule{chemformula} module
@@ -2668,7 +2820,9 @@ input.
     \Darg{\meta{num},\meta{unit}}\oarg{solvent}]
     Typeset nuclear magnetic resonance data. \meta{num} is a valid
     \pkg{siunitx} number input, \meta{unit} is a valid \pkg{siunitx} unit
-    input.  \meta{solvent} is any valid \chemformula\ input as in \cs{chcpd}.
+    input.  \meta{solvent} is any valid \chemformula\ input as in \cs{chcpd}
+    (this depends on the setting of the \option{formula} option,
+    see~\vref{sec:chemformula-module}).
 \end{commands}
 
 \emph{All} Argument are optional! Without arguments we get:
@@ -2813,7 +2967,8 @@ number of options.  For historical reasons they all belong to the module
     Horizontal\sinceversion{5.3} space inserted between number and atom
     (printed by \cs{\#}).
   \keybool{parse}\Module{spectroscopy}\Default{true}
-    Treat the solvent as \chemformula\ formula or not.
+    Treat the solvent as \chemformula\ formula (this depends on the setting of
+    the \option{formula} option, see~\vref{sec:chemformula-module}) or not.
   \keyval{delta}{tokens}\Module{spectroscopy}\Default
     The \meta{tokens} are added after $\delta$.
   \keybool{list}\Module{spectroscopy}\Default{false}
@@ -3295,27 +3450,25 @@ functions.  This allows to use expl3's powerful function variants for
 expansion control.
 
 \begin{commands}
-  \command*{c_chemmacros_other_colon_tl}
+  \explcommand{c_chemmacros_other_colon_tl}
     A constant tokenlist which contains a colon with category code~12 (other).
     This is useful since \TikZ\ sometimes expects an other colon and in an
     expl3 programming environment \code{:} has category code~11 (letter).
-  \command*{chemmacros_tikz_picture:nn}[ \marg{options} \marg{code}]
+  \explcommand{chemmacros_tikz_picture:nn}[ \marg{options} \marg{code}]
     Defined as \verbcode+\tikzpicture[{#1}] #2 \endtikzpicture+.
-  \command*{chemmacros_tikz:nn}[ \marg{options} \marg{code}]
+  \explcommand{chemmacros_tikz:nn}[ \marg{options} \marg{code}]
     Defined as \verbcode+\tikz[{#1}]{#2}+.
-  \command*{chemmacros_tikz_draw:n}[ \marg{options}]
+  \explcommand{chemmacros_tikz_draw:n}[ \marg{options}]
     Defined as \verbcode+\draw[{#1}]+.
-  \command*{chemmacros_tikz_node:n}[ \marg{options}]
+  \explcommand{chemmacros_tikz_node:n}[ \marg{options}]
     Defined as \verbcode+\node[{#1}]+.
-  \command*{chemmacros_tikz_shade:n}[ \marg{options}]
+  \explcommand{chemmacros_tikz_shade:n}[ \marg{options}]
     Defined as \verbcode+\shade[{#1}]+.
-  \command*{chemmacros_tikz_shadedraw:n}[ \marg{options}]
+  \explcommand{chemmacros_tikz_shadedraw:n}[ \marg{options}]
     Defined as \verbcode+\shadedraw[{#1}]+.
-  \command*{chemmacros_tikz_node_in_draw:n}[ \marg{options}]
+  \explcommand{chemmacros_tikz_node_in_draw:n}[ \marg{options}]
     Defined as \verbcode+node[{#1}]+.
 \end{commands}
-
-% TODO
 
 \subsection{The \chemmodule*{xfrac} Module}\label{sec:xfrac-module}
 
@@ -3438,13 +3591,13 @@ options you want to be able to set using
 \cs{chemsetup}\Oarg{foo}\marg{options} please make sure you define (and set)
 them with the following macros:
 \begin{commands}
-  \command*{chemmacros_define_keys:nn}[ \marg{module} \marg{key definitions}]
+  \explcommand{chemmacros_define_keys:nn}[ \marg{module} \marg{key definitions}]
     Define l3keys options for the module \meta{module}.  This is a wrapper for
-    \cs*{keys_define:nn} \Marg{chemmacros/\meta{module}} \marg{key
+    \explcs*{keys_define:nn} \Marg{chemmacros/\meta{module}} \marg{key
       definitions}.
-  \command*{chemmacros_set_keys:nn}[ \marg{module} \marg{input}]
+  \explcommand{chemmacros_set_keys:nn}[ \marg{module} \marg{input}]
     Sets l3keys options for the module \meta{module}.  This is a wrapper for
-    \cs*{keys_set:nn} \Marg{chemmacros/\meta{module}} \marg{input}.
+    \explcs*{keys_set:nn} \Marg{chemmacros/\meta{module}} \marg{input}.
 \end{commands}
 Also (\emph{especially if you consider submitting the module, see
   section~\vref{sec:submitting-module}}) please follow the expl3 naming

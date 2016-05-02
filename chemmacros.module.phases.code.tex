@@ -83,3 +83,52 @@
 \NewChemPhase \aq  {aq}
 
 % --------------------------------------------------------------------------
+\ChemCompatibilityTo{5.5}
+\DeclareTranslation {English} {phase-sld} {s}
+\DeclareTranslation {German}  {phase-sld} {f}
+
+\DeclareTranslation {English} {phase-lqd} {l}
+\DeclareTranslation {German}  {phase-lqd} {f\/l}
+
+\DeclareTranslation {English} {phase-gas} {g}
+\DeclareTranslation {German}  {phase-gas} {g}
+
+\DeclareTranslation {English} {phase-aq} {aq}
+\DeclareTranslation {German}  {phase-aq} {aq}
+\EndChemCompatibility
+
+\ChemCompatibilityFrom{5.6}
+\chemmacros_declare_translations:nn {phase-sld}
+  {
+    fallback = s ,
+    English  = s ,
+    German   = f
+  }
+
+\chemmacros_declare_translations:nn {phase-lqd}
+  {
+    fallback = l ,
+    English  = l ,
+    German   = f\/l
+  }
+
+\chemmacros_declare_translations:nn {phase-gas}
+  {
+    fallback = g ,
+    English  = g ,
+    German   = g
+  }
+
+\chemmacros_declare_translations:nn {phase-aq}
+  {
+    fallback = aq ,
+    English  = aq ,
+    German   = aq
+  }
+\EndChemCompatibility
+
+% --------------------------------------------------------------------------
+\tex_endinput:D
+
+2015/06/09 - first version
+2016/04/27 - moved translations from lang module to phases module

@@ -331,6 +331,7 @@
 \NewDocumentCommand \OX { >{\SplitArgument{1}{,}}m }
   { \chemmacros_redox_partner:nn #1 }
 
+% TODO: add option to make `#2' be parsed as chem formula
 \cs_new_protected:Npn \chemmacros_redox_partner:nn #1#2
   {
     \chemmacros_tex_if:nnTF {measuring@} {}

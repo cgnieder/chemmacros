@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{base}{2016/02/09 basic chemmacros module}
+\ChemModule{base}{2016/04/25 basic chemmacros module}
 
 % for the document hooks
 \ChemCompatibilityFrom{5.1}
@@ -244,6 +244,121 @@
   }
 \EndChemCompatibility
 
+\ChemCompatibilityFrom{5.6}
+\cs_new_protected:Npn \chemmacros_cs_if_free_new:Npn #1
+  {
+    \cs_if_exist:NF #1
+      { \cs_new:Npn #1 }
+  }
+\cs_generate_variant:Nn \chemmacros_cs_if_free_new:Npn {c}
+
+\cs_new_protected:Npn \chemmacros_cs_if_free_new_protected:Npn #1
+  {
+    \cs_if_exist:NF #1
+      { \cs_new_protected:Npn #1 }
+  }
+\cs_generate_variant:Nn \chemmacros_cs_if_free_new_protected:Npn {c}
+
+% #1: counter
+% #2: singular
+% #3: plural
+% #4: Singular
+% #5: Plural
+\cs_new_protected:Npn \chemmacros_add_cleveref_support:nnnnn #1#2#3#4#5
+  {
+    \AfterEndPreamble
+      {
+        \chemmacros_if_package_loaded:nT {cleveref}
+          {
+            \cs_if_exist:cF {cref@#1@name}
+              {
+                \crefname {#1} {#2} {#3}
+                \Crefname {#1} {#4} {#5}
+              }
+          }
+      }
+  }
+\cs_generate_variant:Nn \chemmacros_add_cleveref_support:nnnnn {nnnx , nnnxx , nnnnx }
+  
+% #1: counter
+% #2: singular
+% #3: Singular (optional)
+% #4: plural
+% #5: Plural (optional)
+\NewDocumentCommand \ChemCleverefSupport {mmomo}
+  {
+    \IfNoValueTF {#3}
+      {
+        \IfNoValueTF {#5}
+          {
+            \chemmacros_add_cleveref_support:nnnnn
+              {#1}
+              {#2}
+              {#4}
+              { \tl_mixed_case:n {#2} }
+              { \tl_mixed_case:n {#4} }
+          }
+          {
+            \chemmacros_add_cleveref_support:nnnnn
+              {#1}
+              {#2}
+              {#4}
+              { \tl_mixed_case:n {#2} }
+              {#5}
+          }
+      }
+      {
+        \IfNoValueTF {#5}
+          {
+            \chemmacros_add_cleveref_support:nnnnn
+              {#1}
+              {#2}
+              {#4}
+              {#3}
+              { \tl_mixed_case:n {#4} }
+          }
+          { \chemmacros_add_cleveref_support:nnnnn {#1} {#2} {#4} {#3} {#5} }
+      }
+  }
+\@onlypreamble\ChemCleverefSupport
+
+% #1: id
+% #2: mid sentence
+% #3: begin sentence
+\cs_new_protected:Npn \chemmacros_add_fancyref_support:nnn #1#2#3
+  {
+    \AfterEndPreamble
+      {
+        \chemmacros_if_package_loaded:nT {fancyref}
+          {
+            \chemmacros_cs_if_free_new:cpn {fancyref#1labelprefix} {#1}
+            \chemmacros_cs_if_free_new:cpn {fref#1name} {#2}
+            \chemmacros_cs_if_free_new:cpn {Fref#1name} {#3}
+            \exp_args:Nnx \frefformat {vario} { \exp_not:c {fancyref#1labelprefix} }
+              { \use:c {fref#1name} \fancyrefdefaultspacing ##1##3 }
+            \exp_args:Nnx \Frefformat {vario} { \exp_not:c {fancyref#1labelprefix} }
+              { \use:c {Fref#1name} \fancyrefdefaultspacing ##1##3 }
+            \exp_args:Nnx \frefformat {plain} { \exp_not:c {fancyref#1labelprefix} }
+              { \use:c {fref#1name} \fancyrefdefaultspacing ##1 }
+            \exp_args:Nnx \Frefformat {plain} { \exp_not:c {fancyref#1labelprefix} }
+              { \use:c {Fref#1name} \fancyrefdefaultspacing ##1 }
+          }
+      }
+  }
+\cs_generate_variant:Nn \chemmacros_add_fancyref_support:nnn {nnx}
+
+% #1: id
+% #2: mid sentence
+% #3: begin sentence (optional)
+\NewDocumentCommand \ChemFancyrefSupport {mmo}
+  {
+    \IfNoValueTF {#3}
+      { \chemmacros_add_fancyref_support:nnn {#1} {#2} { \tl_mixed_case:n {#3} } }
+      { \chemmacros_add_fancyref_support:nnn {#1} {#2} {#3} }
+  }
+\@onlypreamble\ChemFancyrefSupport
+\EndChemCompatibility
+
 % --------------------------------------------------------------------------
 % some checks at begin document:
 \bool_new:N \l__chemmacros_in_document_bool
@@ -359,3 +474,5 @@
 2015/10/14 - load `errorcheck' module
 2016/02/09 - starred version of \NewChemMacroset
 2016/03/07 - \chemmacros_define_keys:nn and friends
+2016/04/25 - macros for cleveref and fancyref support, \ChemCleverefSupport
+             \ChemFancyrefSupport
