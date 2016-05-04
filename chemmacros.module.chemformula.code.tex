@@ -205,9 +205,11 @@
   { formula .code:n = \chemmacros_set_formula_method:n {#1} }
 \EndChemCompatibility
 
+\def\bla{bla}
+
 \AtEndPreamble
   {
-    \bool_if:nT
+    \bool_if:nTF
       {
         !\l__chemmacros_formula_method_set_bool
         &&
@@ -217,10 +219,13 @@
       }
       { \chemmacros_check_formula_method: }
       {
-        \chemmacros_if_compatiblity:nnTF {>=} {5.6}
-          { \msg_warning:nn {chemmacros} {default-formula-method} }
-          { \msg_info:nn {chemmacros} {default-formula-method} }
-        \chemmacros_set_formula_method:n {chemformula}
+        \bool_if:NF \l__chemmacros_formula_method_set_bool
+          {
+            \chemmacros_if_compatiblity:nnTF {>=} {5.6}
+              { \msg_info:nn {chemmacros} {default-formula-method} }
+              { \msg_warning:nn {chemmacros} {default-formula-method} }
+            \chemmacros_set_formula_method:n {chemformula}
+          }
       }
   }
 
@@ -236,3 +241,4 @@
              `chemist' and `chemfig'
            - don't automatically load an available method: load `chemformula'
              if the users haven't decided for themselves and issue a warning
+2016/05/03 - correct wrong method check

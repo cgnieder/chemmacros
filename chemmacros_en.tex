@@ -2398,15 +2398,27 @@ reactions.
 \end{example}
 
 If you want to change the layout of the counter tags, you can use
-
 \begin{commands}
-  \command*{renewtagform}[\marg{tagname}\oarg{format}\marg{right delimiter}\marg{left
-  delimiter}]
+  \command*{renewtagform}[\marg{tagname}\oarg{format}\marg{left
+    delimiter}\marg{right delimiter}]
     Provided by the \pkg{mathtools} package.
 \end{commands}
+or use the following options:
+\begin{options}
+  \keyval{tag-open}{left delimiter}\Module{reactions}\Default{\{}
+    \sinceversion{5.6}The left delimiter.
+  \keyval{tag-close}{right delimiter}\Module{reactions}\Default{\}}
+    \sinceversion{5.6}The right delimiter.
+  \keyval{before-tag}{format}\Module{reactions}\Default
+    \sinceversion{5.6}Code inserted before the tags.
+\end{options}
 
 \begin{example}
-  \renewtagform{reaction}[R \textbf]{[}{]}
+  \chemsetup[reactions]{
+    before-tag = R \textbf ,
+    tag-open = [ ,
+    tag-close = ]
+  }
   \begin{reaction}
     H2O + CO2 <<=> H2CO3
   \end{reaction}
@@ -2423,8 +2435,8 @@ The use of \AmS math's \cs{intertext} is possible:
 \end{example}
 
 If\sinceversion{5.6} you are using either \pkg{cleveref} or \pkg{fancyref} the
-\env{scheme} environment (or rather its captions) are supported already.  For
-\pkg{fancyref} use the prefix \code{rct}.
+\env{reaction} counter is supported already.  For \pkg{fancyref} use the
+prefix \code{rct}.
 
 \subsubsection{Own Reactions}
 You can create new types of reactions with the command:

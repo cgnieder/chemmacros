@@ -151,8 +151,19 @@
 \cs_if_exist:NT \KOMAClassName
   { \bool_set_true:N \l__chemmacros_reactions_tocbasic_bool }
 
+\tl_new:N \l__chemmacros_reactions_tag_open_tl
+\tl_new:N \l__chemmacros_reactions_tag_close_tl
+\tl_new:N \l__chemmacros_reactions_before_tag_tl
+
 \chemmacros_define_keys:nn {reactions}
-  { tocbasic .bool_set:N = \l__chemmacros_reactions_tocbasic_bool }
+  {
+    tocbasic   .bool_set:N = \l__chemmacros_reactions_tocbasic_bool ,
+    tag-open   .tl_set:N   = \l__chemmacros_reactions_tag_open_tl ,
+    tag-open   .initial:n  = \{ ,
+    tag-close  .tl_set:N   = \l__chemmacros_reactions_tag_close_tl ,
+    tag-close  .initial:n  = \} ,
+    before-tag .tl_set:N   = \l__chemmacros_reactions_before_tag_tl
+  }
 
 \AtEndPreamble
   {
@@ -175,13 +186,33 @@
   { \chemmacros_translate:n {reactions} }
   [ \chemmacros_translate:n {Reactions} ]
 
+\AfterPackage* {cleveref}
+  {
+    \creflabelformat {reaction}
+      {
+        #2
+        \l__chemmacros_reactions_tag_open_tl
+        #1
+        \l__chemmacros_reactions_tag_close_tl
+        #3
+      }
+  }
+
 \ChemFancyrefSupport {rct}
   { \chemmacros_translate:n {reaction} }
   [ \chemmacros_translate:n {Reaction} ]
 \EndChemCompatibility
   
 % create new tagform
+\ChemCompatibilityTo{5.5}
 \newtagform {reaction} {\{} {\}}
+\EndChemCompatibility
+\ChemCompatibilityFrom{5.6}
+\newtagform {reaction}
+  [\l__chemmacros_reactions_before_tag_tl]
+  {\l__chemmacros_reactions_tag_open_tl}
+  {\l__chemmacros_reactions_tag_close_tl}
+\EndChemCompatibility
 \newcounter {chemmacros_save_reaction}
 \newcounter {reaction}
 
@@ -399,3 +430,4 @@
            - add cleveref support
            - add fancyref support
            - moved translations from lang module to reactions module
+2016/05/04 - options `tag-open', `tag-close' and `before-tag'

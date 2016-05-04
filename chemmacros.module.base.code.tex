@@ -259,6 +259,8 @@
   }
 \cs_generate_variant:Nn \chemmacros_cs_if_free_new_protected:Npn {c}
 
+\RequirePackage{scrlfile}
+
 % #1: counter
 % #2: singular
 % #3: plural
@@ -266,15 +268,12 @@
 % #5: Plural
 \cs_new_protected:Npn \chemmacros_add_cleveref_support:nnnnn #1#2#3#4#5
   {
-    \AfterEndPreamble
+    \AfterPackage* {cleveref}
       {
-        \chemmacros_if_package_loaded:nT {cleveref}
+        \cs_if_exist:cF {cref@#1@name}
           {
-            \cs_if_exist:cF {cref@#1@name}
-              {
-                \crefname {#1} {#2} {#3}
-                \Crefname {#1} {#4} {#5}
-              }
+            \crefname {#1} {#2} {#3}
+            \Crefname {#1} {#4} {#5}
           }
       }
   }
@@ -327,22 +326,19 @@
 % #3: begin sentence
 \cs_new_protected:Npn \chemmacros_add_fancyref_support:nnn #1#2#3
   {
-    \AfterEndPreamble
+    \AfterPackage* {fancyref}
       {
-        \chemmacros_if_package_loaded:nT {fancyref}
-          {
-            \chemmacros_cs_if_free_new:cpn {fancyref#1labelprefix} {#1}
-            \chemmacros_cs_if_free_new:cpn {fref#1name} {#2}
-            \chemmacros_cs_if_free_new:cpn {Fref#1name} {#3}
-            \exp_args:Nnx \frefformat {vario} { \exp_not:c {fancyref#1labelprefix} }
-              { \use:c {fref#1name} \fancyrefdefaultspacing ##1##3 }
-            \exp_args:Nnx \Frefformat {vario} { \exp_not:c {fancyref#1labelprefix} }
-              { \use:c {Fref#1name} \fancyrefdefaultspacing ##1##3 }
-            \exp_args:Nnx \frefformat {plain} { \exp_not:c {fancyref#1labelprefix} }
-              { \use:c {fref#1name} \fancyrefdefaultspacing ##1 }
-            \exp_args:Nnx \Frefformat {plain} { \exp_not:c {fancyref#1labelprefix} }
-              { \use:c {Fref#1name} \fancyrefdefaultspacing ##1 }
-          }
+        \chemmacros_cs_if_free_new:cpn {fancyref#1labelprefix} {#1}
+        \chemmacros_cs_if_free_new:cpn {fref#1name} {#2}
+        \chemmacros_cs_if_free_new:cpn {Fref#1name} {#3}
+        \exp_args:Nnx \frefformat {vario} { \exp_not:c {fancyref#1labelprefix} }
+          { \use:c {fref#1name} \fancyrefdefaultspacing ##1##3 }
+        \exp_args:Nnx \Frefformat {vario} { \exp_not:c {fancyref#1labelprefix} }
+          { \use:c {Fref#1name} \fancyrefdefaultspacing ##1##3 }
+        \exp_args:Nnx \frefformat {plain} { \exp_not:c {fancyref#1labelprefix} }
+          { \use:c {fref#1name} \fancyrefdefaultspacing ##1 }
+        \exp_args:Nnx \Frefformat {plain} { \exp_not:c {fancyref#1labelprefix} }
+          { \use:c {Fref#1name} \fancyrefdefaultspacing ##1 }
       }
   }
 \cs_generate_variant:Nn \chemmacros_add_fancyref_support:nnn {nnx}
@@ -476,3 +472,4 @@
 2016/03/07 - \chemmacros_define_keys:nn and friends
 2016/04/25 - macros for cleveref and fancyref support, \ChemCleverefSupport
              \ChemFancyrefSupport
+2016/05/04 - fix \ChemCleverefSupport
