@@ -181,7 +181,7 @@
 \cs_new_protected:Npn \chemmacros_define_float:nn #1#2
   {
     \bool_if:nT
-      { !\cs_if_exist_p:c {#1} && !\cs_if_exist_p:c {#1} }
+      { !\cs_if_exist_p:c {#1} && !\cs_if_exist_p:c {end#1} }
       {
         \bool_if:NTF \l__chemmacros_float_def_bool
           {

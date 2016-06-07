@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{nomenclature}{2015/09/23 chemical names}
+\ChemModule{nomenclature}{2016/05/31 chemical names}
 
 \RequirePackage{scrlfile}
 
@@ -205,19 +205,19 @@
 \AfterEndPreamble { \chemmacros_make_iupac: }
 \EndChemCompatibility
 
-\NewDocumentCommand \DeclareChemIUPAC { mm }
-  { \chemmacros_define_iupac:Nn #1 { #2 } }
+\NewDocumentCommand \DeclareChemIUPAC {mm}
+  { \chemmacros_define_iupac:Nn #1 {#2} }
 
-\NewDocumentCommand \NewChemIUPAC { mm }
-  { \chemmacros_new_iupac:Nn #1 { #2 } }
+\NewDocumentCommand \NewChemIUPAC {mm}
+  { \chemmacros_new_iupac:Nn #1 {#2} }
 
-\NewDocumentCommand \RenewChemIUPAC { mm }
-  { \chemmacros_renew_iupac:Nn #1 { #2 } }
+\NewDocumentCommand \RenewChemIUPAC {mm}
+  { \chemmacros_renew_iupac:Nn #1 {#2} }
 
-\NewDocumentCommand \ProvideChemIUPAC { mm }
-  { \chemmacros_provide_iupac:Nn #1 { #2 } }
+\NewDocumentCommand \ProvideChemIUPAC {mm}
+  { \chemmacros_provide_iupac:Nn #1 {#2} }
 
-\NewDocumentCommand \LetChemIUPAC { mm }
+\NewDocumentCommand \LetChemIUPAC {mm}
   { \chemmacros_let_iupac:NN #1 #2 }
 
 \chemmacros_define_keys:nn {nomenclature}
@@ -237,7 +237,7 @@
 % stereo descriptors and other nomenclature commands
 % Cahn-Ingold-Prelog
 \dim_new:N  \l__chemmacros_cip_kern_dim
-\dim_set:Nn \l__chemmacros_cip_kern_dim { .075em }
+\dim_set:Nn \l__chemmacros_cip_kern_dim {.075em}
 
 \chemmacros_define_keys:nn {nomenclature}
   { cip-kern .dim_set:N = \l__chemmacros_cip_kern_dim }
@@ -246,8 +246,8 @@
 \cs_new_protected:Npn \chemmacros_cip:n #1
   { \textit{#1} \tex_kern:D \l__chemmacros_cip_kern_dim }
 
-\NewDocumentCommand \cip { m }
-  { \chemmacros_cip:n { #1 } }
+\NewDocumentCommand \cip {m}
+  { \chemmacros_cip:n {#1} }
 \EndChemCompatibility
 
 \ChemCompatibilityFrom{5.2}
@@ -315,31 +315,49 @@
     coord-use-hyphen      .initial:n  = true
   }
 
+% #1: boolean - if true hyphen is turned on
+% #2: boolean - if true superscript will be used
+% #3: symbol
+% #4: sub-/superscript
+\cs_new_protected:Npn \chemformula_coordination_symbol:nnnn #1#2#3#4
+  {
+    \chemmacros_chemformula:n {#3}
+    \tl_if_blank:nF {#4}
+      {
+        \bool_if:nTF {#2}
+          { \chemmacros_chemformula:n { {}^{#4} } }
+          { \chemmacros_chemformula:n { {}_{#4} } }
+      }
+    \bool_if:nT
+      {#1}
+      { \chemmacros_break_point_hyphen: }
+  }
+
 \cs_new_protected:Npn \chemformula_hapto:n #1
   {
-    \chemmacros_chemformula:n { \chemeta ^{#1} }
-    \bool_if:NT \l__chemmacros_coord_use_hyphen_bool
-      { \chemmacros_break_point_hyphen: }
+    \chemformula_coordination_symbol:nnnn
+      { \l__chemmacros_coord_use_hyphen_bool }
+      { \c_false_bool }
+      { \chemeta }
+      {#1}
   }
 
 \cs_new_protected:Npn \chemformula_dento:n #1
   {
-    \chemmacros_chemformula:n { \chemkappa ^{#1} }
-    \bool_if:NT \l__chemmacros_coord_use_hyphen_bool
-      { \chemmacros_break_point_hyphen: }
+    \chemformula_coordination_symbol:nnnn
+      { \l__chemmacros_coord_use_hyphen_bool }
+      { \c_false_bool }
+      { \chemkappa }
+      {#1}
   }
 
 \cs_new_protected:Npn \chemformula_bridge:n #1
   {
-    \chemmacros_chemformula:n {\chemmu}
-    \tl_if_blank:nF { #1 }
-      {
-        \bool_if:NTF \l__chemmacros_bridge_super_bool
-          { \chemmacros_chemformula:n { {}^{#1} } }
-          { \chemmacros_chemformula:n { {}_{#1} } }
-      }
-    \bool_if:NT \l__chemmacros_coord_use_hyphen_bool
-      { \chemmacros_break_point_hyphen: }
+    \chemformula_coordination_symbol:nnnn
+      { \l__chemmacros_coord_use_hyphen_bool }
+      { \l__chemmacros_bridge_super_bool }
+      { \chemmu }
+      {#1}
   }
 
 % \iupac (basically the same as bpchem's \IUPAC)
@@ -557,13 +575,11 @@
 \NewChemIUPACShorthand ' \chemprime
 \EndChemCompatibility
 
-% \group_begin:
-% \chemmacros_activate_all_iupac_shorthands:
-
-\cs_new_protected:Npn \chemmacros_iupac:n #1
+\cs_new_protected:Npn \chemmacros_iupac:nn #1#2
   {
     \group_begin:
       \bool_set_true:N \l__chemmacros_inside_iupac_bool
+      \chemmacros_set_keys:nn {nomenclature} {#1}
       \chemmacros_make_iupac:
       \chemmacros_make_shorthands:
       % what's this vvv in here for?
@@ -572,11 +588,12 @@
         { \chemmacros_define_deprecated:NN \- - }
       \tl_set_rescan:Nnn \l__chemmacros_tmpa_tl
         { \chemmacros_activate_all_iupac_shorthands: }
-        {#1}
+        {#2}
       \l__chemmacros_tmpa_tl
     \group_end:
   }
-% \group_end:
+
+\cs_new_protected:Npn \chemmacros_iupac:n #1 { \chemmacros_iupac:nn {} {#1} }
 
 \ChemCompatibilityTo{5.2}
 % Thanks to Joseph Wright and Enrico Gregorio for the help on the curious
@@ -586,7 +603,7 @@
 \cs_set_eq:NN \@dischyph \-
 \EndChemCompatibility
 
-\NewDocumentCommand \iupac {m} { \chemmacros_iupac:n {#1} }
+\NewDocumentCommand \iupac {O{}m} { \chemmacros_iupac:nn {#1} {#2} }
 
 % --------------------------------------------------------------------------
 % R(ectus)/S(inister):
@@ -665,28 +682,28 @@
 
 % --------------------------------------------------------------------------
 % latin phrases
-\tl_new:N  \l__chemmacros_latin_format_tl
-\tl_set:Nn \l__chemmacros_latin_format_tl { \itshape }
+\tl_new:N   \l__chemmacros_latin_format_tl
+  
+\NewChemMacroset {Latin} {mm}
+  { \chemmacros_define_latin:Nn #1 {#2} }
 
+\ChemCompatibilityTo{5.6}
 \chemmacros_define_keys:nn {nomenclature}
   {
     latin-format .tl_set:N  = \l__chemmacros_latin_format_tl ,
-    latin-format .initial:n = \textit
+    latin-format .initial:n = \textit ,
   }
 
 \cs_new_protected:Npn \chemmacros_latin:n #1
   { { \l__chemmacros_latin_format_tl {#1} } }
-
+  
 \cs_new_protected:Npn \chemmacros_define_latin:Nn #1#2
   { \cs_set_protected:Npn #1 { \chemmacros_latin:n {#2} } }
-
-\NewChemMacroset {Latin} {mm}
-  { \chemmacros_define_latin:Nn #1 {#2} }
-
+  
 \AtBeginDocument
   {
     % if chemstyle is loaded use chemstyle's definition:
-    \chemmacros_if_package_loaded:nTF {chemstyle}
+    \chemmacros_if_package_loaded:nT {chemstyle}
       {
         \AfterPackage* {chemstyle}
           {
@@ -694,16 +711,57 @@
             \cs_set_eq:NN \chemmacros_latin:n \cst@latin
           }
       }
+    \cs_if_exist:NTF \latin
+      { \cs_set_eq:NN  \latin \chemmacros_latin:n }
       { \cs_new_eq:NN  \latin \chemmacros_latin:n }
     \NewChemLatin \insitu   {in~situ}
     \NewChemLatin \abinitio {ab~initio}
     \NewChemLatin \invacuo  {in~vacuo}
   }
+\EndChemCompatibility
+  
+\ChemCompatibilityFrom{5.7}
+\chemmacros_define_keys:nn {nomenclature}
+  {
+    format .tl_set:N  = \l__chemmacros_latin_format_tl ,
+    format .initial:n = \emph ,
+  }
+  
+\cs_new_protected:Npn \chemmacros_write_latin:n #1
+  {
+    \group_begin:
+      \l__chemmacros_latin_format_tl {#1}
+    \group_end:
+  }
+
+\cs_new_protected:Npn \chemmacros_latin:n #1
+  { \chemmacros_write_latin:n {#1} }
+
+\cs_new_protected:Npn \chemmacros_define_latin:Nn #1#2
+  { \DeclareDocumentCommand #1 {O{}} { \latin [##1] {#2} } }
+
+\NewDocumentCommand \latin {O{}m}
+  {
+    \group_begin:
+      \chemmacros_set_keys:nn {nomenclature} {#1}
+      \chemmacros_latin:n {#2}
+    \group_end:
+  }
+
+\AtBeginDocument
+  {
+    \AfterPackage* {chemstyle} { \cs_undefine:N \invacuo }
+    \NewChemLatin \insitu   {in~situ}
+    \NewChemLatin \abinitio {ab~initio}
+    \NewChemLatin \invacuo  {in~vacuo}
+  }
+
+\EndChemCompatibility
 
 % --------------------------------------------------------------------------
 % hyperref support
 % ?? unsure about adding IUPAC commands
-\AfterPackage* { hyperref }
+\AfterPackage* {hyperref}
   {
     \pdfstringdefDisableCommands
       {
@@ -757,3 +815,11 @@
 2016/01/02 - \chemprime
 2016/01/23 - give shorthand definitions only inside \iupac
 2016/01/25 - small improvements (?) of the shorthand code
+2016/05/08 - check if \latin is already defined (eg by achemso) and overwrite
+             definition
+2016/05/10 - define \chemformula_hapto:n and friends in terms of
+             \chemformula_coordination_symbol:nnnn
+           - \iupac gets an optional argument for setting options
+2016/05/31 - overwrite any \latin definition -- or rather: just define \latin
+           - \latin and all macros defined with \NewChemLatin get an optional
+             argument for setting options

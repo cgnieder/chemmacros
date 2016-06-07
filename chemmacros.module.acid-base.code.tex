@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{acid-base}{2016/04/27 acid/base}
+\ChemModule{acid-base}{2016/05/31 acid/base}
 
 \chemmacros_load_modules:n {charges}
 
@@ -66,7 +66,9 @@
     \tl_set:cn
       {l__chemmacros_#2_tl}
       { \chemmacros_translate:n {#2} }
-    \DeclareTranslationFallback {#2} {#3}
+    \chemmacros_if_compatiblity:nnTF {>} {5.6}
+      { \chemmacros_declare_translation:nnn {#2} {fallback} {#3} }
+      { \DeclareTranslationFallback {#2} {#3} }
     \cs_set_protected:Npn #1
       {
         \ensuremath
@@ -150,24 +152,8 @@
 \ChemCompatibilityFrom{5.6}
 \chemmacros_declare_translations:nn {K-acid}
   {
-    fallback = \mathrm {a} ,
-    English  = \mathrm {a} ,
     German   = \mathrm {s} ,
     Dutch    = \mathrm {z}
-  }
-
-\chemmacros_declare_translations:nn {K-base}
-  {
-    fallback = \mathrm {b} ,
-    English  = \mathrm {b} ,
-    German   = \mathrm {b}
-  }
-
-\chemmacros_declare_translations:nn {K-water}
-  {
-    fallback = \mathrm {w} ,
-    English  = \mathrm {w} ,
-    German   = \mathrm {w}
   }
 \EndChemCompatibility
 % --------------------------------------------------------------------------
@@ -175,3 +161,4 @@
 
 2016/02/04 - \NewChemEqConstant and family, new option `eq-constant'
 2016/04/27 - moved translations from lang module to acid-base module
+2016/05/31 - adapt to changes in `lang' module

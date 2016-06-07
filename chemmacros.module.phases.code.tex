@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{phases}{2015/06/09 phase descriptors}
+\ChemModule{phases}{2016/05/31 phase descriptors}
 
 \chemmacros_load_module:n {chemformula}
 
@@ -44,6 +44,7 @@
 \NewChemMacroset {Phase} {mm}
   { \chemmacros_define_phase:Nn #1 {#2} }
 
+\ChemCompatibilityTo{5.6}
 \cs_new_protected:Npn \chemmacros_define_phase:Nn #1#2
   {
     \tl_set:Nx \l__chemmacros_tmpa_tl { phase-\chemmacros_remove_backslash:N #1 }
@@ -54,6 +55,20 @@
     \__chemmacros_define_phase:Nx #1
       { \exp_not:N \chemmacros_translate:n { \exp_not:V \l__chemmacros_tmpa_tl } }
   }
+\EndChemCompatibility
+
+\ChemCompatibilityFrom{5.7}
+\cs_new_protected:Npn \chemmacros_define_phase:Nn #1#2
+  {
+    \tl_set:Nx \l__chemmacros_tmpa_tl { phase-\chemmacros_remove_backslash:N #1 }
+    \chemmacros_declare_translation:Vnn
+      \l__chemmacros_tmpa_tl
+      {fallback}
+      {#2}
+    \__chemmacros_define_phase:Nx #1
+      { \exp_not:N \chemmacros_translate:n { \exp_not:V \l__chemmacros_tmpa_tl } }
+  }
+\EndChemCompatibility
 
 \cs_new_protected:Npn \__chemmacros_define_phase:Nn #1#2
   {
@@ -101,30 +116,20 @@
 \chemmacros_declare_translations:nn {phase-sld}
   {
     fallback = s ,
-    English  = s ,
     German   = f
   }
 
 \chemmacros_declare_translations:nn {phase-lqd}
   {
     fallback = l ,
-    English  = l ,
     German   = f\/l
   }
 
 \chemmacros_declare_translations:nn {phase-gas}
-  {
-    fallback = g ,
-    English  = g ,
-    German   = g
-  }
+  { fallback = g }
 
 \chemmacros_declare_translations:nn {phase-aq}
-  {
-    fallback = aq ,
-    English  = aq ,
-    German   = aq
-  }
+  { fallback = aq }
 \EndChemCompatibility
 
 % --------------------------------------------------------------------------
@@ -132,3 +137,4 @@
 
 2015/06/09 - first version
 2016/04/27 - moved translations from lang module to phases module
+2016/05/31 - adapt to changes in `lang' module

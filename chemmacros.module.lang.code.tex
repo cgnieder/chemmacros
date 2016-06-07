@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{lang}{2016/04/27 language settings for chemmacros}
+\ChemModule{lang}{2016/05/31 language settings for chemmacros}
 
 \RequirePackage{translations}
 
@@ -43,16 +43,25 @@
 % this token list will hold the chosen language for chemmacros; since the
 % language is either chosen automatically or by option it is only available at
 % begin document
-\tl_new:N        \l_chemmacros_language_tl
-\tl_set:Nn       \l_chemmacros_language_tl {english}
-\tl_new:N        \l__chemmacros_current_language_tl
+\tl_new:N  \l_chemmacros_language_tl
+\tl_set:Nn \l_chemmacros_language_tl {english}
+\tl_new:N  \l__chemmacros_current_language_tl
+
+\tl_const:Nx \c__chemmacros_keyword_prefix_tl
+  { \chemmacros_if_compatiblity:nnT {>} {5.6} {chem-keyword-} }
+
+\prop_new:N \g_chemmacros_translations_prop
 
 % translate the key #1
 \cs_new:Npn \chemmacros_translate:n #1
   {
     \bool_if:NTF \l__chemmacros_language_auto_bool
-      { \GetTranslation {#1} }
-      { \GetTranslationFor {\l_chemmacros_language_tl} {#1} }
+      { \GetTranslation { \c__chemmacros_keyword_prefix_tl #1 } }
+      {
+        \GetTranslationFor
+          {\l_chemmacros_language_tl}
+          { \c__chemmacros_keyword_prefix_tl #1 }
+      }
   }
 
 \DeclareExpandableDocumentCommand \ChemTranslate {m}
@@ -93,7 +102,7 @@
 }
 
 % --------------------------------------------------------------------------
-\ChemCompatibilityFrom{5.6}
+% \ChemCompatibilityFrom{5.6}
 \cs_new_protected:Npn \__chemmacros_declare_translation:nw #1#2=#3\q_stop
   {
     \tl_set:Nx \l__chemmacros_tmpa_tl { \tl_trim_spaces:n {#2} }
@@ -101,8 +110,8 @@
     \use:x
       {
         \chemmacros_declare_translation:nnn
-          { \exp_not:V \l__chemmacros_tmpa_tl }
           { \exp_not:n {#1} }
+          { \exp_not:V \l__chemmacros_tmpa_tl }
           { \exp_not:V \l__chemmacros_tmpb_tl }
       }
   }
@@ -111,7 +120,15 @@
 % #2: lang
 % #3: translation
 \cs_new_protected:Npn \chemmacros_declare_translation:nnn #1#2#3
-  { \DeclareTranslation {#1} {#2} {#3} }
+  {
+    % TODO: this should be \declaretranslation
+    \@trnslt@declare@translation
+      { \c__chemmacros_keyword_prefix_tl #1 }
+      {#2}
+      {#3}
+    \prop_gput:Nnn \g_chemmacros_translations_prop {#1(#2)} {#3}
+  }
+\cs_generate_variant:Nn \chemmacros_declare_translation:nnn {V}
 
 % #1: key
 % #2: csv list: { <lang1> = <translation1> , <lang2> = <translation2> }
@@ -128,6 +145,23 @@
 \NewDocumentCommand \DeclareChemTranslation {mmm}
   { \chemmacros_declare_translation:nnn {#1} {#2} {#3} }
 \@onlypreamble \DeclareChemTranslation
+% \EndChemCompatibility
+
+\cs_new:Npn \__chemmacros_parse_translate_list_entry:nnn #1#2#3 {}
+
+\cs_new_protected:Npn \__chemacros_parse_translate_list_entry:www #1(#2)\q_mark#3\q_stop
+  { \__chemmacros_parse_translate_list_entry:nnn {#1} {#2} {#3} }
+
+\cs_new_protected:Npn \chemmacros_for_all_translations_do:n #1
+  {
+    \cs_set:Npn \__chemmacros_parse_translate_list_entry:nnn ##1##2##3 {#1}
+    \prop_map_inline:Nn \g_chemmacros_translations_prop
+      { \__chemacros_parse_translate_list_entry:www ##1 \q_mark ##2 \q_stop }
+  }
+
+\ChemCompatibilityFrom{5.7}
+\NewDocumentCommand \ForAllChemTranslationsDo {+m}
+  { \chemmacros_for_all_translations_do:n {#1} }
 \EndChemCompatibility
 
 % --------------------------------------------------------------------------
@@ -141,3 +175,6 @@
            - \DeclareChemTranslation and \DeclareChemTranslations
            - moved translations from lang module to the corresponding modules
              they belong to
+2016/05/31 - add prefix string to translation keywords
+           - add logging of translation keywords
+           - \ForAllChemTranslationsDo

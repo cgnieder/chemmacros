@@ -25,7 +25,9 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{errorcheck}{2016/03/08 error checking for unloaded modules}[5.2]
+\ChemModule{errorcheck}{2016/05/31 error checking for unloaded modules}[5.2]
+
+\RequirePackage{scrlfile}
 
 \msg_new:nnn {chemmacros} {undefined}
   { The~ #1~ `#2'~ is~ undefined.~ You~ need~ to~ load~ the~ `#3'~ module. }
@@ -98,6 +100,15 @@
 \chemmacros_command_requires_module:Nn     \schemename     {scheme}
 \chemmacros_command_requires_module:Nn     \listofschemes  {scheme}
 
+\BeforePackage {chemscheme}
+  {
+    \cs_undefine:N \scheme
+    \cs_undefine:N \endscheme
+    \cs_undefine:N \listschemename
+    \cs_undefine:N \schemename
+    \cs_undefine:N \listofschemes
+  }
+
 % spectroscopy module
 \chemmacros_command_requires_module:Nn     \NMR           {spectroscopy}
 \chemmacros_environment_requires_module:nn {experimental} {spectroscopy}
@@ -117,4 +128,4 @@
 
 2015/10/14 - first version
 2016/03/08 - add `polymers' module
-
+2016/05/31 - enable `chemscheme' to be loaded after chemmacros

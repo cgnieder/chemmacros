@@ -31,10 +31,10 @@
 
 % --------------------------------------------------------------------------
 % package information:
-\tl_const:Nn \c_chemmacros_date_tl {2016/05/04}
+\tl_const:Nn \c_chemmacros_date_tl {2016/06/07}
 \tl_const:Nn \c_chemmacros_version_major_number_tl {5}
-\tl_const:Nn \c_chemmacros_version_minor_number_tl {6}
-\tl_const:Nn \c_chemmacros_version_subrelease_tl   {a}
+\tl_const:Nn \c_chemmacros_version_minor_number_tl {7}
+\tl_const:Nn \c_chemmacros_version_subrelease_tl   {}
 \tl_const:Nx \c_chemmacros_version_number_tl
   {\c_chemmacros_version_major_number_tl.\c_chemmacros_version_minor_number_tl}
 \tl_const:Nx \c_chemmacros_version_tl
@@ -518,4 +518,14 @@ Version history
                             (reactions)
                           - add cleveref and fancyref support (reactions)
                           - add cleveref and fancyref support (scheme)
+                          - \DeclareChemTranslation and
+                            \DeclareChemTranslations 
+                          - moved translations from lang module to the
+                            corresponding modules they belong to
 2016/05/04 - version 5.6a - fix small but annoying bugs (base and chemformula)
+2016/05/31 - version 5.7  - \iupac gets an optional argument for setting
+                            options (nomenclature)
+                          - \latin always defined by chemmacros (nomenclature)
+                          - fix conflict with `achemso' (nomenclature)
+                          - allow `chemscheme'/`chemstyle' to be loaded after
+                            chemmacros (errorcheck)

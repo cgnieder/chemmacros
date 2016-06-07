@@ -127,7 +127,9 @@
   makeindex-setup = { columns = 2 , columnsep = 1em }
 }
 
-\usepackage{chemfig,booktabs,cancel,varioref,csquotes}
+\usepackage{booktabs,array,longtable}
+
+\usepackage{chemfig,cancel,varioref,csquotes}
 
 \usepackage[
   a4paper,
@@ -701,7 +703,7 @@ In modules one can try adding code for a certain version or range of versions:
   \command{ChemCompatibilityBetween}[\marg{num1}\marg{num2} \meta{code}
   \cs{EndChemCompatibility}]
     Leaves \meta{code} in the input stream if the compatibility version $x$
-    given by \option{compatibility} lies between \meta{num2} and \meta{num2}
+    given by \option{compatibility} lies between \meta{num1} and \meta{num2}
     ($\text{\meta{num1}}\leq x\leq\text{\meta{num2}}$).
   \command{EndChemCompatibility}
     This macro \emph{must} end each of the \cs*{ChemCompatibility\ldots}
@@ -1329,21 +1331,34 @@ existing ones:
 
 \subsubsection{Latin Phrases}
 
-The package \pkg{chemstyle}~\cite{pkg:chemstyle} provides the command
-\cs{latin} to typeset common latin phrases in a consistent way.  \chemmacros\
-defines a similar \cs{latin} only if \pkg{chemstyle} has \emph{not} been
-loaded and additionally provides these commands:
-\begin{center}
-  \cs{insitu}   \insitu \quad
-  \cs{abinitio} \abinitio \quad
-  \cs{invacuo}  \invacuo
-\end{center}
+\chemmacros\ provides a command for typesetting latin phrases:
+\begin{commands}
+  \command{latin}[\oarg{options}\marg{phrase}]
+    Typesets \meta{phrase} according to the option \option{format} described
+    below.
+  \command{insitu}[\quad\insitu]
+  \command{invacuo}[\quad\invacuo]
+  \command{abinitio}[\quad\abinitio]
+\end{commands}
 
-\emph{If the package \pkg{chemstyle} has been loaded they are defined using
-\pkg{chemstyle}'s \cs{latin} command.  This means that then the appearance
-depends on \pkg{chemstyle}'s option \code{abbremph}.}
+If you additionally load \pkg{chemstyle}~\cite{pkg:chemstyle} said package
+will \emph{not} define its own \cs{latin}.
 
-The commands are defined through
+% The package \pkg{chemstyle}~\cite{pkg:chemstyle} provides the command
+% \cs{latin} to typeset common latin phrases in a consistent way.  \chemmacros\
+% defines a similar \cs{latin} only if \pkg{chemstyle} has \emph{not} been
+% loaded and additionally provides these commands:
+% \begin{center}
+%   \cs{insitu}   \insitu \quad
+%   \cs{abinitio} \abinitio \quad
+%   \cs{invacuo}  \invacuo
+% \end{center}
+
+% \emph{If the package \pkg{chemstyle} has been loaded they are defined using
+% \pkg{chemstyle}'s \cs{latin} command.  This means that then the appearance
+% depends on \pkg{chemstyle}'s option \code{abbremph}.}
+
+The last three commands mentioned above are defined through
 \begin{commands}
   \command{NewChemLatin}[\marg{cs}\marg{phrase}]
     Define a new latin phrase.  Gives an error if \meta{cs} already exists.
@@ -1358,11 +1373,10 @@ The commands are defined through
 \begin{example}[side-by-side]
   \NewChemLatin\ltn{latin text}\ltn
 \end{example}
-If you have \emph{not} loaded \pkg{chemstyle} you can change the appearance
-with this option:
+You can change the appearance with this option:
 \begin{options}
-  \keyval{format}{definition}\Module{nomenclature}\Default{\cs*{itshape}}
-    Set the format of the latin phrases.
+  \keyval{format}{definition}\Module{nomenclature}\Default{\cs*{emph}}
+    \changedversion{5.7}Sets the format for the latin phrases.
 \end{options}
 
 \subsection{The \chemmodule*{particles} Module}\label{sec:particles-module}
@@ -1904,7 +1918,7 @@ For further details on mappings please refer to \chemgreek's manual.
 The \chemmodule{lang} module provides language support for \chemmacros.  It
 loads the package \pkg{translations}~\cite{pkg:translations}.
 
-\subsubsection{Information For Users}
+\subsubsection{Information For Users}\label{sec:information-users}
 
 This module defines the following option:
 \begin{options}
@@ -1925,22 +1939,25 @@ translation keys are listed in section~\vref{sec:avail-transl-keys}.
 
 \subsubsection{Available Translation Keys}\label{sec:avail-transl-keys}
 
-Table~\vref{tab:translation-keys} lists (almost) all keys which are predefined
-in \chemmacros.  \emph{Some of the translations have changed in
-  version~5.6\changedversion{5.6}.} The \chemmodule{lang} doesn't provide the
-translations themselves -- they are provided by the corresponding modules.  A
-translation key is a key which is understood by the \pkg{translations} package
-and its commands like \cs*{GetTranslation}.  For each key at least the English
-fallback translation is provided, for most also the German translation is
-provided.  For a few keys also other translations are provided.  If you find
-that a translation for your language is missing you can provide it in the
+Table~\vref{tab:translation-keys} lists all predefined translations of the
+available keys.  \emph{Some of the translations have changed in
+  version~5.6\changedversion{5.6}.} The \chemmodule{lang} module doesn't
+provide the translations themselves -- they are provided by the corresponding
+modules.  A translation key is a unique string\footnote{That is, a string
+  using the definition for strings used for expl3, i.e., converted to a series
+  of category code~12 characters..} of characters.  Each key is used to
+identify a replacement text which depends on the current language or the
+language set through the \option{language} option.  For each key at least the
+English fallback translation is provided, for most also the German translation
+is provided.  For a few keys also other translations are provided.  If you
+find that a translation for your language is missing you can provide it in the
 preamble:
 \begin{commands}
-  \command{DeclareTranslation}[\marg{language}\marg{key}\marg{translation}]
-    Defines a translation of key \meta{key} for the language \meta{language}.
-    No error will be raised if a translation of \meta{key} already exists.
-    This command can only be used in the preamble and is defined by the
-    \pkg{translations} package.
+  % \command{DeclareTranslation}[\marg{language}\marg{key}\marg{translation}]
+  %   Defines a translation of key \meta{key} for the language \meta{language}.
+  %   No error will be raised if a translation of \meta{key} already exists.
+  %   This command can only be used in the preamble and is defined by the
+  %   \pkg{translations} package.
   \command{DeclareChemTranslation}[\marg{language}\marg{key}\marg{translation}]
     \sinceversion{5.6}A command which makes an abstraction from the
     \pkg{translations} package.  It should be used in documents for adding
@@ -1952,58 +1969,43 @@ preamble:
     used by document authors as well, of course.  It gets a csv list of
     key\slash value pairs of translations.  This command can only be used in
     the preamble.
-  \explcommand{chemmacros_declare_translation:nnn}[\marg{language}\marg{key}%
-    \marg{translation}]
-    The expl3 version of \cs{DeclareChemTranslation}.
-  \explcommand{chemmacros_declare_translations:nn}[\marg{key}\Marg{\meta{language} =
-    \meta{translation}}]
-    The expl3 version of \cs{DeclareChemTranslations}.
 \end{commands}
 If you send me an email (see section~\vref{sec:sugg-bug-reports}) with the
 translations for your language I'll gladly add them to the next release of
 \chemmacros!
 
-\begin{table}
-  \centering
-  \caption{Translation keys predefined by \chemmacros.}
-  \label{tab:translation-keys}
-  \NewDocumentCommand\showtranslation{mm}{%
-    \SaveTranslationFor\tmp{#1}{#2}%
-    \code{\detokenize\expandafter{\tmp}}%
-  }
-  \NewDocumentCommand\showtranslations{m}{
-    \code{#1} &
-    \showtranslation{fallback}{#1} &
-    \showtranslation{german}{#1}
-  }
- \begin{tabular}{lll}
-    \toprule
-      \bfseries key & \bfseries fallback translation & \bfseries German \\
-    \midrule
-      \showtranslations{scheme-name} \\
-      \showtranslations{scheme-list} \\
-      \showtranslations{Scheme} \\
-      \showtranslations{scheme} \\
-      \showtranslations{Schemes} \\
-      \showtranslations{schemes} \\
-      \showtranslations{K-acid} \\
-      \showtranslations{K-base} \\
-      \showtranslations{K-water} \\
-      \showtranslations{phase-sld} \\
-      \showtranslations{phase-lqd} \\
-      \showtranslations{phase-gas} \\
-      \showtranslations{phase-aq} \\
-      \showtranslations{list-of-reactions} \\
-      \showtranslations{Reaction} \\
-      \showtranslations{reaction} \\
-      \showtranslations{Reactions} \\
-      \showtranslations{reactions} \\
-    \bottomrule
-  \end{tabular}
-\end{table}
+\emph{Please do not use \pkg{translations}' \cs{DeclareTranslation} for
+  declaring translations.}
 
+\ForAllChemTranslationsDo{
+  \appto\chemtranslationtable{\texttt{#1} & #2 & \texttt{\detokenize{#3}} \\}
+}
+
+\begin{longtable}{lll}
+    \caption{Translation keys predefined by \chemmacros\ (except
+      \code{phase-aqi}, \code{phase-cd} and \code{phase-lc} which were defined
+      in this document).}
+    \label{tab:translation-keys} \\
+    \toprule
+    \bfseries key & \bfseries language & \bfseries translation \\
+    \midrule
+  \endfirsthead
+    \toprule
+    \bfseries key & \bfseries language & \bfseries translation \\
+    \midrule
+  \endhead
+    \bottomrule
+  \endlastfoot
+    \midrule
+    & & \hfill\emph{continues} \\
+  \endfoot
+  \chemtranslationtable
+\end{longtable}
+  
 \subsubsection{Information For Module Writers}
 
+In addition to the commands from section~\vref{sec:avail-transl-keys} the
+following macros are available:
 \begin{commands}
   \expandable\explcommand{chemmacros_translate:n}[ \marg{translation key}]
     Translates the given key to the language which is detected automatically
@@ -2016,6 +2018,12 @@ translations for your language I'll gladly add them to the next release of
   \command{ChemTranslate}[\marg{translation key}]
     A version of \explcs{chemmacros_translate:n} for those who prefer
     traditional \LaTeXe\ programming over expl3.
+  \explcommand{chemmacros_declare_translation:nnn}[\marg{language}\marg{key}%
+    \marg{translation}]
+    The expl3 version of \cs{DeclareChemTranslation}.
+  \explcommand{chemmacros_declare_translations:nn}[\marg{key}\Marg{\meta{language}
+    = \meta{translation}}]
+    The expl3 version of \cs{DeclareChemTranslations}.
 \end{commands}
 
 \clearpage
