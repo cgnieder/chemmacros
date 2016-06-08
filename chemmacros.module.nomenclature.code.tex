@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{nomenclature}{2016/05/31 chemical names}
+\ChemModule{nomenclature}{2016/06/07 chemical names}
 
 \RequirePackage{scrlfile}
 
@@ -319,7 +319,7 @@
 % #2: boolean - if true superscript will be used
 % #3: symbol
 % #4: sub-/superscript
-\cs_new_protected:Npn \chemformula_coordination_symbol:nnnn #1#2#3#4
+\cs_new_protected:Npn \chemmacros_coordination_symbol:nnnn #1#2#3#4
   {
     \chemmacros_chemformula:n {#3}
     \tl_if_blank:nF {#4}
@@ -333,27 +333,27 @@
       { \chemmacros_break_point_hyphen: }
   }
 
-\cs_new_protected:Npn \chemformula_hapto:n #1
+\cs_new_protected:Npn \chemmacros_hapto:n #1
   {
-    \chemformula_coordination_symbol:nnnn
+    \chemmacros_coordination_symbol:nnnn
       { \l__chemmacros_coord_use_hyphen_bool }
       { \c_false_bool }
       { \chemeta }
       {#1}
   }
 
-\cs_new_protected:Npn \chemformula_dento:n #1
+\cs_new_protected:Npn \chemmacros_dento:n #1
   {
-    \chemformula_coordination_symbol:nnnn
+    \chemmacros_coordination_symbol:nnnn
       { \l__chemmacros_coord_use_hyphen_bool }
       { \c_false_bool }
       { \chemkappa }
       {#1}
   }
 
-\cs_new_protected:Npn \chemformula_bridge:n #1
+\cs_new_protected:Npn \chemmacros_bridge:n #1
   {
-    \chemformula_coordination_symbol:nnnn
+    \chemmacros_coordination_symbol:nnnn
       { \l__chemmacros_coord_use_hyphen_bool }
       { \l__chemmacros_bridge_super_bool }
       { \chemmu }
@@ -652,9 +652,9 @@
 \NewChemIUPAC \anti { \textit {anti} }
 
 % coordination chemistry:
-\NewChemIUPAC \hapto  { \chemformula_hapto:n }
-\NewChemIUPAC \dento  { \chemformula_dento:n }
-\NewChemIUPAC \bridge { \chemformula_bridge:n }
+\NewChemIUPAC \hapto  { \chemmacros_hapto:n }
+\NewChemIUPAC \dento  { \chemmacros_dento:n }
+\NewChemIUPAC \bridge { \chemmacros_bridge:n }
 
 % attachments to heteroatoms / added hydrogen
 \NewChemIUPAC \hydrogen   { \textit {H} }
@@ -817,9 +817,11 @@
 2016/01/25 - small improvements (?) of the shorthand code
 2016/05/08 - check if \latin is already defined (eg by achemso) and overwrite
              definition
-2016/05/10 - define \chemformula_hapto:n and friends in terms of
-             \chemformula_coordination_symbol:nnnn
+2016/05/10 - define \chemmacros_hapto:n and friends in terms of
+             \chemmacros_coordination_symbol:nnnn
            - \iupac gets an optional argument for setting options
 2016/05/31 - overwrite any \latin definition -- or rather: just define \latin
            - \latin and all macros defined with \NewChemLatin get an optional
              argument for setting options
+2016/06/07 - rename functions which erroneously were assigned to the
+             `chemformula' module
