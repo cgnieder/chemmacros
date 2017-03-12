@@ -1,15 +1,14 @@
 --------------------------------------------------------------------------
-the CHEMMACROS package v5.7a 2016/06/08
+the CHEMMACROS package v5.7d 2017/09/10
 
   comprehensive support for typesetting chemistry documents
 
 --------------------------------------------------------------------------
 Clemens Niederberger
 Web:    https://github.com/cgnieder/chemmacros/
-        http://www.mychemistry.eu/forums/forum/2430/
 E-Mail: contact@mychemistry.eu
 --------------------------------------------------------------------------
-Copyright 2011-2016 Clemens Niederberger
+Copyright 2011-2017 Clemens Niederberger
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3
@@ -24,11 +23,41 @@ This work has the LPPL maintenance status `maintained'.
 The Current Maintainer of this work is Clemens Niederberger.
 --------------------------------------------------------------------------
 The chemmacros package consists of the following files
- - chemmacros.sty, chemmacros4.sty, chemmacros5.sty,
- - chemmacros_en.tex, chemmacros_en.pdf,
- - quite a number of module files following the naming scheme
-   chemmacros.module.*.code.tex
- - README
+ == STYLE FILES ==
+    chemmacros.sty
+    chemmacros4.sty
+    chemmacros5.sty,
+ == DOCUMENTATION FILES ==
+    chemmacros_en.tex
+    chemmacros_en.pdf,
+    README
+    chemmacros.history
+ == MODULE CODE FILES ==
+    chemmacros.module.acid.code.tex
+    chemmacros.module.all.code.tex
+    chemmacros.module.base.code.tex
+    chemmacros.module.charges.code.tex
+    chemmacros.module.chemformula.code.tex
+    chemmacros.module.errorcheck.code.tex
+    chemmacros.module.greek.code.tex
+    chemmacros.module.isotopes.code.tex
+    chemmacros.module.lang.code.tex
+    chemmacros.module.mechanisms.code.tex
+    chemmacros.module.newman.code.tex
+    chemmacros.module.nomenclature.code.tex
+    chemmacros.module.orbital.code.tex
+    chemmacros.module.particles.code.tex
+    chemmacros.module.phases.code.tex
+    chemmacros.module.polymers.code.tex
+    chemmacros.module.reactions.code.tex
+    chemmacros.module.redox.code.tex
+    chemmacros.module.scheme.code.tex
+    chemmacros.module.spectroscopy.code.tex
+    chemmacros.module.symbols.code.tex
+    chemmacros.module.thermodynamics.code.tex
+    chemmacros.module.tikz.code.tex
+    chemmacros.module.units.code.tex
+    chemmacros.module.xfrac.code.tex
 --------------------------------------------------------------------------
 If you have any ideas, questions, suggestions or bugs to report, please
 feel free to contact me.

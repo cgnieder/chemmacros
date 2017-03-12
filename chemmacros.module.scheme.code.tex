@@ -11,7 +11,7 @@
 % If you have any ideas, questions, suggestions or bugs to report, please
 % feel free to contact me.
 % --------------------------------------------------------------------------
-% Copyright 2011-2016 Clemens Niederberger
+% Copyright 2011-2017 Clemens Niederberger
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -80,7 +80,7 @@
         \counterwithin {#1} {chapter}
         \setcounter {#1} {0}
       }
-    \chemmacros_tex_if:nT {artopt}
+    \chemmacros_tex_if:nnT {artopt} {}
       { \counterwithout {#1} {chapter} }
   }
 
@@ -217,7 +217,7 @@
               {
                 \cs_new_protected:cpn {listof#1s}
                   {
-                    \chemmacros_tex_if:nTF {@twocolumn}
+                    \chemmacros_tex_if:nnTF {@twocolumn} {}
                       { \@restonecoltrue\onecolumn }
                       { \@restonecolfalse }
                     \exp_args:NNx \chapter* {\exp_not:c {list#1name}}
@@ -225,7 +225,7 @@
                       { \MakeUppercase \use:c {list#1name} }
                       { \MakeUppercase \use:c {list#1name} }
                     \@starttoc {#2}
-                    \chemmacros_tex_if:nT {@restonecol}
+                    \chemmacros_tex_if:nnT {@restonecol} {}
                       { \twocolumn }
                   }
               }
@@ -307,3 +307,4 @@
 2015/10/23 - add info message to float method detection
 2016/01/23 - make the module compatible with chemscheme
 2016/04/25 - cleveref and fancyref support
+2016/12/28 - bug fix: typo in \chemmacros_tex_if:nnTF usage

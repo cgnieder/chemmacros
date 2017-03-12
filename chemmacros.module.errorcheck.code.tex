@@ -11,7 +11,7 @@
 % If you have any ideas, questions, suggestions or bugs to report, please
 % feel free to contact me.
 % --------------------------------------------------------------------------
-% Copyright 2011-2016 Clemens Niederberger
+% Copyright 2011-2017 Clemens Niederberger
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -25,44 +25,42 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{errorcheck}{2016/05/31 error checking for unloaded modules}[5.2]
+\ChemModule{errorcheck}{2016/10/05 error checking for unloaded modules}[5.2]
 
 \RequirePackage{scrlfile}
 
 \msg_new:nnn {chemmacros} {undefined}
-  { The~ #1~ `#2'~ is~ undefined.~ You~ need~ to~ load~ the~ `#3'~ module. }
+  {
+    The~ #1~ `#2'~ is~ undefined.~ You~ need~ to~ load~ the~
+    `#3'~ module.
+  }
 
 \cs_generate_variant:Nn \msg_error:nnnnn {nnnx}
 
-\cs_new_protected:Npn \chemmacros_command_requires_module:Nn #1#2
+\cs_new_protected:Npn \chemmacros_requires_module:nNn #1#2#3
   {
-    \chemmacros_if_module_loaded:nF {#2}
+    \chemmacros_if_module_loaded:nF {#3}
       {
-        \cs_set:Npn #1
+        \cs_if_free:NT #2
           {
-            \msg_error:nnnxn {chemmacros} {undefined}
-              {command}
-              { \token_to_str:N #1 }
-              {#2}
+            \cs_set:Npn #2
+              {
+                \msg_error:nnnxn {chemmacros} {undefined}
+                  {#1}
+                  {\token_to_str:N #2}
+                  {#3}
+              }
+            \chemmacros_before_module:nn {#3} { \cs_undefine:N #2 }
           }
       }
-    \chemmacros_before_module:nn {#2} { \cs_undefine:N #1 }
   }
+\cs_generate_variant:Nn \chemmacros_requires_module:nNn {nc}
+
+\cs_new_protected:Npn \chemmacros_command_requires_module:Nn #1#2
+  { \chemmacros_requires_module:nNn {command} #1 {#2} }
 
 \cs_new_protected:Npn \chemmacros_environment_requires_module:nn #1#2
-  {
-    \chemmacros_if_module_loaded:nF {#2}
-      {
-        \cs_set:cpn {#1}
-          {
-            \msg_error:nnnnn {chemmacros} {undefined}
-              {environment}
-              {#1}
-              {#2}
-          }
-      }
-    \chemmacros_before_module:nn {#2} { \cs_undefine:c {#1} }
-  }
+  { \chemmacros_requires_module:ncn {environment} {#1} {#2} }
 
 % --------------------------------------------------------------------------
 % add checking for the most common user commands and environments:
@@ -129,3 +127,4 @@
 2015/10/14 - first version
 2016/03/08 - add `polymers' module
 2016/05/31 - enable `chemscheme' to be loaded after chemmacros
+2016/10/06 - check if commands exist before defining them to raise errors
