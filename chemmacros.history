@@ -355,8 +355,12 @@ Version history
 2016/10/05 - version 5.7b - small improvement of the errorcheck module
 2016/12/28 - version 5.7c - bug fix: typo in \chemmacros_tex_if:nnTF usage
                             (scheme)
-2017/??/?? - version 5.8  - new option `nmr-base-format' (spectroscopy)
+2017/04/17 - version 5.8  - new option `nmr-base-format' (spectroscopy)
                           - change \hapto and \dento to follow iupacs rules
                             according to IUPAC Red Book 2005. IR-10.2.5.2 The
                             eta convention (p.216) and IR-9.2.4.2 The
                             kappa convention (p.155f)
+                          - fix error in \chemmacros_allow_hyphens: definition
+                            (nomenclature)
+                          - new options `cip-inner-format', `cip-outer-format'
+                            and `cip-number-format' (nomenclature)

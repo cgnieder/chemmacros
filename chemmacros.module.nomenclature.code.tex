@@ -250,7 +250,7 @@
   { \chemmacros_cip:n {#1} }
 \EndChemCompatibility
 
-\ChemCompatibilityFrom{5.2}
+\ChemCompatibilityBetween{5.2}{5.7}
 \cs_new_protected:Npn \chemmacros_cip:n #1
   {
     \int_zero:N \l__chemmacros_tmpa_int
@@ -265,6 +265,54 @@
           { \textup{,} }
       }
     \textup{)}
+    \tex_kern:D \l__chemmacros_cip_kern_dim
+  }
+\DeclareChemIUPAC \cip { \chemmacros_cip:n }
+\EndChemCompatibility
+
+\ChemCompatibilityFrom{5.8}
+\tl_new:N \l__chemmacros_cip_inner_tl
+\tl_new:N \l__chemmacros_cip_outer_tl
+\tl_new:N \l__chemmacros_cip_number_tl
+
+\chemmacros_define_keys:nn {nomenclature}
+  {
+    cip-inner-format  .tl_set:N  = \l__chemmacros_cip_inner_tl ,
+    cip-inner-format  .initial:n = \itshape ,
+    cip-outer-format  .tl_set:N  = \l__chemmacros_cip_outer_tl ,
+    cip-outer-format  .initial:n = \upshape ,
+    cip-number-format .tl_set:N  = \l__chemmacros_cip_number_tl ,
+    cip-number-format .initial:n = \upshape
+  }
+  
+\cs_new_protected:Npn \__chemmacros_cip:n #1
+  {
+    \tl_set:Nn \l__chemmacros_tmpa_tl {#1}
+    \int_step_inline:nnnn {0} {1} {9}
+      {
+        \tl_replace_all:Nnn \l__chemmacros_tmpa_tl
+          {##1}
+          { { \l__chemmacros_cip_number_tl ##1} }
+      }
+    { \l__chemmacros_cip_inner_tl \l__chemmacros_tmpa_tl }
+  }
+
+\cs_new_protected:Npn \chemmacros_cip:n #1
+  {
+    \int_zero:N \l__chemmacros_tmpa_int
+    \group_begin:
+      \l__chemmacros_cip_outer_tl (
+      \clist_map_inline:nn
+        {#1}
+        {
+          \int_incr:N \l__chemmacros_tmpa_int
+          \__chemmacros_cip:n {##1}
+          \int_compare:nT
+            { \l__chemmacros_tmpa_int < \clist_count:n {#1} }
+            { , }
+        }
+      )
+    \group_end:
     \tex_kern:D \l__chemmacros_cip_kern_dim
   }
 \DeclareChemIUPAC \cip { \chemmacros_cip:n }
@@ -338,7 +386,7 @@
     \chemmacros_coordination_symbol:nnnn
       { \l__chemmacros_coord_use_hyphen_bool }
       {
-        \chemmacros_if_compatiblity_p:nn {>} {5.7}
+        \chemmacros_if_compatibility_p:nn {>} {5.7}
           { \c_true_bool }
           { \c_false_bool }
       }
@@ -351,7 +399,7 @@
     \chemmacros_coordination_symbol:nnnn
       { \l__chemmacros_coord_use_hyphen_bool }
       {
-        \chemmacros_if_compatiblity_p:nn {>} {5.7}
+        \chemmacros_if_compatibility_p:nn {>} {5.7}
           { \c_true_bool }
           { \c_false_bool }
       }
@@ -378,7 +426,9 @@
 \cs_new_protected:Npn \chemmacros_allow_hyphens:
   {
     \chemmacros_nobreak:
-    \skip_horizontal:N \c_zero_dim
+    \chemmacros_if_compatibility:nnTF {<=} {5.7}
+      { \skip_horizontal:N \c_zero_dim }
+      { \skip_horizontal:N \c_zero_skip }
   }
 
 % #1: pre break
@@ -494,7 +544,7 @@
 \prop_new:N \l__chemmacros_iupac_shorthands_prop
 
 % #1: token
-% #2: arg spec
+% #2: definition
 \cs_new_protected:Npn \chemmacros_define_iupac_shorthand:NN #1#2
   {
     \seq_if_in:NnF \l__chemmacros_iupac_shorthands_seq {#1}
@@ -592,7 +642,7 @@
       \chemmacros_make_shorthands:
       % what's this vvv in here for?
       \chemmacros_ignore_spaces:
-      \chemmacros_if_compatiblity:nnT {<=} {5.2}
+      \chemmacros_if_compatibility:nnT {<=} {5.2}
         { \chemmacros_define_deprecated:NN \- - }
       \tl_set_rescan:Nnn \l__chemmacros_tmpa_tl
         { \chemmacros_activate_all_iupac_shorthands: }
@@ -833,3 +883,6 @@
              argument for setting options
 2016/06/07 - rename functions which erroneously were assigned to the
              `chemformula' module
+2017/04/17 - fix erroneous definition of \chemmacros_allow_hyphens:
+           - new options `cip-inner-format', `cip-outer-format' and
+             `cip-number-format'

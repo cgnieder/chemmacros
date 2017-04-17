@@ -360,7 +360,7 @@
 \bool_new:N \l__chemmacros_in_document_bool
 \bool_new:N \l__chemmacros_chemstyle_bool
 
-\chemmacros_if_compatiblity:nnTF {>=} {5.2}
+\chemmacros_if_compatibility:nnTF {>=} {5.2}
   { \AfterEndPreamble }
   { \AtBeginDocument }
   { \bool_set_true:N \l__chemmacros_in_document_bool }
@@ -458,7 +458,7 @@
 
 % --------------------------------------------------------------------------
 
-\chemmacros_if_compatiblity:nnT {>=} {5.2}
+\chemmacros_if_compatibility:nnT {>=} {5.2}
   { \chemmacros_load_module:n {errorcheck} }
 
 % --------------------------------------------------------------------------

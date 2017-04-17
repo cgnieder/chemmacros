@@ -213,15 +213,15 @@
       {
         !\l__chemmacros_formula_method_set_bool
         &&
-        \chemmacros_if_compatiblity_p:nn {>=} {5.2}
+        \chemmacros_if_compatibility_p:nn {>=} {5.2}
         &&
-        \chemmacros_if_compatiblity_p:nn {<} {5.6}
+        \chemmacros_if_compatibility_p:nn {<} {5.6}
       }
       { \chemmacros_check_formula_method: }
       {
         \bool_if:NF \l__chemmacros_formula_method_set_bool
           {
-            \chemmacros_if_compatiblity:nnTF {>=} {5.6}
+            \chemmacros_if_compatibility:nnTF {>=} {5.6}
               { \msg_info:nn {chemmacros} {default-formula-method} }
               { \msg_warning:nn {chemmacros} {default-formula-method} }
             \chemmacros_set_formula_method:n {chemformula}

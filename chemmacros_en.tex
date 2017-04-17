@@ -1,4 +1,4 @@
-% arara: pdflatex
+: pdflatex
 % arara: biber
 % arara: pdflatex
 % arara: pdflatex
@@ -678,7 +678,7 @@ For future versions the aim is not to make such breaking changes again.  While
 we never know what the future actually will bring \chemmacros\ now has the
 tools for tying code to a version number:
 \begin{commands}
-  \expandable\explcommand{chemmacros_if_compatiblity:nn}[\TF\ \marg{comp}
+  \expandable\explcommand{chemmacros_if_compatibility:nn}[\TF\ \marg{comp}
   \marg{num} \marg{true} \marg{false}]
     expl3 version of \cs{IfChemCompatibilityTF}.
 \end{commands}

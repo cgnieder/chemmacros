@@ -228,7 +228,7 @@
 % --------------------------------------------------------------------------
 \cs_new_protected:Npn \__chemmacros_module:nnnn #1#2#3#4
   {
-    \chemmacros_if_compatiblity:nnF {>=} {#4}
+    \chemmacros_if_compatibility:nnF {>=} {#4}
       {
         \msg_warning:nnnn {chemmacros} {module-not-available} {#2} {#4}
         \tex_endinput:D

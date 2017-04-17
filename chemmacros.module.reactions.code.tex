@@ -117,7 +117,7 @@
 
 \cs_if_exist:NTF \chapter
   {
-    \chemmacros_if_compatiblity:nnTF {>=} {5.2}
+    \chemmacros_if_compatibility:nnTF {>=} {5.2}
       {
         \chemmacros_set_keys:nn {reactions}
           { list-heading-cmd = \chapter* {#1} }
@@ -125,7 +125,7 @@
       { \cs_set_protected:Npn \__chemmacros_reaction_heading:n { \chapter* } }
   }
   {
-    \chemmacros_if_compatiblity:nnTF {>=} {5.2}
+    \chemmacros_if_compatibility:nnTF {>=} {5.2}
       {
         \chemmacros_set_keys:nn {reactions}
           { list-heading-cmd = \section* {#1} }
