@@ -359,7 +359,7 @@ Version history
                           - change \hapto and \dento to follow iupacs rules
                             according to IUPAC Red Book 2005. IR-10.2.5.2 The
                             eta convention (p.216) and IR-9.2.4.2 The
-                            kappa convention (p.155f)
+                            kappa convention (p.155f) (nomenclature)
                           - fix error in \chemmacros_allow_hyphens: definition
                             (nomenclature)
                           - new options `cip-inner-format', `cip-outer-format'

@@ -1,4 +1,4 @@
-: pdflatex
+% arara: pdflatex
 % arara: biber
 % arara: pdflatex
 % arara: pdflatex
@@ -432,6 +432,8 @@
 \ExplSyntaxOff
 
 \AtBeginDocument{\renewcommand*\reftextfaraway[1]{starting on page~\pageref{#1}}}
+
+\usepackage{bookmark}
 
 \begin{document}
 
@@ -1185,6 +1187,19 @@ be changed through the following option:
   \keyval{cip-kern}{dim}\Module{nomenclature}\Default{.075em}
     Set the amount of kerning after the closing parenthesis.
 \end{options}
+The entries typeset by and implemented with \cs{cip} can be customized
+further:
+\begin{options}
+  \keyval{cip-outer-format}{format}\Default{\cs*{upshape}}
+    \sinceversion{5.8}The format of parentheses and commas typeset by
+    \cs{cip}.
+  \keyval{cip-inner-format}{format}\Default{\cs*{itshape}}
+    \sinceversion{5.8}The format of the entries in \cs{cip}.  This format
+    works additive to the outer format.
+  \keyval{cip-number-format}{format}\Default{\cs*{itshape}}
+    \sinceversion{5.8}The format of numbers in \cs{cip}.  This format works
+    additive to the outer format and is applied to arabic figures only.
+\end{options}
 
 \paragraph{Fischer}
 \begin{commands}
@@ -1252,8 +1267,11 @@ Two options allow customization:
     Appends the number as a subscript or superscript, depending on the choice.
     The \ac{iupac} recommendation is the subscript~\cite{iupac:redbook}.
   \keybool{coord-use-hyphen}\Module{nomenclature}\Default{true}
-    Append a hyphen to \cs{hapto}, \cs{dent} and \cs{bridge} or don't.
+    Append a hyphen to \cs{hapto}, \cs{dento} and \cs{bridge} or don't.
 \end{options}
+
+The default behaviour\sinceversion{5.8} of \cs{hapto} and \cs{dento} has
+changed with version~5.8 to follow \ac{iupac} recommendations.
 
 \paragraph{Examples}
 \begin{example}
@@ -2959,6 +2977,8 @@ number of options.  For historical reasons they all belong to the module
     The measuring method.
   \keyval{format}{commands}\Module{spectroscopy}\Default
     For example \cs*{bfseries}.
+  \keyval{nmr-base-format}{commands}\Module{spectroscopy}\Default
+    \sinceversion{5.8}Formatting instructions for the NMR base.
   \keychoice{pos-number}{side,sub,super}\Module{spectroscopy}\Default{side}
     Position of the number next to the atom.
   \keyval{coupling-symbol}{code}\Module{spectroscopy}\Default{J}

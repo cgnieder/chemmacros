@@ -282,7 +282,7 @@
     cip-outer-format  .tl_set:N  = \l__chemmacros_cip_outer_tl ,
     cip-outer-format  .initial:n = \upshape ,
     cip-number-format .tl_set:N  = \l__chemmacros_cip_number_tl ,
-    cip-number-format .initial:n = \upshape
+    cip-number-format .initial:n = \itshape
   }
   
 \cs_new_protected:Npn \__chemmacros_cip:n #1
@@ -386,7 +386,7 @@
     \chemmacros_coordination_symbol:nnnn
       { \l__chemmacros_coord_use_hyphen_bool }
       {
-        \chemmacros_if_compatibility_p:nn {>} {5.7}
+        \chemmacros_if_compatibility:nnTF {>} {5.7}
           { \c_true_bool }
           { \c_false_bool }
       }
@@ -399,7 +399,7 @@
     \chemmacros_coordination_symbol:nnnn
       { \l__chemmacros_coord_use_hyphen_bool }
       {
-        \chemmacros_if_compatibility_p:nn {>} {5.7}
+        \chemmacros_if_compatibility:nnTF {>} {5.7}
           { \c_true_bool }
           { \c_false_bool }
       }
