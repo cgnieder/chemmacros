@@ -1,5 +1,5 @@
-% arara: pdflatex
-% arara: biber
+% !arara: pdflatex
+% !arara: biber
 % arara: pdflatex
 % arara: pdflatex
 % --------------------------------------------------------------------------
@@ -310,7 +310,7 @@
 \usetikzlibrary{calc,positioning,decorations.pathmorphing,patterns}
 
 % \newpackagename\chemmacros{chemmacros}
-\newcommand*\chemmacrosversion{\csname c_chemmacros_version_number_tl\endcsname}
+\newcommand*\chemmacrosversion{\csname c_chemmacros_version_tl\endcsname}
 \newpackagename\chemformula{chemformula}
 \newpackagename\ghsystem{ghsystem}
 \newpackagename\chemgreek{chemgreek}
@@ -627,14 +627,12 @@ important and \emph{breaking} differences:
 It is actually not true that \chemmacros' has no package options any more.  It
 has one very important package option:
 \begin{options}
-  \keychoice{compatibility}{\meta{num},newest,latest}\Default{\chemmacrosversion}
-    Let's you specify the version number of \chemmacros\ you want to use.  Any
+  \keychoice{compatibility}{\meta{version},newest,latest}\Default{\chemmacrosversion}
+    Let's you specify the version of \chemmacros\ you want to use.  Any
     version earlier than 5.0 will load v4.7. \ie, the last version before
     \chemmacros\ got its modular structure\footnote{Mostly: the loaded v4.7
       has got a few fixes}.  Not using the option will always load the newest
-    version.  Please note that you only can specify the \emph{number} of the
-    version.  For a version \enquote{5.2c} you can only set compatibility mode
-    \enquote{5.2} but not specify the subrelease.
+    version.
 
     Both values \code{newest} and \code{latest} will choose the latest version
     available.
@@ -643,25 +641,29 @@ has one very important package option:
 In your document you can check for the compatibility mode.  For the following
 functions it is important to understand the rules: \emph{greater} means
 \emph{newer}.  The version number is \emph{not} a usual decimal number!  The
-syntax for \meta{num} is \meta{major}\code{.}\meta{minor}.  This means that a
-version 5.11 is \emph{newer} than a version 5.7!  In the same way \emph{less}
-means \emph{older}.  As last example: 5.10 is \emph{newer} (greater) than 5.1.
+syntax for \meta{version} is \meta{major}\code{.}\meta{minor}\meta{optional
+  subrelease}.  This means that a version~5.11 is \emph{newer} than a
+version~5.7!  In the same way \emph{less} means \emph{older}.  As last
+example: 5.10~is \emph{newer} (greater) than~5.1.  \meta{optional subrelease}
+is a lowercase letter which might or might not be present in a version number.
+Version~5.7b is newer than~5.7a which in turn is newer than~5.7.
 \begin{commands}
-  \command{IfChemCompatibilityTF}[\marg{comp}\marg{num}\marg{true}\marg{false}]
+  \expandable\command{IfChemCompatibilityTF}[\marg{comp}\marg{version}%
+  \marg{true}\marg{false}]
     Checks the value given through the option \option{compatibility} against
-    \meta{num} using \meta{comp} and either leaves \meta{true} or \meta{false}
-    in the input stream. \meta{comp} can be one of \code{<}, \code{<=},
-    \code{=}, \code{>=} or \code{>}.
-  \command{IfChemCompatibilityT}[\marg{comp}\marg{num}\marg{true}]
-    Checks the value given through the option \option{compatibility} against
-    \meta{num} using \meta{comp} and leaves \meta{true} in the input stream if
-    the check is logically true.  \meta{comp} can be one of \code{<},
+    \meta{version} using \meta{comp} and either leaves \meta{true} or
+    \meta{false} in the input stream. \meta{comp} can be one of \code{<},
     \code{<=}, \code{=}, \code{>=} or \code{>}.
-  \command{IfChemCompatibilityF}[\marg{comp}\marg{num}\marg{false}]
+  \expandable\command{IfChemCompatibilityT}[\marg{comp}\marg{version}\marg{true}]
     Checks the value given through the option \option{compatibility} against
-    \meta{num} using \meta{comp} and leaves \meta{false} in the input stream if
-    the check is logically false.  \meta{comp} can be one of \code{<},
-    \code{<=}, \code{=}, \code{>=} or \code{>}.
+    \meta{version} using \meta{comp} and leaves \meta{true} in the input
+    stream if the check is logically true.  \meta{comp} can be one of
+    \code{<}, \code{<=}, \code{=}, \code{>=} or \code{>}.
+  \expandable\command{IfChemCompatibilityF}[\marg{comp}\marg{version}\marg{false}]
+    Checks the value given through the option \option{compatibility} against
+    \meta{version} using \meta{comp} and leaves \meta{false} in the input
+    stream if the check is logically false.  \meta{comp} can be one of
+    \code{<}, \code{<=}, \code{=}, \code{>=} or \code{>}.
 \end{commands}
 
 A possible usage:
@@ -681,31 +683,33 @@ we never know what the future actually will bring \chemmacros\ now has the
 tools for tying code to a version number:
 \begin{commands}
   \expandable\explcommand{chemmacros_if_compatibility:nn}[\TF\ \marg{comp}
-  \marg{num} \marg{true} \marg{false}]
+  \marg{version} \marg{true} \marg{false}]
     expl3 version of \cs{IfChemCompatibilityTF}.
 \end{commands}
 
 In modules one can try adding code for a certain version or range of versions:
 \begin{commands}
-  \command{ChemCompatibility}[\marg{num} \meta{code} \cs{EndChemCompatibility}]
+  \command{ChemCompatibility}[\marg{version} \meta{code} \cs{EndChemCompatibility}]
     Leaves \meta{code} in the input stream if the compatibility version $x$
-    given by \option{compatibility} matches \meta{num}
-    ($x=\text{\meta{num}}$).
-  \command{ChemCompatibilityFrom}[\marg{num} \meta{code} \cs{EndChemCompatibility}]
+    given by \option{compatibility} matches \meta{version}
+    ($x=\text{\meta{version}}$).
+  \command{ChemCompatibilityFrom}[\marg{version} \meta{code} \cs{EndChemCompatibility}]
     Leaves \meta{code} in the input stream if the compatibility version $x$
-    given by \option{compatibility} matches \meta{num} or newer.  This means
-    \meta{num} is the \emph{oldest} version allowed
-    ($x\geq\text{\meta{num}}$).
-  \command{ChemCompatibilityTo}[\marg{num} \meta{code} \cs{EndChemCompatibility}]
-    Leaves \meta{code} in the input stream if the compatibility version $x$ given
-    by \option{compatibility} matches \meta{num} or older.  This means
-    \meta{num} is the \emph{newest} version allowed
-    ($x\leq\text{\meta{num}}$).
-  \command{ChemCompatibilityBetween}[\marg{num1}\marg{num2} \meta{code}
+    given by \option{compatibility} matches \meta{version} or newer.  This
+    means \meta{version} is the \emph{oldest} version allowed
+    ($x\geq\text{\meta{version}}$).
+  \command{ChemCompatibilityTo}[\marg{version} \meta{code} \cs{EndChemCompatibility}]
+    \changedversion{5.8a}Leaves \meta{code} in the input stream if the
+    compatibility version $x$ given by \option{compatibility} matches any
+    version up to and \emph{excluding} \meta{version}. This means
+    \meta{version} is the \emph{oldest} version \emph{not} allowed
+    ($x<\text{\meta{version}}$).
+  \command{ChemCompatibilityBetween}[\marg{version 1}\marg{version 2} \meta{code}
   \cs{EndChemCompatibility}]
-    Leaves \meta{code} in the input stream if the compatibility version $x$
-    given by \option{compatibility} lies between \meta{num1} and \meta{num2}
-    ($\text{\meta{num1}}\leq x\leq\text{\meta{num2}}$).
+    \changedversion{5.8a}Leaves \meta{code} in the input stream if the
+    compatibility version $x$ given by \option{compatibility} lies between and
+    \emph{including} \meta{version 1} up to and \emph{excluding} \meta{version 2}
+    ($\text{\meta{version 1}}\leq x<\text{\meta{version 2}}$).
   \command{EndChemCompatibility}
     This macro \emph{must} end each of the \cs*{ChemCompatibility\ldots}
     macros.

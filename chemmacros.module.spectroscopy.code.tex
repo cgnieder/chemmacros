@@ -120,7 +120,7 @@
     \tl_set:Nn \l__chemmacros_nmr_element_default_tl {#2}
   }
 
-\ChemCompatibilityTo{5.7}
+\ChemCompatibilityTo{5.8}
 \cs_new_protected:Npn \__chemmacros_nmr_base:nn #1#2
   {
     \tl_if_blank:VF \g__chemmacros_nmr_element_coupled_tl
@@ -363,11 +363,11 @@
 \NewDocumentCommand \chemmacros_data:w { smo }
   {
     \bool_if:NT \l__chemmacros_nmr_list_bool { \item }
-    {
-      \tl_use:N \l__chemmacros_nmr_format_tl #2
-      \IfNoValueF {#3} { ~ ( #3 ) }
-      \IfBooleanT {#1} { \bool_if:NT \l__chemmacros_nmr_use_equal_bool { : } }
-    }
+      {
+        \tl_use:N \l__chemmacros_nmr_format_tl #2
+        \IfNoValueF {#3} { ~ ( #3 ) }
+        \IfBooleanT {#1} { \bool_if:NT \l__chemmacros_nmr_use_equal_bool { : } }
+      }
     \IfBooleanF {#1} { \bool_if:NT \l__chemmacros_nmr_use_equal_bool { ~ = } }
   }
 
@@ -448,7 +448,11 @@
         \tl_set:Nn \l__chemmacros_nmr_coupling_nuclei_tl
           {
             \c_math_subscript_token
-              { \chemmacros_chemformula:n {#2} }
+              {
+                \l__chemmacros_nmr_coupling_nuclei_pre_tl
+                \chemmacros_chemformula:n {#2}
+                \l__chemmacros_nmr_coupling_nuclei_post_tl
+              }
           }
       }
       {

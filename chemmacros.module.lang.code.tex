@@ -48,7 +48,7 @@
 \tl_new:N  \l__chemmacros_current_language_tl
 
 \tl_const:Nx \c__chemmacros_keyword_prefix_tl
-  { \chemmacros_if_compatibility:nnT {>} {5.6} {chem-keyword-} }
+  { \chemmacros_if_compatibility:nnT {>=} {5.7} {chem-keyword-} }
 
 \prop_new:N \g_chemmacros_translations_prop
 
@@ -80,7 +80,7 @@
     language .initial:n = auto
   }
 
-\ChemCompatibilityTo{5.2}
+\ChemCompatibilityTo{5.3}
 \chemmacros_define_global_keys:n
   {
     german   .meta:n = { language = german } ,
@@ -102,7 +102,6 @@
 }
 
 % --------------------------------------------------------------------------
-% \ChemCompatibilityFrom{5.6}
 \cs_new_protected:Npn \__chemmacros_declare_translation:nw #1#2=#3\q_stop
   {
     \tl_set:Nx \l__chemmacros_tmpa_tl { \tl_trim_spaces:n {#2} }
@@ -144,7 +143,6 @@
 \NewDocumentCommand \DeclareChemTranslation {mmm}
   { \chemmacros_declare_translation:nnn {#1} {#2} {#3} }
 \@onlypreamble \DeclareChemTranslation
-% \EndChemCompatibility
 
 \cs_new:Npn \__chemmacros_parse_translate_list_entry:nnn #1#2#3 {}
 

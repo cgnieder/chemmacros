@@ -364,3 +364,12 @@ Version history
                             (nomenclature)
                           - new options `cip-inner-format', `cip-outer-format'
                             and `cip-number-format' (nomenclature)
+2017/06/13 - version 5.8a - changes to compatibility test: it now works also
+                            for subreleases
+                          - change behaviour of \ChemCompatibilityTo and
+                            \ChemCompatibilityBetween in order to cope with
+                            the changed compatibility test; adapt all files
+                            reflecting those changes
+                          - change behaviour of
+                            \__chemmacros_break_point_insert:nnn so it does
+                            nothing as last token in \iupac (nomenclature)

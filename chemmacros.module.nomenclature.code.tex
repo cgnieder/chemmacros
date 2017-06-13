@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{nomenclature}{2017/07/10 chemical names}
+\ChemModule{nomenclature}{2017/06/11 chemical names}
 
 \RequirePackage{scrlfile}
 
@@ -141,7 +141,7 @@
     \chemmacros_make_iupac:
   }
 
-\ChemCompatibilityTo{5.1}
+\ChemCompatibilityTo{5.2}
 \cs_new_protected:Npn \chemmacros_make_iupac:
   {
     \bool_if:NT \l__chemmacros_in_document_bool
@@ -242,7 +242,7 @@
 \chemmacros_define_keys:nn {nomenclature}
   { cip-kern .dim_set:N = \l__chemmacros_cip_kern_dim }
 
-\ChemCompatibilityTo{5.1}
+\ChemCompatibilityTo{5.2}
 \cs_new_protected:Npn \chemmacros_cip:n #1
   { \textit{#1} \tex_kern:D \l__chemmacros_cip_kern_dim }
 
@@ -250,7 +250,7 @@
   { \chemmacros_cip:n {#1} }
 \EndChemCompatibility
 
-\ChemCompatibilityBetween{5.2}{5.7}
+\ChemCompatibilityBetween{5.2}{5.8}
 \cs_new_protected:Npn \chemmacros_cip:n #1
   {
     \int_zero:N \l__chemmacros_tmpa_int
@@ -434,7 +434,7 @@
 % #1: pre break
 % #2: post break
 % #3: no break
-\ChemCompatibilityTo{5.0}
+\ChemCompatibilityTo{5.1}
 \cs_new_protected:Npn \__chemmacros_break_point_insert:nnn #1#2#3
   {
     \chemmacros_nobreak:
@@ -443,12 +443,12 @@
   }
 \EndChemCompatibility
 
-\ChemCompatibilityFrom{5.1}
+\ChemCompatibilityBetween{5.1}{5.8}
 \cs_new_protected:Npn \__chemmacros_break_point_insert:nnn #1#2#3
   {
     \mode_if_math:TF
       {#3}
-      {
+      {      
         \chemmacros_nobreak:
         \tex_discretionary:D {#1} {#2} {#3}
         \chemmacros_allow_hyphens:
@@ -456,6 +456,22 @@
   }
 \EndChemCompatibility
 
+\ChemCompatibilityFrom{5.8a}
+\cs_new_protected:Npn \__chemmacros_break_point_insert:nnn #1#2#3
+  {
+    \mode_if_math:TF
+      {#3}
+      {
+        \peek_meaning:NTF \group_end:
+          {#3}
+          {
+            \chemmacros_nobreak:
+            \tex_discretionary:D {#1} {#2} {#3}
+            \chemmacros_allow_hyphens:
+          }
+      }
+  }
+\EndChemCompatibility
 
 \dim_new:N  \l__chemmacros_iupac_hyphen_pre_dim
 \dim_set:Nn \l__chemmacros_iupac_hyphen_pre_dim { .01em }
@@ -463,15 +479,17 @@
 \dim_set:Nn \l__chemmacros_iupac_hyphen_post_dim { -.03em }
 \dim_new:N  \l__chemmacros_iupac_break_dim
 \dim_set:Nn \l__chemmacros_iupac_break_dim { .03em }
+\skip_new:N  \l__chemmacros_iupac_break_skip
+\skip_set:Nn \l__chemmacros_iupac_break_skip { .03em plus .07em }
 
 \chemmacros_define_keys:nn {nomenclature}
   {
     hyphen-pre-space  .dim_set:N = \l__chemmacros_iupac_hyphen_pre_dim ,
     hyphen-post-space .dim_set:N = \l__chemmacros_iupac_hyphen_post_dim ,
-    break-space       .dim_set:N = \l__chemmacros_iupac_break_dim
+    break-space       .skip_set:N = \l__chemmacros_iupac_break_skip
   }
 
-\ChemCompatibilityTo{5.1}
+\ChemCompatibilityTo{5.2}
 \cs_new_protected:Npn \chemmacros_break_point_hyphen:
   {
     \__chemmacros_break_point_insert:nnn
@@ -481,18 +499,6 @@
         \tex_kern:D \l__chemmacros_iupac_hyphen_pre_dim
         -
         \tex_kern:D \l__chemmacros_iupac_hyphen_post_dim
-      }
-  }
-
-\cs_new_protected:Npn \chemmacros_break_point:
-  {
-    \__chemmacros_break_point_insert:nnn
-      {-}
-      { }
-      {
-        \mode_if_math:TF
-          { | }
-          { \tex_kern:D \l__chemmacros_iupac_break_dim }
       }
   }
 \EndChemCompatibility
@@ -509,6 +515,7 @@
         \tex_kern:D \l__chemmacros_iupac_hyphen_post_dim
       }
   }
+\EndChemCompatibility
 
 \cs_new_protected:Npn \chemmacros_break_point:
   {
@@ -521,7 +528,6 @@
           { \tex_kern:D \l__chemmacros_iupac_break_dim }
       }
   }
-\EndChemCompatibility
 
 \cs_new_protected:Npn \chemmacros_break_point_opening_paren:
   { \__chemmacros_break_point_insert:nnn { - } { ( } { ( } }
@@ -584,10 +590,13 @@
 
 \cs_new_protected:Npn \chemmacros_make_shorthands:
   {
-    \chemmacros_if_document:T
+    \chemmacros_if_compatibility:nnT {>=} {5.2}
       {
-        \chemmacros_for_all_iupac_shorthands_do:n
-          { \prop_item:Nn \l__chemmacros_iupac_shorthands_prop {##1} }
+        \chemmacros_if_document:T
+          {
+            \chemmacros_for_all_iupac_shorthands_do:n
+              { \prop_item:Nn \l__chemmacros_iupac_shorthands_prop {##1} }
+          }
       }
   }
 
@@ -653,7 +662,7 @@
 
 \cs_new_protected:Npn \chemmacros_iupac:n #1 { \chemmacros_iupac:nn {} {#1} }
 
-\ChemCompatibilityTo{5.2}
+\ChemCompatibilityTo{5.3}
 % Thanks to Joseph Wright and Enrico Gregorio for the help on the curious
 % redefinition of \- and the end of the compilation
 % see http://tex.stackexchange.com/q/42405/5049 for reference
@@ -745,7 +754,7 @@
 \NewChemMacroset {Latin} {mm}
   { \chemmacros_define_latin:Nn #1 {#2} }
 
-\ChemCompatibilityTo{5.6}
+\ChemCompatibilityTo{5.7}
 \chemmacros_define_keys:nn {nomenclature}
   {
     latin-format .tl_set:N  = \l__chemmacros_latin_format_tl ,
@@ -886,3 +895,5 @@
 2017/04/17 - fix erroneous definition of \chemmacros_allow_hyphens:
            - new options `cip-inner-format', `cip-outer-format' and
              `cip-number-format'
+2017/06/11 - change behaviour of \__chemmacros_break_point_insert:nnn so
+             it does nothing as last token in \iupac

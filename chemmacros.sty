@@ -31,10 +31,10 @@
 
 % --------------------------------------------------------------------------
 % package information:
-\tl_const:Nn \c_chemmacros_date_tl {2017/04/24}
+\tl_const:Nn \c_chemmacros_date_tl {2017/06/13}
 \tl_const:Nn \c_chemmacros_version_major_number_tl {5}
 \tl_const:Nn \c_chemmacros_version_minor_number_tl {8}
-\tl_const:Nn \c_chemmacros_version_subrelease_tl   {}
+\tl_const:Nn \c_chemmacros_version_subrelease_tl   {a}
 \tl_const:Nx \c_chemmacros_version_number_tl
   {
     \c_chemmacros_version_major_number_tl .
@@ -56,8 +56,8 @@
 
 % --------------------------------------------------------------------------
 % set compatibility
-\fp_new:N \l__chemmacros_compatibility_version_fp
-\fp_set:Nn \l__chemmacros_compatibility_version_fp {\c_chemmacros_version_number_tl}
+\tl_new:N \l__chemmacros_compatibility_version_tl
+\tl_set_eq:NN \l__chemmacros_compatibility_version_tl \c_chemmacros_version_tl
 
 \keys_define:nn {chemmacros/compatibility}
   {
@@ -68,10 +68,11 @@
           {latest} {}
         }
         {
-          \fp_set:Nn \l__chemmacros_compatibility_version_fp
-            { \c_chemmacros_version_number_tl }
+          \tl_set_eq:NN
+            \l__chemmacros_compatibility_version_tl
+            \c_chemmacros_version_tl
         }
-        { \fp_set:Nn \l__chemmacros_compatibility_version_fp {#1} } ,
+        { \tl_set:Nn \l__chemmacros_compatibility_version_tl {#1} } ,
     unknown       .code:n =
       \PassOptionsToPackage{\CurrentOption}{chemmacros4}
       \PassOptionsToPackage{\CurrentOption}{chemmacros5}
@@ -81,36 +82,92 @@
 
 % --------------------------------------------------------------------------
 % compare version numbers
-% #1: number
+% #1: version
 % #2: relation
-% #3: number
+% #3: version
 % #4: true
 % #5: false
 \prg_new_conditional:Npnn \chemmacros_if_version:nnn #1#2#3 {p,T,F,TF}
   {
-    \fp_compare:nTF { floor(#1) = floor(#3) }
+    \fp_compare:nTF
       {
-        \fp_compare:nTF
-          {
-            ( \chemmacros_get_minor_version:f {#1} )
-            #2
-            ( \chemmacros_get_minor_version:f {#3} )
-          }
-          { \prg_return_true: }
-          { \prg_return_false: }
+        (
+          \chemmacros_get_major_version:n {#1} * 1e6 +
+          \chemmacros_get_minor_version:n {#1} * 1e3 +
+          0 \chemmacros_get_subrelease:n {#1}
+        )
+        #2
+        (
+          \chemmacros_get_major_version:n {#3} * 1e6 +
+          \chemmacros_get_minor_version:n {#3} * 1e3 +
+          0 \chemmacros_get_subrelease:n {#3}
+        )
       }
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+\cs_generate_variant:Nn \chemmacros_if_version:nnnTF {fnf}
+
+\cs_new:Npn \__chemmacros_get_minor_version:w #1.#2.#3 \q_stop
+  {
+    \tl_if_blank:nTF {#2} {0} {
+       \tl_map_function:nN {#2} \__chemmacros_get_minor_number:n
+    }
+  }
+
+\cs_new:Npn \chemmacros_get_minor_version:n #1
+  { \__chemmacros_get_minor_version:w #1.. \q_stop }
+
+\cs_new:Npn \__chemmacros_get_minor_number:n #1
+  {
+    \str_case:nn {#1}
       {
-        \fp_compare:nTF { (#1) #2 (#3) }
-          { \prg_return_true: }
-          { \prg_return_false: }
+        {0} {0}
+        {1} {1}
+        {2} {2}
+        {3} {3}
+        {4} {4}
+        {5} {5}
+        {6} {6}
+        {7} {7}
+        {8} {8}
+        {9} {9}
       }
   }
 
-\cs_new:Npn \__chemmacros_get_minor_version:w #1.#2.#3 \q_stop
-  { \tl_if_blank:nTF {#2} {0} {#2} }
-\cs_new:Npn \chemmacros_get_minor_version:n #1
-  { \__chemmacros_get_minor_version:w #1.. \q_stop }
-\cs_generate_variant:Nn \chemmacros_get_minor_version:n {f}
+\cs_new:Npn \__chemmacros_get_major_version:w #1.#2.#3 \q_stop
+  { \tl_if_blank:nTF {#1} {0} {#1} }
+
+\cs_new:Npn \chemmacros_get_major_version:n #1
+  { \__chemmacros_get_major_version:w #1.. \q_stop }
+
+\cs_new:Npn \__chemmacros_get_subrelease:w #1.#2.#3 \q_stop
+  {
+    \tl_if_blank:nTF {#2} {0} {
+       \tl_map_function:nN {#2} \__chemmacros_get_subrelease_number:n
+    }
+  }
+
+\cs_new:Npn \chemmacros_get_subrelease:n #1
+  { \__chemmacros_get_subrelease:w #1.. \q_stop }
+
+\cs_new:Npn \__chemmacros_get_subrelease_number:n #1
+  {
+    \str_case:nnF {#1}
+      {
+        {0} {}
+        {1} {}
+        {2} {}
+        {3} {}
+        {4} {}
+        {5} {}
+        {6} {}
+        {7} {}
+        {8} {}
+        {9} {}
+      }
+      { \int_from_alph:n {#1} }
+  }
 
 % check compatibility
 % #1: relation
@@ -119,8 +176,8 @@
 % #4: false
 \prg_new_conditional:Npnn \chemmacros_if_compatibility:nn #1#2 {p,T,F,TF}
   {
-    \chemmacros_if_version:nnnTF
-      { \fp_to_decimal:N \l__chemmacros_compatibility_version_fp }
+    \chemmacros_if_version:fnfTF
+      { \l__chemmacros_compatibility_version_tl }
       {#1}
       {#2}
       { \prg_return_true: }
@@ -129,13 +186,13 @@
 \cs_generate_variant:Nn \chemmacros_if_compatibility:nnT {nV}
 
 % user checks:
-\NewDocumentCommand \IfChemCompatibilityTF {mm+m+m}
+\NewExpandableDocumentCommand \IfChemCompatibilityTF {mm+m+m}
   { \chemmacros_if_compatibility:nnTF {#1} {#2} {#3} {#4} }
 
-\NewDocumentCommand \IfChemCompatibilityT {mm+m}
+\NewExpandableDocumentCommand \IfChemCompatibilityT {mm+m}
   { \chemmacros_if_compatibility:nnT {#1} {#2} {#3} }
 
-\NewDocumentCommand \IfChemCompatibilityF {mm+m}
+\NewExpandableDocumentCommand \IfChemCompatibilityF {mm+m}
   { \chemmacros_if_compatibility:nnF {#1} {#2} {#3} }
 
 % --------------------------------------------------------------------------
@@ -147,14 +204,14 @@
   { \chemmacros_if_compatibility:nnT {>=} {#1} {#2} }
 
 \cs_new_protected:Npn \ChemCompatibilityTo #1#2 \EndChemCompatibility
-  { \chemmacros_if_compatibility:nnT {<=} {#1} {#2} }
+  { \chemmacros_if_compatibility:nnT {<} {#1} {#2} }
 
 \cs_new_protected:Npn \ChemCompatibilityBetween #1#2#3 \EndChemCompatibility
   {
     \bool_if:nT
       {
         \chemmacros_if_compatibility_p:nn {>=} {#1} &&
-        \chemmacros_if_compatibility_p:nn {<=} {#2}
+        \chemmacros_if_compatibility_p:nn {<} {#2}
       }
       {#3}
   }
@@ -170,23 +227,24 @@
 \msg_new:nnn {chemmacros} {too-high-compatibility}
   {
     You~ requested~ compatibility~ mode~ v #1~ while~ the~ current~ version~
-    of~ chemmacros~ is~ v \c_chemmacros_version_number_tl .~ Falling~ back~
+    of~ chemmacros~ is~ v \c_chemmacros_version_tl .~ Falling~ back~
     to~ v \c_chemmacros_version_number_tl !
   }
 
 \msg_new:nnn {chemmacros} {low-compatibility}
   {
     You~ requested~ compatibility~ mode~ v #1~ while~ the~ current~ version~
-    of~ chemmacros~ is~ v \c_chemmacros_version_number_tl .~ Not~ all~ features~
-    will~ be~ available!
+    of~ chemmacros~ is~ v \c_chemmacros_version_tl .~ Not~ all~ features~
+    or~ fixes~ will~ be~ available!
   }
 
 % --------------------------------------------------------------------------
 % let's see that the max number is the newest (=current) version
-\chemmacros_if_compatibility:nnT {>} { \c_chemmacros_version_number_tl }
+\chemmacros_if_compatibility:nnT {>} { \c_chemmacros_version_tl }
   {
-    \fp_set:Nn \l__chemmacros_compatibility_version_fp
-      { \c_chemmacros_version_number_tl }
+    \tl_set_eq:NN
+      \l__chemmacros_compatibility_version_tl
+      \c_chemmacros_version_tl
   }
 
 % --------------------------------------------------------------------------
@@ -194,14 +252,14 @@
 \chemmacros_if_compatibility:nnT {<} {4.7}
   {
     \msg_warning:nnx {chemmacros} {too-low-compatibility}
-      { \fp_to_tl:N \l__chemmacros_compatibility_version_fp }
+      { \l__chemmacros_compatibility_version_tl }
   }
 
 % not the newest version:
-\chemmacros_if_compatibility:nnT {<} { \c_chemmacros_version_number_tl }
+\chemmacros_if_compatibility:nnT {<} { \c_chemmacros_version_tl }
   {
     \msg_warning:nnx {chemmacros} {low-compatibility}
-      { \fp_to_tl:N \l__chemmacros_compatibility_version_fp }
+      { \l__chemmacros_compatibility_version_tl }
   }
   
 % --------------------------------------------------------------------------

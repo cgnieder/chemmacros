@@ -66,7 +66,7 @@
     \tl_set:cn
       {l__chemmacros_#2_tl}
       { \chemmacros_translate:n {#2} }
-    \chemmacros_if_compatibility:nnTF {>} {5.6}
+    \chemmacros_if_compatibility:nnTF {>=} {5.7}
       { \chemmacros_declare_translation:nnn {#2} {fallback} {#3} }
       { \DeclareTranslationFallback {#2} {#3} }
     \cs_set_protected:Npn #1
@@ -139,7 +139,7 @@
   }
 
 % --------------------------------------------------------------------------
-\ChemCompatibilityTo{5.5}
+\ChemCompatibilityTo{5.6}
 \DeclareTranslation {English} {K-acid}  {\mathrm{a}}
 \DeclareTranslation {German}  {K-acid}  {\mathrm{s}}
 \DeclareTranslation {Dutch}   {K-acid}  {\mathrm{z}}

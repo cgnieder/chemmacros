@@ -91,7 +91,7 @@
   { \l__chemmacros_reaction_heading_tl {#1} }
 \cs_generate_variant:Nn \__chemmacros_reaction_heading:n { V }
 
-\ChemCompatibilityTo{5.5}
+\ChemCompatibilityTo{5.6}
 \tl_set:Nn \l__chemmacros_reaction_lorname_tl
   { \chemmacros_translate:n {reaction} }
 \EndChemCompatibility
@@ -139,7 +139,7 @@
     \@starttoc {lor}
   }
 
-\ChemCompatibilityTo{5.5}
+\ChemCompatibilityTo{5.6}
 \cs_new_protected:Npn \l@reaction #1#2
   { \@dottedtocline {1} {1.5em} {2.3em} {#1} {#2} }
 \EndChemCompatibility
@@ -204,7 +204,7 @@
 \EndChemCompatibility
   
 % create new tagform
-\ChemCompatibilityTo{5.5}
+\ChemCompatibilityTo{5.6}
 \newtagform {reaction} {\{} {\}}
 \EndChemCompatibility
 \ChemCompatibilityFrom{5.6}
@@ -216,7 +216,7 @@
 \newcounter {chemmacros_save_reaction}
 \newcounter {reaction}
 
-\ChemCompatibilityTo{5.5}
+\ChemCompatibilityTo{5.6}
 \cs_new_protected:Npn \__chemmacros_begin_reaction:
   {
     % create individual names for `hyperref':
@@ -291,7 +291,7 @@
   }
 \cs_generate_variant:Nn \chemmacros_declare_reaction_env:nnnn {nnnV}
 
-\ChemCompatibilityTo{5.5}
+\ChemCompatibilityTo{5.6}
 \cs_new_protected:Npn \chemmacros_reaction_read:nnw #1#2#3 \end
   {
     \begin{#1}#2
@@ -348,7 +348,7 @@
 \NewChemReaction {reactions*} {align*}
 
 % --------------------------------------------------------------------------
-\ChemCompatibilityTo{5.5}
+\ChemCompatibilityTo{5.6}
 \DeclareTranslationFallback   {list-of-reactions} {List~ of~ Reactions}
 \DeclareTranslation {English} {list-of-reactions} {List~ of~ Reactions}
 \DeclareTranslation {German}  {list-of-reactions} {Reaktionsverzeichnis}
