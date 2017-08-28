@@ -296,8 +296,8 @@ Version history
                             user with \usechemmodule
                           - various changes, see
                             http://www.mychemistry.eu/2015/06/chemmacros-development/
-                            and the manual section 3.4. Upgrading from version < 5.0
-                            for details
+                            and the manual section 3.4. Upgrading from version
+                            < 5.0 for details
 2015/09/23 - version 5.1  - add option `method' to `chemformula' module
                           - make module `scheme' compatible with `floatrow'
                           - add module hooks `before' and `after'
@@ -320,7 +320,8 @@ Version history
                           - new option `space' (particles)
                           - TikZ decoration `wave' (tikz)
 2016/01/23 - version 5.3a - compatibility with chemscheme package (scheme)
-                          - IUPAC shorthands only defined within \iupac (nomenclature)
+                          - IUPAC shorthands only defined within \iupac
+                            (nomenclature)
 2016/02/10 - version 5.4  - \NewChemEqConstant and family, new option
                             `eq-constant' (acid-base)
                           - added \ignorespacesafterend to environments
@@ -373,3 +374,4 @@ Version history
                           - change behaviour of
                             \__chemmacros_break_point_insert:nnn so it does
                             nothing as last token in \iupac (nomenclature)
+2017/08/27 - version 5.8b - fix missing hyperref check

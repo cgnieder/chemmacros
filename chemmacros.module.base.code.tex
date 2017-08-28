@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{base}{2016/05/04 basic chemmacros module}
+\ChemModule{base}{2017/08/28 basic chemmacros module}
 
 % for the document hooks
 \ChemCompatibilityFrom{5.1}
@@ -463,6 +463,14 @@
 
 % --------------------------------------------------------------------------
 
+\bool_new:N \l__chemmacros_hyperref_bool
+
+\AtEndPreamble
+  {
+    \chemmacros_if_package_loaded:nT {hyperref}
+      { \bool_set_true:N \l__chemmacros_hyperref_bool }
+  }
+
 \tex_endinput:D
 
 2015/09/23 - new conditionals \chemmacros_if_preamble:TF and
@@ -473,3 +481,4 @@
 2016/04/25 - macros for cleveref and fancyref support, \ChemCleverefSupport
              \ChemFancyrefSupport
 2016/05/04 - fix \ChemCleverefSupport
+2017/08/28 - add missing hyperref check
