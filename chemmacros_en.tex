@@ -1,7 +1,7 @@
 % !arara: pdflatex
 % !arara: biber
-% arara: pdflatex
-% arara: pdflatex
+% arara: pdflatex: { action: nonstopmode }
+% arara: pdflatex: { action: nonstopmode }
 % --------------------------------------------------------------------------
 % the CHEMMACROS package
 %
@@ -389,9 +389,13 @@
   {}% failure
 \newsourcecodeenv[
   code-only,
-  sourcecode-options={style=bash},
-  pre-code=\def\prompt{\textasciitilde\space\$\space}
-]{bash}
+  sourcecode-options = {
+    style = bash ,
+    deleteindex = [5][keyword5] ,
+    deleteindex = [6][keyword6]
+  },
+  pre-code           = \def\prompt{\textasciitilde\space\$\space}  
+]{lbash}
 \makeatother
 
 \renewcommand*\dictumauthorformat[1]{#1}
@@ -836,24 +840,24 @@ this you have two possibilities:
 The\sinceversion{5.4} constants \Ka, \Kb, and \Kw\ were defined using the
 following commands:
 \begin{commands}
-  \command{NewChemEqConstant}\marg{cs}\marg{name}\marg{subscript}
+  \command{NewChemEqConstant}[\marg{cs}\marg{name}\marg{subscript}]
     Define the constant \meta{cs} with the name \meta{name} and the subscript
     \meta{subscript}.  This also defines the default translation with the key
     \meta{name} using \meta{subscript} as fallback translation (see
     section~\vref{sec:lang-module} for details).  It also defines the option
     \meta{name} for setting the subscript.
-  \command{RenewChemEqConstant}\marg{cs}\marg{name}\marg{default appearance}
+  \command{RenewChemEqConstant}[\marg{cs}\marg{name}\marg{default appearance}]
     The same as \cs{NewChemEqConstant} but renews an existing command.
-  \command{DeclareChemEqConstant}\marg{cs}\marg{name}\marg{default appearance}
+  \command{DeclareChemEqConstant}[\marg{cs}\marg{name}\marg{default appearance}]
     The same as \cs{NewChemEqConstant} but overwrites existing commands.
-  \command{ProvideChemEqConstant}\marg{cs}\marg{name}\marg{default appearance}
+  \command{ProvideChemEqConstant}[\marg{cs}\marg{name}\marg{default appearance}]
     The same as \cs{NewChemEqConstant} but doesn't throw an error if \meta{cs}
     already exists.
 \end{commands}
 
 This is how \cs{Ka} is defined:
 \begin{sourcecode}
-  \NewChemEqConstant \Ka {K-acid}  { \mathrm{a} }
+  \NewChemEqConstant\Ka{K-acid}{\mathrm{a}}
 \end{sourcecode}
 
 \subsection{The \chemmodule*{charges} Module}\label{sec:charges-module}
@@ -881,10 +885,10 @@ The \chemmodule{charges} module loads the module \chemmodule{chemformula}.
 \subsubsection{Ion Charges}\label{sec:ion-charges}
 Simple displaying of (real) charges.  It is worth noting that these commands
 really are relicts from a time when \chemmacros\ tried hard to be compliant
-with \pkg{mhchem} and \chemformula\ didn't exist, yet.  They are still
-provided for backwards compatibility but \emph{my recommendation is to use}
-\cs{ch} (see the documentation of the \chemformula\
-package~\cite{pkg:chemformula}) \emph{and forget about these commands:}
+with \pkg{mhchem} and \chemformula\ didn't exist, yet.  \textbf{They are still
+  provided for backwards compatibility but \emph{my recommendation is to use}
+  \cs{ch} (see the documentation of the \chemformula\
+  package~\cite{pkg:chemformula}) \emph{and forget about these commands:}}
 \begin{commands}
   \command{pch}[\oarg{number}]
     positive charge
@@ -3656,9 +3660,9 @@ module name:
 \end{sourcecode}
 You will find more details on the naming conventions in \code{interface3.pdf}
 which most likely is available on your system:
-\begin{bash}
+\begin{lbash}
   texdoc interface3
-\end{bash}
+\end{lbash}
 If you haven't read section~\vref{sec:base-module} about the \chemmodule{base}
 module, yet, please have a look.  There some macros for module writers are
 described.  Also other modules define macros for module writers which may be

@@ -374,4 +374,4 @@ Version history
                           - change behaviour of
                             \__chemmacros_break_point_insert:nnn so it does
                             nothing as last token in \iupac (nomenclature)
-2017/08/27 - version 5.8b - fix missing hyperref check
+2017/08/28 - version 5.8b - fix missing hyperref check
