@@ -1032,6 +1032,8 @@ and \cs*{textsuperscript} instead of \sym{\textasciicircum} without
   \item The characters \sym{(} and \sym{)} allow the word to be hyphenated and
     don't prevent further hyphenation, likewise \sym{[} and \sym{]}.
   \item \sinceversion{5.3}The character \sym{'} is printed as \cs{chemprime}.
+  \item \sinceversion{5.8c}The character \sym{=} is printed ad
+    \cs{nonbreakinghyphen}.
 \end{itemize}
 \begin{example}[side-by-side]
   \huge\iupac{2,4-Di|chlor|pentan} \par
@@ -1041,6 +1043,9 @@ and \cs*{textsuperscript} instead of \sym{\textasciicircum} without
   \command{chemprime}
     Prints\sinceversion{5.3} a prime character in superscript position.  It is
     defined as \verbcode+\ensuremath{{}^{\prime}}+.
+  \command{nonbreakinghyphen}
+    Prints\sinceversion{5.8c} a hyphen which doesn't allow a linebreak after
+    it.  It is defined as \verbcode+\mbox{-}\nobreak\hspace{0pt}+.
 \end{commands}
 
 The spaces inserted by \sym{-} and \sym{\textbar} can be

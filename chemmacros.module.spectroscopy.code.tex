@@ -131,8 +131,8 @@
     \tl_put_left:Nn \g__chemmacros_nmr_element_coupled_tl {#2}
     \chemmacros_chemformula:n { ^{#1} }
     \bool_if:NTF \l__chemmacros_nmr_parse_bool
-      { \chemformula_ch:nV {} \g__chemmacros_nmr_element_coupled_tl }
       { \chemmacros_chemformula:V \g__chemmacros_nmr_element_coupled_tl }
+      { \g__chemmacros_nmr_element_coupled_tl }
     \tl_use:N \l__chemmacros_nmr_element_method_connector_tl
     \tl_use:N \l__chemmacros_nmr_method_tl
   }
@@ -157,8 +157,8 @@
       \tl_if_blank:VF \g__chemmacros_nmr_element_coupled_tl
         {
           \bool_if:NTF \l__chemmacros_nmr_parse_bool
-            { \chemformula_ch:nV {} \g__chemmacros_nmr_element_coupled_tl }
             { \chemmacros_chemformula:V \g__chemmacros_nmr_element_coupled_tl }
+            { \g__chemmacros_nmr_element_coupled_tl }
         }
       \tl_use:N \l__chemmacros_nmr_element_method_connector_tl
       \tl_use:N \l__chemmacros_nmr_method_tl
@@ -339,7 +339,7 @@
                 \bool_if:NT \l__chemmacros_nmr_solvent_bool
                   {
                     \bool_if:NTF \l__chemmacros_nmr_parse_bool
-                      { \chemformula_ch:nn { } {#4} }
+                      { \chemmacros_chemformula:n {#4} }
                       {#4}
                   }
                 \bool_if:NT \l__chemmacros_nmr_delimiters_bool
@@ -404,7 +404,10 @@
 \cs_new_protected:Npn \chemmacros_nmr_number:n #1
   {
     \__chemmacros_nmr_number:n {#1}
-    \skip_horizontal:N \l__chemmacros_nmr_space_skip
+    \chemmacros_if_compatibility:nnTF {>=} {5.8c}
+      { \chemmacros_skip_nobreak:N }
+      { \skip_horizontal:N }
+    \l__chemmacros_nmr_space_skip
     \chemmacros_chemformula:V \g__chemmacros_nmr_element_tl
   }
 

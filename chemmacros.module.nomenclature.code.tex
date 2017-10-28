@@ -642,6 +642,11 @@
 \NewChemIUPACShorthand ' \chemprime
 \EndChemCompatibility
 
+\ChemCompatibilityFrom{5.8c}
+\NewChemIUPAC \nonbreakinghyphen { \mbox{-} \nobreak \hspace{0pt} }
+\NewChemIUPACShorthand = \nonbreakinghyphen
+\EndChemCompatibility
+
 \cs_new_protected:Npn \chemmacros_iupac:nn #1#2
   {
     \group_begin:
