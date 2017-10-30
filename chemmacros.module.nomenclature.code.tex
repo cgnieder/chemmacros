@@ -456,7 +456,7 @@
   }
 \EndChemCompatibility
 
-\ChemCompatibilityFrom{5.8a}
+\ChemCompatibility{5.8a}
 \cs_new_protected:Npn \__chemmacros_break_point_insert:nnn #1#2#3
   {
     \mode_if_math:TF
@@ -468,6 +468,49 @@
             \chemmacros_nobreak:
             \tex_discretionary:D {#1} {#2} {#3}
             \chemmacros_allow_hyphens:
+          }
+      }
+  }
+\EndChemCompatibility
+
+\ChemCompatibilityFrom{5.8b}
+\cs_new_protected:Npn \__chemmacros_peek_if_dash:TF #1#2
+  {
+    \peek_charcode:NTF -
+      {#1}
+      {#2}
+  }
+
+\cs_new_protected:Npn \__chemmacros_peek_if_paren:TF #1#2
+  { % (
+    \peek_charcode:NTF )
+      {#1}
+      { % [
+        \peek_charcode:NTF ]
+          {#1}
+          {#2}
+      }
+  }
+  
+\cs_new_protected:Npn \__chemmacros_break_point_insert:nnn #1#2#3
+  {
+    \mode_if_math:TF
+      {#3}
+      {
+        \peek_meaning:NTF \group_end:
+          {#3}
+          {
+            \__chemmacros_peek_if_dash:TF
+              {#3}
+              {
+                \__chemmacros_peek_if_paren:TF
+                  {#3}
+                  {
+                    \chemmacros_nobreak:
+                    \tex_discretionary:D {#1} {#2} {#3}
+                    \chemmacros_allow_hyphens:
+                  }
+              }
           }
       }
   }
@@ -528,7 +571,7 @@
           { \tex_kern:D \l__chemmacros_iupac_break_dim }
       }
   }
-
+  
 \cs_new_protected:Npn \chemmacros_break_point_opening_paren:
   { \__chemmacros_break_point_insert:nnn { - } { ( } { ( } }
 
