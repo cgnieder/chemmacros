@@ -272,7 +272,13 @@
       {
         \cs_if_exist:cF {cref@#1@name}
           {
-            \crefname {#1} {#2} {#3}
+            \chemmacros_tex_if:nnTF {@cref@capitalise} {}
+              {
+                \crefname {#1} {#4} {#5}
+              }
+              {
+                \crefname {#1} {#2} {#3}
+              }
             \Crefname {#1} {#4} {#5}
           }
       }
