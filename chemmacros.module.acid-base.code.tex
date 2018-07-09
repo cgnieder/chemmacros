@@ -67,7 +67,7 @@
       {l__chemmacros_#2_tl}
       { \chemmacros_translate:n {#2} }
     \chemmacros_if_compatibility:nnTF {>=} {5.7}
-      { \chemmacros_declare_translation:nnn {#2} {fallback} {#3} }
+      { \chemmacros_declare_translation:nnn {fallback} {#2} {#3} }
       { \DeclareTranslationFallback {#2} {#3} }
     \cs_set_protected:Npn #1
       {

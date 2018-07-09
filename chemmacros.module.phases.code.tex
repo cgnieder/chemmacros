@@ -62,8 +62,8 @@
   {
     \tl_set:Nx \l__chemmacros_tmpa_tl { phase-\chemmacros_remove_backslash:N #1 }
     \chemmacros_declare_translation:Vnn
-      \l__chemmacros_tmpa_tl
       {fallback}
+      \l__chemmacros_tmpa_tl
       {#2}
     \__chemmacros_define_phase:Nx #1
       { \exp_not:N \chemmacros_translate:n { \exp_not:V \l__chemmacros_tmpa_tl } }
