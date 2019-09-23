@@ -11,7 +11,7 @@
 % If you have any ideas, questions, suggestions or bugs to report, please
 % feel free to contact me.
 % --------------------------------------------------------------------------
-% Copyright 2011-2017 Clemens Niederberger
+% Copyright 2011-2018 Clemens Niederberger
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{polymers}{2016/03/08 polymers}
+\ChemModule{polymers}{2018/03/02 polymers}
 
 \chemmacros_load_modules:n {nomenclature,tikz}
 
@@ -123,8 +123,24 @@
                 depth \l__chemmacros_polymer_delimiter_height_dim
                 width \c_zero_dim
               \tex_right:D \l__chemmacros_polymer_delimiter_right_tl
-              \c_math_subscript_token   { \hbox_overlap_right:n {#5} }
-              \c_math_superscript_token { \hbox_overlap_right:n {#6} }
+              \c_math_subscript_token
+                {
+                  \hbox_overlap_right:n
+                    {
+                      \chemmacros_if_compatibility:nnTF {>} {5.8b}
+                        { \smash {#5} }
+                        {#5}
+                    }
+                }
+              \c_math_superscript_token
+                {
+                  \hbox_overlap_right:n
+                    {
+                      \chemmacros_if_compatibility:nnTF {>} {5.8b}
+                        { \smash {#6} }
+                        {#6}
+                    }
+                }
             \c_math_toggle_token
           } ;
       }
@@ -163,4 +179,4 @@
 
 2016/03/07 - first version
 2016/03/08 - \makepolymerdelims
-
+2018/03/02 - smash sub- and superscripts of polymer delimiters
