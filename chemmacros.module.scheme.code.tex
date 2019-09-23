@@ -248,13 +248,17 @@
 
 % --------------------------------------------------------------------------
 \ChemCompatibilityTo{5.6}
-\DeclareTranslationFallback   {scheme-name} {Scheme}
-\DeclareTranslation {English} {scheme-name} {Scheme}
-\DeclareTranslation {German}  {scheme-name} {Schema}
+\DeclareTranslationFallback     {scheme-name} {Scheme}
+\DeclareTranslation {English}   {scheme-name} {Scheme}
+\DeclareTranslation {German}    {scheme-name} {Schema}
+\DeclareTranslation {Norwegian} {scheme-name} {Skjema}
+\DeclareTranslation {Nynorsk}   {scheme-name} {Skjema}
 
-\DeclareTranslationFallback   {scheme-list} {List~ of~ Schemes}
-\DeclareTranslation {English} {scheme-list} {List~ of~ Schemes}
-\DeclareTranslation {German}  {scheme-list} {Verzeichnis~ der~ Schemata}
+\DeclareTranslationFallback      {scheme-list} {List~ of~ Schemes}
+\DeclareTranslation {English}    {scheme-list} {List~ of~ Schemes}
+\DeclareTranslation {German}     {scheme-list} {Verzeichnis~ der~ Schemata}
+\DeclareTranslation {Norwegian}  {scheme-list} {Skjemaliste}
+\DeclareTranslation {Nynorsk}    {scheme-list} {Skjemaliste}
 \EndChemCompatibility
 
 \ChemCompatibilityFrom{5.6}
@@ -267,37 +271,47 @@
 
 \chemmacros_declare_translations:nn {scheme-list}
   {
-    fallback = List~ of~ Schemes ,
-    English  = List~ of~ Schemes ,
-    German   = Verzeichnis~ der~ Schemata
+    fallback    = List~ of~ Schemes ,
+    English     = List~ of~ Schemes ,
+    German      = Verzeichnis~ der~ Schemata,
+    Norwegian   = Skjemaliste,
+    Nynorsk     = Skjemaliste
   }
 
 \chemmacros_declare_translations:nn {scheme}
   {
-    fallback = scheme ,
-    English  = scheme ,
-    German   = Schema
+    fallback  = scheme ,
+    English   = scheme ,
+    German    = Schema ,
+    Norwegian = skjema ,
+    Nynorsk   = skjema
   }
 
 \chemmacros_declare_translations:nn {Scheme}
   {
-    fallback = Scheme ,
-    English  = Scheme ,
-    German   = Schema
+    fallback  = Scheme ,
+    English   = Scheme ,
+    German    = Schema ,
+    Norwegian = Skjema ,
+    Nynorsk   = Skjema
   }
 
 \chemmacros_declare_translations:nn {schemes}
   {
     fallback = schemes ,
     English  = schemes ,
-    German   = Schemata
+    German   = Schemata ,
+    Norwegian = skjema ,
+    Nynorsk   = skjema
   }
 
 \chemmacros_declare_translations:nn {Schemes}
   {
     fallback = Schemes ,
     English  = Schemes ,
-    German   = Schemata
+    German   = Schemata ,
+    Norwegian = Skjema ,
+	Nynorsk   = Skjema
   }
 \EndChemCompatibility
 
