@@ -114,7 +114,7 @@
     ominus, oplus,
     percent, pgfarrowsdeclarealias, pgfarrowsrenewalias,
     renewtagform, rightarrow,
-    sample, scriptscriptstyle, setatomsep, setbondoffset, sfrac, shade,
+    sample, scriptscriptstyle, setchemfig, sfrac, shade,
       shadedraw, shorthandoff, si, SI, sisetup, square, subsection,
     textcolor, textendash, textsuperscript, tikz, tikzpicture, tiny, toprule,
     upbeta, upeta, upgamma, usetikzlibrary,
@@ -2267,7 +2267,7 @@ changed.
     overlay,
     p/color = black!70
   }
-  \setbondoffset{0pt}
+  \setchemfig{bond offset=0pt}
   \chemfig{
     ?\orbital{p}
     -[,1.3]{\orbital[phase=-]{p}}
@@ -2281,7 +2281,7 @@ changed.
 
 \begin{example}
   \vspace{7mm}
-  \setbondoffset{0pt}
+  \setchemfig{bond offset = 0pt}
   \chemsetup[orbital]{
     overlay ,
     opacity = .75 ,
@@ -2357,7 +2357,7 @@ implements the following macro based on the same idea:
 \end{options}
 
 \begin{example}
-  \setatomsep{2em}
+  \setchemfig{atom sep=2em}
   \chemfig{-[@{op,.75}]CH_2-CH(-[6]Cl)-[@{cl,0.25}]}
   \makepolymerdelims{5pt}[27pt]{op}{cl}
   \chemfig{-[@{op,.75}]CH_2-CH(-[6]Cl)-[@{cl,0.25}]}

@@ -231,7 +231,7 @@
     \chemmacros_if_compatibility:nnF {>=} {#4}
       {
         \msg_warning:nnnn {chemmacros} {module-not-available} {#2} {#4}
-        \tex_endinput:D
+        \file_input_stop:
       }
     \seq_gput_right:Nn \g__chemmacros_loaded_modules_seq {#2}
     \prop_gput:Nnn \g__chemmacros_loaded_modules_prop {#2} {#3}
@@ -280,7 +280,7 @@
   }
 
 % --------------------------------------------------------------------------
-\tex_endinput:D
+\file_input_stop:
 
 % --------------------------------------------------------------------------
 Modules: (* = preloaded)
