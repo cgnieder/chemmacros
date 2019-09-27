@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{reactions}{2019/09/23 reaction environments}
+\ChemModule{reactions}{2019/09/27 reaction environments}
 
 \chemmacros_load_module:n {chemformula}
 
@@ -278,7 +278,7 @@
 % #4: argument list ({#2}{#3}...)
 \cs_new_protected:Npn \chemmacros_declare_reaction_env:nnnn #1#2#3#4
   {
-    \exp_args:Nnx \DeclareDocumentEnvironment {#1} { O{} \prg_replicate:nn {#3+0} {m} }
+    \exp_args:Nnx \DeclareDocumentEnvironment {#1} { !O{} \prg_replicate:nn {#3+0} {m} }
       {
         \chemmacros_add_reaction_description:n {##1}
         \__chemmacros_begin_reaction:
@@ -442,3 +442,4 @@
            - moved translations from lang module to reactions module
 2016/05/04 - options `tag-open', `tag-close' and `before-tag'
 2019/09/23 - added Norwegian translations
+2019/09/27 - change `O{}' argument of reactions into `!O{}'

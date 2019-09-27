@@ -378,4 +378,6 @@ Version history
 2018/03/02 - version 5.8c - fix bug in \chemmacros_p:n (acid/base)
                           - smash sub- and superscripts of polymer delimiters
 			    (polymers)
-2019/09/23 - version 5.8d - add some Norwegian translations
+2019/09/23 - version 5.8d - add some Norwegian translations (reactions, scheme)
+2019/09/27 - version 5.8e - change `O{}' argument of reactions into `!O{}'
+                            (reactions)
