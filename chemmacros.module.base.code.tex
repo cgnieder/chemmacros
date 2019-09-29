@@ -179,8 +179,8 @@
 \cs_new_eq:NN \chemmacros_ignore_spaces: \tex_ignorespaces:D
 
 \cs_new_protected:Npn \chemmacros_leave_vmode: { \hbox_unpack:N \c_empty_box }
-\cs_new_protected:Npn \chemmacros_nobreak:     { \tex_penalty:D \c_ten_thousand }
-\cs_new_protected:Npn \chemmacros_allow_break: { \tex_penalty:D \c_zero }
+\cs_new_protected:Npn \chemmacros_nobreak:     { \tex_penalty:D 10000 \scan_stop: }
+\cs_new_protected:Npn \chemmacros_allow_break: { \tex_penalty:D \c_zero_int }
 \cs_new_protected:Npn \chemmacros_skip_nobreak:N #1
   {
     \chemmacros_nobreak:
