@@ -278,7 +278,8 @@
 % #4: argument list ({#2}{#3}...)
 \cs_new_protected:Npn \chemmacros_declare_reaction_env:nnnn #1#2#3#4
   {
-    \exp_args:Nnx \DeclareDocumentEnvironment {#1} { !O{} \prg_replicate:nn {#3+0} {m} }
+    \exp_args:Nnx \DeclareDocumentEnvironment {#1}
+      { \int_compare:nT { #3+0 = 0 } {!} O{} \prg_replicate:nn {#3+0} {m} }
       {
         \chemmacros_add_reaction_description:n {##1}
         \__chemmacros_begin_reaction:
