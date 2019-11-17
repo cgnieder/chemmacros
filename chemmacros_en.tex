@@ -139,9 +139,14 @@
 ]{geometry}
 
 
-\expandafter\def\csname libertine@figurestyle\endcsname{LF}
+\makeatletter
+\def\libertine@figurestyle{LF}
+\usepackage{amsmath}
+\undef\lvert \undef\lVert
+\undef\rvert \undef\rVert
 \usepackage[libertine]{newtxmath}
-\expandafter\def\csname libertine@figurestyle\endcsname{OsF}
+\def\libertine@figurestyle{OsF}
+\makeatother
 
 \usepackage[biblatex]{embrac}
 \ChangeEmph{[}[,.02em]{]}[.055em,-.08em]
@@ -1373,20 +1378,6 @@ existing ones:
 
 If you additionally load \pkg{chemstyle}~\cite{pkg:chemstyle} said package
 will \emph{not} define its own \cs{latin}.
-
-% The package \pkg{chemstyle}~\cite{pkg:chemstyle} provides the command
-% \cs{latin} to typeset common latin phrases in a consistent way.  \chemmacros\
-% defines a similar \cs{latin} only if \pkg{chemstyle} has \emph{not} been
-% loaded and additionally provides these commands:
-% \begin{center}
-%   \cs{insitu}   \insitu \quad
-%   \cs{abinitio} \abinitio \quad
-%   \cs{invacuo}  \invacuo
-% \end{center}
-
-% \emph{If the package \pkg{chemstyle} has been loaded they are defined using
-% \pkg{chemstyle}'s \cs{latin} command.  This means that then the appearance
-% depends on \pkg{chemstyle}'s option \code{abbremph}.}
 
 The last three commands mentioned above are defined through
 \begin{commands}
@@ -3461,7 +3452,7 @@ units.  Like all \pkg{siunitx} units they're only valid inside
   \command{Molar} \si{\Molar}
   \command{MolMass} \si{\MolMass}
   \command{normal} \si{\normal}
-  \command{torr} \si{\torr}
+  \command{Torr} \si{\Torr}
 \end{commands}
 
 By the way: \cs*{mmHg} \si{\mmHg} already is defined by \pkg{siunitx}.

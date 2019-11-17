@@ -25,19 +25,21 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{units}{2015/09/28 chemical units}
+\ChemModule{units}{2019/11/07 chemical units}
 
 \RequirePackage{siunitx}
 
 % --------------------------------------------------------------------------
-\DeclareSIUnit {\atm       } {atm}
-\DeclareSIUnit {\atmosphere} {atm}
-\DeclareSIUnit {\calory    } {cal}
-\DeclareSIUnit {\cal       } {cal}
-\DeclareSIUnit {\moLar     } {\mole\per\liter}
-\DeclareSIUnit {\MolMass   } {\gram\per\mole}
-\DeclareSIUnit {\normal    } {\textsc{n}}
-\DeclareSIUnit {\torr      } {torr}
+\DeclareSIUnit \atm        {atm}
+\DeclareSIUnit \atmosphere {atm}
+\DeclareSIUnit \calory     {cal}
+\DeclareSIUnit \cal        {cal}
+\DeclareSIUnit \moLar      {\mole\per\liter}
+\DeclareSIUnit \MolMass    {\gram\per\mole}
+\DeclareSIUnit \normal     {\textsc{n}}
+\chemmacros_if_compatibility:nnTF {<} {5.8g}
+  { \DeclareSIUnit \torr {torr} }
+  { \DeclareSIUnit \Torr {Torr} }
 
 \AtEndPreamble
   {
@@ -53,4 +55,5 @@
 \file_input_stop:
 
 2015/09/28 - change \AtBeginDocument into \AtEndPreamble
+2019/11/07 - correction torr -> Torr
 

@@ -381,3 +381,7 @@ Version history
 2019/09/23 - version 5.8d - add some Norwegian translations (reactions, scheme)
 2019/09/27 - version 5.8e - change `O{}' argument of reactions into `!O{}'
                             (reactions)
+2019/09/30 - version 5.8f - fix bug introduced in the last version
+2019/11/17 - version 5.9  - correction: torr -> Torr (units)
+                          - define latin phrases on the go instead of at begin
+                            document

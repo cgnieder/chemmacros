@@ -862,7 +862,9 @@
       \chemmacros_latin:n {#2}
     \group_end:
   }
+\EndChemCompatibility
 
+\ChemCompatibilityBetween{5.7}{5.9}
 \AtBeginDocument
   {
     \AfterPackage* {chemstyle} { \cs_undefine:N \invacuo }
@@ -870,7 +872,13 @@
     \NewChemLatin \abinitio {ab~initio}
     \NewChemLatin \invacuo  {in~vacuo}
   }
+\EndChemCompatibility
 
+\ChemCompatibilityFrom{5.9}
+\cs_undefine:N \invacuo
+\NewChemLatin \invacuo  {in~vacuo}
+\NewChemLatin \abinitio {ab~initio}
+\NewChemLatin \insitu   {in~situ}
 \EndChemCompatibility
 
 % --------------------------------------------------------------------------
