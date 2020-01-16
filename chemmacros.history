@@ -12,7 +12,7 @@ contact@mychemistry.eu
 If you have any ideas, questions, suggestions or bugs to report, please
 feel free to contact me.
 --------------------------------------------------------------------------
-Copyright 2011-2019 Clemens Niederberger
+Copyright 2011--2020 Clemens Niederberger
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3
@@ -385,3 +385,4 @@ Version history
 2019/11/17 - version 5.9  - correction: torr -> Torr (units)
                           - define latin phrases on the go instead of at begin
                             document
+2020/01/16 - version 5.9a - adapt to renaming of string case changing functions
