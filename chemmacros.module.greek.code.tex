@@ -25,9 +25,9 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{greek}{2015/06/09 upright greek symbols}
+\ChemModule{greek}{2020/02/02 upright greek symbols}
 
-\RequirePackage{chemgreek}[2015/04/09]
+\RequirePackage{chemgreek}[2020/01/16]
 
 \msg_new:nnn {chemmacros} {no-greek}
   {
@@ -45,19 +45,15 @@
 % chemgreek selects a mapping if an unambiguous choice is possible, otherwise
 % selects `default'. Warn the user in this case:
 \AtBeginDocument{
-  \bool_if:nT
-    {
-      \chemgreek_if_mapping_active_p:n {default} ||
-      \chemgreek_if_mapping_active_p:n {var-default}
-    }
+  \bool_lazy_or:nnT
+    { \chemgreek_if_mapping_active_p:n {default} }
+    { \chemgreek_if_mapping_active_p:n {var-default} }
     { \msg_warning:nn {chemmacros} {no-greek} }
 }
 
 % an option for manual selection:
 \chemmacros_define_global_keys:n
-  {
-    greek .code:n = \chemmacros_choose_chemgreek_mapping:n {#1}
-  }
+  { greek .code:n = \chemmacros_choose_chemgreek_mapping:n {#1} }
 
 \cs_new_protected:Npn \chemmacros_choose_chemgreek_mapping:n #1
   {
@@ -70,3 +66,5 @@
   }
 
 % --------------------------------------------------------------------------
+\file_input_stop:
+2020/02/02 - lazy boolean evaluation

@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{chemformula}{2016/05/03 integration of chemical formulas}
+\ChemModule{chemformula}{2020/02/02 integration of chemical formulas}
 
 \RequirePackage{amstext}
 \chemmacros_load_module:n {charges}
@@ -209,17 +209,12 @@
 
 \AtEndPreamble
   {
-    \bool_if:nTF
+    \bool_if:NF \l__chemmacros_formula_method_set_bool
       {
-        !\l__chemmacros_formula_method_set_bool
-        &&
-        \chemmacros_if_compatibility_p:nn {>=} {5.2}
-        &&
-        \chemmacros_if_compatibility_p:nn {<} {5.6}
-      }
-      { \chemmacros_check_formula_method: }
-      {
-        \bool_if:NF \l__chemmacros_formula_method_set_bool
+        \bool_lazy_and:nnTF
+          { \chemmacros_if_compatibility_p:nn {>=} {5.2} }
+          { \chemmacros_if_compatibility_p:nn {<} {5.6} }
+          { \chemmacros_check_formula_method: }
           {
             \chemmacros_if_compatibility:nnTF {>=} {5.6}
               { \msg_info:nn {chemmacros} {default-formula-method} }
@@ -242,3 +237,4 @@
            - don't automatically load an available method: load `chemformula'
              if the users haven't decided for themselves and issue a warning
 2016/05/03 - correct wrong method check
+2020/02/02 - lazy boolean evaluation

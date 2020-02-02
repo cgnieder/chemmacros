@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{reactions}{2019/09/27 reaction environments}
+\ChemModule{reactions}{2020/02/02 reaction environments}
 
 \chemmacros_load_module:n {chemformula}
 
@@ -167,11 +167,9 @@
 
 \AtEndPreamble
   {
-    \bool_if:nT
-      {
-        \chemmacros_if_package_loaded_p:n {tocbasic} ||
-        \l__chemmacros_reactions_tocbasic_bool
-      }
+    \bool_lazy_or:nnT
+      { \chemmacros_if_package_loaded_p:n {tocbasic} }
+      { \l__chemmacros_reactions_tocbasic_bool }
       {
         \RequirePackage {tocbasic}
         \addtotoclist [float] {lor}
@@ -444,3 +442,4 @@
 2016/05/04 - options `tag-open', `tag-close' and `before-tag'
 2019/09/23 - added Norwegian translations
 2019/09/27 - change `O{}' argument of reactions into `!O{}'
+2020/02/02 - lazy boolean evaluation

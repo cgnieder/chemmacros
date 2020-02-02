@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{units}{2019/11/07 chemical units}
+\ChemModule{units}{2020/02/02 chemical units}
 
 \RequirePackage{siunitx}
 
@@ -37,9 +37,18 @@
 \DeclareSIUnit \moLar      {\mole\per\liter}
 \DeclareSIUnit \MolMass    {\gram\per\mole}
 \DeclareSIUnit \normal     {\textsc{n}}
-\chemmacros_if_compatibility:nnTF {<} {5.8g}
-  { \DeclareSIUnit \torr {torr} }
-  { \DeclareSIUnit \Torr {Torr} }
+
+\ChemCompatibilityTo{5.8g}
+  \DeclareSIUnit \torr {torr}
+\EndChemcompatibility
+
+\ChemCompatibilityFrom{5.8h}
+  \DeclareSIUnit \Torr {Torr}
+\EndChemcompatibility
+
+\ChemCompatibilityFrom{5.10}
+  \DeclareSIUnit \torr {Torr}
+\EndChemcompatibility
 
 \AtEndPreamble
   {

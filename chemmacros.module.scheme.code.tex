@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{scheme}{2019/09/23 a scheme floating environment}
+\ChemModule{scheme}{2020/02/02 a scheme floating environment}
 
 \RequirePackage {chemnum}
 
@@ -136,12 +136,15 @@
   {
     \prop_get:NnNT \l__chemmacros_float_methods_prop {#1}
       \l__chemmacros_tmpa_tl
-    \bool_if:nT
-      { !\l__chemmacros_float_def_bool && \l__chemmacros_tmpa_tl }
       {
-        \bool_set_true:N \l__chemmacros_float_def_bool
-        \tl_set:Nn \l__chemmacros_float_method_tl {#1}
-        \msg_info:nnn {chemmacros} {float-method} {#1}
+        \bool_lazy_and:nnT
+          { !\l__chemmacros_float_def_bool }
+          { \l__chemmacros_tmpa_tl }
+          {
+            \bool_set_true:N \l__chemmacros_float_def_bool
+            \tl_set:Nn \l__chemmacros_float_method_tl {#1}
+            \msg_info:nnn {chemmacros} {float-method} {#1}
+          }
       }
   }
 
@@ -180,8 +183,9 @@
 % #1: env name
 \cs_new_protected:Npn \chemmacros_define_float:nn #1#2
   {
-    \bool_if:nT
-      { !\cs_if_exist_p:c {#1} && !\cs_if_exist_p:c {end#1} }
+    \bool_lazy_and:nnT
+      { !\cs_if_exist_p:c {#1} }
+      { !\cs_if_exist_p:c {end#1} }
       {
         \bool_if:NTF \l__chemmacros_float_def_bool
           {
@@ -209,11 +213,9 @@
             \newenvironment {#1*}
               {\@dblfloat{#1}}
               {\end@dblfloat}
-            \bool_if:nTF
-              {
-                \chemmacros_if_class_loaded_p:n {book} ||
-                \chemmacros_if_class_loaded_p:n {report}
-              }
+            \bool_lazy_or:nnTF
+              { \chemmacros_if_class_loaded_p:n {book} }
+              { \chemmacros_if_class_loaded_p:n {report} }
               {
                 \cs_new_protected:cpn {listof#1s}
                   {
@@ -321,3 +323,4 @@
 2016/04/25 - cleveref and fancyref support
 2016/12/28 - bug fix: typo in \chemmacros_tex_if:nnTF usage
 2019/03/23 - added Norwegian translations
+2020/02/02 - lazy boolean evaluation

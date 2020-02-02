@@ -40,9 +40,9 @@
 
 \cs_new_protected:Npn \__chemmacros_set_mechanisms:nnn #1#2#3
   {
-    \tl_set:Nn \l__chemmacros_mechanisms_type_tl { #1 }
-    \tl_set:Nn \l__chemmacros_mechanisms_mol_tl  { #2 }
-    \tl_set:Nn \l__chemmacros_mechanisms_ar_tl   { #3 }
+    \tl_set:Nn \l__chemmacros_mechanisms_type_tl {#1}
+    \tl_set:Nn \l__chemmacros_mechanisms_mol_tl  {#2}
+    \tl_set:Nn \l__chemmacros_mechanisms_ar_tl   {#3}
   }
 
 \chemmacros_define_keys:nn {mechanisms}
@@ -50,7 +50,7 @@
     type      .choice: ,
     type /    .code:n    =
       {
-        \__chemmacros_set_mechanisms:nnn { S }
+        \__chemmacros_set_mechanisms:nnn {S}
           {
             \c_math_toggle_token
               \c_math_subscript_token { \text {N} }
@@ -60,7 +60,7 @@
       } ,
     type / 1  .code:n    =
       {
-        \__chemmacros_set_mechanisms:nnn { S }
+        \__chemmacros_set_mechanisms:nnn {S}
           {
             \c_math_toggle_token
               \c_math_subscript_token { \text {N} }
@@ -71,7 +71,7 @@
       } ,
     type / 2  .code:n    =
       {
-        \__chemmacros_set_mechanisms:nnn { S }
+        \__chemmacros_set_mechanisms:nnn {S}
           {
             \c_math_toggle_token
               \c_math_subscript_token { \text {N} }
@@ -82,7 +82,7 @@
       } ,
     type / se .code:n    =
       {
-        \__chemmacros_set_mechanisms:nnn { S }
+        \__chemmacros_set_mechanisms:nnn {S}
           {
             \c_math_toggle_token
               \c_math_subscript_token { \text {E} }
@@ -92,7 +92,7 @@
       } ,
     type / 1e .code:n    =
       {
-        \__chemmacros_set_mechanisms:nnn { S }
+        \__chemmacros_set_mechanisms:nnn {S}
           {
             \c_math_toggle_token
               \c_math_subscript_token { \text {E} }
@@ -103,7 +103,7 @@
       } ,
     type / 2e .code:n    =
       {
-        \__chemmacros_set_mechanisms:nnn { S }
+        \__chemmacros_set_mechanisms:nnn {S}
           {
             \c_math_toggle_token
               \c_math_subscript_token { \text {E} }
@@ -114,7 +114,7 @@
       } ,
     type / ar .code:n    =
       {
-        \__chemmacros_set_mechanisms:nnn { S }
+        \__chemmacros_set_mechanisms:nnn {S}
           {
             \c_math_toggle_token
               \c_math_subscript_token { \text {E} }
@@ -123,14 +123,14 @@
           { Ar - }
       } ,
     type / e  .code:n    =
-      { \__chemmacros_set_mechanisms:nnn { E } { } { } } ,
+      { \__chemmacros_set_mechanisms:nnn {E} { } { } } ,
     type / e1 .code:n    =
-      { \__chemmacros_set_mechanisms:nnn { E } { 1 } { } } ,
+      { \__chemmacros_set_mechanisms:nnn {E} {1} { } } ,
     type / e2 .code:n    =
-      { \__chemmacros_set_mechanisms:nnn { E } { 2 } { } } ,
+      { \__chemmacros_set_mechanisms:nnn {E} {2} { } } ,
     type / cb .code:n    =
       {
-        \__chemmacros_set_mechanisms:nnn { E }
+        \__chemmacros_set_mechanisms:nnn {E}
           {
             1
             \c_math_toggle_token

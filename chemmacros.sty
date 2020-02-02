@@ -31,10 +31,10 @@
 
 % --------------------------------------------------------------------------
 % package information:
-\tl_const:Nn \c_chemmacros_date_tl {2020/01/16}
+\tl_const:Nn \c_chemmacros_date_tl {2020/02/02}
 \tl_const:Nn \c_chemmacros_version_major_number_tl {5}
-\tl_const:Nn \c_chemmacros_version_minor_number_tl {9}
-\tl_const:Nn \c_chemmacros_version_subrelease_tl   {a}
+\tl_const:Nn \c_chemmacros_version_minor_number_tl {10}
+\tl_const:Nn \c_chemmacros_version_subrelease_tl   {}
 \tl_const:Nx \c_chemmacros_version_number_tl
   {
     \c_chemmacros_version_major_number_tl .
@@ -208,11 +208,9 @@
 
 \cs_new_protected:Npn \ChemCompatibilityBetween #1#2#3 \EndChemCompatibility
   {
-    \bool_if:nT
-      {
-        \chemmacros_if_compatibility_p:nn {>=} {#1} &&
-        \chemmacros_if_compatibility_p:nn {<} {#2}
-      }
+    \bool_lazy_and:nnT
+      { \chemmacros_if_compatibility_p:nn {>=} {#1} }
+      { \chemmacros_if_compatibility_p:nn {<} {#2} }
       {#3}
   }
 
@@ -270,3 +268,4 @@
 % --------------------------------------------------------------------------
 \file_input_stop:
 
+2020/02/02 - lazy boolean evaluation

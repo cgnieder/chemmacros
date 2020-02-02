@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{redox}{2015/09/30 oxidation numbers, redox reactions}
+\ChemModule{redox}{2020/02/02 oxidation numbers, redox reactions}
 
 \chemmacros_load_modules:n {tikz,xfrac}
 
@@ -85,18 +85,14 @@
 \ChemCompatibilityTo{5.4}
 \cs_new_protected:Npn \__chemmacros_ox_sign:n #1
   {
-    \bool_if:nT
-      {
-        \fp_compare_p:n { #1 > 0 } &&
-        \l__chemmacros_ox_explicit_sign_bool
-      }
+    \bool_lazy_and:nnT
+      { \fp_compare_p:n { #1 > 0 } }
+      { \l__chemmacros_ox_explicit_sign_bool }
       { \c_math_toggle_token + \c_math_toggle_token }
-      \bool_if:nT
-        {
-          \fp_compare_p:n { #1 = 0 } &&
-          \l__chemmacros_ox_explicit_sign_bool
-        }
-        { \c_math_toggle_token \pm \c_math_toggle_token }
+    \bool_lazy_and:nnT
+      { \fp_compare_p:n { #1 = 0 } }
+      { \l__chemmacros_ox_explicit_sign_bool }
+      { \c_math_toggle_token \pm \c_math_toggle_token }
     \fp_compare:nT { #1 < 0 }
       { \c_math_toggle_token - \c_math_toggle_token }
   }
@@ -104,19 +100,17 @@
 \ChemCompatibilityFrom{5.4}
 \cs_new_protected:Npn \__chemmacros_ox_sign:n #1
   {
-    \bool_if:nT
-      {
-        \fp_compare_p:n { #1 > 0 } &&
-        \l__chemmacros_ox_explicit_sign_bool
-      }
+    \bool_lazy_and:nnT
+      { \fp_compare_p:n { #1 > 0 } }
+      { \l__chemmacros_ox_explicit_sign_bool }
       { \c_math_toggle_token + \c_math_toggle_token }
-      \bool_if:nT
-        {
-          \fp_compare_p:n { #1 = 0 } &&
-          \l__chemmacros_ox_explicit_sign_bool &&
-          \l__chemmacros_ox_explicit_zero_sign_bool
-        }
-        { \c_math_toggle_token \pm \c_math_toggle_token }
+    \bool_lazy_all:nT
+      {
+        { \fp_compare_p:n { #1 = 0 } }
+        { \l__chemmacros_ox_explicit_sign_bool }
+        { \l__chemmacros_ox_explicit_zero_sign_bool }
+      }
+      { \c_math_toggle_token \pm \c_math_toggle_token }
     \fp_compare:nT { #1 < 0 }
       { \c_math_toggle_token - \c_math_toggle_token }
   }
@@ -437,4 +431,4 @@
 % --------------------------------------------------------------------------
 \file_input_stop:
 2015/09/30 - new option `explicit-zero-sign'
-
+2020/02/02 - lazy boolean evaluation

@@ -25,7 +25,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ChemModule{spectroscopy}{2015/12/31 environment for spectroscopic data}
+\ChemModule{spectroscopy}{2020/02/02 environment for spectroscopic data}
 
 \chemmacros_load_modules:n {chemformula}
 \RequirePackage{siunitx}
@@ -275,19 +275,13 @@
             { \bool_set_true:N \l__chemmacros_nmr_frequency_bool }
           \tl_if_empty:nF {#4}
             { \bool_set_true:N \l__chemmacros_nmr_solvent_bool }
-          \bool_if:nT
-            {
-              \l__chemmacros_nmr_frequency_bool
-              ||
-              \l__chemmacros_nmr_solvent_bool
-            }
+          \bool_lazy_or:nnT
+            { \l__chemmacros_nmr_frequency_bool }
+            { \l__chemmacros_nmr_solvent_bool }
             { \bool_set_true:N \l__chemmacros_nmr_delimiters_bool }
-          \bool_if:nT
-            {
-              \l__chemmacros_nmr_frequency_bool
-              &&
-              \l__chemmacros_nmr_solvent_bool
-            }
+          \bool_lazy_and:nT
+            { \l__chemmacros_nmr_frequency_bool }
+            { \l__chemmacros_nmr_solvent_bool }
             { \bool_set_true:N \l__chemmacros_nmr_comma_bool }
           \tl_if_empty:nTF {#2}
             {
@@ -516,3 +510,4 @@
 \file_input_stop:
 2015/12/31 - new option `atom-number-space'
 2017/01/27 - new option `nmr-base-format'
+2020/02/02 - lazy boolean evaluation

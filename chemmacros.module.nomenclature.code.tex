@@ -51,10 +51,10 @@
 
 \msg_new:nnn {chemmacros} {let-iupac}
   {
-    You've~ tried~ to~ let~ the~ iupac~ command~ \token_to_str:N #1 ~ to~ the~
-    iupac~ command~ \token_to_str:N #2 ,~ but~ the~ latter~ doesn't~ exist.~
-    Use~ \token_to_str:N \NewChemIUPAC \c_space_tl instead~ or~declare~
-    \token_to_str:N #2 \c_space_tl first.
+    You've~ tried~ to~ let~ the~ iupac~ command~ \token_to_str:N #1
+    \c_space_tl to~ the~ iupac~ command~ \token_to_str:N #2 ,~ but~ the~
+    latter~ doesn't~ exist.~  Use~ \token_to_str:N \NewChemIUPAC \c_space_tl
+    instead~ or~declare~ \token_to_str:N #2 \c_space_tl first.
   }
 
 \msg_new:nnn {chemmacros} {new-iupac-shorthand}
@@ -70,75 +70,87 @@
     but~ this~ shorthand~ doesn't~ exist,~ yet.
   }
 
+\msg_new:nnn {chemmacros} {show-iupac}
+  { \\ >~ \token_to_str:N #1=iupac~macro: \\ -> #2 }
+
+\msg_new:nnn {chemmacros} {no-iupac-command}
+  { \\ >~ \token_to_str:N #1=not~ defined~ as~ iupac~ macro }
+
+\cs_generate_variant:Nn \msg_show:nnnn {nnnV}
+
+% --------------------------------------------------------------------------
 \prop_new:N \l__chemmacros_iupac_prop
+
+\cs_new_protected:Npn \__chemmacros_iupac_name:NN #1#2
+  { \str_set:Nx #2 { \chemmacros_remove_backslash:N #1 } }
+
+\cs_new_protected:Npn \__chemmacros_define_iupac:Nn #1#2
+  {
+    \__chemmacros_iupac_name:NN #1 \l__chemmacros_tmpa_str
+    \prop_put:NVn \l__chemmacros_iupac_prop
+      \l__chemmacros_tmpa_str
+      {#2}
+    \chemmacros_make_iupac:
+  }
+\cs_generate_variant:Nn \__chemmacros_define_iupac:Nn {NV}
+
+\cs_new_protected:Npn \__chemmacros_let_iupac:NN #1#2
+  {
+    \__chemmacros_iupac_name:NN #1 \l__chemmacros_tmpa_str
+    \__chemmacros_iupac_name:NN #2 \l__chemmacros_tmpb_str
+    \tl_set:Nx \l__chemmacros_tmpa_tl
+      { \prop_item:NV \l__chemmacros_iupac_prop \l__chemmacros_tmpb_str }
+    \__chemmacros_define_iupac:NV #1 \l__chemmacros_tmpa_tl
+  }
+
+\cs_new_protected:Npn \chemmacros_show_iupac:N #1
+  {
+    \group_begin:
+      \__chemmacros_iupac_name:NN #1 \l__chemmacros_tmpa_str
+      \tl_set:Nx \l__chemmacros_tmpa_tl
+        { \prop_item:NV \l__chemmacros_iupac_prop \l__chemmacros_tmpa_str }
+      \tl_if_empty:NTF \l__chemmacros_tmpa_tl
+        { \msg_show:nnn {chemmacros} {no-iupac-command} {#1} }
+        { \msg_show:nnnV {chemmacros} {show-iupac} {#1} \l__chemmacros_tmpa_tl }
+    \group_end:
+  }
+
+\prg_new_protected_conditional:Npnn \chemmacros_if_iupac:N #1 {T,F,TF}
+  {
+    \__chemmacros_iupac_name:NN #1 \l__chemmacros_tmpa_str
+    \prop_if_in:NVTF \l__chemmacros_iupac_prop \l__chemmacros_tmpa_str
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
 
 \cs_new_protected:Npn \chemmacros_new_iupac:Nn #1#2
   {
-    \tl_set:Nx \l__chemmacros_tmpa_tl
-      { \chemmacros_remove_backslash:N #1 }
-    \prop_if_in:NVTF \l__chemmacros_iupac_prop \l__chemmacros_tmpa_tl
+    \chemmacros_if_iupac:NTF #1
       { \msg_error:nnn {chemmacros} {new-iupac} {#1} }
-      {
-        \prop_put:NVn \l__chemmacros_iupac_prop
-          \l__chemmacros_tmpa_tl
-          {#2}
-      }
-    \chemmacros_make_iupac:
+      { \__chemmacros_define_iupac:Nn #1 {#2} }
   }
 
 \cs_new_protected:Npn \chemmacros_provide_iupac:Nn #1#2
   {
-    \tl_set:Nx \l__chemmacros_tmpa_tl
-      { \chemmacros_remove_backslash:N #1 }
-    \prop_if_in:NVF \l__chemmacros_iupac_prop \l__chemmacros_tmpa_tl
-      {
-        \prop_put:NVn \l__chemmacros_iupac_prop
-          \l__chemmacros_tmpa_tl
-          {#2}
-      }
-    \chemmacros_make_iupac:
+    \chemmacros_if_iupac:NF #1
+      { \__chemmacros_define_iupac:Nn #1 {#2} }
   }
 
 \cs_new_protected:Npn \chemmacros_define_iupac:Nn #1#2
-  {
-    \tl_set:Nx \l__chemmacros_tmpa_tl
-      { \chemmacros_remove_backslash:N #1 }
-    \prop_put:NVn \l__chemmacros_iupac_prop
-      \l__chemmacros_tmpa_tl
-      {#2}
-    \chemmacros_make_iupac:
-  }
+  { \__chemmacros_define_iupac:Nn #1 {#2} }
 
 \cs_new_protected:Npn \chemmacros_renew_iupac:Nn #1#2
   {
-    \tl_set:Nx \l__chemmacros_tmpa_tl
-      { \chemmacros_remove_backslash:N #1 }
-    \prop_if_in:NVTF \l__chemmacros_iupac_prop \l__chemmacros_tmpa_tl
-      {
-        \prop_put:NVn \l__chemmacros_iupac_prop
-          \l__chemmacros_tmpa_tl
-          {#2}
-      }
+    \chemmacros_if_iupac:NTF #1
+      { \__chemmacros_define_iupac:Nn #1 {#2} }
       { \msg_error:nnn {chemmacros} {renew-iupac} {#1} }
-    \chemmacros_make_iupac:
   }
 
 \cs_new_protected:Npn \chemmacros_let_iupac:NN #1#2
   {
-    \tl_set:Nx \l__chemmacros_tmpa_tl
-      { \chemmacros_remove_backslash:N #1 }
-    \tl_set:Nx \l__chemmacros_tmpb_tl
-      { \chemmacros_remove_backslash:N #2 }
-    \prop_get:NVNTF \l__chemmacros_iupac_prop
-      \l__chemmacros_tmpb_tl
-      \l__chemmacros_tmpc_tl
-      {
-        \prop_put:NVV \l__chemmacros_iupac_prop
-          \l__chemmacros_tmpa_tl
-          \l__chemmacros_tmpc_tl
-      }
+    \chemmacros_if_iupac:NTF #2
+      { \__chemmacros_let_iupac:NN #1#2 }
       { \msg_error:nnnn {chemmacros} {let-iupac} {#1} {#2} }
-    \chemmacros_make_iupac:
   }
 
 \ChemCompatibilityTo{5.2}
@@ -220,6 +232,7 @@
 \NewDocumentCommand \LetChemIUPAC {mm}
   { \chemmacros_let_iupac:NN #1 #2 }
 
+% --------------------------------------------------------------------------
 \chemmacros_define_keys:nn {nomenclature}
   {
     iupac              .choice: ,
@@ -234,6 +247,7 @@
       \bool_set_true:N \l__chemmacros_iupac_strict_bool ,
   }
 
+% --------------------------------------------------------------------------
 % stereo descriptors and other nomenclature commands
 % Cahn-Ingold-Prelog
 \dim_new:N  \l__chemmacros_cip_kern_dim
@@ -674,20 +688,20 @@
 \NewChemIUPACShorthand - \chemmacros_break_point_hyphen:
 
 \ChemCompatibilityFrom{5.1}
-\NewChemIUPACShorthand ( \chemmacros_break_point_opening_paren:
-\NewChemIUPACShorthand ) \chemmacros_break_point_closing_paren:
-\NewChemIUPACShorthand [ \chemmacros_break_point_opening_bracket:
-\NewChemIUPACShorthand ] \chemmacros_break_point_closing_bracket:
+  \NewChemIUPACShorthand ( \chemmacros_break_point_opening_paren:
+  \NewChemIUPACShorthand ) \chemmacros_break_point_closing_paren:
+  \NewChemIUPACShorthand [ \chemmacros_break_point_opening_bracket:
+  \NewChemIUPACShorthand ] \chemmacros_break_point_closing_bracket:
 \EndChemCompatibility
 
 \ChemCompatibilityFrom{5.3}
-\NewChemIUPAC \chemprime { \ensuremath {{}^{\prime}} }
-\NewChemIUPACShorthand ' \chemprime
+  \NewChemIUPAC \chemprime { \ensuremath {{}^{\prime}} }
+  \NewChemIUPACShorthand ' \chemprime
 \EndChemCompatibility
 
 \ChemCompatibilityFrom{5.8c}
-\NewChemIUPAC \nonbreakinghyphen { \mbox{-} \nobreak \hspace{0pt} }
-\NewChemIUPACShorthand = \nonbreakinghyphen
+  \NewChemIUPAC \nonbreakinghyphen { \mbox{-} \nobreak \hspace{0pt} }
+  \NewChemIUPACShorthand = \nonbreakinghyphen
 \EndChemCompatibility
 
 \cs_new_protected:Npn \chemmacros_iupac:nn #1#2
@@ -698,7 +712,7 @@
       \chemmacros_make_iupac:
       \chemmacros_make_shorthands:
       % what's this vvv in here for?
-      \chemmacros_ignore_spaces:
+      % \chemmacros_ignore_spaces:
       \chemmacros_if_compatibility:nnT {<=} {5.2}
         { \chemmacros_define_deprecated:NN \- - }
       \tl_set_rescan:Nnn \l__chemmacros_tmpa_tl
@@ -953,3 +967,5 @@
              `cip-number-format'
 2017/06/11 - change behaviour of \__chemmacros_break_point_insert:nnn so
              it does nothing as last token in \iupac
+2020/01/02 - \chemmacros_show_iupac:N
+           - \chemmacros_if_iupac:NTF
