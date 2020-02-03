@@ -606,7 +606,7 @@
 
 % --------------------------------------------------------------------------
 % a few general functions:
-\cs_new_eq:NN \chemmacros_leave_vmode:   \chemformula_leave_vmode:
+\cs_new_eq:NN \mode_leave_vertical:   \chemformula_leave_vmode:
 \cs_new_eq:NN \chemmacros_ignore_spaces: \tex_ignorespaces:D
 \cs_new_eq:NN \chemmacros_nobreak:       \chemformula_nobreak:
 \cs_new_eq:NN \chemmacros_allow_break:   \chemformula_allow_break:
@@ -2295,7 +2295,7 @@
       {
         \bool_if:NT \l__chemmacros_nmr_list_bool { \item \scan_stop: }
         \group_begin:
-          \chemmacros_leave_vmode:
+          \mode_leave_vertical:
           \bool_set_false:N \l__chemmacros_nmr_frequency_bool
           \bool_set_false:N \l__chemmacros_nmr_solvent_bool
           \tl_if_empty:nF { #3 }

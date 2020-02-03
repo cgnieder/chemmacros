@@ -85,19 +85,19 @@
 
 % --------------------------------------------------------------------------
 % variants of kernel functions:
-\cs_generate_variant:Nn \tl_if_eq:nnTF       { xx , V }
-\cs_generate_variant:Nn \seq_set_split:Nnn   { Nnx }
-\cs_generate_variant:Nn \prop_item:Nn        { NV }
-\cs_generate_variant:Nn \seq_item:Nn         { cV }
-\cs_generate_variant:Nn \int_to_arabic:n     { V }
-\cs_generate_variant:Nn \tl_replace_once:Nnn { NnV }
-\cs_generate_variant:Nn \prop_gput:Nnn       { cxx , NVf }
-\cs_generate_variant:Nn \msg_error:nnn       { nnV }
-\cs_generate_variant:Nn \msg_warning:nnn     { nnV }
-\cs_generate_variant:Nn \msg_warning:nnnn    { nnV }
-\cs_generate_variant:Nn \vbox_set:Nn         { NV }
-\cs_generate_variant:Nn \keys_define:nn      { x } 
-\cs_generate_variant:Nn \keys_set:nn         { x , nx }
+\cs_generate_variant:Nn \tl_if_eq:nnTF       {xx,V}
+\cs_generate_variant:Nn \seq_set_split:Nnn   {Nnx}
+\cs_generate_variant:Nn \prop_item:Nn        {NV}
+\cs_generate_variant:Nn \seq_item:Nn         {cV}
+\cs_generate_variant:Nn \int_to_arabic:n     {V}
+\cs_generate_variant:Nn \tl_replace_once:Nnn {NnV}
+\cs_generate_variant:Nn \prop_gput:Nnn       {cxx,NVf}
+\cs_generate_variant:Nn \msg_error:nnn       {nnV}
+\cs_generate_variant:Nn \msg_warning:nnn     {nnV}
+\cs_generate_variant:Nn \msg_warning:nnnn    {nnV}
+\cs_generate_variant:Nn \vbox_set:Nn         {NV}
+\cs_generate_variant:Nn \keys_define:nn      {x} 
+\cs_generate_variant:Nn \keys_set:nn         {x,nx}
 
 % --------------------------------------------------------------------------
 % temporary variables:
@@ -129,6 +129,10 @@
 \clist_new:N \l__chemmacros_tmpa_clist
 \clist_new:N \l__chemmacros_tmpb_clist
 \clist_new:N \l__chemmacros_tmpc_clist
+
+\str_new:N   \l__chemmacros_tmpa_str
+\str_new:N   \l__chemmacros_tmpb_str
+\str_new:N   \l__chemmacros_tmpc_str
 
 % --------------------------------------------------------------------------
 % module mechanism:
@@ -323,3 +327,4 @@ Version history
 2015/10/14 - bug fix in the module hook mechanism
            - bug fix in \chemmacros_if_module_loaded:n
            - new `errorcheck' module
+2020/02/03 - add temporary string variables

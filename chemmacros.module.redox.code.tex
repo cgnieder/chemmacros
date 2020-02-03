@@ -328,7 +328,7 @@
 % TODO: add option to make `#2' be parsed as chem formula
 \cs_new_protected:Npn \chemmacros_redox_partner:nn #1#2
   {
-    \chemmacros_tex_if:nnTF {measuring@} {}
+    \legacy_if:nTF {measuring@}
       {
         \group_begin:
           \tikz[baseline=(#1.base)] { \node [inner~sep=0pt] (#1) {#2} ; }
@@ -432,3 +432,4 @@
 \file_input_stop:
 2015/09/30 - new option `explicit-zero-sign'
 2020/02/02 - lazy boolean evaluation
+           - prefer \legacy_if:nTF over \chemmacros_if_tex:nnTF

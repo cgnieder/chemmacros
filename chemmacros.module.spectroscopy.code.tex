@@ -268,7 +268,7 @@
       {
         \bool_if:NT \l__chemmacros_nmr_list_bool { \item \scan_stop: }
         \group_begin:
-          \chemmacros_leave_vmode:
+          \mode_leave_vertical:
           \bool_set_false:N \l__chemmacros_nmr_frequency_bool
           \bool_set_false:N \l__chemmacros_nmr_solvent_bool
           \tl_if_empty:nF {#3}
@@ -279,7 +279,7 @@
             { \l__chemmacros_nmr_frequency_bool }
             { \l__chemmacros_nmr_solvent_bool }
             { \bool_set_true:N \l__chemmacros_nmr_delimiters_bool }
-          \bool_lazy_and:nT
+          \bool_lazy_and:nnT
             { \l__chemmacros_nmr_frequency_bool }
             { \l__chemmacros_nmr_solvent_bool }
             { \bool_set_true:N \l__chemmacros_nmr_comma_bool }

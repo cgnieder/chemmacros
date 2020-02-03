@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------
-the CHEMMACROS package v5.9 2019/11/17
+the CHEMMACROS package v5.10 2020/02/03
 
   comprehensive support for typesetting chemistry documents
 
@@ -28,8 +28,9 @@ The chemmacros package consists of the following files
     chemmacros4.sty
     chemmacros5.sty,
  == DOCUMENTATION FILES ==
-    chemmacros_en.tex
-    chemmacros_en.pdf,
+    chemmacros-manual.tex
+    chemmacros-manual.pdf
+    chemmacros-manual.cls
     README
     chemmacros.history
  == MODULE CODE FILES ==

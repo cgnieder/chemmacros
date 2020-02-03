@@ -184,7 +184,6 @@
 
 \cs_new_eq:NN \chemmacros_ignore_spaces: \tex_ignorespaces:D
 
-\cs_new_protected:Npn \chemmacros_leave_vmode: { \hbox_unpack:N \c_empty_box }
 \cs_new_protected:Npn \chemmacros_nobreak:     { \tex_penalty:D 10000 \scan_stop: }
 \cs_new_protected:Npn \chemmacros_allow_break: { \tex_penalty:D \c_zero_int }
 \cs_new_protected:Npn \chemmacros_skip_nobreak:N #1
@@ -193,13 +192,6 @@
     \skip_horizontal:N #1
     \chemmacros_nobreak:
   }
-
-% do I use those at all?
-\prg_new_conditional:Npnn \chemmacros_tex_if:nn #1#2 {p,T,F,TF}
-  { \use:c { if #1 } #2 \prg_return_true: \else: \prg_return_false: \fi: }
-
-\prg_new_conditional:Npnn \chemmacros_latex_if:n #1 {p,T,F,TF}
-  { #1 { \prg_return_true: } { \prg_return_false: } }
 
 % this is used at least in the `isotope' module
 \prg_new_conditional:Npnn \chemmacros_if_is_int:n #1 {p,T,F,TF}
@@ -278,7 +270,7 @@
       {
         \cs_if_exist:cF {cref@#1@name}
           {
-            \chemmacros_tex_if:nnTF {@cref@capitalise} {}
+            \legacy_if:nTF {@cref@capitalise}
               { \crefname {#1} {#4} {#5} }
               { \crefname {#1} {#2} {#3} }
             \Crefname {#1} {#4} {#5}

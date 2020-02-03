@@ -80,7 +80,7 @@
         \counterwithin {#1} {chapter}
         \setcounter {#1} {0}
       }
-    \chemmacros_tex_if:nnT {artopt} {}
+    \legacy_if:nT {artopt}
       { \counterwithout {#1} {chapter} }
   }
 
@@ -219,7 +219,7 @@
               {
                 \cs_new_protected:cpn {listof#1s}
                   {
-                    \chemmacros_tex_if:nnTF {@twocolumn} {}
+                    \legacy_if:nTF {@twocolumn}
                       { \@restonecoltrue\onecolumn }
                       { \@restonecolfalse }
                     \exp_args:NNx \chapter* {\exp_not:c {list#1name}}
@@ -227,8 +227,7 @@
                       { \MakeUppercase \use:c {list#1name} }
                       { \MakeUppercase \use:c {list#1name} }
                     \@starttoc {#2}
-                    \chemmacros_tex_if:nnT {@restonecol} {}
-                      { \twocolumn }
+                    \legacy_if:nT {@restonecol} { \twocolumn }
                   }
               }
               {
@@ -321,6 +320,7 @@
 2015/10/23 - add info message to float method detection
 2016/01/23 - make the module compatible with chemscheme
 2016/04/25 - cleveref and fancyref support
-2016/12/28 - bug fix: typo in \chemmacros_tex_if:nnTF usage
+2016/12/28 - bug fix: typo in \chemmacros_if_tex:nnTF usage
 2019/03/23 - added Norwegian translations
-2020/02/02 - lazy boolean evaluation
+2020/02/03 - lazy boolean evaluation
+           - prefer \legacy_if:nTF over \chemmacros_if_tex:nnTF

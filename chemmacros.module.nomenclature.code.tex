@@ -657,6 +657,9 @@
       }
   }
 
+\NewDocumentCommand \ChemMakeIupacShorthands {}
+  { \chemmacros_make_shorthands: }
+
 \NewDocumentCommand \DeclareChemIUPACShorthand {mm} 
   { \chemmacros_define_iupac_shorthand:NN #1#2 }
 
@@ -711,13 +714,13 @@
       \chemmacros_set_keys:nn {nomenclature} {#1}
       \chemmacros_make_iupac:
       \chemmacros_make_shorthands:
-      % what's this vvv in here for?
-      % \chemmacros_ignore_spaces:
+      % \prop_show:N \l__chemmacros_iupac_shorthands_prop
       \chemmacros_if_compatibility:nnT {<=} {5.2}
         { \chemmacros_define_deprecated:NN \- - }
       \tl_set_rescan:Nnn \l__chemmacros_tmpa_tl
         { \chemmacros_activate_all_iupac_shorthands: }
         {#2}
+      % \tl_analysis_show:N
       \l__chemmacros_tmpa_tl
     \group_end:
   }

@@ -30,133 +30,8 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\documentclass[load-preamble+]{cnltx-doc}
-\usepackage[utf8]{inputenc}
-\usepackage[compatibility=newest]{chemmacros}
-\setcnltx{
-  package  = {chemmacros},
-  info     = {comprehensive support for typesetting chemistry documents},
-  url      = https://github.com/cgnieder/chemmacros ,
-  authors  = Clemens Niederberger ,
-  email    = contact@mychemistry.eu ,
-  abstract = {%
-    \centering
-    \includegraphics{chemmacros-logo.pdf}
-    \par
-  } ,
-  quote-format = \small\biolinumLF ,
-  add-cmds = {
-     abinitio, activatechemgreekmapping, AddRxnDesc, anti, aq, aqi,
-     ba, bond, bridge,
-    cd, ch, changechemgreeksymbol, charrow, chcpd, chemabove, chemalpha,
-      chembeta, ChemCleverefSupport, chemdelta, chemDelta,
-      ChemFancyrefSupport, chemformula@bondlength, chemgamma, ChemModule,
-      chemomega, chemphi, chemPhi, chemsetup, chlewis, chname , cip, cis, ch,
-      CNMR,
-    data, DeclareChemArrow, DeclareChemBond, DeclareChemBondAlias,
-      DeclareChemCharge, DeclareChemEqConstant, declarechemgreekmapping,
-      DeclareChemIUPAC, DeclareChemIUPACShorthand, DeclareChemLatin,
-      DeclareChemNMR, DeclareChemNucleophile, DeclareChemPartialCharge,
-      DeclareChemParticle, DeclareChemPhase, DeclareChemReaction,
-      DeclareChemState,
-      delm, delp, Delta, dexter, Dfi,
-    el, ElPot, endo, entgegen, Enthalpy, enthalpy, entropy,
-    fdelm, fdelp, fmch, fminus, fpch, fplus, fscrm, fscrp,
-    gas, ghs, ghslistall, ghspic, gibbs, gram,
-    hapto, HNMR, Helmholtz, hydrogen,
-    IfChemCompatibilityF, IfChemCompatibilityT, IfChemCompatibilityTF, insitu,
-      invacuo, isotope, iupac,
-    Ka, Kb, Kw,
-    laevus, Lfi, listofreactions, lqd,
-    makepolymerdelims, mch, mega, meta, mhName,
-    NewChemArrow, NewChemBond, NewChemBondAlias,
-      NewChemCharge, NewChemEqConstant, newchemgreekmapping, NewChemIUPAC,
-      NewChemIUPACShorthand, NewChemLatin, NewChemMacroset, NewChemNMR,
-      NewChemNucleophile, NewChemPartialCharge, NewChemParticle, NewChemPhase,
-      NewChemReaction, NewChemState,
-      newman, nitrogen, NMR, Nu, Nuc,
-    orbital, ortho, ox, OX, oxygen,
-    para, pch, per, pH, phase, phosphorus, photon, pKa, pKb, pOH, pos,
-      positron, Pot, ProvideChemArrow, ProvideChemBond, ProvideChemCharge,
-      ProvideChemEqConstant, ProvideChemIUPAC, ProvideChemIUPACShorthand,
-      ProvideChemLatin, ProvideChemNMR, ProvideChemNucleophile,
-      ProvideChemPartialCharge, ProvideChemParticle, ProvideChemPhase,
-      ProvideChemReaction,
-      ProvideChemState, prt,
-    Rad, redox, RemoveChemIUPACShorthand, RenewChemArrow, RenewChemBond,
-      RenewChemCharge, RenewChemEqConstant, renewchemgreekmapping,
-      RenewChemIUPAC, RenewChemIUPACShorthand, RenewChemLatin, RenewChemNMR,
-      RenewChemNucleophile, RenewChemPartialCharge, RenewChemParticle,
-      RenewChemPhase, RenewChemState,
-    Sf, scrm, scrp, second, selectchemgreekmapping, setchemformula,
-      ShowChemArrow, ShowChemBond, sld, Sod, state, sulfur,
-    trans,
-    usechemmodule,
-    val,
-    zusammen
-  } ,
-  add-silent-cmds = {
-    addplot,
-    bottomrule,
-    cancel, cdot, ce, cee, celsius, centering, chemfig, chemname, clap,
-      cnsetup, code, color, cstack, cstsetup,
-    DeclareInstance, DeclareSIUnit, definecolor, draw,
-    electronvolt, endtikzpicture,
-    footnotesize,
-    glqq, grqq,
-    hertz, hspace,
-    includegraphics, intertext, IUPAC,
-    joule,
-    kelvin, kilo,
-    latin, lc, lewis, Lewis, liquid, ltn,
-    metre, midrule, milli, mmHg, mole,
-    nano, nicefrac, num, numrange,
-    ominus, oplus,
-    percent, pgfarrowsdeclarealias, pgfarrowsrenewalias,
-    renewtagform, rightarrow,
-    sample, scriptscriptstyle, setchemfig, sfrac, shade,
-      shadedraw, shorthandoff, si, SI, sisetup, square, subsection,
-    textcolor, textendash, textsuperscript, tikz, tikzpicture, tiny, toprule,
-    upbeta, upeta, upgamma, usetikzlibrary,
-    volt, vphantom, vspave,
-    xspace,
-    z@, z@skip
-  } ,
-  index-setup = { othercode = \footnotesize , level = \section } ,
-  makeindex-setup = { columns = 2 , columnsep = 1em }
-}
+\documentclass{chemmacros-manual}
 
-\usepackage{booktabs,array,longtable}
-
-\usepackage{chemfig,cancel,varioref,csquotes}
-
-\usepackage[
-  a4paper,
-  top    = .1\paperheight,
-  bottom = .1\paperheight,
-  left   = .2\paperwidth,
-  right  = .1\paperwidth
-]{geometry}
-
-
-\makeatletter
-\def\libertine@figurestyle{LF}
-\usepackage{amsmath}
-\undef\lvert \undef\lVert
-\undef\rvert \undef\rVert
-\usepackage[libertine]{newtxmath}
-\def\libertine@figurestyle{OsF}
-\makeatother
-
-\usepackage[biblatex]{embrac}
-\ChangeEmph{[}[,.02em]{]}[.055em,-.08em]
-\ChangeEmph{(}[-.01em,.04em]{)}[.04em,-.05em]
-
-\usepackage[accsupp]{acro}
-\acsetup{
-  long-format  = \scshape ,
-  short-format = \scshape
-}
 \DeclareAcronym{ghs}{
   short     = ghs ,
   long      = Globally Harmonized System of Classification and Labelling of
@@ -208,19 +83,17 @@
   chemformula/format = \libertineLF
 }
 
-\usepackage{siunitx}
-
 \sisetup{
   detect-mode=false,
   mode=text,
   text-rm=\libertineLF
 }
 
-\usepackage{filecontents}
-
 \defbibheading{bibliography}{\section{References}}
 \addbibresource{\jobname.bib}
-\begin{filecontents*}{\jobname.bib}
+\addbibresource{cnltx.bib}
+
+\begin{filecontents*}[overwrite]{\jobname.bib}
 @book{iupac:greenbook,
   author    = {E. Richard Cohan and Tomislav Cvita\v{s} and Jeremy G. Frey and
     Bertil Holmstr\"om and Kozo Kuchitsu and Roberto Marquardt and Ian Mills and
@@ -1647,8 +1520,6 @@ modules. In the macro descriptions below \TF\ denotes that a \code{T}, an
   \marg{true} \marg{false}]
     Checks if class \meta{name} has been loaded. Also works after begin
     document.
-  \explcommand{chemmacros_leave_vmode:}
-    Equivalent of \cs*{leavevmode}.
   \explcommand{chemmacros_nobreak:}
     Inserts a penalty of \num{10000}.
   \explcommand{chemmacros_allow_break:}
