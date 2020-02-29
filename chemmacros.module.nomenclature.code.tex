@@ -711,6 +711,8 @@
   {
     \group_begin:
       \bool_set_true:N \l__chemmacros_inside_iupac_bool
+      \chemmacros_if_compatibility:nnT {>} {5.10}
+        { \bool_set_true:N \l__chemmacros_in_document_bool }
       \chemmacros_set_keys:nn {nomenclature} {#1}
       \chemmacros_make_iupac:
       \chemmacros_make_shorthands:
@@ -972,3 +974,5 @@
              it does nothing as last token in \iupac
 2020/01/02 - \chemmacros_show_iupac:N
            - \chemmacros_if_iupac:NTF
+2020/02/29 - let \chemmacros_iupac:nn think we're in the document – fixes
+             issue #30

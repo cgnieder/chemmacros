@@ -388,5 +388,9 @@ Version history
 2020/01/16 - version 5.9a - adapt to renaming of string case changing functions
 2020/02/03 - version 5.10 - define \torr as well as \Torr (units)
                           - prefer lazy boolean evaluation
-			  - prefer the kernel commands to
+                          - prefer the kernel commands to
                             \chemmacros_leave_vmode: and \chemmacros_tex_if:
+2020/02/29 - version 5.11 - use \ch even for simple formulas – resolves issue
+                            #28 (chemformula)
+			  - let \chemmacros_iupac:nn think we're in the
+                            document – fixes issue #30 (nomenclature)
