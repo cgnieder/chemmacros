@@ -52,8 +52,19 @@
 \bool_new:N \l__chemmacros_ox_top_bool
 \bool_new:N \l__chemmacros_ox_align_center_bool
 
+\ChemCompatibilityFrom{5.11}
+\tl_new:N \l__chemmacros_ox_format_tl
+\EndChemCompatibility
+
 \int_new:N \l__chemmacros_ox_number_int
 \fp_new:N  \l__chemmacros_ox_number_fp
+
+\cs_new_protected:Npn \__chemmacros_ox_format:n #1
+  {
+    \chemmacros_if_compatibility:nnTF {>=} {5.11}
+    { { \l__chemmacros_ox_format_tl {#1} } }
+    { \use:n {#1} }
+  }
 
 \cs_new_protected:Npn \__chemmacros_ox_process_number:n #1
   {
@@ -180,7 +191,10 @@
     \hbox_set:Nn \l__chemmacros_tmpa_box
       {
         \chemmacros_text:n
-          { \relsize {-3} \__chemmacros_ox_process_number:n {#1} }
+          {
+            \__chemmacros_ox_format:n
+              { \relsize {-3} \__chemmacros_ox_process_number:n {#1} }
+          }
       }
     \hbox_set:Nn \l__chemmacros_tmpb_box { \chemmacros_chemformula:n {#2} }
     \chemmacros_math:n
@@ -196,7 +210,10 @@
               {
                 \box_use:N \l__chemmacros_tmpb_box
                 \tl_use:N \l__chemmacros_ox_side_connect_tl
-                ( \__chemmacros_ox_process_number:n {#1} )
+                (
+                  \__chemmacros_ox_format:n
+                    { \__chemmacros_ox_process_number:n {#1} }
+                )
               }
           }
         \bool_if:NT \l__chemmacros_ox_top_bool
@@ -283,6 +300,11 @@
     explicit-zero-sign .bool_set:N = \l__chemmacros_ox_explicit_zero_sign_bool ,
     explicit-zero-sign .default:n  = true
   }
+\EndChemCompatibility
+
+\ChemCompatibilityFrom{5.11}
+\chemmacros_define_keys:nn {redox}
+  { format .tl_set:N = \l__chemmacros_ox_format_tl }
 \EndChemCompatibility
 
 % \ox[<keyval>]{<num>,<atom>}
@@ -433,3 +455,4 @@
 2015/09/30 - new option `explicit-zero-sign'
 2020/02/02 - lazy boolean evaluation
            - prefer \legacy_if:nTF over \chemmacros_if_tex:nnTF
+2020/03/02 - add option redox/format

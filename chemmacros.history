@@ -390,7 +390,6 @@ Version history
                           - prefer lazy boolean evaluation
                           - prefer the kernel commands to
                             \chemmacros_leave_vmode: and \chemmacros_tex_if:
-2020/02/29 - version 5.11 - use \ch even for simple formulas – resolves issue
-                            #28 (chemformula)
-			  - let \chemmacros_iupac:nn think we're in the
+2020/03/07 - version 5.11 - let \chemmacros_iupac:nn think we're in the
                             document – fixes issue #30 (nomenclature)
+			  - add option redox/format

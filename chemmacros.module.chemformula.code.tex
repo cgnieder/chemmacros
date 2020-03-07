@@ -131,11 +131,7 @@
   {
     \chemmacros_integrate_package:nnn {} {chemformula} {2015/09/08}
     \cs_set_protected:Npn \chemmacros_chemformula:n #1
-      {
-        \chemmacros_if_compatibility:nnTF {>} {5.10}
-          { \chemformula_ch:nn {} {#1} }
-          { \chemformula_chcpd:nn {} {#1} }
-      }
+      { \chemformula_chcpd:nn {} {#1} }
     \cs_set_protected:Npn \chemmacros_reaction:n #1
       { \chemformula_ch:nn {} {#1} }
   }
@@ -243,3 +239,5 @@
 2016/05/03 - correct wrong method check
 2020/02/02 - lazy boolean evaluation
 2020/02/29 - use \ch even for simple formulas – resolves issue #28
+2020/03/02 - undo last change: this makes problems with oxidation numbers in a
+             reaction
