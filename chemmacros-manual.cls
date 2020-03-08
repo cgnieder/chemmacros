@@ -378,5 +378,6 @@
 \chemmacros@add@version{2019-11-17}{5.9}
 \chemmacros@add@version{2020-01-16}{5.9a}
 \chemmacros@add@version{2020-02-03}{5.10}
+\chemmacros@add@version{2020-03-07}{5.11}
 
 \endinput

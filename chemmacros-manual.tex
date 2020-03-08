@@ -1,7 +1,7 @@
 % !arara: pdflatex
 % !arara: biber
-% arara: pdflatex: { action: nonstopmode }
-% arara: pdflatex: { action: nonstopmode }
+% arara: pdflatex: { interaction: nonstopmode }
+% arara: pdflatex: { interaction: nonstopmode }
 % --------------------------------------------------------------------------
 % the CHEMMACROS package
 %
@@ -2481,6 +2481,10 @@ The following command is provided to set oxidation numbers:
 
 There are a number of options that can be used to modify the typeset result:
 \begin{options}
+  \keyval{format}{code}\Module{redox}
+    \sinceversion{5.11}Allows to apply arbitrary \meta{code} in front of the
+    typeset oxidation numbers.  The last command may expect the oxidation
+    number as an argument.  An example might be \cs*{textcolor}\Marg{red}.
   \keybool{parse}\Module{redox}\Default{true}
     When \code{false} an arbitrary entry can be used for \code{<number>}.
   \keybool{roman}\Module{redox}\Default{false}
