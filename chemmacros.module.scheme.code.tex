@@ -236,10 +236,13 @@
               {
                 \cs_new_protected:cpn {listof#1s}
                   {
-                     \exp_args:NNx \section* {\exp_not:c {list#1name}}
-                     \@mkboth
-                      { \MakeUppercase \use:c {list#1name} }
-                      { \MakeUppercase \use:c {list#1name} }
+                    \section* {\use:c {list#1name}}
+                    \use:x
+                      {  
+                        \exp_not:N \@mkboth
+                          { \exp_not:N \MakeUppercase \exp_not:c {list#1name} }
+                          { \exp_not:N \MakeUppercase \exp_not:c {list#1name} }
+                      }
                     \@starttoc {#2}
                   }
               }
