@@ -222,10 +222,13 @@
                     \legacy_if:nTF {@twocolumn}
                       { \@restonecoltrue\onecolumn }
                       { \@restonecolfalse }
-                    \exp_args:NNx \chapter* {\exp_not:c {list#1name}}
-                    \@mkboth
-                      { \MakeUppercase \use:c {list#1name} }
-                      { \MakeUppercase \use:c {list#1name} }
+                    \chapter* { \use:c {list#1name} }
+                    \use:x
+                      {  
+                        \exp_not:N \@mkboth
+                          { \exp_not:N \MakeUppercase \exp_not:c {list#1name} }
+                          { \exp_not:N \MakeUppercase \exp_not:c {list#1name} }
+                      }
                     \@starttoc {#2}
                     \legacy_if:nT {@restonecol} { \twocolumn }
                   }
@@ -324,3 +327,4 @@
 2019/03/23 - added Norwegian translations
 2020/02/03 - lazy boolean evaluation
            - prefer \legacy_if:nTF over \chemmacros_if_tex:nnTF
+2020/11/21 - fix issue #41

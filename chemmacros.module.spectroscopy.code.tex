@@ -205,6 +205,7 @@
     pos-number / side .code:n =
       \tl_set:Nn \l__chemmacros_nmr_position_tl {-}
       \bool_set_true:N \l__chemmacros_nmr_position_side_bool ,
+    pos-number /  .initial:n  = side ,
     coupling-unit .tl_set:N   = \l__chemmacros_nmr_coupling_unit_tl ,
     coupling-pos  .choice: ,
     coupling-pos / sub .code:n =
