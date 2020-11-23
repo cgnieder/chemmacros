@@ -48,18 +48,24 @@
     \prop_put:Nnn \l__chemmacros_float_definitions_prop {#1}
       { \cs_set_protected:Npn \__chemmacros_define_float:nn ##1##2 {#3} }
   }
-
+  
 % the order in which the methods are defined determines in which order the
 % methods will be checked at begin document:
 \chemmacros_define_float_method:nnn {KOMA}
   { \cs_if_exist_p:N \KOMAClassName }
   {
-    \DeclareNewTOC[
+    \bool_lazy_or:nnTF
+      { \chemmacros_if_class_loaded_p:n {scrbook} }
+      { \chemmacros_if_class_loaded_p:n {scrreprt} }
+      { \DeclareNewTOC[ counterwithin = chapter, }
+      { \DeclareNewTOC[ }
       type  = #1 ,
       types = #1s ,
       float ,
+      tocentryindent = 1.5em ,
+      tocentrynumwidth = 2.3em ,
       name = \chemmacros_translate:n {#1-name} ,
-      listname = {\exp_not:N \chemmacros_translate:n {#1-list}}
+      listname = { \exp_not:N \chemmacros_translate:n {#1-list} }
     ]{#2}
   }
 
@@ -82,6 +88,10 @@
       }
     \legacy_if:nT {artopt}
       { \counterwithout {#1} {chapter} }
+    \apptocmd \insertchapterspace
+      { \addtocontents {#2} { \protect \addvspace {10pt} } }
+      {}
+      {}
   }
 
 \chemmacros_define_float_method:nnn {tocbasic}
@@ -196,8 +206,18 @@
             \__chemmacros_define_float:nn {#1} {#2}
           }
           {
-            \newcounter {#1}
-            \cs_set:cpn {the#1}      {\arabic{#1}}
+            \bool_lazy_or:nnTF
+              { \chemmacros_if_class_loaded_p:n {book} }
+              { \chemmacros_if_class_loaded_p:n {report} }
+              {
+                \newcounter {#1} [chapter]
+                \cs_set:cpn {the#1}
+                  { \ifnum \c@chapter>\z@ \thechapter.\fi \arabic {#1} }
+              }
+              {
+                \newcounter {#1}
+                \cs_set:cpn {the#1} { \arabic {#1} }
+              }
             \cs_new:cpn {fps@#1}     {tbp}
             \cs_new:cpn {ftype@#1}   {8}
             \cs_new:cpn {ext@#1}     {#2}
@@ -232,6 +252,11 @@
                     \@starttoc {#2}
                     \legacy_if:nT {@restonecol} { \twocolumn }
                   }
+                \patchcmd \@chapter
+                  { \addtocontents }
+                  { \addtocontents {#2} { \protect \addvspace {10\p@} } \addtocontents }
+                  {}
+                  {}
               }
               {
                 \cs_new_protected:cpn {listof#1s}
