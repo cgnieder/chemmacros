@@ -1,35 +1,6 @@
-% --------------------------------------------------------------------------
-%
-% the CHEMMACROS package -- module: `nomenclature'
-%
-% --------------------------------------------------------------------------
-% Clemens Niederberger
-% --------------------------------------------------------------------------
-% https://github.org/cgnieder/chemmacros/
-% contact@mychemistry.eu
-% --------------------------------------------------------------------------
-% If you have any ideas, questions, suggestions or bugs to report, please
-% feel free to contact me.
-% --------------------------------------------------------------------------
-% Copyright 2011--2020 Clemens Niederberger
-%
-% This work may be distributed and/or modified under the
-% conditions of the LaTeX Project Public License, either version 1.3c
-% of this license or (at your option) any later version.
-% The latest version of this license is in
-%   http://www.latex-project.org/lppl.txt
-% and version 1.3 or later is part of all distributions of LaTeX
-% version 2008/05/04 or later.
-%
-% This work has the LPPL maintenance status `maintained'.
-%
-% The Current Maintainer of this work is Clemens Niederberger.
-% --------------------------------------------------------------------------
-\ChemModule{nomenclature}{2017/06/11 chemical names}
+\ChemModule{nomenclature}{2020/11/29 chemical names}
 
 \RequirePackage{scrlfile}
-
-\chemmacros_load_module:n {tikz}
 
 \bool_new:N      \l__chemmacros_iupac_restricted_bool
 \bool_new:N      \l__chemmacros_iupac_strict_bool
@@ -948,31 +919,4 @@
   }
   
 % --------------------------------------------------------------------------
-\file_input_stop:
-
-2015/10/01 - use new function \chemmacros_if_document:TF for
-             \chemmacros_make_iupac:
-           - \cip only italicizes elements of csv list
-           - fix bug in \RemoveChemIUPACShorthand
-2016/01/02 - \chemprime
-2016/01/23 - give shorthand definitions only inside \iupac
-2016/01/25 - small improvements (?) of the shorthand code
-2016/05/08 - check if \latin is already defined (eg by achemso) and overwrite
-             definition
-2016/05/10 - define \chemmacros_hapto:n and friends in terms of
-             \chemmacros_coordination_symbol:nnnn
-           - \iupac gets an optional argument for setting options
-2016/05/31 - overwrite any \latin definition -- or rather: just define \latin
-           - \latin and all macros defined with \NewChemLatin get an optional
-             argument for setting options
-2016/06/07 - rename functions which erroneously were assigned to the
-             `chemformula' module
-2017/04/17 - fix erroneous definition of \chemmacros_allow_hyphens:
-           - new options `cip-inner-format', `cip-outer-format' and
-             `cip-number-format'
-2017/06/11 - change behaviour of \__chemmacros_break_point_insert:nnn so
-             it does nothing as last token in \iupac
-2020/01/02 - \chemmacros_show_iupac:N
-           - \chemmacros_if_iupac:NTF
-2020/02/29 - let \chemmacros_iupac:nn think we're in the document – fixes
-             issue #30
+\ChemModuleEnd

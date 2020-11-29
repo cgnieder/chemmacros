@@ -249,11 +249,11 @@ if [ "$build" == true ] ; then
     $modulename.units.$moduleext \
     > $styname
     # append necessary end:
-    echo -e "% finish package:\n\
-\\AtEndDocument { \\\\acro_close_aux: \\\\acro_do_rerun: }\n\
-%----------------------------------------------------------------------------\n\
-\\\\file_input_stop:"\
-    >> $styname
+    # echo -e "% finish package:\n\
+# \\AtEndDocument { \\\\acro_close_aux: \\\\acro_do_rerun: }\n\
+# %----------------------------------------------------------------------------\n\
+# \\\\file_input_stop:"\
+#     >> $styname
 fi
 
 # build manual
@@ -295,6 +295,7 @@ if [ "$update" == true ] ; then
     fi
     cd ${CODE_DIR}
     cp $styname ${LATEXLOCAL_DIR}/$pkgname
+    cp ${pkgname}.sty ${LATEXLOCAL_DIR}/$pkgname
     cp $styoldname ${LATEXLOCAL_DIR}/$pkgname
     if [ "$runmktexlsr" == true ] ; then
         if [ "$verbose" == true ] ; then

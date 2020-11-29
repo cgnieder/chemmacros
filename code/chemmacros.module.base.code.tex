@@ -1,31 +1,4 @@
-% --------------------------------------------------------------------------
-%
-% the CHEMMACROS package -- module: `base'
-%
-% --------------------------------------------------------------------------
-% Clemens Niederberger
-% --------------------------------------------------------------------------
-% https://github.org/cgnieder/chemmacros/
-% contact@mychemistry.eu
-% --------------------------------------------------------------------------
-% If you have any ideas, questions, suggestions or bugs to report, please
-% feel free to contact me.
-% --------------------------------------------------------------------------
-% Copyright 2011--2020 Clemens Niederberger
-%
-% This work may be distributed and/or modified under the
-% conditions of the LaTeX Project Public License, either version 1.3c
-% of this license or (at your option) any later version.
-% The latest version of this license is in
-%   http://www.latex-project.org/lppl.txt
-% and version 1.3 or later is part of all distributions of LaTeX
-% version 2008/05/04 or later.
-%
-% This work has the LPPL maintenance status `maintained'.
-%
-% The Current Maintainer of this work is Clemens Niederberger.
-% --------------------------------------------------------------------------
-\ChemModule{base}{2020/02/02 basic chemmacros module}
+\ChemModule{base}{2020/11/29 basic chemmacros module}
 
 % for the document hooks
 \ChemCompatibilityFrom{5.1}
@@ -458,11 +431,6 @@
 
 % --------------------------------------------------------------------------
 
-\chemmacros_if_compatibility:nnT {>=} {5.2}
-  { \chemmacros_load_module:n {errorcheck} }
-
-% --------------------------------------------------------------------------
-
 \bool_new:N \l__chemmacros_hyperref_bool
 
 \AtEndPreamble
@@ -471,17 +439,4 @@
       { \bool_set_true:N \l__chemmacros_hyperref_bool }
   }
 
-\file_input_stop:
-
-2015/09/23 - new conditionals \chemmacros_if_preamble:TF and
-             \chemmacros_if_document:TF
-2015/10/14 - load `errorcheck' module
-2016/02/09 - starred version of \NewChemMacroset
-2016/03/07 - \chemmacros_define_keys:nn and friends
-2016/04/25 - macros for cleveref and fancyref support, \ChemCleverefSupport
-             \ChemFancyrefSupport
-2016/05/04 - fix \ChemCleverefSupport
-2017/08/28 - add missing hyperref check
-2020/01/16 - adapt to renaming of string case changing functions
-2020/02/02 - lazy boolean evaluation
-2020/11/21 - exchange \tl_mixed_case:n for \tl_titlecase:n
+\ChemModuleEnd

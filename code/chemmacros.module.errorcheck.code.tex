@@ -1,31 +1,4 @@
-% --------------------------------------------------------------------------
-%
-% the CHEMMACROS package -- module: `errorcheck'
-%
-% --------------------------------------------------------------------------
-% Clemens Niederberger
-% --------------------------------------------------------------------------
-% https://github.org/cgnieder/chemmacros/
-% contact@mychemistry.eu
-% --------------------------------------------------------------------------
-% If you have any ideas, questions, suggestions or bugs to report, please
-% feel free to contact me.
-% --------------------------------------------------------------------------
-% Copyright 2011--2020 Clemens Niederberger
-%
-% This work may be distributed and/or modified under the
-% conditions of the LaTeX Project Public License, either version 1.3c
-% of this license or (at your option) any later version.
-% The latest version of this license is in
-%   http://www.latex-project.org/lppl.txt
-% and version 1.3 or later is part of all distributions of LaTeX
-% version 2008/05/04 or later.
-%
-% This work has the LPPL maintenance status `maintained'.
-%
-% The Current Maintainer of this work is Clemens Niederberger.
-% --------------------------------------------------------------------------
-\ChemModule{errorcheck}{2016/10/05 error checking for unloaded modules}[5.2]
+\ChemModule{errorcheck}{2020/11/29 error checking for unloaded modules}
 
 \RequirePackage{scrlfile}
 
@@ -39,7 +12,7 @@
 
 \cs_new_protected:Npn \chemmacros_requires_module:nNn #1#2#3
   {
-    \chemmacros_if_module_loaded:nF {#3}
+    \chemmacros_module_if_loaded:nF {#3}
       {
         \cs_if_free:NT #2
           {
@@ -50,7 +23,7 @@
                   {\token_to_str:N #2}
                   {#3}
               }
-            \chemmacros_before_module:nn {#3} { \cs_undefine:N #2 }
+            \chemmacros_module_before:nn {#3} { \cs_undefine:N #2 }
           }
       }
   }
@@ -122,9 +95,4 @@
 
 % --------------------------------------------------------------------------
 
-\file_input_stop:
-
-2015/10/14 - first version
-2016/03/08 - add `polymers' module
-2016/05/31 - enable `chemscheme' to be loaded after chemmacros
-2016/10/06 - check if commands exist before defining them to raise errors
+\ChemModuleEnd

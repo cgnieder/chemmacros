@@ -1,34 +1,6 @@
-% --------------------------------------------------------------------------
-%
-% the CHEMMACROS package -- module: `chemformula'
-%
-% --------------------------------------------------------------------------
-% Clemens Niederberger
-% --------------------------------------------------------------------------
-% https://github.org/cgnieder/chemmacros/
-% contact@mychemistry.eu
-% --------------------------------------------------------------------------
-% If you have any ideas, questions, suggestions or bugs to report, please
-% feel free to contact me.
-% --------------------------------------------------------------------------
-% Copyright 2011--2020 Clemens Niederberger
-%
-% This work may be distributed and/or modified under the
-% conditions of the LaTeX Project Public License, either version 1.3c
-% of this license or (at your option) any later version.
-% The latest version of this license is in
-%   http://www.latex-project.org/lppl.txt
-% and version 1.3 or later is part of all distributions of LaTeX
-% version 2008/05/04 or later.
-%
-% This work has the LPPL maintenance status `maintained'.
-%
-% The Current Maintainer of this work is Clemens Niederberger.
-% --------------------------------------------------------------------------
-\ChemModule{chemformula}{2020/02/02 integration of chemical formulas}
+\ChemModule{chemformula}{2020/11/29 integration of chemical formulas}
 
 \RequirePackage{amstext}
-\chemmacros_load_module:n {charges}
 
 \msg_new:nnn {chemmacros} {unknown-formula-method}
   {
@@ -225,19 +197,4 @@
   }
 
 % --------------------------------------------------------------------------
-\file_input_stop:
-
-2015/09/22 - new general option `method' which allows a choice between
-             `chemformula' and `mhchem'
-2015/10/13 - add missing compatibility definitions
-           - check for `mhchem' and `chemformula' and set method accordingly
-             if possible
-2016/04/27 - further generalization of the `method' concept, new methods
-             `chemist' and `chemfig'
-           - don't automatically load an available method: load `chemformula'
-             if the users haven't decided for themselves and issue a warning
-2016/05/03 - correct wrong method check
-2020/02/02 - lazy boolean evaluation
-2020/02/29 - use \ch even for simple formulas – resolves issue #28
-2020/03/02 - undo last change: this makes problems with oxidation numbers in a
-             reaction
+\ChemModuleEnd
