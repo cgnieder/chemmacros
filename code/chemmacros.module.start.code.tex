@@ -1,0 +1,323 @@
+% --------------------------------------------------------------------------
+% the CHEMMACROS package
+%
+%   comprehensive support for typesetting chemistry documents
+%
+% --------------------------------------------------------------------------
+% Clemens Niederberger
+% --------------------------------------------------------------------------
+% https://github.org/cgnieder/chemmacros/
+% contact@mychemistry.eu
+% --------------------------------------------------------------------------
+% If you have any ideas, questions, suggestions or bugs to report, please
+% feel free to contact me.
+% --------------------------------------------------------------------------
+% Copyright 2011--2020 Clemens Niederberger
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Clemens Niederberger.
+% --------------------------------------------------------------------------
+% The chemmacros package consists of the following files
+%  - chemmacros.sty, chemmacros4.sty, chemmacros5.sty,
+%  - chemmacros_en.tex, chemmacros_en.pdf,
+%  - quite a number of module files following the naming scheme
+%    chemmacros.module.*.code.tex
+%  - README
+ % --------------------------------------------------------------------------
+\RequirePackage{expl3,xparse,l3keys2e}
+\ExplSyntaxOn
+
+% --------------------------------------------------------------------------
+% package information:
+\ProvidesExplPackage
+  {chemmacros5}
+  {\c_chemmacros_date_tl}
+  {\c_chemmacros_version_tl}
+  {\c_chemmacros_info_tl \c_space_tl (CN)}
+
+% --------------------------------------------------------------------------
+\msg_new:nnn {chemmacros} {package-option}
+  {
+    Unknown~ option~ `#1'!~ Since~ v5.0~ chemmacros~ has~ no~ package~
+    options~ any~ more!
+  }
+
+\msg_new:nnn {chemmacros} {module-not-available}
+  {
+    The~ module~ `#1'~ is~ only~ available~ in~ compatibility~ mode~ #2~ or~
+    higher.
+  }
+
+\cs_generate_variant:Nn \msg_warning:nnn { nnV }
+
+\keys_define:nn {chemmacros/package-options}
+  {
+    compatibility .code:n = ,
+    unknown       .code:n =
+      \msg_warning:nnV {chemmacros} {package-option} \CurrentOption
+  }
+
+\ProcessKeysPackageOptions {chemmacros/package-options}
+
+% --------------------------------------------------------------------------
+% messages:
+\msg_new:nnn {chemmacros} {module-missing}
+  {
+    You've~ requested~ the~ chemmacros~ module~ `#1'~ but~ it~ appears~ to~
+    be~ missing~ on~ your~ system.~ Maybe~ you've~ misspelled~ the~ name?~
+    Loading~ the~ module~ will~ abort~ \msg_line_context:
+  }
+
+\msg_new:nnn {chemmacros} {loading-module}
+  {
+    (chemmacros) \c_space_tl \c_space_tl \c_space_tl \c_space_tl
+    Loading~ module~ `#1'...
+  }
+
+% --------------------------------------------------------------------------
+% variants of kernel functions:
+\cs_generate_variant:Nn \tl_if_eq:nnTF       {xx,V}
+\cs_generate_variant:Nn \seq_set_split:Nnn   {Nnx}
+\cs_generate_variant:Nn \prop_item:Nn        {NV}
+\cs_generate_variant:Nn \seq_item:Nn         {cV}
+\cs_generate_variant:Nn \int_to_arabic:n     {V}
+\cs_generate_variant:Nn \tl_replace_once:Nnn {NnV}
+\cs_generate_variant:Nn \prop_gput:Nnn       {cxx,NVf}
+\cs_generate_variant:Nn \msg_error:nnn       {nnV}
+\cs_generate_variant:Nn \msg_warning:nnn     {nnV}
+\cs_generate_variant:Nn \msg_warning:nnnn    {nnV}
+\cs_generate_variant:Nn \vbox_set:Nn         {NV}
+\cs_generate_variant:Nn \keys_define:nn      {x} 
+\cs_generate_variant:Nn \keys_set:nn         {x,nx}
+
+% --------------------------------------------------------------------------
+% temporary variables:
+\tl_new:N    \l__chemmacros_tmpa_tl
+\tl_new:N    \l__chemmacros_tmpb_tl
+\tl_new:N    \l__chemmacros_tmpc_tl
+\tl_new:N    \l__chemmacros_tmpd_tl
+
+\bool_new:N  \l__chemmacros_tmpa_bool
+\bool_new:N  \l__chemmacros_tmpb_bool
+\bool_new:N  \l__chemmacros_tmpc_bool
+
+\dim_new:N   \l__chemmacros_tmpa_dim
+\dim_new:N   \l__chemmacros_tmpb_dim
+\dim_new:N   \l__chemmacros_tmpc_dim
+
+\seq_new:N   \l__chemmacros_tmpa_seq
+\seq_new:N   \l__chemmacros_tmpb_seq
+\seq_new:N   \l__chemmacros_tmpc_seq
+
+\int_new:N   \l__chemmacros_tmpa_int
+\int_new:N   \l__chemmacros_tmpb_int
+\int_new:N   \l__chemmacros_tmpc_int
+
+\box_new:N   \l__chemmacros_tmpa_box
+\box_new:N   \l__chemmacros_tmpb_box
+\box_new:N   \l__chemmacros_tmpc_box
+
+\clist_new:N \l__chemmacros_tmpa_clist
+\clist_new:N \l__chemmacros_tmpb_clist
+\clist_new:N \l__chemmacros_tmpc_clist
+
+\str_new:N   \l__chemmacros_tmpa_str
+\str_new:N   \l__chemmacros_tmpb_str
+\str_new:N   \l__chemmacros_tmpc_str
+
+% ----------------------------------------------------------------------------
+% module mechanism:
+\msg_new:nnn {chemmacros} {module-missing}
+  {
+    You've~ requested~ the~ chemmacros~ module~ `#1'~ but~ it~ appears~ to~
+    be~ missing~ on~ your~ system.~ Maybe~ you've~ misspelled~ the~ name?~
+    Loading~ the~ module~ will~ abort~ \msg_line_context:
+  }
+
+\msg_new:nnn {chemmacros} {loading-module}
+  { Loading~ module~ `#1'~ ... }
+
+\msg_new:nnn {chemmacros} {wrong-module-name}
+  { The~ module~ file~ name~ is~ `#2'~ but~ it~ provides~ module~ `#1'. }
+
+\msg_new:nnn {chemmacros} {forbidden-module}
+  {
+    You've~ requested~ the~ chemmacros~ module~ `modules'~ \msg_line_context: .~
+  This~ module~ is~ a~ pseudo~ module~ which~ may~ not~ be~ loaded~ through~
+  the~ module~ loading~ mechansim.
+  }
+
+% ----------------------------------------------------------------------------
+\cs_generate_variant:Nn \str_if_eq:nnF {xx}
+\cs_generate_variant:Nn \msg_error:nnnn {nnnx}
+
+\prg_new_conditional:Npnn \chemmacros_package_if_loaded:n #1 {p,T,F,TF}
+  {
+    \cs_if_exist:cTF {ver@#1.sty}
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+
+% ----------------------------------------------------------------------------
+% this is for external file modules called "styles":
+\tl_const:Nn \c__chemmacros_module_extension_tl {code.tex}
+\tl_const:Nn \c__chemmacros_module_prefix_tl    {chemmacros.module}
+
+\tl_new:N \g__chemmacros_modules_loaded_tl
+
+\cs_new_protected:Npn \chemmacros_modules_load:n #1
+  { \clist_map_inline:nn {#1} { \chemmacros_module_load:n {##1} } }
+
+\cs_new_protected:Npn \chemmacros_module_load:n #1
+  {
+    \tl_set:Nx \l_tmpa_tl { \tl_trim_spaces:n {#1} }
+    \str_if_eq:VnTF \l_tmpa_tl {modules}
+      { \msg_error:nn {chemmacros} {forbidden-module} }
+      {  \__chemmacros_module_load:V \l_tmpa_tl }
+  }
+
+\cs_new_protected:Npn \__chemmacros_module_load:n #1
+  {
+    \chemmacros_module_if_loaded:nF {#1}
+      {
+        \chemmacros_module_if_exist:nTF {#1}
+          {
+            \__chemmacros_module_hook_use:nn {#1} {before}
+            \msg_info:nnn {chemmacros} {loading-module} {#1}
+            \@onefilewithoptions
+              {\c__chemmacros_module_prefix_tl.#1}[][]
+              \c__chemmacros_module_extension_tl
+            \__chemmacros_module_hook_use:nn {#1} {after}
+          }
+          { \msg_error:nnn {chemmacros} {module-missing} {#1} }
+      }
+  }
+\cs_generate_variant:Nn \__chemmacros_module_load:n {V}
+
+\prg_new_conditional:Npnn \chemmacros_module_if_loaded:n #1 {p,T,F,TF}
+  {
+    \tl_if_in:NnTF \g__chemmacros_modules_loaded_tl {#1}
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+
+\prg_new_conditional:Npnn \chemmacros_module_if_exist:n #1 {p,T,F,TF}
+  {
+    \file_if_exist:nTF
+      {\c__chemmacros_module_prefix_tl.#1.\c__chemmacros_module_extension_tl}
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+
+% --------------------------------------------------------------------------
+% module hooks:
+% #1: module
+% #2: code
+\cs_new_protected:Npn \chemmacros_module_after:nn #1#2
+  {
+    \chemmacros_module_if_loaded:nTF {#1}
+      {#2}
+      { \__chemmacros_add_to_module_hook:nnn {#1} {after} {#2} }
+  }
+
+% #1: module
+% #2: code
+\cs_new_protected:Npn \chemmacros_module_before:nn #1#2
+  {
+    % TODO: error in T case?
+    \chemmacros_module_if_loaded:nF {#1}
+      { \__chemmacros_add_to_module_hook:nnn {#1} {before} {#2} }
+  }
+
+% #1: module
+% #2: hook name
+% #3: code
+\cs_new_protected:Npn \__chemmacros_add_to_module_hook:nnn #1#2#3
+  {
+    \chemmacros_module_if_loaded:nF {#1}
+      {
+        \tl_if_exist:cF {g__chemmacros_module_hook_#1_#2_tl}
+          { \tl_new:c {g__chemmacros_module_hook_#1_#2_tl} }
+        \tl_gput_right:cn {g__chemmacros_module_hook_#1_#2_tl} {#3}
+      }
+  }
+
+% #1: module
+% #2: hook name
+\cs_new_protected:Npn \__chemmacros_module_hook_use:nn #1#2
+  {
+    \tl_if_exist:cT {g__chemmacros_module_hook_#1_#2_tl}
+      {
+        \tl_use:c {g__chemmacros_module_hook_#1_#2_tl}
+        \tl_gclear:c {g__chemmacros_module_hook_#1_#2_tl}
+      }
+  }
+\cs_generate_variant:Nn \__chemmacros_module_hook_use:nn {V}
+
+% --------------------------------------------------------------------------
+\tl_new:N \l__chemmacros_module_date_tl
+\tl_new:N \l__chemmacros_module_version_tl
+
+\tl_set_eq:NN \l__chemmacros_module_date_tl \c_chemmacros_date_tl
+\tl_set_eq:NN \l__chemmacros_module_version_tl \c_chemmacros_version_tl
+
+\cs_new_protected:Npn \__chemmacros_module:nn #1#2
+  {
+    \tl_gput_right:Nn \g__chemmacros_modules_loaded_tl {{#1}}
+    \str_if_eq:xxF
+      {\c__chemmacros_module_prefix_tl.#1.\c__chemmacros_module_extension_tl}
+      {\@currname.\@currext}
+      {
+        \msg_error:nnnxx {chemmacros} {wrong-module-name}
+          {#1}
+          {\@currname.\@currext}
+      }
+    \ProvidesFile
+      {\c__chemmacros_module_prefix_tl.#1.\c__chemmacros_module_extension_tl}
+      [
+        \l__chemmacros_module_date_tl
+        \c_space_tl
+        v \l__chemmacros_module_version_tl
+        \c_space_tl
+        chemmacros~ style~ file~ `#1'~ (#2)
+      ]
+  }
+
+% --------------------------------------------------------------------------
+% define internal chemmacros modules:
+\tl_new:N \g_chemmacros_module_tl
+\tl_new:N \g__chemmacros_module_stop_tl
+
+\cs_new_protected:Npn \chemmacros_stop_module:n #1
+  { \tl_gput_right:Nn \g__chemmacros_module_stop_tl {{#1}} }
+
+% #1: name
+% #2: description
+\cs_new_protected:Npn \ChemModule #1#2
+  {
+    \msg_log:nnnn {chemmacros} {loading-module} {#1} {#2}
+    \tl_gput_right:Nn \g__chemmacros_modules_loaded_tl {{#1}}
+    \tl_gset:Nn \g_chemmacros_module_tl {#1}
+    \__chemmacros_module_hook_use:nn {#1} {before}
+    \tl_map_inline:Nn \g__chemmacros_module_stop_tl
+      {
+        \str_if_eq:nnT {##1} {#1}
+          { \tl_map_break:n { \__chemmacros_gobble_module:w } }
+      }
+  }
+
+\cs_new_protected:Npn \ChemModuleEnd
+  { \__chemmacros_module_hook_use:Vn \g_chemmacros_module_tl {after} }
+
+\cs_new_protected:Npn \__chemmacros_gobble_module:w #1 \ChemModuleEnd {}
+
+% --------------------------------------------------------------------------
