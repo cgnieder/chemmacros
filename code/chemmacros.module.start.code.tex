@@ -129,7 +129,7 @@
   }
 
 \msg_new:nnn {chemmacros} {loading-module}
-  { Loading~ module~ `#1'~ ... }
+  { Loading~ the~ chemmacros~ module~ `#1'~ ... }
 
 \msg_new:nnn {chemmacros} {wrong-module-name}
   { The~ module~ file~ name~ is~ `#2'~ but~ it~ provides~ module~ `#1'. }
@@ -290,6 +290,7 @@
 \cs_new_protected:Npn \ChemModule #1#2
   {
     \msg_log:nnnn {chemmacros} {loading-module} {#1} {#2}
+    \msg_term:nnnn {chemmacros} {loading-module} {#1} {#2}
     \tl_gput_right:Nn \g__chemmacros_modules_loaded_tl {{#1}}
     \tl_gset:Nn \g_chemmacros_module_tl {#1}
     \__chemmacros_module_hook_use:nn {#1} {before}

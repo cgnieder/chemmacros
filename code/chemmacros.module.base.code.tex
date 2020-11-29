@@ -338,7 +338,7 @@
   { \AtBeginDocument }
   { \bool_set_true:N \l__chemmacros_in_document_bool }
 
-\AtBeginDocument
+\hook_gput_code:nnn {begindocument} {top-level}
   {
     \@ifpackageloaded { chemstyle }
       { \bool_set_true:N \l__chemmacros_chemstyle_bool }
@@ -400,8 +400,16 @@
       { \keys_set:nn {chemmacros/#1} {#2} }
   }
 
+\msg_new:nnn {chemmacros} {module-mechanism}
+  {
+    The~ module~ mechanism~ has~ changed~ with~ v5.12. \\
+    All~ modules~ have~ been~ integrated~ into~ the~ main~ package~ and~ thus~
+    are~ preloaded~ already.~ This~ corresponds~ to~ the~ earlier~ setting~
+    `modules=all'
+  }
+
 \chemmacros_define_global_keys:n
-  { modules .code:n = \chemmacros_load_modules:n {#1} }
+  { modules .code:n = \msg_warning:nn {chemmacros} {module-mechanism} }
 
 % --------------------------------------------------------------------------
 

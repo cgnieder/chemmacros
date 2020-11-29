@@ -61,18 +61,19 @@
   }
 \EndChemCompatibility
 
-\AtBeginDocument{
-  \bool_if:NTF \l__chemmacros_language_auto_bool
-    {
-      \tl_set:Nx \l_chemmacros_language_tl
-        { \@trnslt@language{\@trnslt@current@language} }
-    }
-    {
-      \tl_set_eq:NN
-        \l_chemmacros_language_tl
-        \l__chemmacros_current_language_tl
-    }   
-}
+\hook_gput_code:nnn {begindocument} {package/chemmacros5}
+  {
+    \bool_if:NTF \l__chemmacros_language_auto_bool
+      {
+        \tl_set:Nx \l_chemmacros_language_tl
+          { \@trnslt@language{\@trnslt@current@language} }
+      }
+      {
+        \tl_set_eq:NN
+          \l_chemmacros_language_tl
+          \l__chemmacros_current_language_tl
+      }
+  }
 
 % --------------------------------------------------------------------------
 \cs_new_protected:Npn \__chemmacros_declare_translation:nw #1#2=#3\q_stop

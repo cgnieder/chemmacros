@@ -129,7 +129,7 @@
   }
 
 \msg_new:nnn {chemmacros} {loading-module}
-  { Loading~ module~ `#1'~ ... }
+  { Loading~ the~ chemmacros~ module~ `#1'~ ... }
 
 \msg_new:nnn {chemmacros} {wrong-module-name}
   { The~ module~ file~ name~ is~ `#2'~ but~ it~ provides~ module~ `#1'. }
@@ -290,6 +290,7 @@
 \cs_new_protected:Npn \ChemModule #1#2
   {
     \msg_log:nnnn {chemmacros} {loading-module} {#1} {#2}
+    \msg_term:nnnn {chemmacros} {loading-module} {#1} {#2}
     \tl_gput_right:Nn \g__chemmacros_modules_loaded_tl {{#1}}
     \tl_gset:Nn \g_chemmacros_module_tl {#1}
     \__chemmacros_module_hook_use:nn {#1} {before}
@@ -646,7 +647,7 @@
   { \AtBeginDocument }
   { \bool_set_true:N \l__chemmacros_in_document_bool }
 
-\AtBeginDocument
+\hook_gput_code:nnn {begindocument} {top-level}
   {
     \@ifpackageloaded { chemstyle }
       { \bool_set_true:N \l__chemmacros_chemstyle_bool }
@@ -708,8 +709,16 @@
       { \keys_set:nn {chemmacros/#1} {#2} }
   }
 
+\msg_new:nnn {chemmacros} {module-mechanism}
+  {
+    The~ module~ mechanism~ has~ changed~ with~ v5.12. \\
+    All~ modules~ have~ been~ integrated~ into~ the~ main~ package~ and~ thus~
+    are~ preloaded~ already.~ This~ corresponds~ to~ the~ earlier~ setting~
+    `modules=all'
+  }
+
 \chemmacros_define_global_keys:n
-  { modules .code:n = \chemmacros_load_modules:n {#1} }
+  { modules .code:n = \msg_warning:nn {chemmacros} {module-mechanism} }
 
 % --------------------------------------------------------------------------
 
@@ -909,18 +918,19 @@
   }
 \EndChemCompatibility
 
-\AtBeginDocument{
-  \bool_if:NTF \l__chemmacros_language_auto_bool
-    {
-      \tl_set:Nx \l_chemmacros_language_tl
-        { \@trnslt@language{\@trnslt@current@language} }
-    }
-    {
-      \tl_set_eq:NN
-        \l_chemmacros_language_tl
-        \l__chemmacros_current_language_tl
-    }   
-}
+\hook_gput_code:nnn {begindocument} {package/chemmacros5}
+  {
+    \bool_if:NTF \l__chemmacros_language_auto_bool
+      {
+        \tl_set:Nx \l_chemmacros_language_tl
+          { \@trnslt@language{\@trnslt@current@language} }
+      }
+      {
+        \tl_set_eq:NN
+          \l_chemmacros_language_tl
+          \l__chemmacros_current_language_tl
+      }
+  }
 
 % --------------------------------------------------------------------------
 \cs_new_protected:Npn \__chemmacros_declare_translation:nw #1#2=#3\q_stop
@@ -1002,12 +1012,14 @@
 
 % chemgreek selects a mapping if an unambiguous choice is possible, otherwise
 % selects `default'. Warn the user in this case:
-\AtBeginDocument{
-  \bool_lazy_or:nnT
-    { \chemgreek_if_mapping_active_p:n {default} }
-    { \chemgreek_if_mapping_active_p:n {var-default} }
-    { \msg_warning:nn {chemmacros} {no-greek} }
-}
+
+\hook_gput_code:nnn {begindocument} {top-level}
+  {
+    \bool_lazy_or:nnT
+      { \chemgreek_if_mapping_active_p:n {default} }
+      { \chemgreek_if_mapping_active_p:n {var-default} }
+      { \msg_warning:nn {chemmacros} {no-greek} }
+  }
 
 % an option for manual selection:
 \chemmacros_define_global_keys:n
@@ -2643,7 +2655,7 @@
 % --------------------------------------------------------------------------
 % hyperref support
 % ?? unsure about adding IUPAC commands
-\AfterPackage* {hyperref}
+\hook_gput_code:nnn {package/hyperref/after} {package/chemmacros5}
   {
     \pdfstringdefDisableCommands
       {
