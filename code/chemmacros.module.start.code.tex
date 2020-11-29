@@ -79,10 +79,14 @@
 
 \msg_new:nnn {chemmacros} {module-mechanism}
   {
-    The~ module~ mechanism~ has~ changed~ with~ v5.12. \\
-    All~ modules~ have~ been~ integrated~ into~ the~ main~ package~ and~ thus~
-    are~ preloaded~ already.~ This~ corresponds~ to~ the~ earlier~ setting~
-    `modules=all'
+    The~ module~ mechanism~ has~ changed~ with~ v6! \\
+    ==== ======= ========== ==== ======== ===== === \\
+    *~ All~ modules~ have~ been~ integrated~ into~ \\
+    the~ main~ package~ and~ thus~ are~ preloaded~ \\
+    already~ (unless~ you~ have~ loaded~ \\
+    `chemmacros'~ with~ the~ `minimal'~ option). \\
+    *~ The~ new~ default~ corresponds~ to~ the~ \\
+    earlier~ setting~ `modules=all'.
   }
 
 \cs_generate_variant:Nn \msg_warning:nnn { nnV }
@@ -125,8 +129,10 @@
   {
     minimal .code:n = \__chemmacros_loadtime_error:n {load-time-option} ,
     modules .code:n =
-      \__chemmacros_loadtime_warning:n {load-time-option}
       \msg_warning:nn {chemmacros} {module-mechanism}
+      \__chemmacros_loadtime_warning:n {load-time-option} ,
+    package-options / minimal .meta:nn = {chemmacros} {minimal} ,
+    package-options / modules .meta:nn = {chemmacros} {modules}
   }
 
 \bool_if:NF \l__chemmacros_minimal_bool
