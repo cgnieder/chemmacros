@@ -246,6 +246,7 @@ if [ "$build" == true ] ; then
     $modulename.spectroscopy.$moduleext \
     $modulename.thermodynamics.$moduleext \
     $modulename.units.$moduleext \
+    $modulename.reactants.$moduleext \
     > $styname
     # append necessary end:
     # echo -e "% finish package:\n\
