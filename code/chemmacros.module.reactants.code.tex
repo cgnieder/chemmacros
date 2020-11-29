@@ -1,6 +1,5 @@
-\ChemModule{reactants}{2020/04/24 typeset reactants and data}
+\ChemModule{reactants}{2020/11/29 typeset reactants and data}
 
-\chemmacros_load_modules:n {nomenclature,units}
 \RequirePackage {chemnum}
 
 \cs_generate_variant:Nn \chemnum_cmpd:nnnn {nnne}
@@ -30,109 +29,165 @@
 \bool_new:N \__chemmacros_reactant_nameuselong_bool
 \bool_new:N \__chemmacros_reactant_nameuseregular_bool
 
+\tl_new:N \l__chemmacros_mass_unit_tl
+\tl_new:N \l__chemmacros_volume_unit_tl
+\tl_new:N \l__chemmacros_amount_unit_tl
+\tl_new:N \l__chemmacros_concentration_unit_tl
+\tl_new:N \l__chemmacros_equiv_unit_tl
+\tl_new:N \l__chemmacros_fraction_unit_tl
+\tl_new:N \l__chemmacros_purity_unit_tl
+\tl_new:N \l__chemmacros_solution_name_tl
 
 \chemmacros_define_keys:nn {reactants}
   {
+    mass-unit .tl_set:N  = \l__chemmacros_mass_unit_tl ,
+    mass-unit .default:n = \g ,
+    %%
+    volume-unit .tl_set:N  = \l__chemmacros_volume_unit_tl ,
+    volume-unit .default:n = \mL ,
+    %%
+    amount-unit .tl_set:N  = \l__chemmacros_amount_unit_tl ,
+    amount-unit .default:n = \mmol ,
+    %%
+    concentration-unit .tl_set:N  = \l__chemmacros_concentration_unit_tl ,
+    concentration-unit .default:n = \Molar ,
+    %%
+    equiv-unit .tl_set:N  = \l__chemmacros_equiv_unit_tl ,
+    equiv-unit .default:n = eq ,
+    %%
+    fraction-unit .tl_set:N  = \l__chemmacros_fraction_unit_tl ,
+    fraction-unit .default:n = w/w \percent ,
+    %%
+    purity-unit .tl_set:N  = \l__chemmacros_purity_unit_tl ,
+    purity-unit .default:n = \percent ,
+    %%
+    solution-name .tl_set:N  = \l__chemmacros_solution_name_tl ,
+    solution-name .default:n = \chemmacros_translate:n {solution} ,
+    %%
     switch .bool_set:N = \l__chemmacros_reactant_switch_bool ,
-    switch .initial:n  = false,
-    
+    switch .initial:n  = false ,
+    %%
     initiate .bool_set:N = \l__chemmacros_reactant_initiate_bool ,
-    initiate .initial:n  = false,
-    
+    initiate .initial:n  = false ,
+    %%
     noequivalents .bool_set:N = \l__chemmacros_reactant_noequivalents_bool ,
-    noequivalents .initial:n  = false,
-    
-    reactant-output-style .choice:, 
-    reactant-output-style / name-main-other .code:n = \bool_set_true:N \l__chemmacros_reactant_nmo_bool,
+    noequivalents .initial:n  = false ,
+    %%
+    reactant-output-style .choice: , 
+    reactant-output-style / name-main-other .code:n =
+      \bool_set_true:N \l__chemmacros_reactant_nmo_bool ,
     reactant-output-style / main-name-other .code:n = 
       {
         \bool_set_true:N \l__chemmacros_reactant_mno_bool
         \bool_set_false:N \l__chemmacros_reactant_nmo_bool
-      },
+      } ,
     reactant-output-style / main-other-name .code:n = 
       {
         \bool_set_true:N \l__chemmacros_reactant_mon_bool
         \bool_set_false:N \l__chemmacros_reactant_nmo_bool
-      },
-    reactant-output-style .default:n  = name-main-other, 
-    reactant-output-style .initial:n  = name-main-other, 
-    
-    solvent-output-style .choice:, 
-    solvent-output-style / main-name .code:n = \bool_set_true:N \l__chemmacros_reactant_smn_bool,
+      } ,
+    % reactant-output-style .default:n  = name-main-other ,
+    reactant-output-style .initial:n  = name-main-other ,
+    %%
+    solvent-output-style .choice: ,
+    solvent-output-style / main-name .code:n =
+      \bool_set_true:N \l__chemmacros_reactant_smn_bool ,
     solvent-output-style / name-main .code:n = 
       {
         \bool_set_true:N \l__chemmacros_reactant_snm_bool
         \bool_set_false:N \l__chemmacros_reactant_smn_bool
-      },
-    solvent-output-style .default:n  = main-name, 
-    solvent-output-style .initial:n  = main-name,
-    
-    main .choice:, 
+      } ,
+    % solvent-output-style .default:n  = main-name , 
+    solvent-output-style .initial:n  = main-name ,
+    %%
+    main .choice: , 
     main / amount .code:n  = 
       {
         \bool_set_true:N \l__chemmacros_reactant_mainchoiceamount_bool 
         \bool_set_false:N \l__chemmacros_reactant_mainchoicedefault_bool
-      },
+      } ,
     main / equiv .code:n   = 
       {
         \bool_set_true:N \l__chemmacros_reactant_mainchoiceequiv_bool
         \bool_set_false:N \l__chemmacros_reactant_mainchoicedefault_bool
-      },
-    main / default .code:n = \bool_set_true:N \l__chemmacros_reactant_mainchoicedefault_bool,
-    main .default:n  = default,
+      } ,
+    main / default .code:n =
+      \bool_set_true:N \l__chemmacros_reactant_mainchoicedefault_bool ,
+    % main .default:n  = default ,
     main .initial:n  = default, 
-    
-    acronym-support .choice:, 
+    %%
+    acronym-support .choice: , 
     acronym-support / glossaries-extra .code:n  = 
       {
         \bool_set_true:N \l__chemmacros_reactant_acronymchoiceglossaries_bool 
         \bool_set_false:N \l__chemmacros_reactant_acronymchoicenone_bool
-      },
+      } ,
     acronym-support / acro .code:n   = 
       {
         \bool_set_true:N \l__chemmacros_reactant_acronymchoiceacro_bool
         \bool_set_false:N \l__chemmacros_reactant_acronymchoicenone_bool
-      },
-    acronym-support / none .code:n = \bool_set_true:N \l__chemmacros_reactant_acronymchoicenone_bool,
-    acronym-support .default:n  = none,
-    acronym-support .initial:n  = none,    
+      } ,
+    acronym-support / none .code:n =
+      \bool_set_true:N \l__chemmacros_reactant_acronymchoicenone_bool,
+    % acronym-support .default:n  = none,
+    acronym-support .initial:n  = none 
   }
   
   
-\bool_if:NT \l__chemmacros_reactant_acronymchoiceglossaries_bool{
-\RequirePackage[acronyms]{glossaries-extra}
-}
+\bool_if:NT \l__chemmacros_reactant_acronymchoiceglossaries_bool
+  { \RequirePackage [acronyms] {glossaries-extra} }
 
-\bool_if:NT \l__chemmacros_reactant_acronymchoiceacro_bool{
-\RequirePackage[acronyms]{acro}
-}
-
-
+\bool_if:NT \l__chemmacros_reactant_acronymchoiceacro_bool
+  { \RequirePackage {acro} }
 
 \msg_new:nnn {chemmacros} {reactant-name}
-  { The~ reactant~ `#1'~ has~ been~ defined~ without~ a~ name!~ \msg_line_context: }
+  {
+    The~ reactant~ `#1'~ has~ been~ defined~ without~ a~ name!~
+    \msg_line_context:
+  }
   
 \msg_new:nnn {chemmacros} {undefined-key}
-  { The~ reactant~ key~ `#1'~ has~ not~ been~ defined~ using~ the~ DeclareChemReactant~ command!~ \msg_line_context: }
+  {
+    The~ reactant~ key~ `#1'~ has~ not~ been~ defined~ using~
+    \token_to_str:N \DeclareChemReactant \c_space_tl \msg_line_context:
+  }
   
 \msg_new:nnn {chemmacros} {double-defined-key}
-  { The~ reactant~ key~ `#1'~ has~ already~ been~ defined~ using~ the~ DeclareChemReactant~ command!~ \msg_line_context: }
+  {
+    The~ reactant~ key~ `#1'~ has~ already~ been~ defined~ using~
+    \token_to_str:N \DeclareChemReactant \c_space_tl \msg_line_context:
+  }
   
 \msg_new:nnn {chemmacros} {double-defined-key-acronym}
-  { The~ reactant~ key~ `#1'~ has~ already~ been~ defined~ using~ the~ DeclareAcronym~ command!~ \msg_line_context: }
+  {
+    The~ reactant~ key~ `#1'~ has~ already~ been~ defined~ using~
+    \token_to_str:N \DeclareAcronym \c_space_tl \msg_line_context:
+  }
   
 \msg_new:nnn {chemmacros} {incompatible-equivalents}
-  { Incompatible~ options~ noequivalents~ and~ main=equiv~ detected.~ noequivalents~ will~ be~ ignored!~ \msg_line_context: }
+  {
+    Incompatible~ options~ `noequivalents'~ and~ `main=equiv'~ detected.~
+    `noequivalents'~ will~ be~ ignored~ \msg_line_context:
+  }
   
 \msg_new:nnn {chemmacros} {acronym-support-glossaries-load}
-  { Using~ the~ acro-support=glossaries-extra~ option~ requires~ to~ load~ the~ glossaries-extra~ package~ with~ the~ acronym~ option.}
+  {
+    Using~ the~ `acro-support=glossaries-extra'~ option~ requires~ to~ load~
+    the~ `glossaries-extra'~ package~ with~ the~ `acronym'~ option.
+  }
   
 \msg_new:nnn {chemmacros} {acronym-support-acro-load}
-  { Using~ the~ acro-support=acro~ option~ requires~ to~ load~ the~ acro~ package.}
+  {
+    Using~ the~ `acro-support=acro'~ option~ requires~ to~ load~ the~ `acro'~
+    package.
+  }
   
 \msg_new:nnn {chemmacros} {acronym-support-load}
-  { reactants~, reactantl,~ solvents~ and~ solventl~ are~ only~ available~ when~ using~ the~ acro-support=...~ option.}
-  
+  {
+    \token_to_str:N \reactants,~ \token_to_str:N \reactantl,~
+    \token_to_str:N \solvents,~ and~ \token_to_str:N \solventl'~ are~ only~
+    available~ when~ using~ the~ `acro-support'~ option.
+  }  
   
 % --------------------------------------------------------------------------
 % #1: key
@@ -157,26 +212,33 @@
       { \__chemmacros_reactant_set_properties:nn {#1} { number = #1 } }
     \bool_if:NT \l__chemmacros_reactant_initiate_bool
       {
-        \AtBeginDocument
+        \hook_gput_code:nnn {begindocument} {chemmacros}
           { \chemnum_init:ne {} { \__chemmacros_reactant_item:nn {#1} {number} } }
       }
     \bool_if:NT \l__chemmacros_reactant_acronymchoiceglossaries_bool
       { 
-        \chemmacros_if_package_loaded:nF {glossaries-extra} {\msg_error:nnn {chemmacros} {acronym-support-glossaries-load}{#1}} 
+        \chemmacros_if_package_loaded:nF {glossaries-extra}
+          { \msg_error:nnn {chemmacros} {acronym-support-glossaries-load} {#1} }
         \__chemmacros_reactant_if_property:nnT {#1} {short}
           {
-          \newacronym{#1}{\__chemmacros_reactant_item:nn {#1} {short}}{\__chemmacros_reactant_item:nn {#1} {name}}
+            \newacronym
+              {#1}
+              { \__chemmacros_reactant_item:nn {#1} {short} }
+              { \__chemmacros_reactant_item:nn {#1} {name} }
           }
       }
     \bool_if:NT \l__chemmacros_reactant_acronymchoiceacro_bool
       { 
-        \chemmacros_if_package_loaded:nF {acro} {\msg_error:nnn {chemmacros} {acronym-support-acro-load}{#1}} 
+        \chemmacros_if_package_loaded:nF {acro}
+          { \msg_error:nnn {chemmacros} {acronym-support-acro-load} {#1} }
         \__chemmacros_reactant_if_property:nnT {#1} {short}
           {
-          \cs_if_exist:cT 
-            {g__acro_#1_int} 
-            {\msg_error:nnn {chemmacros} {double-defined-key-acronym} {#1} }
-          \DeclareAcronym{#1}{short={\__chemmacros_reactant_item:nn {#1} {short}}, long={\__chemmacros_reactant_item:nn {#1} {name}}}
+            \cs_if_exist:cT  {g__acro_#1_int}
+              { \msg_error:nnn {chemmacros} {double-defined-key-acronym} {#1} }
+            \DeclareAcronym {#1} {
+              short = \__chemmacros_reactant_item:nn {#1} {short} ,
+              long  = \__chemmacros_reactant_item:nn {#1} {name}
+            }
           }
       }
   }
@@ -227,10 +289,10 @@
 % #5: options
 \NewDocumentCommand \reactant {st+O{}mO{}}
   { 
-  \bool_set_true:N {\__chemmacros_reactant_nameuseregular_bool}
-  \bool_set_false:N {\__chemmacros_reactant_nameuseshort_bool}
-  \bool_set_false:N {\__chemmacros_reactant_nameuselong_bool}
-  \chemmacros_reactant:nnnnn {#1} {#5} {#3} {#4} {#2}
+    \bool_set_true:N  \__chemmacros_reactant_nameuseregular_bool
+    \bool_set_false:N \__chemmacros_reactant_nameuseshort_bool
+    \bool_set_false:N \__chemmacros_reactant_nameuselong_bool
+    \chemmacros_reactant:nnnnn {#1} {#5} {#3} {#4} {#2}
   }
   
 % #1: boolean > no name
@@ -238,28 +300,19 @@
 % #3: properties
 % #4: key
 % #5: options
-
 \NewDocumentCommand \reactants {st+O{}mO{}}
-{
-  \bool_lazy_any:nTF
   {
-    { \l__chemmacros_reactant_acronymchoiceglossaries_bool }
-    { \l__chemmacros_reactant_acronymchoiceacro_bool }
+    \bool_lazy_or:nnTF
+      { \l__chemmacros_reactant_acronymchoiceglossaries_bool }
+      { \l__chemmacros_reactant_acronymchoiceacro_bool }
+      {
+        \bool_set_true:N  \__chemmacros_reactant_nameuseshort_bool
+        \bool_set_false:N \__chemmacros_reactant_nameuseregular_bool
+        \bool_set_false:N \__chemmacros_reactant_nameuselong_bool
+        \chemmacros_reactant:nnnnn {#1} {#5} {#3} {#4} {#2}
+      }
+      { \msg_error:nnn {chemmacros} {acronym-support-load} }
   }
-  {
-    \bool_set_true:N {\__chemmacros_reactant_nameuseshort_bool}
-    \bool_set_false:N {\__chemmacros_reactant_nameuseregular_bool}
-    \bool_set_false:N {\__chemmacros_reactant_nameuselong_bool} 
-    \chemmacros_reactant:nnnnn {#1} {#5} {#3} {#4} {#2}
-  }
-  {
-    \msg_error:nnn {chemmacros} {acronym-support-load} 
-  }
-}
-
-
-
-
   
 % #1: boolean > no name
 % #2: boolean: if true, allow no properties and use cmpd+ 
@@ -267,23 +320,18 @@
 % #4: key
 % #5: options
 \NewDocumentCommand \reactantl {st+O{}mO{}}
-{
-  \bool_lazy_any:nTF
   {
-    { \l__chemmacros_reactant_acronymchoiceglossaries_bool }
-    { \l__chemmacros_reactant_acronymchoiceacro_bool }
+    \bool_lazy_or:nnTF
+      { \l__chemmacros_reactant_acronymchoiceglossaries_bool }
+      { \l__chemmacros_reactant_acronymchoiceacro_bool }
+      {
+        \bool_set_true:N  \__chemmacros_reactant_nameuselong_bool
+        \bool_set_false:N \__chemmacros_reactant_nameuseregular_bool
+        \bool_set_false:N \__chemmacros_reactant_nameuseshort_bool
+        \chemmacros_reactant:nnnnn {#1} {#5} {#3} {#4} {#2}
+      }
+      { \msg_error:nnn {chemmacros} {acronym-support-load} }
   }
-  {
-    \bool_set_true:N {\__chemmacros_reactant_nameuselong_bool}
-    \bool_set_false:N {\__chemmacros_reactant_nameuseregular_bool}
-    \bool_set_false:N {\__chemmacros_reactant_nameuseshort_bool} 
-    \chemmacros_reactant:nnnnn {#1} {#5} {#3} {#4} {#2}
-  }
-  {
-    \msg_error:nnn {chemmacros} {acronym-support-load} 
-  }
-}
-  
 
 % #1: boolean > no name
 % #2: options
@@ -301,7 +349,9 @@
           \space
           \chemmacros_reactant_check_all:nn {#4} {(}
           \__chemmacros_reactant_mainproperty:nnn {#2} {#3} {#4}
-          \chemmacros_reactant_check_main:nn {#4} {\chemmacros_reactant_check_other:nn {#4} {,\space} }
+          \chemmacros_reactant_check_main:nn
+            {#4}
+            { \chemmacros_reactant_check_other:nn {#4} {,~} }
           \chemmacros_reactant_properties:nnn {#2} {#3} {#4}
           \chemmacros_reactant_check_all:nn {#4} {)} 
         }
@@ -309,9 +359,9 @@
         {
           \__chemmacros_reactant_set_properties:nn {#4} {#3}
           \__chemmacros_reactant_mainproperty:nnn {#2} {#3} {#4}
-          \chemmacros_reactant_check_main:nn {#4} {\space} 
+          \chemmacros_reactant_check_main:nn {#4} {~}
           \chemmacros_reactant_name:nnnn {#1} {#2} {#4} {#5}
-          \chemmacros_reactant_check_other:nn {#4} {\space(}
+          \chemmacros_reactant_check_other:nn {#4} {~(}
           \chemmacros_reactant_properties:nnn {#2} {#3} {#4}
           \chemmacros_reactant_check_other:nn {#4} {)}
         }
@@ -319,141 +369,135 @@
         {
           \__chemmacros_reactant_set_properties:nn {#4} {#3}
           \__chemmacros_reactant_mainproperty:nnn {#2} {#3} {#4}
-           \chemmacros_reactant_check_main:nn {#4} {\space} 
+           \chemmacros_reactant_check_main:nn {#4} {~} 
           \chemmacros_reactant_check_other:nn {#4} {(}
           \chemmacros_reactant_properties:nnn {#2} {#3} {#4}
-          \chemmacros_reactant_check_other:nn {#4} {)\space}
+          \chemmacros_reactant_check_other:nn {#4} {)~}
           \chemmacros_reactant_name:nnnn {#1} {#2} {#4} {#5}
         }
       \group_end:
   }
-
    
 % #1: key
 % #2: true code
 \cs_new_protected:Npn \chemmacros_reactant_check_main:nn #1#2
   {
     \bool_if:NT \l__chemmacros_reactant_mainchoicedefault_bool
-    {
-      \bool_lazy_any:nT
-        {
+      {
+        \bool_lazy_or:nnT
           { \__chemmacros_reactant_if_property_p:nn {#1} {mass} }
           { \__chemmacros_reactant_if_property_p:nn {#1} {volume} }
-        }
         {#2}
     }
     \bool_if:NT \l__chemmacros_reactant_mainchoiceamount_bool
-    {
-      \bool_lazy_any:nT
-        {
-          { \__chemmacros_reactant_if_property_p:nn {#1} {mass} }
-          { \__chemmacros_reactant_if_property_p:nn {#1} {volume} }
-          { \__chemmacros_reactant_if_property_p:nn {#1} {amount} }
-        }
-        {#2}
-    }
+      {
+        \bool_lazy_any:nT
+          {
+            { \__chemmacros_reactant_if_property_p:nn {#1} {mass} }
+            { \__chemmacros_reactant_if_property_p:nn {#1} {volume} }
+            { \__chemmacros_reactant_if_property_p:nn {#1} {amount} }
+          }
+          {#2}
+      }
     \bool_if:NT \l__chemmacros_reactant_mainchoiceequiv_bool
-    {
-      \bool_lazy_any:nT
-        {
-          { \__chemmacros_reactant_if_property_p:nn {#1} {mass} }
-          { \__chemmacros_reactant_if_property_p:nn {#1} {volume} }
-          { \__chemmacros_reactant_if_property_p:nn {#1} {equiv} }
-        }
-        {#2}
-    }
+      {
+        \bool_lazy_any:nT
+          {
+            { \__chemmacros_reactant_if_property_p:nn {#1} {mass} }
+            { \__chemmacros_reactant_if_property_p:nn {#1} {volume} }
+            { \__chemmacros_reactant_if_property_p:nn {#1} {equiv} }
+          }
+          {#2}
+      }
   }
-
 
 % #1: key
 % #2: true code
 \cs_new_protected:Npn \chemmacros_reactant_check_other:nn #1#2
   {
     \bool_if:NT \l__chemmacros_reactant_mainchoicedefault_bool
-    {
-      \bool_if:NTF \l__chemmacros_reactant_noequivalents_bool
       {
-        \bool_lazy_any:nT
+        \bool_if:NTF \l__chemmacros_reactant_noequivalents_bool
           {
-               { \__chemmacros_reactant_if_property_p:nn {#1} {fraction} }
-               { \__chemmacros_reactant_if_property_p:nn {#1} {amount} }
-               { \__chemmacros_reactant_if_property_p:nn {#1} {purity} } 
-               { \__chemmacros_reactant_if_property_p:nn {#1} {concentration} }
-               { \__chemmacros_reactant_if_property_p:nn {#1} {solvent} }
-        }
-        {#2}
-      }
-      {
-        \bool_lazy_any:nT
+            \bool_lazy_any:nT
+              {
+                { \__chemmacros_reactant_if_property_p:nn {#1} {fraction} }
+                { \__chemmacros_reactant_if_property_p:nn {#1} {amount} }
+                { \__chemmacros_reactant_if_property_p:nn {#1} {purity} } 
+                { \__chemmacros_reactant_if_property_p:nn {#1} {concentration} }
+                { \__chemmacros_reactant_if_property_p:nn {#1} {solvent} }
+              }
+              {#2}
+          }
           {
-               { \__chemmacros_reactant_if_property_p:nn {#1} {fraction} }
-               { \__chemmacros_reactant_if_property_p:nn {#1} {amount} }
-               { \__chemmacros_reactant_if_property_p:nn {#1} {equiv} }
-               { \__chemmacros_reactant_if_property_p:nn {#1} {purity} } 
-               { \__chemmacros_reactant_if_property_p:nn {#1} {concentration} }
-               { \__chemmacros_reactant_if_property_p:nn {#1} {solvent} }
-        }
-        {#2}
+            \bool_lazy_any:nT
+              {
+                { \__chemmacros_reactant_if_property_p:nn {#1} {fraction} }
+                { \__chemmacros_reactant_if_property_p:nn {#1} {amount} }
+                { \__chemmacros_reactant_if_property_p:nn {#1} {equiv} }
+                { \__chemmacros_reactant_if_property_p:nn {#1} {purity} } 
+                { \__chemmacros_reactant_if_property_p:nn {#1} {concentration} }
+                { \__chemmacros_reactant_if_property_p:nn {#1} {solvent} }
+              }
+              {#2}
+          }
       }
-    }
     \bool_if:NT \l__chemmacros_reactant_mainchoiceamount_bool
-    {
-      \bool_if:NTF \l__chemmacros_reactant_noequivalents_bool
       {
-        \bool_lazy_any:nT
+        \bool_if:NTF \l__chemmacros_reactant_noequivalents_bool
           {
-            { \__chemmacros_reactant_if_property_p:nn {#1} {fraction} }
-            { \__chemmacros_reactant_if_property_p:nn {#1} {purity} } 
-            { \__chemmacros_reactant_if_property_p:nn {#1} {concentration} }
-            { \__chemmacros_reactant_if_property_p:nn {#1} {solvent} }
-        }
-        {#2}
-      }
-      {
-        \bool_lazy_any:nT
+            \bool_lazy_any:nT
+              {
+                { \__chemmacros_reactant_if_property_p:nn {#1} {fraction} }
+                { \__chemmacros_reactant_if_property_p:nn {#1} {purity} } 
+                { \__chemmacros_reactant_if_property_p:nn {#1} {concentration} }
+                { \__chemmacros_reactant_if_property_p:nn {#1} {solvent} }
+              }
+              {#2}
+          }
           {
-            { \__chemmacros_reactant_if_property_p:nn {#1} {fraction} }
-            {\__chemmacros_reactant_if_property_p:nn  {#1} {equiv} }
-            { \__chemmacros_reactant_if_property_p:nn {#1} {purity} } 
-            { \__chemmacros_reactant_if_property_p:nn {#1} {concentration} }
-            { \__chemmacros_reactant_if_property_p:nn {#1} {solvent} }
-        }
-        {#2}
+            \bool_lazy_any:nT
+              {
+                { \__chemmacros_reactant_if_property_p:nn {#1} {fraction} }
+                {\__chemmacros_reactant_if_property_p:nn  {#1} {equiv} }
+                { \__chemmacros_reactant_if_property_p:nn {#1} {purity} } 
+                { \__chemmacros_reactant_if_property_p:nn {#1} {concentration} }
+                { \__chemmacros_reactant_if_property_p:nn {#1} {solvent} }
+              }
+              {#2}
+          }
       }
-    }
     \bool_if:NT \l__chemmacros_reactant_mainchoiceequiv_bool
-    {
-      \bool_lazy_any:nT
-        {
-            { \__chemmacros_reactant_if_property_p:nn {#1} {fraction} }
-            { \__chemmacros_reactant_if_property_p:nn {#1} {amount} }
-            { \__chemmacros_reactant_if_property_p:nn {#1} {purity} } 
-            { \__chemmacros_reactant_if_property_p:nn {#1} {concentration} }
-            { \__chemmacros_reactant_if_property_p:nn {#1} {solvent} }
-        }
-        {#2}
-    }
-  }
-   
-  
-% #1: key
-% #2: true code
-\cs_new_protected:Npn \chemmacros_reactant_check_all:nn #1#2
-  {
-      \bool_lazy_any:nT
+      {
+        \bool_lazy_any:nT
           {
-            { \__chemmacros_reactant_if_property_p:nn {#1} {mass} }
-            { \__chemmacros_reactant_if_property_p:nn {#1} {volume} }
             { \__chemmacros_reactant_if_property_p:nn {#1} {fraction} }
             { \__chemmacros_reactant_if_property_p:nn {#1} {amount} }
-            { \__chemmacros_reactant_if_property_p:nn {#1} {equiv} }
             { \__chemmacros_reactant_if_property_p:nn {#1} {purity} } 
             { \__chemmacros_reactant_if_property_p:nn {#1} {concentration} }
             { \__chemmacros_reactant_if_property_p:nn {#1} {solvent} }
           }
           {#2}
+      }
   }
-  
+
+% #1: key
+% #2: true code
+\cs_new_protected:Npn \chemmacros_reactant_check_all:nn #1#2
+  {
+    \bool_lazy_any:nT
+      {
+        { \__chemmacros_reactant_if_property_p:nn {#1} {mass} }
+        { \__chemmacros_reactant_if_property_p:nn {#1} {volume} }
+        { \__chemmacros_reactant_if_property_p:nn {#1} {fraction} }
+        { \__chemmacros_reactant_if_property_p:nn {#1} {amount} }
+        { \__chemmacros_reactant_if_property_p:nn {#1} {equiv} }
+        { \__chemmacros_reactant_if_property_p:nn {#1} {purity} } 
+        { \__chemmacros_reactant_if_property_p:nn {#1} {concentration} }
+        { \__chemmacros_reactant_if_property_p:nn {#1} {solvent} }
+      }
+      {#2}
+  }
   
 % #1: boolean > no name
 % #2: options
@@ -465,44 +509,41 @@
       \chemmacros_set_keys:nn {reactants} {#2} 
       \bool_lazy_or:nnT 
         { \bool_lazy_and_p:nn {#1} { !\l__chemmacros_reactant_switch_bool } } 
-        { !#1 } 
-        { 
-        \bool_if:nT { \__chemmacros_reactant_nameuseregular_bool } { \__chemmacros_reactant_item:nn {#3} {name} }
-        \bool_if:nT 
-          { \__chemmacros_reactant_nameuseshort_bool } 
-          { 
-            \bool_if:nT 
-            { \l__chemmacros_reactant_acronymchoiceglossaries_bool } { \glsxtrshort{#3} } 
-            \bool_if:nT 
-            { \l__chemmacros_reactant_acronymchoiceacro_bool } { \acs{#3} } 
-          }
-        \bool_if:nT 
-          { \__chemmacros_reactant_nameuselong_bool } 
-          { 
-            \bool_if:nT 
-            { \l__chemmacros_reactant_acronymchoiceglossaries_bool } { \glsxtrlong{#3} } 
-            \bool_if:nT 
-            { \l__chemmacros_reactant_acronymchoiceacro_bool } { \acl{#3} } 
-          }
-      \bool_if:nF {#1} { \nobreakspace } 
-      \bool_lazy_or:nnT 
+        { !#1 }
+        {
+          \bool_if:NT \__chemmacros_reactant_nameuseregular_bool
+            { \__chemmacros_reactant_item:nn {#3} {name} }
+          \bool_if:NT \__chemmacros_reactant_nameuseshort_bool
+            { 
+              \bool_if:NT \l__chemmacros_reactant_acronymchoiceglossaries_bool
+                { \glsxtrshort {#3} } 
+              \bool_if:NT \l__chemmacros_reactant_acronymchoiceacro_bool
+                { \acs {#3} }
+            }
+          \bool_if:NT \__chemmacros_reactant_nameuselong_bool
+            { 
+              \bool_if:NT \l__chemmacros_reactant_acronymchoiceglossaries_bool
+                { \glsxtrlong {#3} }
+              \bool_if:NT \l__chemmacros_reactant_acronymchoiceacro_bool
+                { \acl {#3} }
+            }
+        }
+      \bool_if:nF {#1} { \nobreakspace }
+      \bool_lazy_or:nnT
         { \bool_lazy_and_p:nn {#1} { \l__chemmacros_reactant_switch_bool } } 
-        { !#1 } 
-        { 
+        { !#1 }
+        {
           \chemnum_cmpd:nnne
             { \c_false_bool }
-            { #4 }
+            {#4}
             { }
-            { \__chemmacros_reactant_item:nn {#3} {number} }
-       
-       \bool_if:nF
-       {#4}
-       {\chemnum_compound_if_initiated:nF {#3}
-         {
-           \msg_warning:nnn {chemmacros} {undefined-key}  {#3}
-         }
-       } 
-       }
+            { \__chemmacros_reactant_item:nn {#3} {number} }       
+          \bool_if:nF {#4}
+            {
+              \chemnum_compound_if_initiated:nF {#3}
+                { \msg_warning:nnn {chemmacros} {undefined-key} {#3} }
+            }
+        }
     \group_end:
   }
 }
@@ -516,56 +557,82 @@
       \seq_clear:N \l__chemmacros_tmpa_seq
       \__chemmacros_reactant_set_properties:nn {#3} {#2}
       \chemmacros_set_keys:nn {reactants} {#1}
-        \bool_lazy_any:nT
-          {
-            { \__chemmacros_reactant_if_property_p:nn {#3} {mass} }
-            { \__chemmacros_reactant_if_property_p:nn {#3} {volume} }
-            { \__chemmacros_reactant_if_property_p:nn {#3} {fraction} }
-            { \__chemmacros_reactant_if_property_p:nn {#3} {amount} }
-            { \__chemmacros_reactant_if_property_p:nn {#3} {equiv} }
-            { \__chemmacros_reactant_if_property_p:nn {#3} {purity} } 
-            { \__chemmacros_reactant_if_property_p:nn {#3} {concentration} }
-            { \__chemmacros_reactant_if_property_p:nn {#3} {solvent} }
-            { \__chemmacros_reactant_if_property_p:nn {#3} {fraction-unit} }
-            { \__chemmacros_reactant_if_property_p:nn {#3} {amount-unit} }
-            { \__chemmacros_reactant_if_property_p:nn {#3} {equiv-unit} }
-            { \__chemmacros_reactant_if_property_p:nn {#3} {purity-unit} }
-            { \__chemmacros_reactant_if_property_p:nn {#3} {concentration-unit} }
-          }
-          {
-            \__chemmacros_reactant_change_unit:Nnn {#3} {fraction-unit} \defaultfractionunit
-            \__chemmacros_reactant_change_unit:Nnn {#3} {amount-unit} \defaultamountunit
-            \bool_if:NF \l__chemmacros_reactant_noequivalents_bool
+      \bool_lazy_any:nT
+        {
+          { \__chemmacros_reactant_if_property_p:nn {#3} {mass} }
+          { \__chemmacros_reactant_if_property_p:nn {#3} {volume} }
+          { \__chemmacros_reactant_if_property_p:nn {#3} {fraction} }
+          { \__chemmacros_reactant_if_property_p:nn {#3} {amount} }
+          { \__chemmacros_reactant_if_property_p:nn {#3} {equiv} }
+          { \__chemmacros_reactant_if_property_p:nn {#3} {purity} } 
+          { \__chemmacros_reactant_if_property_p:nn {#3} {concentration} }
+          { \__chemmacros_reactant_if_property_p:nn {#3} {solvent} }
+          { \__chemmacros_reactant_if_property_p:nn {#3} {fraction-unit} }
+          { \__chemmacros_reactant_if_property_p:nn {#3} {amount-unit} }
+          { \__chemmacros_reactant_if_property_p:nn {#3} {equiv-unit} }
+          { \__chemmacros_reactant_if_property_p:nn {#3} {purity-unit} }
+          { \__chemmacros_reactant_if_property_p:nn {#3} {concentration-unit} }
+        }
+        {
+          \__chemmacros_reactant_change_unit:NnV #3
+            {fraction-unit}
+            \l__chemmacros_fraction_unit_tl
+          \__chemmacros_reactant_change_unit:NnV #3
+            {amount-unit}
+            \l__chemmacros_amount_unit_tl
+          \bool_if:NF \l__chemmacros_reactant_noequivalents_bool
             {
-              \__chemmacros_reactant_change_unit:Nnn {#3} {equiv-unit} \defaultequivunit
+              \__chemmacros_reactant_change_unit:NnV #3
+                {equiv-unit}
+                \l__chemmacros_equiv_unit_tl
             }
-            \__chemmacros_reactant_change_unit:Nnn {#3} {purity-unit} \defaultpurityunit
-            \__chemmacros_reactant_change_unit:Nnn {#3} {concentration-unit} \defaultconcentrationunit
-            \__chemmacros_reactant_add_property:Nnnn \l__chemmacros_tmpa_seq {#3} {fraction} {\defaultfractionunit}
-            \bool_if:NF \l__chemmacros_reactant_mainchoiceamount_bool
+          \__chemmacros_reactant_change_unit:NnV #3
+            {purity-unit}
+            \l__chemmacros_purity_unit_tl
+          \__chemmacros_reactant_change_unit:NnV #3
+            {concentration-unit}
+            \l__chemmacros_concentration_unit_tl
+          \__chemmacros_reactant_add_property:NnnV \l__chemmacros_tmpa_seq
+            {#3}
+            {fraction}
+            \l__chemmacros_fraction_unit_tl
+          \bool_if:NF \l__chemmacros_reactant_mainchoiceamount_bool
             { 
-              \__chemmacros_reactant_add_property:Nnnn \l__chemmacros_tmpa_seq {#3} {amount} {\defaultamountunit}
+              \__chemmacros_reactant_add_property:NnnV \l__chemmacros_tmpa_seq
+                {#3}
+                {amount}
+                \l__chemmacros_amount_unit_tl
             }
-            \bool_if:NTF \l__chemmacros_reactant_noequivalents_bool
-              {
-                \bool_if:NT \l__chemmacros_reactant_mainchoiceequiv_bool
-                  {
-                    \msg_warning:nnn {chemmacros} {incompatible-equivalents} {#1}
-                  }
-              }
-              {
-                \bool_if:NF \l__chemmacros_reactant_mainchoiceequiv_bool
-                  { 
-                    \__chemmacros_reactant_add_property:Nnnn \l__chemmacros_tmpa_seq {#3} {equiv} {\defaultequivunit}
-                  }
-              }
-          \__chemmacros_reactant_add_property:Nnnn \l__chemmacros_tmpa_seq {#3} {purity} {\defaultpurityunit}
-          \__chemmacros_reactant_add_property:Nnnn \l__chemmacros_tmpa_seq {#3} {concentration} {\defaultconcentrationunit}
-          \seq_use:Nn \l__chemmacros_tmpa_seq {,~} \__chemmacros_reactant_add_solvent:Nnn{#3}{solvent}{\solutionname}
+          \bool_if:NTF \l__chemmacros_reactant_noequivalents_bool
+            {
+              \bool_if:NT \l__chemmacros_reactant_mainchoiceequiv_bool
+                { \msg_warning:nnn {chemmacros} {incompatible-equivalents} {#1} }
+            }
+            {
+              \bool_if:NF \l__chemmacros_reactant_mainchoiceequiv_bool
+                { 
+                  \__chemmacros_reactant_add_property:NnnV \l__chemmacros_tmpa_seq
+                    {#3}
+                    {equiv}
+                    \l__chemmacros_equiv_unit_tl
+                }
+            }
+          \__chemmacros_reactant_add_property:NnnV \l__chemmacros_tmpa_seq
+            {#3}
+            {purity}
+            \l__chemmacros_purity_unit_tl
+          \__chemmacros_reactant_add_property:NnnV \l__chemmacros_tmpa_seq
+            {#3}
+            {concentration}
+            \l__chemmacros_concentration_unit_tl
+          \seq_use:Nn \l__chemmacros_tmpa_seq {,~}
+          \__chemmacros_reactant_add_solvent:NnV
+            {#3}
+            {solvent}
+            \l__chemmacros_solution_name_tl
         }
     \group_end:
   }
-  
 
 % #1: options
 % #2: properties
@@ -573,52 +640,61 @@
 \cs_new_protected:Npn \__chemmacros_reactant_mainproperty:nnn #1#2#3
   {
     \group_begin:
-    \seq_clear:N \l__chemmacros_tmpa_seq
+      \seq_clear:N \l__chemmacros_tmpa_seq
       \__chemmacros_reactant_set_properties:nn {#3} {#2}
       \chemmacros_set_keys:nn {reactants} {#1}
-        \bool_lazy_any:nT
-          {
-            { \__chemmacros_reactant_if_property_p:nn {#3} {mass-unit} }
-            { \__chemmacros_reactant_if_property_p:nn {#3} {volume-unit} }
-          }
-          {
-            \__chemmacros_reactant_change_unit:Nnn {#3} {mass-unit} \defaultmassunit
-            \__chemmacros_reactant_change_unit:Nnn {#3} {volume-unit} \defaultvolumeunit
-          }
-        \bool_if:NT \l__chemmacros_reactant_mainchoiceamount_bool
-          {
-          \bool_lazy_any:nT
-            {
-              { \__chemmacros_reactant_if_property_p:nn {#3} {amount-unit} }
-            }
-          }
-          {
-            \__chemmacros_reactant_change_unit:Nnn {#3} {amount-unit} \defaultamountunit
-          }
-        \bool_if:NT \l__chemmacros_reactant_mainchoiceequiv_bool
+      \bool_lazy_or:nnT
+        { \__chemmacros_reactant_if_property_p:nn {#3} {mass-unit} }
+        { \__chemmacros_reactant_if_property_p:nn {#3} {volume-unit} }
         {
-          \bool_lazy_any:nT
-          {
-            { \__chemmacros_reactant_if_property_p:nn {#3} {equiv-unit} }
-          }
-          }
-          {
-            \__chemmacros_reactant_change_unit:Nnn {#3} {equiv-unit} \defaultequivunit
+          \__chemmacros_reactant_change_unit:NnV #3
+            {mass-unit}
+            \l__chemmacros_mass_unit_tl
+          \__chemmacros_reactant_change_unit:NnV #3
+            {volume-unit}
+            \l__chemmacros_volume_unit_tl
         }
-        \__chemmacros_reactant_add_property:Nnnn \l__chemmacros_tmpa_seq {#3} {mass} {\defaultmassunit}
-        \__chemmacros_reactant_add_property:Nnnn \l__chemmacros_tmpa_seq {#3} {volume} {\defaultvolumeunit}
-        \bool_if:NT \l__chemmacros_reactant_mainchoiceamount_bool
-           {
-             \__chemmacros_reactant_add_property:Nnnn \l__chemmacros_tmpa_seq {#3} {amount} {\defaultamountunit}
-           }
-        \bool_if:NT \l__chemmacros_reactant_mainchoiceequiv_bool
-           {
-             \__chemmacros_reactant_add_property:Nnnn \l__chemmacros_tmpa_seq {#3} {equiv} {\defaultequivunit}
-           }
-        \seq_use:Nn \l__chemmacros_tmpa_seq {,~}
+      \bool_lazy_and:nnT
+        { \l__chemmacros_reactant_mainchoiceamount_bool }
+        { \__chemmacros_reactant_if_property_p:nn {#3} {amount-unit} }
+        {
+          \__chemmacros_reactant_change_unit:NnV #3
+            {amount-unit}
+            \l__chemmacros_amount_unit_tl
+        }
+      \bool_lazy_and:nnT
+        { \l__chemmacros_reactant_mainchoiceequiv_bool }
+        { \__chemmacros_reactant_if_property_p:nn {#3} {equiv-unit} }
+        {
+          \__chemmacros_reactant_change_unit:NnV #3
+            {equiv-unit}
+            \l__chemmacros_equiv_unit_tl
+        }
+      \__chemmacros_reactant_add_property:NnnV \l__chemmacros_tmpa_seq
+        {#3}
+        {mass}
+        \l__chemmacros_mass_unit_tl
+      \__chemmacros_reactant_add_property:NnnV \l__chemmacros_tmpa_seq
+        {#3}
+        {volume}
+        \l__chemmacros_volume_unit_tl
+      \bool_if:NT \l__chemmacros_reactant_mainchoiceamount_bool
+        {
+          \__chemmacros_reactant_add_property:NnnV \l__chemmacros_tmpa_seq
+            {#3}
+            {amount}
+            \l__chemmacros_amount_unit_tl
+        }
+      \bool_if:NT \l__chemmacros_reactant_mainchoiceequiv_bool
+        {
+          \__chemmacros_reactant_add_property:NnnV \l__chemmacros_tmpa_seq
+            {#3}
+            {equiv}
+            \l__chemmacros_equiv_unit_tl
+        }
+      \seq_use:Nn \l__chemmacros_tmpa_seq {,~}
     \group_end:
   }  
-    
 
 % #1: seq variable
 % #2: key
@@ -626,13 +702,13 @@
 % #4: unit
 \cs_new_protected:Npn \__chemmacros_reactant_add_property:Nnnn #1#2#3#4 
   {
-    \__chemmacros_reactant_if_property:nnT {#2} {#3} 
+    \__chemmacros_reactant_if_property:nnT {#2} {#3}
       {
         \seq_put_right:Nn #1 
           { \SI { \__chemmacros_reactant_item:nn {#2} {#3} } {#4} } 
       }
   }
-  
+\cs_generate_variant:Nn \__chemmacros_reactant_add_property:Nnnn {NnnV}  
   
 % #1: key
 % #2: property (name of solvent)
@@ -641,10 +717,13 @@
   {
     \__chemmacros_reactant_if_property:nnT {#1} {#2} 
       {
-       \space\solutionname\space\__chemmacros_reactant_item:nn {#1} {#2}  
+        \c_space_tl
+        \l__chemmacros_solution_name_tl
+        \c_space_tl
+        \__chemmacros_reactant_item:nn {#1} {#2}  
       }
   }
-
+\cs_generate_variant:Nn \__chemmacros_reactant_add_solvent:Nnn {NnV}
 
 % #1: key
 % #2: property 
@@ -652,9 +731,7 @@
 \cs_new_protected:Npn \__chemmacros_reactant_change_unit:Nnn #1#2#3
   {
     \__chemmacros_reactant_if_property:nnT {#1} {#2} 
-      {
-        \prop_get:cnN {l__chemmacros_reactant_#1_prop} {#2} #3
-      }
+      { \prop_get:cnN {l__chemmacros_reactant_#1_prop} {#2} #3 }
   }
   
   
@@ -664,68 +741,63 @@
 % #3: options
 \NewDocumentCommand \solvent {O{}mO{}}
   {
-  \bool_set_true:N {\__chemmacros_reactant_nameuseregular_bool}
-  \bool_set_false:N {\__chemmacros_reactant_nameuseshort_bool}
-  \bool_set_false:N {\__chemmacros_reactant_nameuselong_bool}
-  \chemmacros_solvent:nnn {#3} {#1} {#2}
+    \group_begin:
+      \bool_set_true:N  \__chemmacros_reactant_nameuseregular_bool
+      \bool_set_false:N \__chemmacros_reactant_nameuseshort_bool
+      \bool_set_false:N \__chemmacros_reactant_nameuselong_bool
+      \chemmacros_solvent:nnn {#3} {#1} {#2}
+    \group_end:
   }
   
 % #1: properties
 % #2: key
 % #3: options
 \NewDocumentCommand \solvents {O{}mO{}}
-{
-  \bool_lazy_any:nTF
   {
-    { \l__chemmacros_reactant_acronymchoiceglossaries_bool }
-    { \l__chemmacros_reactant_acronymchoiceacro_bool }
+    \group_begin:
+      \bool_lazy_or:nnTF
+        { \l__chemmacros_reactant_acronymchoiceglossaries_bool }
+        { \l__chemmacros_reactant_acronymchoiceacro_bool }
+        {
+          \bool_set_true:N  \__chemmacros_reactant_nameuseshort_bool
+          \bool_set_false:N \__chemmacros_reactant_nameuseregular_bool
+          \bool_set_false:N \__chemmacros_reactant_nameuselong_bool
+          \chemmacros_solvent:nnn {#3} {#1} {#2}
+        }
+        { \msg_error:nn {chemmacros} {acronym-support-load} }
+    \group_end:
   }
-  {
-    \bool_set_true:N {\__chemmacros_reactant_nameuseshort_bool}
-    \bool_set_false:N {\__chemmacros_reactant_nameuseregular_bool}
-    \bool_set_false:N {\__chemmacros_reactant_nameuselong_bool} 
-    \chemmacros_solvent:nnn {#3} {#1} {#2}
-  }
-  {
-    \msg_error:nnn {chemmacros} {acronym-support-load} 
-  }
-}
-
  
 % #1: properties
 % #2: key
 % #3: options
 \NewDocumentCommand \solventl {O{}mO{}}
-{
-  \bool_lazy_any:nTF
   {
-    { \l__chemmacros_reactant_acronymchoiceglossaries_bool }
-    { \l__chemmacros_reactant_acronymchoiceacro_bool }
+    \group_begin:
+      \bool_lazy_or:nnTF
+        { \l__chemmacros_reactant_acronymchoiceglossaries_bool }
+        { \l__chemmacros_reactant_acronymchoiceacro_bool }
+        {
+          \bool_set_true:N  \__chemmacros_reactant_nameuselong_bool
+          \bool_set_false:N \__chemmacros_reactant_nameuseregular_bool
+          \bool_set_false:N \__chemmacros_reactant_nameuseshort_bool
+          \chemmacros_solvent:nnn {#3} {#1} {#2}
+        }
+        { \msg_error:nn {chemmacros} {acronym-support-load} }
+    \group_end:
   }
-  {
-    \bool_set_true:N {\__chemmacros_reactant_nameuselong_bool}
-    \bool_set_false:N {\__chemmacros_reactant_nameuseregular_bool}
-    \bool_set_false:N {\__chemmacros_reactant_nameuseshort_bool} 
-    \chemmacros_solvent:nnn {#3} {#1} {#2}
-  }
-  {
-    \msg_error:nnn {chemmacros} {acronym-support-load} 
-  }
-}
-  
-
 
 % #1: options
 % #2: properties
 % #3: key  
 \cs_new_protected:Npn \chemmacros_solvent:nnn #1#2#3
   {
-     \group_begin:
+    \group_begin:
       \bool_if:NT \l__chemmacros_reactant_snm_bool
         {
           \__chemmacros_reactant_set_properties:nn {#3} {#2}
           \chemmacros_solvent_name:nn {#1} {#3}
-          \chemmacros_reactant_check_main:nn {#3} {\space(}
+          \chemmacros_reactant_check_main:nn {#3} {~(}
           \chemmacros_solvent_properties:nnn {#1} {#2} {#3}
           \chemmacros_reactant_check_main:nn {#3} {)}
         }
@@ -733,10 +805,10 @@
         {
           \__chemmacros_reactant_set_properties:nn {#3} {#2}
           \chemmacros_solvent_properties:nnn {#1} {#2} {#3}
-          \chemmacros_reactant_check_main:nn {#3} {\space}
+          \chemmacros_reactant_check_main:nn {#3} {~}
           \chemmacros_solvent_name:nn {#1} {#3}
         }
-  \group_end:
+    \group_end:
   }
   
 % #1: options
@@ -747,19 +819,18 @@
     \group_begin:
       \__chemmacros_reactant_set_properties:nn {#3} {#2}
       \chemmacros_set_keys:nn {reactants} {#1}
-        \bool_lazy_any:nT
+        \bool_lazy_or:nnT
+          { \__chemmacros_reactant_if_property_p:nn {#3} {volume} }
+          { \__chemmacros_reactant_if_property_p:nn {#3} {volume-unit} }
           {
-            { \__chemmacros_reactant_if_property_p:nn {#3} {volume} }
-            { \__chemmacros_reactant_if_property_p:nn {#3} {volume-unit} }
-          }
-          {
-            \__chemmacros_reactant_change_unit:Nnn {#3} {volume-unit} \defaultvolumeunit 
-            \SI{\__chemmacros_reactant_item:nn {#3} {volume}}{\defaultvolumeunit}
+            \__chemmacros_reactant_change_unit:Nnn {#3} {volume-unit} \l__chemmacros_volume_unit_tl 
+            \SI
+              { \__chemmacros_reactant_item:nn {#3} {volume} }
+              { \l__chemmacros_volume_unit_tl }
             
           }
-    \group_end:
+      \group_end:
   }
-  
 
 % #1: options
 % #2: key 
@@ -767,42 +838,23 @@
   {
     \group_begin:
       \chemmacros_set_keys:nn {reactants} {#1} 
-      \bool_if:nT { \__chemmacros_reactant_nameuseregular_bool } { \__chemmacros_reactant_item:nn {#2} {name} }
-      \bool_if:nT { \__chemmacros_reactant_nameuseshort_bool } 
-        { \bool_if:nT 
-            { \l__chemmacros_reactant_acronymchoiceglossaries_bool } { \glsxtrshort{#2} } 
-            \bool_if:nT 
-            { \l__chemmacros_reactant_acronymchoiceacro_bool } { \acs{#2} }  
+      \bool_if:NT \__chemmacros_reactant_nameuseregular_bool
+        { \__chemmacros_reactant_item:nn {#2} {name} }
+      \bool_if:NT \__chemmacros_reactant_nameuseshort_bool
+        {
+          \bool_if:NT \l__chemmacros_reactant_acronymchoiceglossaries_bool
+            { \glsxtrshort {#2} } 
+          \bool_if:NT \l__chemmacros_reactant_acronymchoiceacro_bool
+            { \acs {#2} }
          }
-      \bool_if:nT { \__chemmacros_reactant_nameuselong_bool } 
-        { \bool_if:nT 
-            { \l__chemmacros_reactant_acronymchoiceglossaries_bool } { \glsxtrshort{#2} } 
-            \bool_if:nT 
-            { \l__chemmacros_reactant_acronymchoiceacro_bool } { \acs{#2} } 
+      \bool_if:NT \__chemmacros_reactant_nameuselong_bool
+        {
+          \bool_if:NT \l__chemmacros_reactant_acronymchoiceglossaries_bool
+            { \glsxtrshort {#2} } 
+          \bool_if:NT \l__chemmacros_reactant_acronymchoiceacro_bool
+            { \acs {#2} } 
         }
     \group_end:
-  }
-  
-  
-\tl_set:Nn \defaultmassunit { \g }
-\tl_set:Nn \defaultvolumeunit { \mL }
-\tl_set:Nn \defaultamountunit { \mmol }
-\tl_set:Nn \defaultconcentrationunit { \Molar }
-\tl_set:Nn \defaultequivunit { eq }
-\tl_set:Nn \defaultfractionunit { w/w \percent }
-\tl_set:Nn \defaultpurityunit { \percent }
-\tl_set:Nn \solutionname { \chemmacros_translate:n {solution} }
-
-\chemmacros_define_keys:nn {reactants}
-  {
-    default-mass-unit .tl_set:N = \defaultmassunit ,
-    default-volume-unit .tl_set:N = \defaultvolumeunit ,
-    default-amount-unit .tl_set:N = \defaultamountunit ,
-    default-concentration-unit .tl_set:N = \defaultconcentrationunit ,
-    default-equiv-unit .tl_set:N = \defaultequivunit ,
-    default-fraction-unit .tl_set:N = \defaultfractionunit ,
-    default-purity-unit .tl_set:N = \defaultpurityunit ,
-    solution-name .tl_set:N = \solutionname ,
   }
   
 \chemmacros_declare_translations:nn {solution}
@@ -811,7 +863,6 @@
     English  = solution~ in ,
     German   = Lösung~ in ,
   }
-  
-   
+
 % --------------------------------------------------------------------------
 \ChemModuleEnd
