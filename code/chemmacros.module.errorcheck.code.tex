@@ -16,14 +16,29 @@
       {
         \cs_if_free:NT #2
           {
-            \cs_set:Npn #2
+            \str_case:nn {#1}
               {
-                \msg_error:nnnxn {chemmacros} {undefined}
-                  {#1}
-                  {\token_to_str:N #2}
-                  {#3}
+                {command} {
+                  \cs_set:Npn #2
+                    {
+                      \msg_error:nnnxn {chemmacros} {undefined}
+                        {#1}
+                        { \token_to_str:N #2 }
+                        {#3}
+                    }
+                  \chemmacros_module_before:nn {#3} { \cs_undefine:N #2 }
+                }
+                {environment} {
+                  \cs_set:Npn #2
+                    {
+                      \msg_error:nnnxn {chemmacros} {undefined}
+                        {#1}
+                        { \tl_tail:e { \token_to_str:N #2 } }
+                        {#3}
+                    }
+                  \chemmacros_module_before:nn {#3} { \cs_undefine:N #2 }
+                }
               }
-            \chemmacros_module_before:nn {#3} { \cs_undefine:N #2 }
           }
       }
   }
@@ -71,7 +86,7 @@
 \chemmacros_command_requires_module:Nn     \schemename     {scheme}
 \chemmacros_command_requires_module:Nn     \listofschemes  {scheme}
 
-\BeforePackage {chemscheme}
+\AddToHook {package/chemscheme/before}
   {
     \cs_undefine:N \scheme
     \cs_undefine:N \endscheme

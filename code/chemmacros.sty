@@ -27,7 +27,7 @@
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
 % The chemmacros package consists of the following files
-%  - chemmacros.sty, chemmacros4.sty, chemmacros5.sty,
+%  - chemmacros.sty, chemmacros4.sty, chemmacros.sty,
 %  - chemmacros_en.tex, chemmacros_en.pdf,
 %  - quite a number of module files following the naming scheme
 %    chemmacros.module.*.code.tex
@@ -62,28 +62,79 @@
   {\c_chemmacros_info_tl \c_space_tl (CN)}
 
 % --------------------------------------------------------------------------
-\msg_new:nnn {chemmacros} {package-option}
+% load-time messages:
+\msg_new:nnn {chemmacros} {load-time-option}
   {
-    Unknown~ option~ `#1'!~ Since~ v5.0~ chemmacros~ has~ no~ package~
-    options~ any~ more!
+    `#1'~ is~ a~ load-time~ option! \\
+    You~ cannot~ set~ it~ with~ \token_to_str:N \chemsetup ! \\
+    You~ need~ to~ use~ \token_to_str:N \usepackage [#1] {chemmacros} .
   }
 
-\msg_new:nnn {chemmacros} {module-not-available}
+\msg_new:nnn {chemmacros} {unknown-option}
   {
-    The~ module~ `#1'~ is~ only~ available~ in~ compatibility~ mode~ #2~ or~
-    higher.
+    Unknown~ option~ `#1' \\
+    I~ dont'~ know~ the~ option~ `#1'.~ Please~ make~ sure~ there~ is~ no~
+    typo.~ Check~ the~ manual~ for~ help.
+  }
+
+\msg_new:nnn {chemmacros} {module-mechanism}
+  {
+    The~ module~ mechanism~ has~ changed~ with~ v5.12. \\
+    All~ modules~ have~ been~ integrated~ into~ the~ main~ package~ and~ thus~
+    are~ preloaded~ already.~ This~ corresponds~ to~ the~ earlier~ setting~
+    `modules=all'
   }
 
 \cs_generate_variant:Nn \msg_warning:nnn { nnV }
 
+\cs_new_protected:Npn \__chemmacros_loadtime_error:n #1
+   { \msg_error:nnV {chemmacros} {#1} \l_keys_key_str }
+
+\cs_new_protected:Npn \__chemmacros_loadtime_warning:n #1
+   { \msg_warning:nnV {chemmacros} {#1} \l_keys_key_str }
+
+\cs_generate_variant:Nn \msg_error:nnn {nnV}
+\cs_generate_variant:Nn \msg_warning:nnn {nnV}
+
+\clist_new:N \l_chemmacros_modules_clist
+\clist_set:Nn \l_chemmacros_modules_clist
+  {
+    base, errorcheck, lang, greek, chemformula, charges, acid-base, symbols,
+    particles, phases, nomenclature, tikz, xfrac
+  }
+
+\clist_const:Nn \c_chemmacros_all_modules_clist
+  {
+    base, errorcheck, lang, greek, chemformula, charges, acid-base, symbols,
+    particles, phases, nomenclature, tikz, isotopes, mechanisms, newman,
+    orbital, polymers, reactions, redox, xfrac, scheme, spectroscopy,
+    thermodynamics, units 
+  }
+
 \keys_define:nn {chemmacros/package-options}
   {
-    compatibility .code:n = ,
-    unknown       .code:n =
-      \msg_warning:nnV {chemmacros} {package-option} \CurrentOption
+    minimal .bool_set:N = \l__chemmacros_minimal_bool ,
+    minimal .initial:n  = false ,
+    modules .code:n     = \clist_put_right:Nn \l_chemmacros_modules_clist {#1} ,
+    unknown .code:n     = \__chemmacros_loadtime_warning:n {unknown-option}
   }
 
 \ProcessKeysPackageOptions {chemmacros/package-options}
+
+\keys_define:nn {chemmacros}
+  {
+    minimal .code:n = \__chemmacros_loadtime_error:n {load-time-option} ,
+    modules .code:n =
+      \__chemmacros_loadtime_warning:n {load-time-option}
+      \msg_warning:nn {chemmacros} {module-mechanism}
+  }
+
+\bool_if:NF \l__chemmacros_minimal_bool
+  {
+    \clist_set_eq:NN
+      \l_chemmacros_modules_clist
+      \c_chemmacros_all_modules_clist
+  }
 
 % --------------------------------------------------------------------------
 % variants of kernel functions:
@@ -93,6 +144,7 @@
 \cs_generate_variant:Nn \seq_item:Nn         {cV}
 \cs_generate_variant:Nn \int_to_arabic:n     {V}
 \cs_generate_variant:Nn \tl_replace_once:Nnn {NnV}
+\cs_generate_variant:Nn \tl_tail:n           {e}
 \cs_generate_variant:Nn \prop_gput:Nnn       {cxx,NVf}
 \cs_generate_variant:Nn \msg_error:nnn       {nnV}
 \cs_generate_variant:Nn \msg_warning:nnn     {nnV}
@@ -306,22 +358,28 @@
 % #2: description
 \cs_new_protected:Npn \ChemModule #1#2
   {
-    \msg_log:nnnn {chemmacros} {loading-module} {#1} {#2}
-    \msg_term:nnnn {chemmacros} {loading-module} {#1} {#2}
-    \tl_gput_right:Nn \g__chemmacros_modules_loaded_tl {{#1}}
-    \tl_gset:Nn \g_chemmacros_module_tl {#1}
-    \__chemmacros_module_hook_use:nn {#1} {before}
     \tl_map_inline:Nn \g__chemmacros_module_stop_tl
       {
         \str_if_eq:nnT {##1} {#1}
           { \tl_map_break:n { \__chemmacros_gobble_module:w } }
       }
+    \msg_log:nnnn {chemmacros} {loading-module} {#1} {#2}
+    \msg_term:nnnn {chemmacros} {loading-module} {#1} {#2}
+    \tl_gput_right:Nn \g__chemmacros_modules_loaded_tl {{#1}}
+    \tl_gset:Nn \g_chemmacros_module_tl {#1}
+    \__chemmacros_module_hook_use:nn {#1} {before}
   }
 
 \cs_new_protected:Npn \ChemModuleEnd
   { \__chemmacros_module_hook_use:Vn \g_chemmacros_module_tl {after} }
 
 \cs_new_protected:Npn \__chemmacros_gobble_module:w #1 \ChemModuleEnd {}
+
+\clist_map_inline:Nn \c_chemmacros_all_modules_clist
+  {
+    \clist_if_in:NnF \l_chemmacros_modules_clist {#1}
+      { \chemmacros_stop_module:n {#1} }
+  }
 
 % --------------------------------------------------------------------------
 \ChemModule{base}{2020/11/29 basic chemmacros module}
@@ -712,17 +770,6 @@
       { \keys_set:nn {chemmacros/#1} {#2} }
   }
 
-\msg_new:nnn {chemmacros} {module-mechanism}
-  {
-    The~ module~ mechanism~ has~ changed~ with~ v5.12. \\
-    All~ modules~ have~ been~ integrated~ into~ the~ main~ package~ and~ thus~
-    are~ preloaded~ already.~ This~ corresponds~ to~ the~ earlier~ setting~
-    `modules=all'
-  }
-
-\chemmacros_define_global_keys:n
-  { modules .code:n = \msg_warning:nn {chemmacros} {module-mechanism} }
-
 % --------------------------------------------------------------------------
 
 % load package #1 and add its options to chemmacros
@@ -778,14 +825,29 @@
       {
         \cs_if_free:NT #2
           {
-            \cs_set:Npn #2
+            \str_case:nn {#1}
               {
-                \msg_error:nnnxn {chemmacros} {undefined}
-                  {#1}
-                  {\token_to_str:N #2}
-                  {#3}
+                {command} {
+                  \cs_set:Npn #2
+                    {
+                      \msg_error:nnnxn {chemmacros} {undefined}
+                        {#1}
+                        { \token_to_str:N #2 }
+                        {#3}
+                    }
+                  \chemmacros_module_before:nn {#3} { \cs_undefine:N #2 }
+                }
+                {environment} {
+                  \cs_set:Npn #2
+                    {
+                      \msg_error:nnnxn {chemmacros} {undefined}
+                        {#1}
+                        { \tl_tail:e { \token_to_str:N #2 } }
+                        {#3}
+                    }
+                  \chemmacros_module_before:nn {#3} { \cs_undefine:N #2 }
+                }
               }
-            \chemmacros_module_before:nn {#3} { \cs_undefine:N #2 }
           }
       }
   }
@@ -833,7 +895,7 @@
 \chemmacros_command_requires_module:Nn     \schemename     {scheme}
 \chemmacros_command_requires_module:Nn     \listofschemes  {scheme}
 
-\BeforePackage {chemscheme}
+\AddToHook {package/chemscheme/before}
   {
     \cs_undefine:N \scheme
     \cs_undefine:N \endscheme
@@ -912,7 +974,7 @@
     language .initial:n = auto
   }
 
-\hook_gput_code:nnn {begindocument} {package/chemmacros5}
+\hook_gput_code:nnn {begindocument} {package/chemmacros}
   {
     \bool_if:NTF \l__chemmacros_language_auto_bool
       {
@@ -2369,7 +2431,7 @@
 % --------------------------------------------------------------------------
 % hyperref support
 % ?? unsure about adding IUPAC commands
-\hook_gput_code:nnn {package/hyperref/after} {package/chemmacros5}
+\hook_gput_code:nnn {package/hyperref/after} {package/chemmacros}
   {
     \pdfstringdefDisableCommands
       {

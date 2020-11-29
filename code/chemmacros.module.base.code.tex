@@ -386,17 +386,6 @@
       { \keys_set:nn {chemmacros/#1} {#2} }
   }
 
-\msg_new:nnn {chemmacros} {module-mechanism}
-  {
-    The~ module~ mechanism~ has~ changed~ with~ v5.12. \\
-    All~ modules~ have~ been~ integrated~ into~ the~ main~ package~ and~ thus~
-    are~ preloaded~ already.~ This~ corresponds~ to~ the~ earlier~ setting~
-    `modules=all'
-  }
-
-\chemmacros_define_global_keys:n
-  { modules .code:n = \msg_warning:nn {chemmacros} {module-mechanism} }
-
 % --------------------------------------------------------------------------
 
 % load package #1 and add its options to chemmacros
