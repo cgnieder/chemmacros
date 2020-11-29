@@ -1,10 +1,5 @@
 \ChemModule{base}{2020/11/29 basic chemmacros module}
 
-% for the document hooks
-\ChemCompatibilityFrom{5.1}
-\RequirePackage {etoolbox}
-\EndChemCompatibility
-
 % --------------------------------------------------------------------------
 \msg_new:nnn {chemmacros} {command-deprecated}
   {
@@ -197,7 +192,6 @@
       { \prg_return_false: }
   }
 
-\ChemCompatibilityFrom{5.2}
 % this is still true \AtBeginDocument:
 \prg_new_conditional:Npnn \chemmacros_if_preamble: {p,T,F,TF}
   {
@@ -213,9 +207,6 @@
       { \prg_return_true: }
       { \prg_return_false: }
   }
-\EndChemCompatibility
-
-\ChemCompatibilityFrom{5.6}
 \cs_new_protected:Npn \chemmacros_cs_if_free_new:Npn #1
   {
     \cs_if_exist:NF #1
@@ -326,20 +317,15 @@
       { \chemmacros_add_fancyref_support:nnn {#1} {#2} {#3} }
   }
 \@onlypreamble\ChemFancyrefSupport
-\EndChemCompatibility
 
 % --------------------------------------------------------------------------
 % some checks at begin document:
 \bool_new:N \l__chemmacros_in_document_bool
 \bool_new:N \l__chemmacros_chemstyle_bool
 
-\chemmacros_if_compatibility:nnTF {>=} {5.2}
-  { \AfterEndPreamble }
-  { \AtBeginDocument }
-  { \bool_set_true:N \l__chemmacros_in_document_bool }
-
 \hook_gput_code:nnn {begindocument} {top-level}
   {
+    \bool_set_true:N \l__chemmacros_in_document_bool
     \@ifpackageloaded { chemstyle }
       { \bool_set_true:N \l__chemmacros_chemstyle_bool }
       { \bool_set_false:N \l__chemmacros_chemstyle_bool }
@@ -441,7 +427,7 @@
 
 \bool_new:N \l__chemmacros_hyperref_bool
 
-\AtEndPreamble
+\AddToHook {begindocument/end}
   {
     \chemmacros_if_package_loaded:nT {hyperref}
       { \bool_set_true:N \l__chemmacros_hyperref_bool }

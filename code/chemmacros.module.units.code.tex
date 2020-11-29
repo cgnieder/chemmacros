@@ -10,20 +10,9 @@
 \DeclareSIUnit \moLar      {\mole\per\liter}
 \DeclareSIUnit \MolMass    {\gram\per\mole}
 \DeclareSIUnit \normal     {\textsc{n}}
+\DeclareSIUnit \torr       {Torr}
 
-\ChemCompatibilityTo{5.8g}
-  \DeclareSIUnit \torr {torr}
-\EndChemCompatibility
-
-\ChemCompatibilityFrom{5.8h}
-  \DeclareSIUnit \Torr {Torr}
-\EndChemCompatibility
-
-\ChemCompatibilityFrom{5.10}
-  \DeclareSIUnit \torr {Torr}
-\EndChemCompatibility
-
-\AtEndPreamble
+\AddToHook {begindocument/before}
   {
     \chemmacros_if_package_loaded:nF {chemstyle}
       {

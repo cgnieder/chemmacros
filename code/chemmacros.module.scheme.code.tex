@@ -89,7 +89,6 @@
     }]{#1}
   }
 
-\ChemCompatibilityFrom{5.1}
 \chemmacros_define_float_method:nnn {floatrow}
   { \chemmacros_if_package_loaded_p:n {floatrow} }
   {
@@ -101,7 +100,6 @@
     \cs_new_protected:cpn {listof#1s}
       { \listof {#1} {\chemmacros_translate:n {#1-list}} }
   }
-\EndChemCompatibility
 
 \chemmacros_define_float_method:nnn {float}
   { \chemmacros_if_package_loaded_p:n {float} }
@@ -150,7 +148,6 @@
   }
 
 % --------------------------------------------------------------------------
-\ChemCompatibilityFrom{5.6}
 \ChemCleverefSupport {scheme}
   { \chemmacros_translate:n {scheme} }
   [ \chemmacros_translate:n {Scheme} ]
@@ -160,7 +157,6 @@
 \ChemFancyrefSupport {sch}
   { \chemmacros_translate:n {scheme} }
   [ \chemmacros_translate:n {Scheme} ]
-\EndChemCompatibility
 
 % --------------------------------------------------------------------------
 % #1: env name
@@ -252,17 +248,6 @@
   }
 
 % --------------------------------------------------------------------------
-\ChemCompatibilityTo{5.6}
-\DeclareTranslationFallback     {scheme-name} {Scheme}
-\DeclareTranslation {English}   {scheme-name} {Scheme}
-\DeclareTranslation {German}    {scheme-name} {Schema}
-
-\DeclareTranslationFallback      {scheme-list} {List~ of~ Schemes}
-\DeclareTranslation {English}    {scheme-list} {List~ of~ Schemes}
-\DeclareTranslation {German}     {scheme-list} {Verzeichnis~ der~ Schemata}
-\EndChemCompatibility
-
-\ChemCompatibilityFrom{5.6}
 \chemmacros_declare_translations:nn {scheme-name}
   {
     fallback = Scheme ,
@@ -316,7 +301,6 @@
     Norwegian = Skjema ,
     Nynorsk   = Skjema
   }
-\EndChemCompatibility
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd

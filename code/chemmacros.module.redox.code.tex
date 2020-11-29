@@ -12,9 +12,7 @@
 \bool_new:N \l__chemmacros_ox_sign_bool
 \bool_new:N \l__chemmacros_ox_integer_bool
 \bool_new:N \l__chemmacros_ox_explicit_sign_bool
-\ChemCompatibilityFrom{5.2}
 \bool_new:N \l__chemmacros_ox_explicit_zero_sign_bool
-\EndChemCompatibility
 \bool_new:N \l__chemmacros_ox_format_roman_bool
 \bool_new:N \l__chemmacros_ox_decimal_marker_comma_bool
 \bool_new:N \l__chemmacros_ox_parse_bool
@@ -23,19 +21,13 @@
 \bool_new:N \l__chemmacros_ox_top_bool
 \bool_new:N \l__chemmacros_ox_align_center_bool
 
-\ChemCompatibilityFrom{5.11}
 \tl_new:N \l__chemmacros_ox_format_tl
-\EndChemCompatibility
 
 \int_new:N \l__chemmacros_ox_number_int
 \fp_new:N  \l__chemmacros_ox_number_fp
 
 \cs_new_protected:Npn \__chemmacros_ox_format:n #1
-  {
-    \chemmacros_if_compatibility:nnTF {>=} {5.11}
-    { { \l__chemmacros_ox_format_tl {#1} } }
-    { \use:n {#1} }
-  }
+  { { \l__chemmacros_ox_format_tl {#1} } }
 
 \cs_new_protected:Npn \__chemmacros_ox_process_number:n #1
   {
@@ -64,22 +56,6 @@
     \group_end:
   }
 
-\ChemCompatibilityTo{5.4}
-\cs_new_protected:Npn \__chemmacros_ox_sign:n #1
-  {
-    \bool_lazy_and:nnT
-      { \fp_compare_p:n { #1 > 0 } }
-      { \l__chemmacros_ox_explicit_sign_bool }
-      { \c_math_toggle_token + \c_math_toggle_token }
-    \bool_lazy_and:nnT
-      { \fp_compare_p:n { #1 = 0 } }
-      { \l__chemmacros_ox_explicit_sign_bool }
-      { \c_math_toggle_token \pm \c_math_toggle_token }
-    \fp_compare:nT { #1 < 0 }
-      { \c_math_toggle_token - \c_math_toggle_token }
-  }
-\EndChemCompatibility
-\ChemCompatibilityFrom{5.4}
 \cs_new_protected:Npn \__chemmacros_ox_sign:n #1
   {
     \bool_lazy_and:nnT
@@ -96,7 +72,6 @@
     \fp_compare:nT { #1 < 0 }
       { \c_math_toggle_token - \c_math_toggle_token }
   }
-\EndChemCompatibility
 
 \cs_new_protected:Npn \__chemmacros_ox_value:n #1
   {
@@ -262,21 +237,12 @@
       \bool_set_true:N \l__chemmacros_ox_align_center_bool ,
     align / right  .code:n    =
       \bool_set_false:N \l__chemmacros_ox_align_center_bool ,
-    align          .initial:n = center
-  }
-
-\ChemCompatibilityFrom{5.4}
-\chemmacros_define_keys:nn {redox}
-  {
+    align          .initial:n = center ,
     explicit-zero-sign .bool_set:N = \l__chemmacros_ox_explicit_zero_sign_bool ,
-    explicit-zero-sign .default:n  = true
+    explicit-zero-sign .default:n  = true ,
+    format .tl_set:N = \l__chemmacros_ox_format_tl
   }
-\EndChemCompatibility
 
-\ChemCompatibilityFrom{5.11}
-\chemmacros_define_keys:nn {redox}
-  { format .tl_set:N = \l__chemmacros_ox_format_tl }
-\EndChemCompatibility
 
 % \ox[<keyval>]{<num>,<atom>}
 % \ox*[<keyval>]{<num>,<atom>} => always number on the top

@@ -20,8 +20,7 @@
 \tl_set:Nn \l_chemmacros_language_tl {english}
 \tl_new:N  \l__chemmacros_current_language_tl
 
-\tl_const:Nx \c__chemmacros_keyword_prefix_tl
-  { \chemmacros_if_compatibility:nnT {>=} {5.7} {chem-keyword-} }
+\tl_const:Nn \c__chemmacros_keyword_prefix_tl {chem-keyword-}
 
 \prop_new:N \g_chemmacros_translations_prop
 
@@ -52,14 +51,6 @@
         } ,
     language .initial:n = auto
   }
-
-\ChemCompatibilityTo{5.3}
-\chemmacros_define_global_keys:n
-  {
-    german   .meta:n = { language = german } ,
-    ngerman  .meta:n = { language = ngerman }
-  }
-\EndChemCompatibility
 
 \hook_gput_code:nnn {begindocument} {package/chemmacros5}
   {
@@ -130,10 +121,8 @@
       { \__chemmacros_parse_translate_list_entry:www ##1 \q_mark ##2 \q_stop }
   }
 
-\ChemCompatibilityFrom{5.7}
 \NewDocumentCommand \ForAllChemTranslationsDo {+m}
   { \chemmacros_for_all_translations_do:n {#1} }
-\EndChemCompatibility
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd

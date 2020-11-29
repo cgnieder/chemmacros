@@ -125,7 +125,6 @@
       }
   }
 
-\ChemCompatibilityFrom{5.6}
 \chemmacros_add_method_package:nn {chemist}
   {
     \RequirePackage {chemist}
@@ -165,34 +164,17 @@
         \cs_set_protected:Npn \fminus { \ensuremath{\ominus} }
       }
   }
-\EndChemCompatibility
 
 % --------------------------------------------------------------------------
-\ChemCompatibilityTo{5.1}
-\chemmacros_set_formula_method:n {chemformula}
-\EndChemCompatibility
-
-\ChemCompatibilityFrom{5.1}
 \chemmacros_define_global_keys:n
   { formula .code:n = \chemmacros_set_formula_method:n {#1} }
-\EndChemCompatibility
 
-\def\bla{bla}
-
-\AtEndPreamble
+\AddToHook {begindocument/before}
   {
     \bool_if:NF \l__chemmacros_formula_method_set_bool
       {
-        \bool_lazy_and:nnTF
-          { \chemmacros_if_compatibility_p:nn {>=} {5.2} }
-          { \chemmacros_if_compatibility_p:nn {<} {5.6} }
-          { \chemmacros_check_formula_method: }
-          {
-            \chemmacros_if_compatibility:nnTF {>=} {5.6}
-              { \msg_info:nn {chemmacros} {default-formula-method} }
-              { \msg_warning:nn {chemmacros} {default-formula-method} }
-            \chemmacros_set_formula_method:n {chemformula}
-          }
+        \msg_info:nn {chemmacros} {default-formula-method}
+        \chemmacros_set_formula_method:n {chemformula}
       }
   }
 

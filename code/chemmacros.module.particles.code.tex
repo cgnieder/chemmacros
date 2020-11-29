@@ -27,15 +27,11 @@
 \bool_new:N \l__chemmacros_nucleophile_elpair_bool
 \bool_new:N \l__chemmacros_elpair_dots_bool
 
-\ChemCompatibilityFrom{5.3}
 \dim_new:N  \l__chemmacros_nucleophile_dim
 \dim_set:Nn \l__chemmacros_nucleophile_dim { .1em }
 
 \chemmacros_define_keys:nn {particles}
-  {
-    space .dim_set:N = \l__chemmacros_nucleophile_dim
-  }
-\EndChemCompatibility
+  { space .dim_set:N = \l__chemmacros_nucleophile_dim }
 
 \chemmacros_define_keys:nn {particles}
   {
@@ -62,8 +58,7 @@
         \bool_if:NTF \l__chemmacros_nucleophile_elpair_bool
           {
             \chemmacros_elpair:n { #2 }
-            \chemmacros_if_compatibility:nnT {>=} {5.3}
-              { \skip_horizontal:N \l__chemmacros_nucleophile_dim }
+            \skip_horizontal:N \l__chemmacros_nucleophile_dim
             \chemmacros_chemformula:n { {}^{-} }
           }
           { \chemmacros_chemformula:n { #2^{-} } }
@@ -100,11 +95,6 @@
 % nucleophiles:
 \NewChemNucleophile \Nuc {Nu}
 \NewChemNucleophile \ba  {ba}
-
-\ChemCompatibilityTo{5.3}
-  \DeclareChemDeprecated \Hto \Oxo
-  \DeclareChemDeprecated \Nu \Nuc
-\EndChemCompatibility
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd

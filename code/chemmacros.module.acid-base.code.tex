@@ -37,9 +37,7 @@
     \tl_set:cn
       {l__chemmacros_#2_tl}
       { \chemmacros_translate:n {#2} }
-    \chemmacros_if_compatibility:nnTF {>=} {5.7}
-      { \chemmacros_declare_translation:nnn {#2} {fallback} {#3} }
-      { \DeclareTranslationFallback {#2} {#3} }
+    \chemmacros_declare_translation:nnn {#2} {fallback} {#3}
     \cs_set_protected:Npn #1
       {
         \ensuremath
@@ -61,11 +59,8 @@
 \NewChemEqConstant \Kb {K-base}  { \mathrm{b} }
 \NewChemEqConstant \Kw {K-water} { \mathrm{w} }
 
-\chemmacros_if_compatibility:nnT {>=} {5.4}
-  {
-    \chemmacros_define_keys:nn {acid-base}
-      { eq-constant .tl_set:N = \l__chemmacros_equilibrium_constant_tl }
-  }
+\chemmacros_define_keys:nn {acid-base}
+  { eq-constant .tl_set:N = \l__chemmacros_equilibrium_constant_tl }
 
 \chemmacros_define_keys:nn {acid-base}
   {
@@ -79,9 +74,7 @@
 \cs_new_protected:Npn \chemmacros_p:n #1
   {
     \group_begin:
-      \chemmacros_if_compatibility:nnTF {<=} {5.8b}
-        { \mbox }
-        { \chemmacros_text:n }
+      \chemmacros_text:n
         {
           \chemmacros_p_style:n {p}
           \ensuremath {#1}
@@ -112,22 +105,11 @@
   }
 
 % --------------------------------------------------------------------------
-\ChemCompatibilityTo{5.6}
-\DeclareTranslation {English} {K-acid}  {\mathrm{a}}
-\DeclareTranslation {German}  {K-acid}  {\mathrm{s}}
-\DeclareTranslation {Dutch}   {K-acid}  {\mathrm{z}}
-
-\DeclareTranslation {English} {K-base}  {\mathrm{b}}
-
-\DeclareTranslation {English} {K-water} {\mathrm{w}}
-\EndChemCompatibility
-
-\ChemCompatibilityFrom{5.6}
 \chemmacros_declare_translations:nn {K-acid}
   {
     German = \mathrm {s} ,
     Dutch  = \mathrm {z}
   }
-\EndChemCompatibility
+
 % --------------------------------------------------------------------------
 \ChemModuleEnd

@@ -26,11 +26,10 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ProvidesClass{chemmacros-manual}[2020/02/03]
+\ProvidesClass{chemmacros-manual}[2020/11/29]
 
 \LoadClass[load-preamble,add-index]{cnltx-doc}
 \RequirePackage{imakeidx}
-\RequirePackage[utf8]{inputenc}
 
 \RequirePackage[compatibility=newest]{chemmacros}
 \setcnltx{
@@ -379,5 +378,7 @@
 \chemmacros@add@version{2020-01-16}{5.9a}
 \chemmacros@add@version{2020-02-03}{5.10}
 \chemmacros@add@version{2020-03-07}{5.11}
+\chemmacros@add@version{2020-11-21}{5.11a}
+\chemmacros@add@version{2020-11-29}{5.12}
 
 \endinput

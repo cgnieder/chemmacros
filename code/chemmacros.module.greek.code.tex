@@ -17,7 +17,7 @@
 % chemgreek selects a mapping if an unambiguous choice is possible, otherwise
 % selects `default'. Warn the user in this case:
 
-\hook_gput_code:nnn {begindocument} {top-level}
+\hook_gput_code:nnn {begindocument/end} {top-level}
   {
     \bool_lazy_or:nnT
       { \chemgreek_if_mapping_active_p:n {default} }

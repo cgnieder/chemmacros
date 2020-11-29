@@ -93,24 +93,6 @@
     \tl_set:Nn \l__chemmacros_nmr_element_default_tl {#2}
   }
 
-\ChemCompatibilityTo{5.8}
-\cs_new_protected:Npn \__chemmacros_nmr_base:nn #1#2
-  {
-    \tl_if_blank:VF \g__chemmacros_nmr_element_coupled_tl
-      {
-        \tl_put_left:Nn \g__chemmacros_nmr_element_coupled_tl { \{ }
-        \tl_put_right:Nn \g__chemmacros_nmr_element_coupled_tl { \} }
-      }
-    \tl_put_left:Nn \g__chemmacros_nmr_element_coupled_tl {#2}
-    \chemmacros_chemformula:n { ^{#1} }
-    \bool_if:NTF \l__chemmacros_nmr_parse_bool
-      { \chemmacros_chemformula:V \g__chemmacros_nmr_element_coupled_tl }
-      { \g__chemmacros_nmr_element_coupled_tl }
-    \tl_use:N \l__chemmacros_nmr_element_method_connector_tl
-    \tl_use:N \l__chemmacros_nmr_method_tl
-  }
-\EndChemCompatibility
-\ChemCompatibilityFrom{5.8}
 \tl_new:N \l__chemmacros_nmr_base_format_tl
 
 \chemmacros_define_keys:nn {spectroscopy}
@@ -137,7 +119,6 @@
       \tl_use:N \l__chemmacros_nmr_method_tl
     \group_end:
   }
-\EndChemCompatibility
 
 \cs_generate_variant:Nn \__chemmacros_nmr_base:nn { VV }
 
@@ -196,8 +177,7 @@
       \l__chemmacros_nmr_coupling_symbol_tl ,
     atom-number-cs .code:n       =
       \cs_set_eq:NN \__chemmacros_nmr_number:n #1 ,
-    \chemmacros_if_compatibility:nnT {>=} {5.3}
-      { atom-number-space .skip_set:N = \l__chemmacros_nmr_space_skip , }
+    atom-number-space .skip_set:N = \l__chemmacros_nmr_space_skip ,
     coupling-pos-cs .code:n      =
       \cs_set_eq:NN \__chemmacros_nmr_position:n #1 ,
     parse         .bool_set:N    = \l__chemmacros_nmr_parse_bool ,
@@ -372,10 +352,7 @@
 \cs_new_protected:Npn \chemmacros_nmr_number:n #1
   {
     \__chemmacros_nmr_number:n {#1}
-    \chemmacros_if_compatibility:nnTF {>=} {5.8c}
-      { \chemmacros_skip_nobreak:N }
-      { \skip_horizontal:N }
-    \l__chemmacros_nmr_space_skip
+    \chemmacros_skip_nobreak:N \l__chemmacros_nmr_space_skip
     \chemmacros_chemformula:V \g__chemmacros_nmr_element_tl
   }
 

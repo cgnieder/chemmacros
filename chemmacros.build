@@ -22,8 +22,7 @@
 pkgname="chemmacros"
 moduleext="code.tex"
 modulename="${pkgname}.module"
-styname="${pkgname}5.sty"
-styoldname="${pkgname}4.sty"
+styname="${pkgname}.sty"
 program="arara --verbose"
 manualfile="$pkgname-manual"
 zipname="$pkgname"
@@ -295,8 +294,6 @@ if [ "$update" == true ] ; then
     fi
     cd ${CODE_DIR}
     cp $styname ${LATEXLOCAL_DIR}/$pkgname
-    cp ${pkgname}.sty ${LATEXLOCAL_DIR}/$pkgname
-    cp $styoldname ${LATEXLOCAL_DIR}/$pkgname
     if [ "$runmktexlsr" == true ] ; then
         if [ "$verbose" == true ] ; then
             echo "running mktexlsr ..."

@@ -62,14 +62,8 @@
   { \l__chemmacros_reaction_heading_tl {#1} }
 \cs_generate_variant:Nn \__chemmacros_reaction_heading:n { V }
 
-\ChemCompatibilityTo{5.6}
-\tl_set:Nn \l__chemmacros_reaction_lorname_tl
-  { \chemmacros_translate:n {reaction} }
-\EndChemCompatibility
-\ChemCompatibilityFrom{5.6}
 \tl_set:Nn \l__chemmacros_reaction_lorname_tl
   { \chemmacros_translate:n {Reaction} }
-\EndChemCompatibility
 
 \tl_set:Nn \reactionlistname { \chemmacros_translate:n {list-of-reactions} }
 
@@ -77,32 +71,13 @@
   {
     list-name .tl_set:N = \reactionlistname ,
     list-entry .tl_set:N = \l__chemmacros_reaction_lorname_tl ,
-  }
-\ChemCompatibilityFrom{5.2}
-\chemmacros_define_keys:nn {reactions}
-  {
     list-heading-cmd .code:n =
       \cs_set_protected:Npn \__chemmacros_reaction_heading:n ##1 {#1}
   }
-\EndChemCompatibility
 
 \cs_if_exist:NTF \chapter
-  {
-    \chemmacros_if_compatibility:nnTF {>=} {5.2}
-      {
-        \chemmacros_set_keys:nn {reactions}
-          { list-heading-cmd = \chapter* {#1} }
-      }
-      { \cs_set_protected:Npn \__chemmacros_reaction_heading:n { \chapter* } }
-  }
-  {
-    \chemmacros_if_compatibility:nnTF {>=} {5.2}
-      {
-        \chemmacros_set_keys:nn {reactions}
-          { list-heading-cmd = \section* {#1} }
-      }
-      { \cs_set_protected:Npn \__chemmacros_reaction_heading:n { \section* } }
-  }
+  { \chemmacros_set_keys:nn {reactions} { list-heading-cmd = \chapter* {#1} } }
+  { \chemmacros_set_keys:nn {reactions} { list-heading-cmd = \section* {#1} } }
 
 \cs_new_protected:Npn \listofreactions
   {
@@ -110,12 +85,6 @@
     \@starttoc {lor}
   }
 
-\ChemCompatibilityTo{5.6}
-\cs_new_protected:Npn \l@reaction #1#2
-  { \@dottedtocline {1} {1.5em} {2.3em} {#1} {#2} }
-\EndChemCompatibility
-
-\ChemCompatibilityFrom{5.6}
 \cs_new_eq:NN \l@reaction \l@figure
 
 \bool_new:N \l__chemmacros_reactions_tocbasic_bool
@@ -136,7 +105,7 @@
     before-tag .tl_set:N   = \l__chemmacros_reactions_before_tag_tl
   }
 
-\AtEndPreamble
+\AddToHook {begindocument/end}
   {
     \bool_lazy_or:nnT
       { \chemmacros_if_package_loaded_p:n {tocbasic} }
@@ -155,7 +124,7 @@
   { \chemmacros_translate:n {reactions} }
   [ \chemmacros_translate:n {Reactions} ]
 
-\AfterPackage* {cleveref}
+\AddToHook {package/cleveref/after}
   {
     \creflabelformat {reaction}
       {
@@ -170,40 +139,16 @@
 \ChemFancyrefSupport {rct}
   { \chemmacros_translate:n {reaction} }
   [ \chemmacros_translate:n {Reaction} ]
-\EndChemCompatibility
   
 % create new tagform
-\ChemCompatibilityTo{5.6}
-\newtagform {reaction} {\{} {\}}
-\EndChemCompatibility
-\ChemCompatibilityFrom{5.6}
 \newtagform {reaction}
   [\l__chemmacros_reactions_before_tag_tl]
   {\l__chemmacros_reactions_tag_open_tl}
   {\l__chemmacros_reactions_tag_close_tl}
-\EndChemCompatibility
+
 \newcounter {chemmacros_save_reaction}
 \newcounter {reaction}
 
-\ChemCompatibilityTo{5.6}
-\cs_new_protected:Npn \__chemmacros_begin_reaction:
-  {
-    % create individual names for `hyperref':
-    \bool_if:NT \l__chemmacros_hyperref_bool
-      {
-        \cs_set:Npn \theHequation
-          { R . \theHsection . \arabic {reaction} }
-      }
-    % enable labelformat `reaction':
-    \bool_if:NT \l__chemmacros_varioref_bool
-      { \cs_set_eq:NN \p@equation \p@reaction }
-    \setcounter {chemmacros_save_reaction} { \value {equation} }
-    \setcounter {equation} { \value {reaction} }
-    \usetagform {reaction}
-  }
-\EndChemCompatibility
-
-\ChemCompatibilityFrom{5.6}
 \cs_new_protected:Npn \__chemmacros_begin_reaction:
   {
     \patchcmd \thereaction {reaction} {equation} {} {}
@@ -217,7 +162,6 @@
       { \crefalias {equation} {reaction} }
     \usetagform {reaction}
   }
-\EndChemCompatibility
 
 % switch back to equation tags
 \cs_new_protected:Npn \__chemmacros_end_reaction:
@@ -261,17 +205,6 @@
   }
 \cs_generate_variant:Nn \chemmacros_declare_reaction_env:nnnn {nnnV}
 
-\ChemCompatibilityTo{5.6}
-\cs_new_protected:Npn \chemmacros_reaction_read:nnw #1#2#3 \end
-  {
-    \begin{#1}#2
-      \chemmacros_reaction:n {#3}
-    \end{#1}
-    \end
-  }
-\EndChemCompatibility
-
-\ChemCompatibilityFrom{5.6}
 \cs_new_protected:Npn \chemmacros_reaction_read:nnw #1#2#3 \end
   {
     \tl_clear:N \l__chemmacros_tmpa_tl
@@ -307,7 +240,6 @@
     \end{#1}
   }
 \cs_generate_variant:Nn \chemmacros_reaction_write:nnn { nnV }
-\EndChemCompatibility
 
 \NewChemMacroset* {Reaction} {mO{}m}
   { \chemmacros_define_reaction:nnn {#1} {#3} {#2} }
@@ -318,23 +250,6 @@
 \NewChemReaction {reactions*} {align*}
 
 % --------------------------------------------------------------------------
-\ChemCompatibilityTo{5.6}
-\DeclareTranslationFallback     {list-of-reactions} {List~ of~ Reactions}
-\DeclareTranslation {English}   {list-of-reactions} {List~ of~ Reactions}
-\DeclareTranslation {German}    {list-of-reactions} {Reaktionsverzeichnis}
-\DeclareTranslation {Italian}   {list-of-reactions} {Elenco~ delle~ reazioni}
-\DeclareTranslation {French}    {list-of-reactions} {Table~ des~ r\'{e}actions}
-\DeclareTranslation {Dutch}     {list-of-reactions} {Lijst~ van~ reacties}
-
-\DeclareTranslationFallback     {reaction} {Reaction}
-\DeclareTranslation {English}   {reaction} {Reaction}
-\DeclareTranslation {German}    {reaction} {Reaktion}
-\DeclareTranslation {Italian}   {reaction} {Reazione}
-\DeclareTranslation {French}    {reaction} {R\'{e}action}
-\DeclareTranslation {Dutch}     {reaction} {Reactie}
-\EndChemCompatibility
-
-\ChemCompatibilityFrom{5.6}
 \chemmacros_declare_translations:nn {list-of-reactions}
   {
     fallback  = List~ of~ Reactions ,
@@ -394,6 +309,6 @@
     Norwegian = Reaksjoner ,
     Nynorsk   = Reaksjonar
  }
-\EndChemCompatibility
+
 % --------------------------------------------------------------------------
 \ChemModuleEnd

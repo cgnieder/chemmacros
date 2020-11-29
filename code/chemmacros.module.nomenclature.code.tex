@@ -124,39 +124,6 @@
       { \msg_error:nnnn {chemmacros} {let-iupac} {#1} {#2} }
   }
 
-\ChemCompatibilityTo{5.2}
-\cs_new_protected:Npn \chemmacros_make_iupac:
-  {
-    \bool_if:NT \l__chemmacros_in_document_bool
-      {
-        \bool_if:NTF \l__chemmacros_inside_iupac_bool
-          {
-            \prop_map_inline:Nn \l__chemmacros_iupac_prop
-              { \cs_set_protected:cpn {##1} {##2} }
-          }
-          {
-            \bool_if:NF \l__chemmacros_iupac_restricted_bool
-              {
-                \bool_if:NTF \l__chemmacros_iupac_strict_bool
-                  {
-                    \prop_map_inline:Nn \l__chemmacros_iupac_prop
-                      { \cs_set_protected:cpn {##1} {##2} }
-                  }
-                  {
-                    \prop_map_inline:Nn \l__chemmacros_iupac_prop
-                      {
-                        \cs_if_exist:cF {##1}
-                          { \cs_set_protected:cpn {##1} {##2} }
-                      }
-                  }
-              }
-          }
-      }    
-  }
-\AtBeginDocument { \chemmacros_make_iupac: }
-\EndChemCompatibility
-
-\ChemCompatibilityFrom{5.2}
 \cs_new_protected:Npn \chemmacros_make_iupac:
   {
     \chemmacros_if_document:T
@@ -185,8 +152,8 @@
           }
       }    
   }
-\AfterEndPreamble { \chemmacros_make_iupac: }
-\EndChemCompatibility
+
+\AddToHook {begindocument/end} { \chemmacros_make_iupac: }
 
 \NewDocumentCommand \DeclareChemIUPAC {mm}
   { \chemmacros_define_iupac:Nn #1 {#2} }
@@ -227,35 +194,6 @@
 \chemmacros_define_keys:nn {nomenclature}
   { cip-kern .dim_set:N = \l__chemmacros_cip_kern_dim }
 
-\ChemCompatibilityTo{5.2}
-\cs_new_protected:Npn \chemmacros_cip:n #1
-  { \textit{#1} \tex_kern:D \l__chemmacros_cip_kern_dim }
-
-\NewDocumentCommand \cip {m}
-  { \chemmacros_cip:n {#1} }
-\EndChemCompatibility
-
-\ChemCompatibilityBetween{5.2}{5.8}
-\cs_new_protected:Npn \chemmacros_cip:n #1
-  {
-    \int_zero:N \l__chemmacros_tmpa_int
-    \textup{(}
-    \clist_map_inline:nn
-      {#1}
-      {
-        \int_incr:N \l__chemmacros_tmpa_int
-        \textit{##1}
-        \int_compare:nT
-          { \l__chemmacros_tmpa_int < \clist_count:n {#1} }
-          { \textup{,} }
-      }
-    \textup{)}
-    \tex_kern:D \l__chemmacros_cip_kern_dim
-  }
-\DeclareChemIUPAC \cip { \chemmacros_cip:n }
-\EndChemCompatibility
-
-\ChemCompatibilityFrom{5.8}
 \tl_new:N \l__chemmacros_cip_inner_tl
 \tl_new:N \l__chemmacros_cip_outer_tl
 \tl_new:N \l__chemmacros_cip_number_tl
@@ -300,8 +238,8 @@
     \group_end:
     \tex_kern:D \l__chemmacros_cip_kern_dim
   }
+
 \DeclareChemIUPAC \cip { \chemmacros_cip:n }
-\EndChemCompatibility
 
 % remember: TikZ needs : to be other
 \cs_new_protected:Npn \chemmacros_sconf:n #1
@@ -370,11 +308,7 @@
   {
     \chemmacros_coordination_symbol:nnnn
       { \l__chemmacros_coord_use_hyphen_bool }
-      {
-        \chemmacros_if_compatibility:nnTF {>} {5.7}
-          { \c_true_bool }
-          { \c_false_bool }
-      }
+      { \c_true_bool }
       { \chemeta }
       {#1}
   }
@@ -383,11 +317,7 @@
   {
     \chemmacros_coordination_symbol:nnnn
       { \l__chemmacros_coord_use_hyphen_bool }
-      {
-        \chemmacros_if_compatibility:nnTF {>} {5.7}
-          { \c_true_bool }
-          { \c_false_bool }
-      }
+      { \c_true_bool }
       { \chemkappa }
       {#1}
   }
@@ -411,54 +341,12 @@
 \cs_new_protected:Npn \chemmacros_allow_hyphens:
   {
     \chemmacros_nobreak:
-    \chemmacros_if_compatibility:nnTF {<=} {5.7}
-      { \skip_horizontal:N \c_zero_dim }
-      { \skip_horizontal:N \c_zero_skip }
+    \skip_horizontal:N \c_zero_skip
   }
 
 % #1: pre break
 % #2: post break
 % #3: no break
-\ChemCompatibilityTo{5.1}
-\cs_new_protected:Npn \__chemmacros_break_point_insert:nnn #1#2#3
-  {
-    \chemmacros_nobreak:
-    \tex_discretionary:D { - } { } {#3}
-    \chemmacros_allow_hyphens:
-  }
-\EndChemCompatibility
-
-\ChemCompatibilityBetween{5.1}{5.8}
-\cs_new_protected:Npn \__chemmacros_break_point_insert:nnn #1#2#3
-  {
-    \mode_if_math:TF
-      {#3}
-      {      
-        \chemmacros_nobreak:
-        \tex_discretionary:D {#1} {#2} {#3}
-        \chemmacros_allow_hyphens:
-      }
-  }
-\EndChemCompatibility
-
-\ChemCompatibility{5.8a}
-\cs_new_protected:Npn \__chemmacros_break_point_insert:nnn #1#2#3
-  {
-    \mode_if_math:TF
-      {#3}
-      {
-        \peek_meaning:NTF \group_end:
-          {#3}
-          {
-            \chemmacros_nobreak:
-            \tex_discretionary:D {#1} {#2} {#3}
-            \chemmacros_allow_hyphens:
-          }
-      }
-  }
-\EndChemCompatibility
-
-\ChemCompatibilityFrom{5.8b}
 \cs_new_protected:Npn \__chemmacros_peek_if_dash:TF #1#2
   {
     \peek_charcode:NTF -
@@ -499,7 +387,6 @@
           }
       }
   }
-\EndChemCompatibility
 
 \dim_new:N  \l__chemmacros_iupac_hyphen_pre_dim
 \dim_set:Nn \l__chemmacros_iupac_hyphen_pre_dim { .01em }
@@ -517,21 +404,6 @@
     break-space       .skip_set:N = \l__chemmacros_iupac_break_skip
   }
 
-\ChemCompatibilityTo{5.2}
-\cs_new_protected:Npn \chemmacros_break_point_hyphen:
-  {
-    \__chemmacros_break_point_insert:nnn
-      {-}
-      { }
-      {
-        \tex_kern:D \l__chemmacros_iupac_hyphen_pre_dim
-        -
-        \tex_kern:D \l__chemmacros_iupac_hyphen_post_dim
-      }
-  }
-\EndChemCompatibility
-
-\ChemCompatibilityFrom{5.2}
 \cs_new_protected:Npn \chemmacros_break_point_hyphen:
   {
     \__chemmacros_break_point_insert:nnn
@@ -543,7 +415,6 @@
         \tex_kern:D \l__chemmacros_iupac_hyphen_post_dim
       }
   }
-\EndChemCompatibility
 
 \cs_new_protected:Npn \chemmacros_break_point:
   {
@@ -618,13 +489,10 @@
 
 \cs_new_protected:Npn \chemmacros_make_shorthands:
   {
-    \chemmacros_if_compatibility:nnT {>=} {5.2}
+    \chemmacros_if_document:T
       {
-        \chemmacros_if_document:T
-          {
-            \chemmacros_for_all_iupac_shorthands_do:n
-              { \prop_item:Nn \l__chemmacros_iupac_shorthands_prop {##1} }
-          }
+        \chemmacros_for_all_iupac_shorthands_do:n
+          { \prop_item:Nn \l__chemmacros_iupac_shorthands_prop {##1} }
       }
   }
 
@@ -660,53 +528,31 @@
 \NewChemIUPACShorthand ^ \chemmacros_superscript:n
 \NewChemIUPACShorthand | \chemmacros_break_point:
 \NewChemIUPACShorthand - \chemmacros_break_point_hyphen:
-
-\ChemCompatibilityFrom{5.1}
-  \NewChemIUPACShorthand ( \chemmacros_break_point_opening_paren:
-  \NewChemIUPACShorthand ) \chemmacros_break_point_closing_paren:
-  \NewChemIUPACShorthand [ \chemmacros_break_point_opening_bracket:
-  \NewChemIUPACShorthand ] \chemmacros_break_point_closing_bracket:
-\EndChemCompatibility
-
-\ChemCompatibilityFrom{5.3}
-  \NewChemIUPAC \chemprime { \ensuremath {{}^{\prime}} }
-  \NewChemIUPACShorthand ' \chemprime
-\EndChemCompatibility
-
-\ChemCompatibilityFrom{5.8c}
-  \NewChemIUPAC \nonbreakinghyphen { \mbox{-} \nobreak \hspace{0pt} }
-  \NewChemIUPACShorthand = \nonbreakinghyphen
-\EndChemCompatibility
+\NewChemIUPACShorthand ( \chemmacros_break_point_opening_paren:
+\NewChemIUPACShorthand ) \chemmacros_break_point_closing_paren:
+\NewChemIUPACShorthand [ \chemmacros_break_point_opening_bracket:
+\NewChemIUPACShorthand ] \chemmacros_break_point_closing_bracket:
+\NewChemIUPAC \chemprime { \ensuremath {{}^{\prime}} }
+\NewChemIUPACShorthand ' \chemprime
+\NewChemIUPAC \nonbreakinghyphen { \mbox{-} \nobreak \hspace{0pt} }
+\NewChemIUPACShorthand = \nonbreakinghyphen
 
 \cs_new_protected:Npn \chemmacros_iupac:nn #1#2
   {
     \group_begin:
       \bool_set_true:N \l__chemmacros_inside_iupac_bool
-      \chemmacros_if_compatibility:nnT {>} {5.10}
-        { \bool_set_true:N \l__chemmacros_in_document_bool }
+      \bool_set_true:N \l__chemmacros_in_document_bool
       \chemmacros_set_keys:nn {nomenclature} {#1}
       \chemmacros_make_iupac:
       \chemmacros_make_shorthands:
-      % \prop_show:N \l__chemmacros_iupac_shorthands_prop
-      \chemmacros_if_compatibility:nnT {<=} {5.2}
-        { \chemmacros_define_deprecated:NN \- - }
       \tl_set_rescan:Nnn \l__chemmacros_tmpa_tl
         { \chemmacros_activate_all_iupac_shorthands: }
         {#2}
-      % \tl_analysis_show:N
       \l__chemmacros_tmpa_tl
     \group_end:
   }
 
 \cs_new_protected:Npn \chemmacros_iupac:n #1 { \chemmacros_iupac:nn {} {#1} }
-
-\ChemCompatibilityTo{5.3}
-% Thanks to Joseph Wright and Enrico Gregorio for the help on the curious
-% redefinition of \- and the end of the compilation
-% see http://tex.stackexchange.com/q/42405/5049 for reference
-\cs_set_protected:Npx \- { \exp_not:o { \- } }
-\cs_set_eq:NN \@dischyph \-
-\EndChemCompatibility
 
 \NewDocumentCommand \iupac {O{}m} { \chemmacros_iupac:nn {#1} {#2} }
 
@@ -792,40 +638,6 @@
 \NewChemMacroset {Latin} {mm}
   { \chemmacros_define_latin:Nn #1 {#2} }
 
-\ChemCompatibilityTo{5.7}
-\chemmacros_define_keys:nn {nomenclature}
-  {
-    latin-format .tl_set:N  = \l__chemmacros_latin_format_tl ,
-    latin-format .initial:n = \textit ,
-  }
-
-\cs_new_protected:Npn \chemmacros_latin:n #1
-  { { \l__chemmacros_latin_format_tl {#1} } }
-  
-\cs_new_protected:Npn \chemmacros_define_latin:Nn #1#2
-  { \cs_set_protected:Npn #1 { \chemmacros_latin:n {#2} } }
-  
-\AtBeginDocument
-  {
-    % if chemstyle is loaded use chemstyle's definition:
-    \chemmacros_if_package_loaded:nT {chemstyle}
-      {
-        \AfterPackage* {chemstyle}
-          {
-            \cs_undefine:N \invacuo
-            \cs_set_eq:NN \chemmacros_latin:n \cst@latin
-          }
-      }
-    \cs_if_exist:NTF \latin
-      { \cs_set_eq:NN  \latin \chemmacros_latin:n }
-      { \cs_new_eq:NN  \latin \chemmacros_latin:n }
-    \NewChemLatin \insitu   {in~situ}
-    \NewChemLatin \abinitio {ab~initio}
-    \NewChemLatin \invacuo  {in~vacuo}
-  }
-\EndChemCompatibility
-  
-\ChemCompatibilityFrom{5.7}
 \chemmacros_define_keys:nn {nomenclature}
   {
     format .tl_set:N  = \l__chemmacros_latin_format_tl ,
@@ -852,24 +664,11 @@
       \chemmacros_latin:n {#2}
     \group_end:
   }
-\EndChemCompatibility
 
-\ChemCompatibilityBetween{5.7}{5.9}
-\AtBeginDocument
-  {
-    \AfterPackage* {chemstyle} { \cs_undefine:N \invacuo }
-    \NewChemLatin \insitu   {in~situ}
-    \NewChemLatin \abinitio {ab~initio}
-    \NewChemLatin \invacuo  {in~vacuo}
-  }
-\EndChemCompatibility
-
-\ChemCompatibilityFrom{5.9}
 \cs_undefine:N \invacuo
 \NewChemLatin \invacuo  {in~vacuo}
 \NewChemLatin \abinitio {ab~initio}
 \NewChemLatin \insitu   {in~situ}
-\EndChemCompatibility
 
 % --------------------------------------------------------------------------
 % hyperref support
