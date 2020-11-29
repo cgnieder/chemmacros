@@ -553,6 +553,7 @@
   }
 
 \cs_new_protected:Npn \chemmacros_iupac:n #1 { \chemmacros_iupac:nn {} {#1} }
+\cs_generate_variant:Nn \chemmacros_iupac:n {e}
 
 \NewDocumentCommand \iupac {O{}m} { \chemmacros_iupac:nn {#1} {#2} }
 
