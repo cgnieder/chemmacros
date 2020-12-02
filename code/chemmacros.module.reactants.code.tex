@@ -846,7 +846,170 @@
         }
     \group_end:
   }
+
+% --------------------------------------------------------------------------
+
+% #1: full ID
+\DeclareExpandableDocumentCommand \reactantplain {m}
+  { 
+    \chemmacros_if_package_loaded:nF {hyperref} 
+      { \msg_expandable_error:nnnn {chemmacros} {package-not-loaded}{\reactantplain}{hyperref} }
+      \__chemmacros_reactants_if_property:nnF {#1} {bookmark}
+        { \msg_expandable_error:nnn {chemmacros} {reactant-bookmark} {#1} }
+    \texorpdfstring
+      { \__chemmacros_reactants_item:nn {#1} {name}\space\cmpd+{#1} }
+      { \__chemmacros_reactants_item:nn {#1} {bookmark}\space\cmpdplain{#1} }
+  }
   
+  
+% #1: main Id
+% #2: sub ID
+\DeclareExpandableDocumentCommand \submainreactantplain {mm}
+  { 
+    \chemmacros_if_package_loaded:nF {hyperref} 
+      { \msg_expandable_error:nnnn {chemmacros} {package-not-loaded}{\submainreactantplain}{hyperref} }
+        \__chemmacros_reactants_if_property:nnF {#1\l__chemnum_compound_separator_tl#2} {bookmark}
+          { \msg_expandable_error:nnn {chemmacros} {reactant-bookmark} {#1.#2} }
+    \texorpdfstring
+      { \__chemmacros_reactants_item:nn {#1\l__chemnum_compound_separator_tl#2} {name}\space\cmpd+{#1.#2} }
+      { \__chemmacros_reactants_item:nn {#1\l__chemnum_compound_separator_tl#2} {bookmark}\space\submaincmpdplain{#1}{#2} }
+  }
+
+
+% #1: full ID
+\DeclareExpandableDocumentCommand \solventplain {m}
+  { 
+    \chemmacros_if_package_loaded:nF {hyperref} 
+      { \msg_expandable_error:nnnn {chemmacros} {package-not-loaded}{\solventplain}{hyperref} }
+      \__chemmacros_reactants_if_property:nnF {#1} {bookmark}
+        { \msg_expandable_error:nnn {chemmacros} {reactant-bookmark} {#1} }
+    \texorpdfstring
+      { \__chemmacros_reactants_item:nn {#1} {name}\space}
+      { \__chemmacros_reactants_item:nn {#1} {bookmark}\space}
+  } 
+  
+% --------------------------------------------------------------------------
+
+% #1: star: include ID in table
+\NewDocumentCommand \printreactants {s}
+  {
+    \chemmacros_if_package_loaded:nF {xltabular} 
+      { \msg_error:nnnn {chemmacros} {package-not-loaded}{\printreactants}{xltabular} }
+    \group_begin:
+      % TODO: expl3-command
+      \chemsetup{ reactants/switch = false }
+      % TODO: no internal chemnum macros:
+      \int_step_variable:nNn
+        { \seq_count:c {g__chemnum_initiated_compounds_seq} }
+        \l__chemmacros_reactants_tmpa_tl 
+        {
+          \seq_gput_right:Nx 
+            \l__chemmacros_reactants_tmpa_seq
+            {
+              % TODO: expl3-command
+              \refcmpd
+                {
+                  % TODO: no internal chemnum macros:
+                  \seq_item:cV
+                    {g__chemnum_initiated_compounds_seq}
+                    \l__chemmacros_reactants_tmpa_tl
+                }
+              & 
+              \bool_if:nT {#1}
+                {
+                  % TODO: no internal chemnum macros:
+                  \seq_item:cV
+                    {g__chemnum_initiated_compounds_seq}
+                    \l__chemmacros_reactants_tmpa_tl
+                  &
+                }
+              % TODO: expl3-command
+              \solvent
+                {
+                  % TODO: no internal chemnum macros:
+                  \seq_item:cV
+                    {g__chemnum_initiated_compounds_seq}
+                    \l__chemmacros_reactants_tmpa_tl
+                }
+              \tabularnewline
+            }
+          \tl_set:Nx
+            \l__chemmacros_reactants_tmpb_tl
+            {
+              % TODO: no internal chemnum macros:
+              \seq_item:cV
+                {g__chemnum_initiated_compounds_seq}
+                \l__chemmacros_reactants_tmpa_tl
+            }
+          \chemmacros_reactants_list_subreactant:Vn
+            \l__chemmacros_reactants_tmpb_tl
+            {#1}
+        }
+      % TODO: longtable ?
+      %       table customizable?
+      \par
+      \noindent
+      \bool_if:nTF {#1}
+        { \begin{xltabular}{\textwidth}{ll>{\raggedright\arraybackslash}X} }
+        { \begin{xltabular}{\textwidth}{l>{\raggedright\arraybackslash}X} }
+         \seq_use:Nn \l__chemmacros_reactants_tmpa_seq { }
+      \end{xltabular}
+    \group_end:
+  }
+
+% #1: full ID
+% #2: star, include ID in table
+\cs_new_protected:Npn \chemmacros_reactants_list_subreactant:xn #1#2
+  {
+     % TODO: expl3-command
+    \seq_if_exist:cT 
+      {g__chemnum_compound_#1_subcompounds_seq}
+      {
+         % TODO: expl3-command
+        \int_step_variable:nNn
+          { \seq_count:c {g__chemnum_compound_#1_subcompounds_seq} } 
+          \l__chemmacros_reactants_tmpa_tl 
+          {
+            \seq_gput_right:Nx 
+            \l__chemmacros_reactants_tmpa_seq
+              {
+                 % TODO: expl3-command, no internal chemnum variables
+                \refcmpd
+                  {
+                    #1
+                    \l__chemnum_compound_separator_tl
+                    \seq_item:cV
+                      {g__chemnum_compound_#1_subcompounds_seq}
+                      \l__chemmacros_reactants_tmpa_tl
+                  }
+                & 
+                \bool_if:nT {#2}
+                  {
+                    #1
+                    % TODO: no internal chemnum variables
+                    \l__chemnum_compound_separator_tl
+                    \seq_item:cV
+                      {g__chemnum_compound_#1_subcompounds_seq}
+                      \l__chemmacros_reactants_tmpa_tl
+                    &
+                  }
+                % TODO: expl3-command, no internal chemnum variables
+                \solvent
+                  {
+                    #1
+                    \l__chemnum_compound_separator_tl
+                    \seq_item:cV
+                      {g__chemnum_compound_#1_subcompounds_seq}
+                      \l__chemmacros_reactants_tmpa_tl
+                  }
+                \tabularnewline
+              }
+          }
+      }
+  }
+
+% --------------------------------------------------------------------------
+
 \chemmacros_declare_translations:nn {solution}
   {
     fallback = solution~ in ,
