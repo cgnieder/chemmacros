@@ -213,7 +213,7 @@
       { \chemmacros_nmr:nnnn { } {#2} {#3} {#4} }
   }
 
-\AtBeginDocument
+\hook_gput_code:nnn {begindocument} {chemmacros}
   {
     % \NMR{<num>,<elem>}(<num>,<unit>)[<solvent>] ALL arguments are optional
     % \NMR* same but without ": $\delta$" at end

@@ -1,4 +1,4 @@
-\ChemModule{reactants}{2020/11/29 typeset reactants and data}
+\ChemModule{reactants}{2020/12/02 typeset reactants and data}
 
 \RequirePackage {chemnum}
 
@@ -6,6 +6,45 @@
 \cs_generate_variant:Nn \chemnum_init:nn {ne}
 
 % --------------------------------------------------------------------------
+\msg_new:nnn {chemmacros} {reactant-name}
+  {
+    The~ reactant~ `#1'~ has~ been~ defined~ without~ a~ name!~
+    \msg_line_context:
+  }
+  
+\msg_new:nnn {chemmacros} {undefined-key}
+  {
+    The~ reactant~ key~ `#1'~ has~ not~ been~ defined~ using~
+    \token_to_str:N \DeclareChemReactant \c_space_tl \msg_line_context:
+  }
+  
+\msg_new:nnn {chemmacros} {double-defined-key}
+  {
+    The~ reactant~ key~ `#1'~ has~ already~ been~ defined~ using~
+    \token_to_str:N \DeclareChemReactant \c_space_tl \msg_line_context:
+  }
+  
+\msg_new:nnn {chemmacros} {double-defined-key-acronym}
+  {
+    The~ reactant~ key~ `#1'~ has~ already~ been~ defined~ using~
+    \token_to_str:N \DeclareAcronym \c_space_tl \msg_line_context:
+  }
+  
+\msg_new:nnn {chemmacros} {incompatible-equivalents}
+  {
+    Incompatible~ options~ `noequivalents'~ and~ `main=equiv'~ detected.~
+    `noequivalents'~ will~ be~ ignored~ \msg_line_context:
+  }
+  
+\msg_new:nnn {chemmacros} {acronym-support}
+  {
+    \token_to_str:N #1 is~ only~ available~ when~ setting~ the~
+    `acronym-support'~ option~ accordingly~ \msg_line_context:
+  }
+
+% --------------------------------------------------------------------------
+\seq_new:N \l__chemmacros_reactants_tmpa_seq
+
 \bool_new:N \l__chemmacros_reactant_switch_bool
 \bool_new:N \l__chemmacros_reactant_initiate_bool
 \bool_new:N \l__chemmacros_reactant_noequivalents_bool
@@ -38,13 +77,13 @@
 \chemmacros_define_keys:nn {reactants}
   {
     mass-unit .tl_set:N  = \l__chemmacros_mass_unit_tl ,
-    mass-unit .default:n = \g ,
+    mass-unit .default:n = \gram ,
     %%
     volume-unit .tl_set:N  = \l__chemmacros_volume_unit_tl ,
-    volume-unit .default:n = \mL ,
+    volume-unit .default:n = \milli\liter ,
     %%
     amount-unit .tl_set:N  = \l__chemmacros_amount_unit_tl ,
-    amount-unit .default:n = \mmol ,
+    amount-unit .default:n = \milli\mole ,
     %%
     concentration-unit .tl_set:N  = \l__chemmacros_concentration_unit_tl ,
     concentration-unit .default:n = \Molar ,
@@ -115,65 +154,18 @@
     acronym-support .choice: , 
     acronym-support / glossaries-extra .code:n =
       \bool_set_true:N \l__chemmacros_reactant_acronym_support_bool
-      \str_set:Nn \l__chemmacros_reactant_acronym_support_str {glossaries} ,
+      \str_set:Nn \l__chemmacros_reactant_acronym_support_str {glossaries}
+      \RequirePackage [acronyms] {glossaries-extra} ,
     acronym-support / acro .code:n =
       \bool_set_true:N \l__chemmacros_reactant_acronym_support_bool
-      \str_set:Nn \l__chemmacros_reactant_acronym_support_str {acro} ,
+      \str_set:Nn \l__chemmacros_reactant_acronym_support_str {acro}
+      \RequirePackage {acro} ,
     acronym-support / none .code:n =
       \bool_set_false:N \l__chemmacros_reactant_acronym_support_bool
       \str_clear:N \l__chemmacros_reactant_acronym_support_str ,
     acronym-support .initial:n  = none
   }
 
-\hook_gput_code:nnn {begindocument} {chemmacros}
-  {
-    \bool_if:NT \l__chemmacros_reactant_acronym_support_bool
-      {
-        \str_case:Vn \l__chemmacros_reactant_acronym_support_str
-          {
-            {glossaries} { \RequirePackage [acronyms] {glossaries-extra} }
-            {acro} { \RequirePackage {acro} }
-          }
-      }
-  }
-
-\msg_new:nnn {chemmacros} {reactant-name}
-  {
-    The~ reactant~ `#1'~ has~ been~ defined~ without~ a~ name!~
-    \msg_line_context:
-  }
-  
-\msg_new:nnn {chemmacros} {undefined-key}
-  {
-    The~ reactant~ key~ `#1'~ has~ not~ been~ defined~ using~
-    \token_to_str:N \DeclareChemReactant \c_space_tl \msg_line_context:
-  }
-  
-\msg_new:nnn {chemmacros} {double-defined-key}
-  {
-    The~ reactant~ key~ `#1'~ has~ already~ been~ defined~ using~
-    \token_to_str:N \DeclareChemReactant \c_space_tl \msg_line_context:
-  }
-  
-\msg_new:nnn {chemmacros} {double-defined-key-acronym}
-  {
-    The~ reactant~ key~ `#1'~ has~ already~ been~ defined~ using~
-    \token_to_str:N \DeclareAcronym \c_space_tl \msg_line_context:
-  }
-  
-\msg_new:nnn {chemmacros} {incompatible-equivalents}
-  {
-    Incompatible~ options~ `noequivalents'~ and~ `main=equiv'~ detected.~
-    `noequivalents'~ will~ be~ ignored~ \msg_line_context:
-  }
-  
-\msg_new:nnn {chemmacros} {acronym-support-load}
-  {
-    \token_to_str:N \reactants,~ \token_to_str:N \reactantl,~
-    \token_to_str:N \solvents,~ and~ \token_to_str:N \solventl'~ are~ only~
-    available~ when~ using~ the~ `acro-support'~ option.
-  }  
-  
 % --------------------------------------------------------------------------
 % #1: key
 % #2: properties
@@ -206,26 +198,38 @@
           {
             {glossaries}
             {
-              \__chemmacros_reactant_if_property:nnT {#1} {short}
+              \chemmacros_if_package_loaded:nTF {glossaries-extra}
                 {
-                  \exp_args:Nnxx
-                  \newacronym
-                    {#1}
-                    { \__chemmacros_reactant_item:nn {#1} {short} }
-                    { \chemmacros_iupac:e { \__chemmacros_reactant_item:nn {#1} {name} } }
+                  \__chemmacros_reactant_if_property:nnT {#1} {short}
+                    {
+                      \exp_args:Nnxx
+                      \newacronym
+                        {#1}
+                        { \__chemmacros_reactant_item:nn {#1} {short} }
+                        { \__chemmacros_reactant_item:nn {#1} {name} }
+                    }
+                }
+                {
+                  % TODO: error
                 }
             }
             {acro}
             {
               \__chemmacros_reactant_if_property:nnT {#1} {short}
                 {
-                  \acro_if_defined:nT {#1}
-                    { \msg_error:nnn {chemmacros} {double-defined-key-acronym} {#1} }
-                  \exp_args:Nnx
-                  \DeclareAcronym {#1} {
-                    short = \__chemmacros_reactant_item:nn {#1} {short} ,
-                    long  = \chemmacros_iupac:e { \__chemmacros_reactant_item:nn {#1} {name} }
-                  }
+                  \chemmacros_if_package_loaded:nTF {acro}
+                    {
+                      \acro_if_defined:nT {#1}
+                        { \msg_error:nnn {chemmacros} {double-defined-key-acronym} {#1} }
+                      \exp_args:Nnx
+                      \DeclareAcronym {#1} {
+                        short = \__chemmacros_reactant_item:nn {#1} {short} ,
+                        long  = \__chemmacros_reactant_item:nn {#1} {name}
+                      }
+                    }
+                    {
+                      % TODO: error
+                    }
                 }
             }
           }
@@ -277,9 +281,11 @@
 % #4: key
 % #5: options
 \NewDocumentCommand \reactant {st+O{}mO{}}
-  { 
-    \str_set:Nn \l__chemmacros_reactant_name_str {regular}
-    \chemmacros_reactant:nnnnn {#1} {#5} {#3} {#4} {#2}
+  {
+    \group_begin:
+      \str_set:Nn \l__chemmacros_reactant_name_str {regular}
+      \chemmacros_reactant:nnnnn {#1} {#5} {#3} {#4} {#2}
+    \group_end:
   }
   
 % #1: boolean > no name
@@ -289,12 +295,14 @@
 % #5: options
 \NewDocumentCommand \reactants {st+O{}mO{}}
   {
-    \bool_if:NTF \l__chemmacros_reactant_acronym_support_bool
-      {
-        \str_set:Nn \l__chemmacros_reactant_name_str {short}
-        \chemmacros_reactant:nnnnn {#1} {#5} {#3} {#4} {#2}
-      }
-      { \msg_error:nnn {chemmacros} {acronym-support-load} }
+    \group_begin:
+      \bool_if:NTF \l__chemmacros_reactant_acronym_support_bool
+        {
+          \str_set:Nn \l__chemmacros_reactant_name_str {short}
+          \chemmacros_reactant:nnnnn {#1} {#5} {#3} {#4} {#2}
+        }
+        { \msg_error:nnn {chemmacros} {acronym-support} { \reactants } }
+    \group_end:
   }
   
 % #1: boolean > no name
@@ -304,12 +312,14 @@
 % #5: options
 \NewDocumentCommand \reactantl {st+O{}mO{}}
   {
-    \bool_if:NTF \l__chemmacros_reactant_acronym_support_bool
-      {
-        \str_set:Nn \l__chemmacros_reactant_name_str {long}
-        \chemmacros_reactant:nnnnn {#1} {#5} {#3} {#4} {#2}
-      }
-      { \msg_error:nnn {chemmacros} {acronym-support-load} }
+    \group_begin:
+      \bool_if:NTF \l__chemmacros_reactant_acronym_support_bool
+        {
+          \str_set:Nn \l__chemmacros_reactant_name_str {long}
+          \chemmacros_reactant:nnnnn {#1} {#5} {#3} {#4} {#2}
+        }
+        { \msg_error:nnn {chemmacros} {acronym-support} { \reactantl } }
+    \group_end:
   }
 
 % #1: boolean > no name
@@ -319,27 +329,32 @@
 % #5: boolean: if true, allow no properties and use cmpd+ 
 \cs_new_protected:Npn \chemmacros_reactant:nnnnn #1#2#3#4#5
   {
-     \group_begin:
+    \group_begin:
       \bool_if:NT \l__chemmacros_reactant_nmo_bool
         {
-
           \__chemmacros_reactant_set_properties:nn {#4} {#3}
+          % name:
           \chemmacros_reactant_name:nnnn {#1} {#2} {#4} {#5}
           \space
           \chemmacros_reactant_check_all:nn {#4} {(}
+          % main:
           \__chemmacros_reactant_mainproperty:nnn {#2} {#3} {#4}
           \chemmacros_reactant_check_main:nn
             {#4}
             { \chemmacros_reactant_check_other:nn {#4} {,~} }
+          % others:
           \chemmacros_reactant_properties:nnn {#2} {#3} {#4}
           \chemmacros_reactant_check_all:nn {#4} {)} 
         }
       \bool_if:NT \l__chemmacros_reactant_mno_bool
         {
           \__chemmacros_reactant_set_properties:nn {#4} {#3}
+          % main:
           \__chemmacros_reactant_mainproperty:nnn {#2} {#3} {#4}
           \chemmacros_reactant_check_main:nn {#4} {~}
+          % name:
           \chemmacros_reactant_name:nnnn {#1} {#2} {#4} {#5}
+          % others:
           \chemmacros_reactant_check_other:nn {#4} {~(}
           \chemmacros_reactant_properties:nnn {#2} {#3} {#4}
           \chemmacros_reactant_check_other:nn {#4} {)}
@@ -347,16 +362,19 @@
       \bool_if:NT \l__chemmacros_reactant_mon_bool
         {
           \__chemmacros_reactant_set_properties:nn {#4} {#3}
+          % main:
           \__chemmacros_reactant_mainproperty:nnn {#2} {#3} {#4}
-           \chemmacros_reactant_check_main:nn {#4} {~} 
+          \chemmacros_reactant_check_main:nn {#4} {~}
+          % others:
           \chemmacros_reactant_check_other:nn {#4} {(}
           \chemmacros_reactant_properties:nnn {#2} {#3} {#4}
           \chemmacros_reactant_check_other:nn {#4} {)~}
+          % name
           \chemmacros_reactant_name:nnnn {#1} {#2} {#4} {#5}
         }
-      \group_end:
+    \group_end:
   }
-   
+
 % #1: key
 % #2: true code
 \cs_new_protected:Npn \chemmacros_reactant_check_main:nn #1#2
@@ -438,7 +456,7 @@
             \bool_lazy_any:nT
               {
                 { \__chemmacros_reactant_if_property_p:nn {#1} {fraction} }
-                {\__chemmacros_reactant_if_property_p:nn  {#1} {equiv} }
+                { \__chemmacros_reactant_if_property_p:nn  {#1} {equiv} }
                 { \__chemmacros_reactant_if_property_p:nn {#1} {purity} } 
                 { \__chemmacros_reactant_if_property_p:nn {#1} {concentration} }
                 { \__chemmacros_reactant_if_property_p:nn {#1} {solvent} }
@@ -493,10 +511,7 @@
           \str_case:Vn \l__chemmacros_reactant_name_str
             {
               {regular}
-              {
-                \chemmacros_iupac:e
-                  { \__chemmacros_reactant_item:nn {#3} {name} }
-              }
+              { \__chemmacros_reactant_item:nn {#3} {name} }
               {short}
               { 
                 \str_case:Vn \l__chemmacros_reactant_acronym_support_str
@@ -746,12 +761,12 @@
 \NewDocumentCommand \solvents {O{}mO{}}
   {
     \group_begin:
-      \bool_if_N:TF \l__chemmacros_reactant_acronym_support_bool
+      \bool_if:NTF \l__chemmacros_reactant_acronym_support_bool
         {
           \str_set:Nn \l__chemmacros_reactant_name_str {short}
           \chemmacros_solvent:nnn {#3} {#1} {#2}
         }
-        { \msg_error:nn {chemmacros} {acronym-support-load} }
+        { \msg_error:nnn {chemmacros} {acronym-support} { \solvents } }
     \group_end:
   }
  
@@ -766,7 +781,7 @@
           \str_set:Nn \l__chemmacros_reactant_name_str {long}
           \chemmacros_solvent:nnn {#3} {#1} {#2}
         }
-        { \msg_error:nn {chemmacros} {acronym-support-load} }
+        { \msg_error:nnn {chemmacros} {acronym-support} { \solventl } }
     \group_end:
   }
 
@@ -806,7 +821,7 @@
           { \__chemmacros_reactant_if_property_p:nn {#3} {volume} }
           { \__chemmacros_reactant_if_property_p:nn {#3} {volume-unit} }
           {
-            \__chemmacros_reactant_change_unit:NnV #3
+            \__chemmacros_reactant_change_unit:nnN #3
               {volume-unit}
               \l__chemmacros_volume_unit_tl 
             \SI
@@ -826,7 +841,7 @@
       \str_case:Vn \l__chemmacros_reactant_name_str
         {
           {regular}
-          { \chemmacros_iupac:e { \__chemmacros_reactant_item:nn {#2} {name} } }
+          { \__chemmacros_reactant_item:nn {#2} {name} }
           {short}
           {
             \str_case:Vn \l__chemmacros_reactant_acronym_support_str
@@ -853,12 +868,18 @@
 \DeclareExpandableDocumentCommand \reactantplain {m}
   { 
     \chemmacros_if_package_loaded:nF {hyperref} 
-      { \msg_expandable_error:nnnn {chemmacros} {package-not-loaded}{\reactantplain}{hyperref} }
-      \__chemmacros_reactants_if_property:nnF {#1} {bookmark}
-        { \msg_expandable_error:nnn {chemmacros} {reactant-bookmark} {#1} }
+      {
+        \msg_expandable_error:nnnn
+          {chemmacros}
+          {package-not-loaded}
+          { \reactantplain }
+          {hyperref}
+      }
+    \__chemmacros_reactant_if_property:nnF {#1} {bookmark}
+      { \msg_expandable_error:nnn {chemmacros} {reactant-bookmark} {#1} }
     \texorpdfstring
-      { \__chemmacros_reactants_item:nn {#1} {name}\space\cmpd+{#1} }
-      { \__chemmacros_reactants_item:nn {#1} {bookmark}\space\cmpdplain{#1} }
+      { \__chemmacros_reactant_item:nn {#1} {name} ~ \cmpd+ {#1} }
+      { \__chemmacros_reactant_item:nn {#1} {bookmark} ~ \cmpdplain {#1} }
   }
   
   
@@ -867,12 +888,29 @@
 \DeclareExpandableDocumentCommand \submainreactantplain {mm}
   { 
     \chemmacros_if_package_loaded:nF {hyperref} 
-      { \msg_expandable_error:nnnn {chemmacros} {package-not-loaded}{\submainreactantplain}{hyperref} }
-        \__chemmacros_reactants_if_property:nnF {#1\l__chemnum_compound_separator_tl#2} {bookmark}
-          { \msg_expandable_error:nnn {chemmacros} {reactant-bookmark} {#1.#2} }
+      {
+        \msg_expandable_error:nnnn
+          {chemmacros}
+          {package-not-loaded}
+          { \submainreactantplain }
+          {hyperref}
+      }
+    \__chemmacros_reactant_if_property:nnF {#1\l__chemnum_compound_separator_tl#2} {bookmark}
+      { \msg_expandable_error:nnn {chemmacros} {reactant-bookmark} {#1.#2} }
+    % TODO: no internal chemnum macros:
     \texorpdfstring
-      { \__chemmacros_reactants_item:nn {#1\l__chemnum_compound_separator_tl#2} {name}\space\cmpd+{#1.#2} }
-      { \__chemmacros_reactants_item:nn {#1\l__chemnum_compound_separator_tl#2} {bookmark}\space\submaincmpdplain{#1}{#2} }
+      {
+        \__chemmacros_reactant_item:nn
+          { #1 \l__chemnum_compound_separator_tl #2 }
+          {name}
+        ~ \cmpd+ {#1.#2}
+      }
+      {
+        \__chemmacros_reactant_item:nn
+          { #1 \l__chemnum_compound_separator_tl #2 }
+          {bookmark}
+        ~ \submaincmpdplain {#1} {#2}
+      }
   }
 
 
@@ -880,16 +918,21 @@
 \DeclareExpandableDocumentCommand \solventplain {m}
   { 
     \chemmacros_if_package_loaded:nF {hyperref} 
-      { \msg_expandable_error:nnnn {chemmacros} {package-not-loaded}{\solventplain}{hyperref} }
-      \__chemmacros_reactants_if_property:nnF {#1} {bookmark}
+      {
+        \msg_expandable_error:nnnn
+          {chemmacros}
+          {package-not-loaded}
+          { \solventplain }
+          {hyperref}
+        }
+      \__chemmacros_reactant_if_property:nnF {#1} {bookmark}
         { \msg_expandable_error:nnn {chemmacros} {reactant-bookmark} {#1} }
     \texorpdfstring
-      { \__chemmacros_reactants_item:nn {#1} {name}\space}
-      { \__chemmacros_reactants_item:nn {#1} {bookmark}\space}
+      { \__chemmacros_reactant_item:nn {#1} {name}\space}
+      { \__chemmacros_reactant_item:nn {#1} {bookmark}\space}
   } 
   
 % --------------------------------------------------------------------------
-
 % #1: star: include ID in table
 \NewDocumentCommand \printreactants {s}
   {
@@ -950,16 +993,26 @@
       \par
       \noindent
       \bool_if:nTF {#1}
-        { \begin{xltabular}{\textwidth}{ll>{\raggedright\arraybackslash}X} }
-        { \begin{xltabular}{\textwidth}{l>{\raggedright\arraybackslash}X} }
-         \seq_use:Nn \l__chemmacros_reactants_tmpa_seq { }
+        {
+          \begin
+            {xltabular}
+            { \textwidth }
+            { ll>{\raggedright\arraybackslash}X }
+        }
+        {
+          \begin
+            {xltabular}
+            { \textwidth }
+            { l>{\raggedright\arraybackslash}X }
+        }
+      \seq_use:Nn \l__chemmacros_reactants_tmpa_seq { }
       \end{xltabular}
     \group_end:
   }
 
 % #1: full ID
 % #2: star, include ID in table
-\cs_new_protected:Npn \chemmacros_reactants_list_subreactant:xn #1#2
+\cs_new_protected:Npn \chemmacros_reactants_list_subreactant:nn #1#2
   {
      % TODO: expl3-command
     \seq_if_exist:cT 
@@ -1007,6 +1060,7 @@
           }
       }
   }
+\cs_generate_variant:Nn \chemmacros_reactants_list_subreactant:nn {V}
 
 % --------------------------------------------------------------------------
 
