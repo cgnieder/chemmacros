@@ -111,17 +111,17 @@
     %%
     reactant-output-style .choice: , 
     reactant-output-style / name-main-other .code:n =
-      \bool_set_true:N \l__chemmacros_reactant_nmo_bool ,
-    reactant-output-style / main-name-other .code:n = 
-      {
-        \bool_set_true:N \l__chemmacros_reactant_mno_bool
-        \bool_set_false:N \l__chemmacros_reactant_nmo_bool
-      } ,
-    reactant-output-style / main-other-name .code:n = 
-      {
-        \bool_set_true:N \l__chemmacros_reactant_mon_bool
-        \bool_set_false:N \l__chemmacros_reactant_nmo_bool
-      } ,
+      \bool_set_true:N \l__chemmacros_reactant_nmo_bool
+      \bool_set_false:N \l__chemmacros_reactant_mno_bool
+      \bool_set_false:N \l__chemmacros_reactant_mon_bool ,
+    reactant-output-style / main-name-other .code:n =
+      \bool_set_false:N \l__chemmacros_reactant_nmo_bool
+      \bool_set_true:N \l__chemmacros_reactant_mno_bool
+      \bool_set_false:N \l__chemmacros_reactant_mon_bool ,
+    reactant-output-style / main-other-name .code:n =
+      \bool_set_false:N \l__chemmacros_reactant_nmo_bool
+      \bool_set_false:N \l__chemmacros_reactant_mno_bool
+      \bool_set_true:N \l__chemmacros_reactant_mon_bool ,
     % reactant-output-style .default:n  = name-main-other ,
     reactant-output-style .initial:n  = name-main-other ,
     %%
