@@ -5653,28 +5653,28 @@
 \chemmacros_define_keys:nn {reactants}
   {
     mass-unit .tl_set:N  = \l__chemmacros_mass_unit_tl ,
-    mass-unit .default:n = \gram ,
+    mass-unit .initial:n = \gram ,
     %%
     volume-unit .tl_set:N  = \l__chemmacros_volume_unit_tl ,
-    volume-unit .default:n = \milli\liter ,
+    volume-unit .initial:n = \milli\liter ,
     %%
     amount-unit .tl_set:N  = \l__chemmacros_amount_unit_tl ,
-    amount-unit .default:n = \milli\mole ,
+    amount-unit .initial:n = \milli\mole ,
     %%
     concentration-unit .tl_set:N  = \l__chemmacros_concentration_unit_tl ,
-    concentration-unit .default:n = \Molar ,
+    concentration-unit .initial:n = \Molar ,
     %%
     equiv-unit .tl_set:N  = \l__chemmacros_equiv_unit_tl ,
-    equiv-unit .default:n = eq ,
+    equiv-unit .initial:n = eq ,
     %%
     fraction-unit .tl_set:N  = \l__chemmacros_fraction_unit_tl ,
-    fraction-unit .default:n = w/w \percent ,
+    fraction-unit .initial:n = w/w \percent ,
     %%
     purity-unit .tl_set:N  = \l__chemmacros_purity_unit_tl ,
-    purity-unit .default:n = \percent ,
+    purity-unit .initial:n = \percent ,
     %%
     solution-name .tl_set:N  = \l__chemmacros_solution_name_tl ,
-    solution-name .default:n = \chemmacros_translate:n {solution} ,
+    solution-name .initial:n = \chemmacros_translate:n {solution} ,
     %%
     switch .bool_set:N = \l__chemmacros_reactant_switch_bool ,
     switch .initial:n  = false ,
@@ -6258,7 +6258,7 @@
         }
       \__chemmacros_reactant_add_property:NnnV \l__chemmacros_tmpa_seq
         {#3}
-        {mass}
+        {mass-unit}
         \l__chemmacros_mass_unit_tl
       \__chemmacros_reactant_add_property:NnnV \l__chemmacros_tmpa_seq
         {#3}
@@ -6278,7 +6278,8 @@
             {equiv}
             \l__chemmacros_equiv_unit_tl
         }
-      \seq_use:Nn \l__chemmacros_tmpa_seq {,~}
+      \seq_if_empty:NF \l__chemmacros_tmpa_seq
+        { \seq_use:Nn \l__chemmacros_tmpa_seq {,~} }
     \group_end:
   }  
 
@@ -6290,8 +6291,8 @@
   {
     \__chemmacros_reactant_if_property:nnT {#2} {#3}
       {
-        \seq_put_right:Nn #1 
-          { \SI { \__chemmacros_reactant_item:nn {#2} {#3} } {#4} } 
+        \seq_put_right:Ne #1 
+          { \SI { \__chemmacros_reactant_item:nn {#2} {#3} } { \exp_not:n {#4} } } 
       }
   }
 \cs_generate_variant:Nn \__chemmacros_reactant_add_property:Nnnn {NnnV}  
@@ -6397,7 +6398,7 @@
           { \__chemmacros_reactant_if_property_p:nn {#3} {volume} }
           { \__chemmacros_reactant_if_property_p:nn {#3} {volume-unit} }
           {
-            \__chemmacros_reactant_change_unit:nnN #3
+            \__chemmacros_reactant_change_unit:nnN {#3}
               {volume-unit}
               \l__chemmacros_volume_unit_tl 
             \SI
