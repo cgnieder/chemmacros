@@ -25,40 +25,12 @@ The Current Maintainer of this work is Clemens Niederberger.
 The chemmacros package consists of the following files
  == STYLE FILES ==
     chemmacros.sty
-    chemmacros4.sty
-    chemmacros5.sty,
  == DOCUMENTATION FILES ==
     chemmacros-manual.tex
     chemmacros-manual.pdf
     chemmacros-manual.cls
     README
-    chemmacros.history
- == MODULE CODE FILES ==
-    chemmacros.module.acid.code.tex
-    chemmacros.module.all.code.tex
-    chemmacros.module.base.code.tex
-    chemmacros.module.charges.code.tex
-    chemmacros.module.chemformula.code.tex
-    chemmacros.module.errorcheck.code.tex
-    chemmacros.module.greek.code.tex
-    chemmacros.module.isotopes.code.tex
-    chemmacros.module.lang.code.tex
-    chemmacros.module.mechanisms.code.tex
-    chemmacros.module.newman.code.tex
-    chemmacros.module.nomenclature.code.tex
-    chemmacros.module.orbital.code.tex
-    chemmacros.module.particles.code.tex
-    chemmacros.module.phases.code.tex
-    chemmacros.module.polymers.code.tex
-    chemmacros.module.reactions.code.tex
-    chemmacros.module.redox.code.tex
-    chemmacros.module.scheme.code.tex
-    chemmacros.module.spectroscopy.code.tex
-    chemmacros.module.symbols.code.tex
-    chemmacros.module.thermodynamics.code.tex
-    chemmacros.module.tikz.code.tex
-    chemmacros.module.units.code.tex
-    chemmacros.module.xfrac.code.tex
+    HISTORY
 --------------------------------------------------------------------------
 If you have any ideas, questions, suggestions or bugs to report, please
 feel free to contact me.
