@@ -379,12 +379,14 @@
         \str_case:VnF \l__chemmacros_reactants_main_str
           {
             {amount} {
-              \__chemmacros_reactants_if_property:nnT {#1} {amount}
+              \__chemmacros_reactants_if_property:nnTF {#1} {amount}
                 { \prg_return_true: }
+                { \prg_return_false: }
             }
             {equiv} {
-              \__chemmacros_reactants_if_property:nnT {#1} {equiv}
+              \__chemmacros_reactants_if_property:nnTF {#1} {equiv}
                 { \prg_return_true: }
+                { \prg_return_false: }
             }
           }
           { \prg_return_false: }
