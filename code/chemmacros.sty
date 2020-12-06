@@ -38,10 +38,10 @@
 
 % --------------------------------------------------------------------------
 % package information:
-\tl_const:Nn \c_chemmacros_date_tl {2020/11/29}
+\tl_const:Nn \c_chemmacros_date_tl {2020/12/06}
 \tl_const:Nn \c_chemmacros_version_major_number_tl {6}
-\tl_const:Nn \c_chemmacros_version_minor_number_tl {}
-\tl_const:Nn \c_chemmacros_version_subrelease_tl   {}
+\tl_const:Nn \c_chemmacros_version_minor_number_tl {0}
+\tl_const:Nn \c_chemmacros_version_subrelease_tl   {alpha-1}
 \tl_const:Nx \c_chemmacros_version_number_tl
   {
     \c_chemmacros_version_major_number_tl .
@@ -5574,12 +5574,14 @@
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd
-\ChemModule{reactants}{2020/12/02 typeset reactants and data}
+\ChemModule{reactants}{2020/12/06 typeset reactants and data}
+% idea and main development of this module: Leandriis
 
 \RequirePackage {chemnum}
 
 \cs_generate_variant:Nn \chemnum_cmpd:nnnn {nnne}
 \cs_generate_variant:Nn \chemnum_init:nn {ne}
+\cs_generate_variant:Nn \chemnum_get_subcompound:nn {nV}
 
 \cs_generate_variant:Nn \seq_item:Nn {NV}
 
@@ -6075,11 +6077,11 @@
             {#4}
             { }
             { \__chemmacros_reactants_item:nn {#3} {number} }       
-          \bool_if:nF {#4}
-            {
-              \chemnum_compound_if_initiated:nF {#3}
-                { \msg_warning:nnn {chemmacros} {undefined-key} {#3} }
-            }
+          % \bool_if:nF {#4}
+          %   {
+          %     \chemnum_compound_if_initiated:nF {#3}
+          %       { \msg_warning:nnn {chemmacros} {undefined-key} {#3} }
+          %   }
         }
     \group_end:
   }
@@ -6432,21 +6434,21 @@
           {hyperref}
       }
     \__chemmacros_reactants_if_property:nnF
-      { #1 \l__chemnum_compound_separator_tl #2 }
+      { #1 \l_chemnum_compound_separator_tl #2 }
       {bookmark}
       { \msg_expandable_error:nnn {chemmacros} {reactant-bookmark} {#1.#2} }
     % TODO: no internal chemnum macros:
     \texorpdfstring
       {
         \__chemmacros_reactants_item:nn
-          { #1 \l__chemnum_compound_separator_tl #2 }
+          { #1 \l_chemnum_compound_separator_tl #2 }
           {name}
         \c_space_tl
         \cmpd+ {#1.#2}
       }
       {
         \__chemmacros_reactants_item:nn
-          { #1 \l__chemnum_compound_separator_tl #2 }
+          { #1 \l_chemnum_compound_separator_tl #2 }
           {bookmark}
         ~ \submaincmpdplain {#1} {#2}
       }
@@ -6487,7 +6489,7 @@
       \chemmacros_set_keys:nn {reactants} { switch = false }
       % TODO: no internal chemnum macros:
       \int_step_variable:nNn
-        { \seq_count:N \g__chemnum_initiated_compounds_seq }
+        { \seq_count:N \g_chemnum_initiated_compounds_seq }
         \l__chemmacros_reactants_tmpa_tl 
         {
           \seq_put_right:Nx 
@@ -6498,7 +6500,7 @@
                 {
                   % TODO: no internal chemnum macros:
                   \seq_item:NV
-                    \g__chemnum_initiated_compounds_seq
+                    \g_chemnum_initiated_compounds_seq
                     \l__chemmacros_reactants_tmpa_tl
                 }
               & 
@@ -6506,7 +6508,7 @@
                 {
                   % TODO: no internal chemnum macros:
                   \seq_item:NV
-                    \g__chemnum_initiated_compounds_seq
+                    \g_chemnum_initiated_compounds_seq
                     \l__chemmacros_reactants_tmpa_tl
                   &
                 }
@@ -6515,7 +6517,7 @@
                 {
                   % TODO: no internal chemnum macros:
                   \seq_item:NV
-                    \g__chemnum_initiated_compounds_seq
+                    \g_chemnum_initiated_compounds_seq
                     \l__chemmacros_reactants_tmpa_tl
                 }
               \tabularnewline
@@ -6525,7 +6527,7 @@
             {
               % TODO: no internal chemnum macros:
               \seq_item:NV
-                \g__chemnum_initiated_compounds_seq
+                \g_chemnum_initiated_compounds_seq
                 \l__chemmacros_reactants_tmpa_tl
             }
           \chemmacros_reactants_list_subreactant:Vn
@@ -6558,13 +6560,10 @@
 % #2: star, include ID in table
 \cs_new_protected:Npn \chemmacros_reactants_list_subreactant:nn #1#2
   {
-    % TODO: no internal chemnum variables
-    \seq_if_exist:cT 
-      {g__chemnum_compound_#1_subcompounds_seq}
+    \chemnum_if_subcompounds:nT {#1}
       {
-         % TODO: no internal chemnum variables
         \int_step_variable:nNn
-          { \seq_count:c {g__chemnum_compound_#1_subcompounds_seq} } 
+          { \chemnum_count_subcompounds:n {#1} } 
           \l__chemmacros_reactants_tmpa_tl 
           {
             \seq_put_right:Nx 
@@ -6574,9 +6573,9 @@
                 \refcmpd
                   {
                     #1
-                    \l__chemnum_compound_separator_tl
-                    \seq_item:cV
-                      {g__chemnum_compound_#1_subcompounds_seq}
+                    \l_chemnum_compound_separator_tl
+                    \chemnum_get_subcompound:nV
+                      {#1}
                       \l__chemmacros_reactants_tmpa_tl
                   }
                 & 
@@ -6584,9 +6583,9 @@
                   {
                     #1
                     % TODO: no internal chemnum variables
-                    \l__chemnum_compound_separator_tl
-                    \seq_item:cV
-                      {g__chemnum_compound_#1_subcompounds_seq}
+                    \l_chemnum_compound_separator_tl
+                    \chemnum_get_subcompound:nV
+                      {#1}
                       \l__chemmacros_reactants_tmpa_tl
                     &
                   }
@@ -6594,9 +6593,9 @@
                 \solvent
                   {
                     #1
-                    \l__chemnum_compound_separator_tl
-                    \seq_item:cV
-                      {g__chemnum_compound_#1_subcompounds_seq}
+                    \l_chemnum_compound_separator_tl
+                    \chemnum_get_subcompound:nV
+                      {#1}
                       \l__chemmacros_reactants_tmpa_tl
                   }
                 \tabularnewline
