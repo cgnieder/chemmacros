@@ -900,16 +900,21 @@
 \NewDocumentCommand \printreactants {s}
   {
     \chemmacros_if_package_loaded:nF {xltabular} 
-      { \msg_error:nnnn {chemmacros} {package-not-loaded}{\printreactants}{xltabular} }
+      {
+        \msg_error:nnnn
+          {chemmacros}
+          {package-not-loaded}
+          { \printreactants }
+          {xltabular}
+      }
     \group_begin:
-      % TODO: expl3-command
-      \chemsetup{ reactants/switch = false }
+      \chemmacros_set_keys:nn {reactants} { switch = false }
       % TODO: no internal chemnum macros:
       \int_step_variable:nNn
-        { \seq_count:c {g__chemnum_initiated_compounds_seq} }
+        { \seq_count:N \g__chemnum_initiated_compounds_seq }
         \l__chemmacros_reactants_tmpa_tl 
         {
-          \seq_gput_right:Nx 
+          \seq_put_right:Nx 
             \l__chemmacros_reactants_tmpa_seq
             {
               % TODO: expl3-command
@@ -977,16 +982,16 @@
 % #2: star, include ID in table
 \cs_new_protected:Npn \chemmacros_reactants_list_subreactant:nn #1#2
   {
-     % TODO: expl3-command
+    % TODO: no internal chemnum variables
     \seq_if_exist:cT 
       {g__chemnum_compound_#1_subcompounds_seq}
       {
-         % TODO: expl3-command
+         % TODO: no internal chemnum variables
         \int_step_variable:nNn
           { \seq_count:c {g__chemnum_compound_#1_subcompounds_seq} } 
           \l__chemmacros_reactants_tmpa_tl 
           {
-            \seq_gput_right:Nx 
+            \seq_put_right:Nx 
             \l__chemmacros_reactants_tmpa_seq
               {
                  % TODO: expl3-command, no internal chemnum variables
