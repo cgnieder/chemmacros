@@ -645,7 +645,7 @@
         }
       \__chemmacros_reactants_add_property:NnnV \l__chemmacros_tmpa_seq
         {#3}
-        {mass-unit}
+        {mass}
         \l__chemmacros_mass_unit_tl
       \__chemmacros_reactants_add_property:NnnV \l__chemmacros_tmpa_seq
         {#3}
@@ -678,7 +678,7 @@
   {
     \__chemmacros_reactants_if_property:nnT {#2} {#3}
       {
-        \seq_put_right:Ne #1 
+        \seq_put_right:Nn #1 
           { \SI { \__chemmacros_reactants_item:nn {#2} {#3} } { \exp_not:n {#4} } } 
       }
   }
