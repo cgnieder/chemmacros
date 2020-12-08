@@ -38,10 +38,10 @@
 
 % --------------------------------------------------------------------------
 % package information:
-\tl_const:Nn \c_chemmacros_date_tl {2020/12/06}
+\tl_const:Nn \c_chemmacros_date_tl {2020/12/08}
 \tl_const:Nn \c_chemmacros_version_major_number_tl {6}
 \tl_const:Nn \c_chemmacros_version_minor_number_tl {0}
-\tl_const:Nn \c_chemmacros_version_subrelease_tl   {alpha-1}
+\tl_const:Nn \c_chemmacros_version_subrelease_tl   {alpha}
 \tl_const:Nx \c_chemmacros_version_number_tl
   {
     \c_chemmacros_version_major_number_tl .
@@ -5574,7 +5574,7 @@
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd
-\ChemModule{reactants}{2020/12/06 typeset reactants and data}
+\ChemModule{reactants}{2020/12/08 typeset reactants and data}
 % idea and main development of this module: Leandriis
 
 \RequirePackage {chemnum}
@@ -5584,6 +5584,7 @@
 \cs_generate_variant:Nn \chemnum_get_subcompound:nn {nV}
 
 \cs_generate_variant:Nn \seq_item:Nn {NV}
+\cs_generate_variant:Nn \seq_put_right:Nn {Ne}
 
 % --------------------------------------------------------------------------
 \msg_new:nnn {chemmacros} {reactant-name}
@@ -6076,7 +6077,9 @@
             { \c_false_bool }
             {#4}
             { }
-            { \__chemmacros_reactants_item:nn {#3} {number} }       
+            { \__chemmacros_reactants_item:nn {#3} {number} }
+          % what is this for?
+          % it causes problems when #3 is a combination of main and sub:
           % \bool_if:nF {#4}
           %   {
           %     \chemnum_compound_if_initiated:nF {#3}
@@ -6252,7 +6255,7 @@
   {
     \__chemmacros_reactants_if_property:nnT {#2} {#3}
       {
-        \seq_put_right:Nn #1 
+        \seq_put_right:Ne #1 
           { \SI { \__chemmacros_reactants_item:nn {#2} {#3} } { \exp_not:n {#4} } } 
       }
   }
