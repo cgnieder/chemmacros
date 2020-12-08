@@ -8,6 +8,7 @@
 \cs_generate_variant:Nn \chemnum_get_subcompound:nn {nV}
 
 \cs_generate_variant:Nn \seq_item:Nn {NV}
+\cs_generate_variant:Nn \seq_put_right:Nn {Ne}
 
 % --------------------------------------------------------------------------
 \msg_new:nnn {chemmacros} {reactant-name}
@@ -678,7 +679,7 @@
   {
     \__chemmacros_reactants_if_property:nnT {#2} {#3}
       {
-        \seq_put_right:Nn #1 
+        \seq_put_right:Ne #1 
           { \SI { \__chemmacros_reactants_item:nn {#2} {#3} } { \exp_not:n {#4} } } 
       }
   }
