@@ -5622,6 +5622,11 @@
     \token_to_str:N #1 is~ only~ available~ when~ setting~ the~
     `acronym-support'~ option~ accordingly~ \msg_line_context:
   }
+  
+\msg_new:nnn {chemmacros} {package-not-loaded}
+  { 
+    `#1'~ requires~ `#2'~.
+  }
 
 % --------------------------------------------------------------------------
 \seq_new:N \l__chemmacros_reactants_tmpa_seq
@@ -5638,8 +5643,10 @@
 \bool_new:N \l__chemmacros_reactants_smn_bool
 
 \bool_new:N \l__chemmacros_reactants_acronym_support_bool
+\bool_new:N \l__chemmacros_reactants_printreactants_style_bool
 
 \str_new:N \l__chemmacros_reactants_acronym_support_str
+\str_new:N \l__chemmacros_reactants_printreactants_style_str
 \str_new:N \l__chemmacros_reactants_main_str
 \str_new:N \l__chemmacros_reactants_name_str
 
@@ -5735,7 +5742,20 @@
     acronym-support / none .code:n =
       \bool_set_false:N \l__chemmacros_reactants_acronym_support_bool
       \str_clear:N \l__chemmacros_reactants_acronym_support_str ,
-    acronym-support .initial:n  = none
+    acronym-support .initial:n  = none ,
+   	printreactants-style .choice: , 
+    printreactants-style / xltabular .code:n =
+      \bool_set_true:N \l__chemmacros_reactants_printreactants_style_bool
+      \str_set:Nn \l__chemmacros_reactants_printreactants_style_str {xltabular}
+      \RequirePackage {xltabular} ,
+    printreactants-style / longtable .code:n =
+      \bool_set_true:N \l__chemmacros_reactants_printreactants_style_bool
+      \str_set:Nn \l__chemmacros_reactants_printreactants_style_str {longtable}
+      \RequirePackage {longtable} ,
+    printreactants-style / none .code:n =
+      \bool_set_false:N \l__chemmacros_reactants_printreactants_style_bool
+      \str_clear:N \l__chemmacros_reactants_printreactants_style_str ,
+    printreactants-style .initial:n  = none
   }
 
 % --------------------------------------------------------------------------
@@ -5781,8 +5801,12 @@
                         { \__chemmacros_reactants_item:nn {#1} {name} }
                     }
                 }
-                {
-                  % TODO: error
+				            {
+                \msg_expandable_error:nnnn
+                  {chemmacros}
+                  {package-not-loaded}
+                  { \printreactants }
+                  {glossaries-extra}
                 }
             }
             {acro}
@@ -5799,8 +5823,12 @@
                         long  = \__chemmacros_reactants_item:nn {#1} {name}
                       }
                     }
-                    {
-                      % TODO: error
+				                {
+                    \msg_expandable_error:nnnn
+                      {chemmacros}
+                      {package-not-loaded}
+                      { \printreactants }
+                      {acro}
                     }
                 }
             }
@@ -6480,14 +6508,6 @@
 % #1: star: include ID in table
 \NewDocumentCommand \printreactants {s}
   {
-    \chemmacros_if_package_loaded:nF {xltabular} 
-      {
-        \msg_error:nnnn
-          {chemmacros}
-          {package-not-loaded}
-          { \printreactants }
-          {xltabular}
-      }
     \group_begin:
       \chemmacros_set_keys:nn {reactants} { switch = false }
       % TODO: no internal chemnum macros:
@@ -6539,23 +6559,69 @@
         }
       % TODO: longtable ?
       %       table customizable?
+	  % first draft of two styles
       \par
       \noindent
-      \bool_if:nTF {#1}
+      \bool_if:NT \l__chemmacros_reactants_printreactants_style_bool
         {
-          \begin
-            {xltabular}
-            { \textwidth }
-            { ll>{\raggedright\arraybackslash}X }
-        }
-        {
-          \begin
-            {xltabular}
-            { \textwidth }
-            { l>{\raggedright\arraybackslash}X }
-        }
-      \seq_use:Nn \l__chemmacros_reactants_tmpa_seq { }
-      \end{xltabular}
+          \str_case:Vn \l__chemmacros_reactants_printreactants_style_str
+            {
+              {xltabular}
+              {
+                \chemmacros_if_package_loaded:nTF {xltabular}
+                  {	  
+                    \bool_if:nTF {#1}
+                    {
+                      \begin
+                        {xltabular}
+                        { \textwidth }
+                        { @{}ll>{\raggedright\arraybackslash}X@{} }
+                    }
+                    {
+                      \begin
+                        {xltabular}
+                        { \textwidth }
+                        { @{}l>{\raggedright\arraybackslash}X@{} }
+                    }
+                   \seq_use:Nn \l__chemmacros_reactants_tmpa_seq { }
+				   \end{xltabular}
+				  }
+				  {
+                    \msg_expandable_error:nnnn
+                      {chemmacros}
+                      {package-not-loaded}
+                      { \printreactants }
+                      {xltabular}
+				  }
+			  }
+              {longtable}
+              {
+                \chemmacros_if_package_loaded:nTF {longtable}
+                  {	  
+                    \bool_if:nTF {#1}
+                    {
+                      \begin
+                        {longtable}[l]
+                        { @{}ll>{\raggedright\arraybackslash}p{0.6\textwidth}@{} }
+                    }
+                    {
+                      \begin
+                        {longtable}[l]
+                        { @{}l>{\raggedright\arraybackslash}p{0.9\textwidth}@{} }
+                    }
+                  \seq_use:Nn \l__chemmacros_reactants_tmpa_seq { }
+                  \end{longtable}
+				  }
+				  {
+                    \msg_expandable_error:nnnn
+                      {chemmacros}
+                      {package-not-loaded}
+                      { \printreactants }
+                      {longtable}
+				  }
+			  }
+			}
+	    }
     \group_end:
   }
 
