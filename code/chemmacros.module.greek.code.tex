@@ -1,4 +1,6 @@
 \ChemModule{greek}{2020/11/29 upright greek symbols}
+
+\DeclareHookRule {begindocument/end} {chemmacros} {after} {chemgreek}
 \RequirePackage{chemgreek}
 
 \msg_new:nnn {chemmacros} {no-greek}
@@ -17,7 +19,7 @@
 % chemgreek selects a mapping if an unambiguous choice is possible, otherwise
 % selects `default'. Warn the user in this case:
 
-\hook_gput_code:nnn {begindocument/end} {top-level}
+\hook_gput_code:nnn {begindocument/end} {chemmacros}
   {
     \bool_lazy_or:nnT
       { \chemgreek_if_mapping_active_p:n {default} }

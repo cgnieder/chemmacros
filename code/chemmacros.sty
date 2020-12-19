@@ -609,8 +609,6 @@
   }
 \cs_generate_variant:Nn \chemmacros_cs_if_free_new_protected:Npn {c}
 
-\RequirePackage{scrlfile}
-
 % #1: counter
 % #2: singular
 % #3: plural
@@ -618,7 +616,7 @@
 % #5: Plural
 \cs_new_protected:Npn \chemmacros_add_cleveref_support:nnnnn #1#2#3#4#5
   {
-    \AfterPackage* {cleveref}
+    \hook_gput_code:nnn {package/after/cleveref} {chemmacros}
       {
         \cs_if_exist:cF {cref@#1@name}
           {
@@ -678,7 +676,7 @@
 % #3: begin sentence
 \cs_new_protected:Npn \chemmacros_add_fancyref_support:nnn #1#2#3
   {
-    \AfterPackage* {fancyref}
+    \hook_gput_code:nnn {package/after/fancyref} {chemmacros}
       {
         \chemmacros_cs_if_free_new:cpn {fancyref#1labelprefix} {#1}
         \chemmacros_cs_if_free_new:cpn {fref#1name} {#2}
@@ -714,9 +712,8 @@
 \hook_gput_code:nnn {begindocument} {top-level}
   {
     \bool_set_true:N \l__chemmacros_in_document_bool
-    \@ifpackageloaded { chemstyle }
+    \chemmacros_if_package_loaded:nT {chemstyle}
       { \bool_set_true:N \l__chemmacros_chemstyle_bool }
-      { \bool_set_false:N \l__chemmacros_chemstyle_bool }
   }
 
 % --------------------------------------------------------------------------
@@ -804,7 +801,7 @@
 
 \bool_new:N \l__chemmacros_hyperref_bool
 
-\AddToHook {begindocument/end}
+\hook_gput_code:nnn {begindocument/end} {chemmacros}
   {
     \chemmacros_if_package_loaded:nT {hyperref}
       { \bool_set_true:N \l__chemmacros_hyperref_bool }
@@ -1053,6 +1050,8 @@
 % --------------------------------------------------------------------------
 \ChemModuleEnd
 \ChemModule{greek}{2020/11/29 upright greek symbols}
+
+\DeclareHookRule {begindocument/end} {chemmacros} {after} {chemgreek}
 \RequirePackage{chemgreek}
 
 \msg_new:nnn {chemmacros} {no-greek}
@@ -1071,7 +1070,7 @@
 % chemgreek selects a mapping if an unambiguous choice is possible, otherwise
 % selects `default'. Warn the user in this case:
 
-\hook_gput_code:nnn {begindocument/end} {top-level}
+\hook_gput_code:nnn {begindocument/end} {chemmacros}
   {
     \bool_lazy_or:nnT
       { \chemgreek_if_mapping_active_p:n {default} }
@@ -1266,7 +1265,7 @@
 \chemmacros_define_global_keys:n
   { formula .code:n = \chemmacros_set_formula_method:n {#1} }
 
-\AddToHook {begindocument/before}
+\hook_gput_code:nnn {begindocument/before} {chemmacros}
   {
     \bool_if:NF \l__chemmacros_formula_method_set_bool
       {
@@ -1915,7 +1914,8 @@
       }    
   }
 
-\AddToHook {begindocument/end} { \chemmacros_make_iupac: }
+\hook_gput_code:nnn {begindocument/end} {chemmacros}
+  { \chemmacros_make_iupac: }
 
 \NewDocumentCommand \DeclareChemIUPAC {mm}
   { \chemmacros_define_iupac:Nn #1 {#2} }
@@ -2436,7 +2436,7 @@
 % --------------------------------------------------------------------------
 % hyperref support
 % ?? unsure about adding IUPAC commands
-\hook_gput_code:nnn {package/hyperref/after} {package/chemmacros}
+\hook_gput_code:nnn {package/hyperref/after} {chemmacros}
   {
     \pdfstringdefDisableCommands
       {
@@ -3879,7 +3879,7 @@
 % redefine mathtools' command \MT_define_tagform:nwnn to ensure we add an
 % entry to the list of reactions even if the user redefines the reaction tag
 % this should probably be done via patching...
-\AfterPackage* { mathtools }
+\hook_gput_code:nnn {package/after/mathtools} {chemmacros}
   {
     \cs_set_protected:Npn \MT_define_tagform:nwnn #1[#2]#3#4
       {
@@ -3976,7 +3976,7 @@
   { \chemmacros_translate:n {reactions} }
   [ \chemmacros_translate:n {Reactions} ]
 
-\AddToHook {package/cleveref/after}
+\hook_gput_code:nnn {package/cleveref/after} {chemmacros}
   {
     \creflabelformat {reaction}
       {
@@ -4804,10 +4804,8 @@
       \chemmacros_check_float_method:n
   }
 
-\AtEndPreamble
+\hook_gput_code:nnn {begindocument/before} {chemmacros}
   {
-    % the check is there since v5.3a -- let's wait and see if we actually need
-    % a compatibility check here:
     \chemmacros_if_package_loaded:nF {chemscheme}
       {
         \chemmacros_check_float_methods:
@@ -5741,7 +5739,7 @@
       \bool_set_false:N \l__chemmacros_reactants_acronym_support_bool
       \str_clear:N \l__chemmacros_reactants_acronym_support_str ,
     acronym-support .initial:n  = none ,
-   	printreactants-style .choice: , 
+	  printreactants-style .choice: , 
     printreactants-style / xltabular .code:n =
       \bool_set_true:N \l__chemmacros_reactants_printreactants_style_bool
       \str_set:Nn \l__chemmacros_reactants_printreactants_style_str {xltabular}
@@ -5799,7 +5797,7 @@
                         { \__chemmacros_reactants_item:nn {#1} {name} }
                     }
                 }
-				            {
+				        {
                 \msg_expandable_error:nnnn
                   {chemmacros}
                   {package-not-loaded}
@@ -5821,7 +5819,7 @@
                         long  = \__chemmacros_reactants_item:nn {#1} {name}
                       }
                     }
-				                {
+				            {
                     \msg_expandable_error:nnnn
                       {chemmacros}
                       {package-not-loaded}
@@ -6506,6 +6504,7 @@
 % #1: star: include ID in table
 \NewDocumentCommand \printreactants {s}
   {
+    \chemmacros_if_package_loaded:nF {xltabular} 
     \group_begin:
       \chemmacros_set_keys:nn {reactants} { switch = false }
       % TODO: no internal chemnum macros:

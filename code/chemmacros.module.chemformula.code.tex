@@ -169,7 +169,7 @@
 \chemmacros_define_global_keys:n
   { formula .code:n = \chemmacros_set_formula_method:n {#1} }
 
-\AddToHook {begindocument/before}
+\hook_gput_code:nnn {begindocument/before} {chemmacros}
   {
     \bool_if:NF \l__chemmacros_formula_method_set_bool
       {

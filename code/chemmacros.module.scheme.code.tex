@@ -136,10 +136,8 @@
       \chemmacros_check_float_method:n
   }
 
-\AtEndPreamble
+\hook_gput_code:nnn {begindocument/before} {chemmacros}
   {
-    % the check is there since v5.3a -- let's wait and see if we actually need
-    % a compatibility check here:
     \chemmacros_if_package_loaded:nF {chemscheme}
       {
         \chemmacros_check_float_methods:

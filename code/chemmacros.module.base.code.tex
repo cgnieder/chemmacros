@@ -221,8 +221,6 @@
   }
 \cs_generate_variant:Nn \chemmacros_cs_if_free_new_protected:Npn {c}
 
-\RequirePackage{scrlfile}
-
 % #1: counter
 % #2: singular
 % #3: plural
@@ -230,7 +228,7 @@
 % #5: Plural
 \cs_new_protected:Npn \chemmacros_add_cleveref_support:nnnnn #1#2#3#4#5
   {
-    \AfterPackage* {cleveref}
+    \hook_gput_code:nnn {package/after/cleveref} {chemmacros}
       {
         \cs_if_exist:cF {cref@#1@name}
           {
@@ -290,7 +288,7 @@
 % #3: begin sentence
 \cs_new_protected:Npn \chemmacros_add_fancyref_support:nnn #1#2#3
   {
-    \AfterPackage* {fancyref}
+    \hook_gput_code:nnn {package/after/fancyref} {chemmacros}
       {
         \chemmacros_cs_if_free_new:cpn {fancyref#1labelprefix} {#1}
         \chemmacros_cs_if_free_new:cpn {fref#1name} {#2}
@@ -326,9 +324,8 @@
 \hook_gput_code:nnn {begindocument} {top-level}
   {
     \bool_set_true:N \l__chemmacros_in_document_bool
-    \@ifpackageloaded { chemstyle }
+    \chemmacros_if_package_loaded:nT {chemstyle}
       { \bool_set_true:N \l__chemmacros_chemstyle_bool }
-      { \bool_set_false:N \l__chemmacros_chemstyle_bool }
   }
 
 % --------------------------------------------------------------------------
@@ -416,7 +413,7 @@
 
 \bool_new:N \l__chemmacros_hyperref_bool
 
-\AddToHook {begindocument/end}
+\hook_gput_code:nnn {begindocument/end} {chemmacros}
   {
     \chemmacros_if_package_loaded:nT {hyperref}
       { \bool_set_true:N \l__chemmacros_hyperref_bool }

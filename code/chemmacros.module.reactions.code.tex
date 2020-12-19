@@ -27,7 +27,7 @@
 % redefine mathtools' command \MT_define_tagform:nwnn to ensure we add an
 % entry to the list of reactions even if the user redefines the reaction tag
 % this should probably be done via patching...
-\AfterPackage* { mathtools }
+\hook_gput_code:nnn {package/after/mathtools} {chemmacros}
   {
     \cs_set_protected:Npn \MT_define_tagform:nwnn #1[#2]#3#4
       {
@@ -124,7 +124,7 @@
   { \chemmacros_translate:n {reactions} }
   [ \chemmacros_translate:n {Reactions} ]
 
-\AddToHook {package/cleveref/after}
+\hook_gput_code:nnn {package/cleveref/after} {chemmacros}
   {
     \creflabelformat {reaction}
       {

@@ -153,7 +153,8 @@
       }    
   }
 
-\AddToHook {begindocument/end} { \chemmacros_make_iupac: }
+\hook_gput_code:nnn {begindocument/end} {chemmacros}
+  { \chemmacros_make_iupac: }
 
 \NewDocumentCommand \DeclareChemIUPAC {mm}
   { \chemmacros_define_iupac:Nn #1 {#2} }
@@ -674,7 +675,7 @@
 % --------------------------------------------------------------------------
 % hyperref support
 % ?? unsure about adding IUPAC commands
-\hook_gput_code:nnn {package/hyperref/after} {package/chemmacros}
+\hook_gput_code:nnn {package/hyperref/after} {chemmacros}
   {
     \pdfstringdefDisableCommands
       {
