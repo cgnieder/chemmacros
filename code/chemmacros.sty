@@ -26,22 +26,15 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-% The chemmacros package consists of the following files
-%  - chemmacros.sty, chemmacros4.sty, chemmacros.sty,
-%  - chemmacros_en.tex, chemmacros_en.pdf,
-%  - quite a number of module files following the naming scheme
-%    chemmacros.module.*.code.tex
-%  - README
- % --------------------------------------------------------------------------
 \RequirePackage{expl3,xparse,l3keys2e}
 \ExplSyntaxOn
 
 % --------------------------------------------------------------------------
 % package information:
-\tl_const:Nn \c_chemmacros_date_tl {2020/12/08}
+\tl_const:Nn \c_chemmacros_date_tl {2020/12/19}
 \tl_const:Nn \c_chemmacros_version_major_number_tl {6}
 \tl_const:Nn \c_chemmacros_version_minor_number_tl {0}
-\tl_const:Nn \c_chemmacros_version_subrelease_tl   {alpha}
+\tl_const:Nn \c_chemmacros_version_subrelease_tl   {alpha-2}
 \tl_const:Nx \c_chemmacros_version_number_tl
   {
     \c_chemmacros_version_major_number_tl .
@@ -87,6 +80,8 @@
     `chemmacros'~ with~ the~ `minimal'~ option). \\
     *~ The~ new~ default~ corresponds~ to~ the~ \\
     earlier~ setting~ `modules=all'.
+    \tl_if_blank:nF {#1}
+      { \\ The~ command~ \token_to_str:N #1 is~ deprecated. }
   }
 
 \cs_generate_variant:Nn \msg_warning:nnn { nnV }
@@ -134,6 +129,9 @@
     package-options / minimal .meta:nn = {chemmacros} {minimal} ,
     package-options / modules .meta:nn = {chemmacros} {modules}
   }
+
+\NewDocumentCommand \usechemmodule {m}
+  { \msg_warning:nnn {chemmacros} {module-mechanism} {\usechemmodule} }
 
 \bool_if:NF \l__chemmacros_minimal_bool
   {
@@ -1212,7 +1210,7 @@
     \chemmacros_integrate_package:nnn {version=4} {mhchem} {}
     \cs_set_protected:Npn \chemmacros_chemformula:n #1 { \ce {#1} }
     \cs_set_protected:Npn \chemmacros_reaction:n #1    { \ce {#1} }
-    \chemmacros_after_module:nn {charges}
+    \chemmacros_module_after:nn {charges}
       {
         \cs_set_protected:Npn \chemmacros_elpair:n #1 { \ce{#1} : }
         \cs_set_protected:Npn \chemmacros_plus:  { + }
@@ -1231,7 +1229,7 @@
       { \chemmacros_text:n { \ChemForm {#1} } }
     \cs_set_protected:Npn \chemmacros_reaction:n #1
       { \chemmacros_text:n { \ChemForm {#1} } }
-    \chemmacros_after_module:nn {charges}
+    \chemmacros_module_after:nn {charges}
       {
         \cs_set_protected:Npn \chemmacros_elpair:n #1
           { \chemmacros_text:n { \ChemForm {#1} : } }
@@ -1251,7 +1249,7 @@
       { \printatom {#1} }
     \cs_set_protected:Npn \chemmacros_reaction:n #1
       { \printatom {#1} }
-    \chemmacros_after_module:nn {charges}
+    \chemmacros_module_after:nn {charges}
       {
         \cs_set_protected:Npn \chemmacros_elpair:n #1
           { \Lewis { 0: , \printatom {#1} } }

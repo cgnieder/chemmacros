@@ -113,7 +113,7 @@
     \chemmacros_integrate_package:nnn {version=4} {mhchem} {}
     \cs_set_protected:Npn \chemmacros_chemformula:n #1 { \ce {#1} }
     \cs_set_protected:Npn \chemmacros_reaction:n #1    { \ce {#1} }
-    \chemmacros_after_module:nn {charges}
+    \chemmacros_module_after:nn {charges}
       {
         \cs_set_protected:Npn \chemmacros_elpair:n #1 { \ce{#1} : }
         \cs_set_protected:Npn \chemmacros_plus:  { + }
@@ -132,7 +132,7 @@
       { \chemmacros_text:n { \ChemForm {#1} } }
     \cs_set_protected:Npn \chemmacros_reaction:n #1
       { \chemmacros_text:n { \ChemForm {#1} } }
-    \chemmacros_after_module:nn {charges}
+    \chemmacros_module_after:nn {charges}
       {
         \cs_set_protected:Npn \chemmacros_elpair:n #1
           { \chemmacros_text:n { \ChemForm {#1} : } }
@@ -152,7 +152,7 @@
       { \printatom {#1} }
     \cs_set_protected:Npn \chemmacros_reaction:n #1
       { \printatom {#1} }
-    \chemmacros_after_module:nn {charges}
+    \chemmacros_module_after:nn {charges}
       {
         \cs_set_protected:Npn \chemmacros_elpair:n #1
           { \Lewis { 0: , \printatom {#1} } }
