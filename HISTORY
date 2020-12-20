@@ -400,4 +400,4 @@ Version history
                            - add reactants module
                            - fix issue #42
                            - use LaTeX's new hook mechanism
-                           - get rid of scrfile dependency
+                           - get rid of scrlfile dependency
