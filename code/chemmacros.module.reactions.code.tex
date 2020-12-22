@@ -105,7 +105,7 @@
     before-tag .tl_set:N   = \l__chemmacros_reactions_before_tag_tl
   }
 
-\AddToHook {begindocument/end}
+\hook_gput_code:nnn {package/tocbasic/after} {chemmacros}
   {
     \bool_lazy_or:nnT
       { \chemmacros_if_package_loaded_p:n {tocbasic} }
