@@ -890,7 +890,6 @@
       { #1 \l_chemnum_compound_separator_tl #2 }
       {bookmark}
       { \msg_expandable_error:nnn {chemmacros} {reactant-bookmark} {#1.#2} }
-    % TODO: no internal chemnum macros:
     \texorpdfstring
       {
         \__chemmacros_reactants_item:nn
@@ -933,7 +932,6 @@
     \chemmacros_if_package_loaded:nF {xltabular} 
     \group_begin:
       \chemmacros_set_keys:nn {reactants} { switch = false }
-      % TODO: no internal chemnum macros:
       \int_step_variable:nNn
         { \seq_count:N \g_chemnum_initiated_compounds_seq }
         \l__chemmacros_reactants_tmpa_tl 
@@ -941,10 +939,8 @@
           \seq_put_right:Nx 
             \l__chemmacros_reactants_tmpa_seq
             {
-              % TODO: expl3-command
-              \refcmpd
+              \chemnum_cmpd:nnne { \c_false_bool } { \c_true_bool } {}
                 {
-                  % TODO: no internal chemnum macros:
                   \seq_item:NV
                     \g_chemnum_initiated_compounds_seq
                     \l__chemmacros_reactants_tmpa_tl
@@ -952,16 +948,14 @@
               & 
               \bool_if:nT {#1}
                 {
-                  % TODO: no internal chemnum macros:
                   \seq_item:NV
                     \g_chemnum_initiated_compounds_seq
                     \l__chemmacros_reactants_tmpa_tl
                   &
                 }
-              % TODO: expl3-command
+              % TODO: expl3-command ??
               \solvent
                 {
-                  % TODO: no internal chemnum macros:
                   \seq_item:NV
                     \g_chemnum_initiated_compounds_seq
                     \l__chemmacros_reactants_tmpa_tl
@@ -971,7 +965,6 @@
           \tl_set:Nx
             \l__chemmacros_reactants_tmpb_tl
             {
-              % TODO: no internal chemnum macros:
               \seq_item:NV
                 \g_chemnum_initiated_compounds_seq
                 \l__chemmacros_reactants_tmpa_tl
@@ -982,7 +975,7 @@
         }
       % TODO: longtable ?
       %       table customizable?
-	  % first draft of two styles
+      % first draft of two styles
       \par
       \noindent
       \bool_if:NT \l__chemmacros_reactants_printreactants_style_bool
@@ -1061,11 +1054,10 @@
             \seq_put_right:Nx 
             \l__chemmacros_reactants_tmpa_seq
               {
-                 % TODO: expl3-command, no internal chemnum variables
-                \refcmpd
+                \chemnum_cmpd:nnne { \c_false_bool } { \c_true_bool } {}
                   {
-                    #1
-                    \l_chemnum_compound_separator_tl
+                    \exp_not:n {#1}
+                    \exp_not:V \l_chemnum_compound_separator_tl
                     \chemnum_get_subcompound:nV
                       {#1}
                       \l__chemmacros_reactants_tmpa_tl
@@ -1074,14 +1066,13 @@
                 \bool_if:nT {#2}
                   {
                     #1
-                    % TODO: no internal chemnum variables
                     \l_chemnum_compound_separator_tl
                     \chemnum_get_subcompound:nV
                       {#1}
                       \l__chemmacros_reactants_tmpa_tl
                     &
                   }
-                % TODO: expl3-command, no internal chemnum variables
+                % TODO: expl3-command ??
                 \solvent
                   {
                     #1
