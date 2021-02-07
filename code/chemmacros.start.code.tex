@@ -55,6 +55,35 @@
   {\c_chemmacros_info_tl \c_space_tl (CN)}
 
 % --------------------------------------------------------------------------
+% variants of kernel functions:
+\cs_generate_variant:Nn \tl_if_eq:nnTF {x,xx,V}
+\cs_generate_variant:Nn \tl_replace_once:Nnn {NnV}
+\cs_generate_variant:Nn \tl_tail:n {e}
+
+\cs_generate_variant:Nn \seq_set_split:Nnn {Nnx}
+\cs_generate_variant:Nn \seq_item:Nn {cV,NV}
+\cs_generate_variant:Nn \seq_put_right:Nn {Ne}
+
+\cs_generate_variant:Nn \prop_item:Nn {NV}
+\cs_generate_variant:Nn \prop_gput:Nnn {cxx,NVf}
+
+\cs_generate_variant:Nn \int_to_arabic:n {V}
+
+\cs_generate_variant:Nn \msg_error:nnnnn {nnnx}
+\cs_generate_variant:Nn \msg_error:nnnn {nnnx}
+\cs_generate_variant:Nn \msg_error:nnn {nnV}
+\cs_generate_variant:Nn \msg_warning:nnn {nnV}
+\cs_generate_variant:Nn \msg_warning:nnnn {nnV}
+\cs_generate_variant:Nn \msg_show:nnnn {nnnV}
+
+\cs_generate_variant:Nn \vbox_set:Nn {NV}
+
+\cs_generate_variant:Nn \keys_define:nn {x} 
+\cs_generate_variant:Nn \keys_set:nn {x,nx}
+
+\cs_generate_variant:Nn \str_if_eq:nnF {xx}
+
+% --------------------------------------------------------------------------
 % load-time messages:
 \msg_new:nnn {chemmacros} {load-time-option}
   {
@@ -84,16 +113,11 @@
       { \\ The~ command~ \token_to_str:N #1 is~ deprecated. }
   }
 
-\cs_generate_variant:Nn \msg_warning:nnn { nnV }
-
 \cs_new_protected:Npn \__chemmacros_loadtime_error:n #1
    { \msg_error:nnV {chemmacros} {#1} \l_keys_key_str }
 
 \cs_new_protected:Npn \__chemmacros_loadtime_warning:n #1
    { \msg_warning:nnV {chemmacros} {#1} \l_keys_key_str }
-
-\cs_generate_variant:Nn \msg_error:nnn {nnV}
-\cs_generate_variant:Nn \msg_warning:nnn {nnV}
 
 \clist_new:N \l_chemmacros_modules_clist
 \clist_set:Nn \l_chemmacros_modules_clist
@@ -139,23 +163,6 @@
       \l_chemmacros_modules_clist
       \c_chemmacros_all_modules_clist
   }
-
-% --------------------------------------------------------------------------
-% variants of kernel functions:
-\cs_generate_variant:Nn \tl_if_eq:nnTF       {xx,V}
-\cs_generate_variant:Nn \seq_set_split:Nnn   {Nnx}
-\cs_generate_variant:Nn \prop_item:Nn        {NV}
-\cs_generate_variant:Nn \seq_item:Nn         {cV}
-\cs_generate_variant:Nn \int_to_arabic:n     {V}
-\cs_generate_variant:Nn \tl_replace_once:Nnn {NnV}
-\cs_generate_variant:Nn \tl_tail:n           {e}
-\cs_generate_variant:Nn \prop_gput:Nnn       {cxx,NVf}
-\cs_generate_variant:Nn \msg_error:nnn       {nnV}
-\cs_generate_variant:Nn \msg_warning:nnn     {nnV}
-\cs_generate_variant:Nn \msg_warning:nnnn    {nnV}
-\cs_generate_variant:Nn \vbox_set:Nn         {NV}
-\cs_generate_variant:Nn \keys_define:nn      {x} 
-\cs_generate_variant:Nn \keys_set:nn         {x,nx}
 
 % --------------------------------------------------------------------------
 % temporary variables:
@@ -215,9 +222,6 @@
   }
 
 % ----------------------------------------------------------------------------
-\cs_generate_variant:Nn \str_if_eq:nnF {xx}
-\cs_generate_variant:Nn \msg_error:nnnn {nnnx}
-
 \prg_new_conditional:Npnn \chemmacros_package_if_loaded:n #1 {p,T,F,TF}
   {
     \cs_if_exist:cTF {ver@#1.sty}
@@ -228,7 +232,7 @@
 % ----------------------------------------------------------------------------
 % this is for external file modules called "styles":
 \tl_const:Nn \c__chemmacros_module_extension_tl {code.tex}
-\tl_const:Nn \c__chemmacros_module_prefix_tl    {chemmacros.module}
+\tl_const:Nn \c__chemmacros_module_prefix_tl    {chemmacros}
 
 \tl_new:N \g__chemmacros_modules_loaded_tl
 

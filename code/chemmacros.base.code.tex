@@ -239,7 +239,7 @@
           }
       }
   }
-\cs_generate_variant:Nn \chemmacros_add_cleveref_support:nnnnn {nnnx , nnnxx , nnnnx }
+\cs_generate_variant:Nn \chemmacros_add_cleveref_support:nnnnn {nnnx,nnnxx,nnnnx}
   
 % #1: counter
 % #2: singular
@@ -256,15 +256,15 @@
               {#1}
               {#2}
               {#4}
-              { \tl_titlecase:n {#2} }
-              { \tl_titlecase:n {#4} }
+              { \text_titlecase:n {#2} }
+              { \text_titlecase:n {#4} }
           }
           {
             \chemmacros_add_cleveref_support:nnnnn
               {#1}
               {#2}
               {#4}
-              { \tl_titlecase:n {#2} }
+              { \text_titlecase:n {#2} }
               {#5}
           }
       }
@@ -276,7 +276,7 @@
               {#2}
               {#4}
               {#3}
-              { \tl_titlecase:n {#4} }
+              { \text_titlecase:n {#4} }
           }
           { \chemmacros_add_cleveref_support:nnnnn {#1} {#2} {#4} {#3} {#5} }
       }
@@ -311,7 +311,7 @@
 \NewDocumentCommand \ChemFancyrefSupport {mmo}
   {
     \IfNoValueTF {#3}
-      { \chemmacros_add_fancyref_support:nnn {#1} {#2} { \tl_titlecase:n {#3} } }
+      { \chemmacros_add_fancyref_support:nnn {#1} {#2} { \text_titlecase:n {#3} } }
       { \chemmacros_add_fancyref_support:nnn {#1} {#2} {#3} }
   }
 \@onlypreamble\ChemFancyrefSupport
@@ -321,7 +321,7 @@
 \bool_new:N \l__chemmacros_in_document_bool
 \bool_new:N \l__chemmacros_chemstyle_bool
 
-\hook_gput_code:nnn {begindocument} {top-level}
+\hook_gput_code:nnn {begindocument/after} {chemmacros}
   {
     \bool_set_true:N \l__chemmacros_in_document_bool
     \chemmacros_if_package_loaded:nT {chemstyle}
@@ -368,11 +368,11 @@
 
 \cs_new_protected:Npn \chemmacros_text:n #1
   { \mode_if_math:TF { \text {#1} } {#1} }
-\cs_generate_variant:Nn \chemmacros_text:n { V }
+\cs_generate_variant:Nn \chemmacros_text:n {V}
 
 \cs_new_protected:Npn \chemmacros_math:n #1
   { \chemmacros_text:n { \c_math_toggle_token #1 \c_math_toggle_token } }
-\cs_generate_variant:Nn \chemmacros_math:n { V }
+\cs_generate_variant:Nn \chemmacros_math:n {V}
 
 % --------------------------------------------------------------------------
 % a setup command:

@@ -55,6 +55,35 @@
   {\c_chemmacros_info_tl \c_space_tl (CN)}
 
 % --------------------------------------------------------------------------
+% variants of kernel functions:
+\cs_generate_variant:Nn \tl_if_eq:nnTF {x,xx,V}
+\cs_generate_variant:Nn \tl_replace_once:Nnn {NnV}
+\cs_generate_variant:Nn \tl_tail:n {e}
+
+\cs_generate_variant:Nn \seq_set_split:Nnn {Nnx}
+\cs_generate_variant:Nn \seq_item:Nn {cV,NV}
+\cs_generate_variant:Nn \seq_put_right:Nn {Ne}
+
+\cs_generate_variant:Nn \prop_item:Nn {NV}
+\cs_generate_variant:Nn \prop_gput:Nnn {cxx,NVf}
+
+\cs_generate_variant:Nn \int_to_arabic:n {V}
+
+\cs_generate_variant:Nn \msg_error:nnnnn {nnnx}
+\cs_generate_variant:Nn \msg_error:nnnn {nnnx}
+\cs_generate_variant:Nn \msg_error:nnn {nnV}
+\cs_generate_variant:Nn \msg_warning:nnn {nnV}
+\cs_generate_variant:Nn \msg_warning:nnnn {nnV}
+\cs_generate_variant:Nn \msg_show:nnnn {nnnV}
+
+\cs_generate_variant:Nn \vbox_set:Nn {NV}
+
+\cs_generate_variant:Nn \keys_define:nn {x} 
+\cs_generate_variant:Nn \keys_set:nn {x,nx}
+
+\cs_generate_variant:Nn \str_if_eq:nnF {xx}
+
+% --------------------------------------------------------------------------
 % load-time messages:
 \msg_new:nnn {chemmacros} {load-time-option}
   {
@@ -84,16 +113,11 @@
       { \\ The~ command~ \token_to_str:N #1 is~ deprecated. }
   }
 
-\cs_generate_variant:Nn \msg_warning:nnn { nnV }
-
 \cs_new_protected:Npn \__chemmacros_loadtime_error:n #1
    { \msg_error:nnV {chemmacros} {#1} \l_keys_key_str }
 
 \cs_new_protected:Npn \__chemmacros_loadtime_warning:n #1
    { \msg_warning:nnV {chemmacros} {#1} \l_keys_key_str }
-
-\cs_generate_variant:Nn \msg_error:nnn {nnV}
-\cs_generate_variant:Nn \msg_warning:nnn {nnV}
 
 \clist_new:N \l_chemmacros_modules_clist
 \clist_set:Nn \l_chemmacros_modules_clist
@@ -139,23 +163,6 @@
       \l_chemmacros_modules_clist
       \c_chemmacros_all_modules_clist
   }
-
-% --------------------------------------------------------------------------
-% variants of kernel functions:
-\cs_generate_variant:Nn \tl_if_eq:nnTF       {xx,V}
-\cs_generate_variant:Nn \seq_set_split:Nnn   {Nnx}
-\cs_generate_variant:Nn \prop_item:Nn        {NV}
-\cs_generate_variant:Nn \seq_item:Nn         {cV}
-\cs_generate_variant:Nn \int_to_arabic:n     {V}
-\cs_generate_variant:Nn \tl_replace_once:Nnn {NnV}
-\cs_generate_variant:Nn \tl_tail:n           {e}
-\cs_generate_variant:Nn \prop_gput:Nnn       {cxx,NVf}
-\cs_generate_variant:Nn \msg_error:nnn       {nnV}
-\cs_generate_variant:Nn \msg_warning:nnn     {nnV}
-\cs_generate_variant:Nn \msg_warning:nnnn    {nnV}
-\cs_generate_variant:Nn \vbox_set:Nn         {NV}
-\cs_generate_variant:Nn \keys_define:nn      {x} 
-\cs_generate_variant:Nn \keys_set:nn         {x,nx}
 
 % --------------------------------------------------------------------------
 % temporary variables:
@@ -215,9 +222,6 @@
   }
 
 % ----------------------------------------------------------------------------
-\cs_generate_variant:Nn \str_if_eq:nnF {xx}
-\cs_generate_variant:Nn \msg_error:nnnn {nnnx}
-
 \prg_new_conditional:Npnn \chemmacros_package_if_loaded:n #1 {p,T,F,TF}
   {
     \cs_if_exist:cTF {ver@#1.sty}
@@ -228,7 +232,7 @@
 % ----------------------------------------------------------------------------
 % this is for external file modules called "styles":
 \tl_const:Nn \c__chemmacros_module_extension_tl {code.tex}
-\tl_const:Nn \c__chemmacros_module_prefix_tl    {chemmacros.module}
+\tl_const:Nn \c__chemmacros_module_prefix_tl    {chemmacros}
 
 \tl_new:N \g__chemmacros_modules_loaded_tl
 
@@ -627,7 +631,7 @@
           }
       }
   }
-\cs_generate_variant:Nn \chemmacros_add_cleveref_support:nnnnn {nnnx , nnnxx , nnnnx }
+\cs_generate_variant:Nn \chemmacros_add_cleveref_support:nnnnn {nnnx,nnnxx,nnnnx}
   
 % #1: counter
 % #2: singular
@@ -644,15 +648,15 @@
               {#1}
               {#2}
               {#4}
-              { \tl_titlecase:n {#2} }
-              { \tl_titlecase:n {#4} }
+              { \text_titlecase:n {#2} }
+              { \text_titlecase:n {#4} }
           }
           {
             \chemmacros_add_cleveref_support:nnnnn
               {#1}
               {#2}
               {#4}
-              { \tl_titlecase:n {#2} }
+              { \text_titlecase:n {#2} }
               {#5}
           }
       }
@@ -664,7 +668,7 @@
               {#2}
               {#4}
               {#3}
-              { \tl_titlecase:n {#4} }
+              { \text_titlecase:n {#4} }
           }
           { \chemmacros_add_cleveref_support:nnnnn {#1} {#2} {#4} {#3} {#5} }
       }
@@ -699,7 +703,7 @@
 \NewDocumentCommand \ChemFancyrefSupport {mmo}
   {
     \IfNoValueTF {#3}
-      { \chemmacros_add_fancyref_support:nnn {#1} {#2} { \tl_titlecase:n {#3} } }
+      { \chemmacros_add_fancyref_support:nnn {#1} {#2} { \text_titlecase:n {#3} } }
       { \chemmacros_add_fancyref_support:nnn {#1} {#2} {#3} }
   }
 \@onlypreamble\ChemFancyrefSupport
@@ -709,7 +713,7 @@
 \bool_new:N \l__chemmacros_in_document_bool
 \bool_new:N \l__chemmacros_chemstyle_bool
 
-\hook_gput_code:nnn {begindocument} {top-level}
+\hook_gput_code:nnn {begindocument/after} {chemmacros}
   {
     \bool_set_true:N \l__chemmacros_in_document_bool
     \chemmacros_if_package_loaded:nT {chemstyle}
@@ -756,11 +760,11 @@
 
 \cs_new_protected:Npn \chemmacros_text:n #1
   { \mode_if_math:TF { \text {#1} } {#1} }
-\cs_generate_variant:Nn \chemmacros_text:n { V }
+\cs_generate_variant:Nn \chemmacros_text:n {V}
 
 \cs_new_protected:Npn \chemmacros_math:n #1
   { \chemmacros_text:n { \c_math_toggle_token #1 \c_math_toggle_token } }
-\cs_generate_variant:Nn \chemmacros_math:n { V }
+\cs_generate_variant:Nn \chemmacros_math:n {V}
 
 % --------------------------------------------------------------------------
 % a setup command:
@@ -810,15 +814,11 @@
 \ChemModuleEnd
 \ChemModule{errorcheck}{2020/11/29 error checking for unloaded modules}
 
-\RequirePackage{scrlfile}
-
 \msg_new:nnn {chemmacros} {undefined}
   {
     The~ #1~ `#2'~ is~ undefined.~ You~ need~ to~ load~ the~
     `#3'~ module.
   }
-
-\cs_generate_variant:Nn \msg_error:nnnnn {nnnx}
 
 \cs_new_protected:Npn \chemmacros_requires_module:nNn #1#2#3
   {
@@ -1426,7 +1426,6 @@
       }
       { \prg_return_false: }
   }
-\cs_generate_variant:Nn \tl_if_eq:nnTF {x}
 
 % #1: cs
 % #2: translation id and option name
@@ -1761,10 +1760,8 @@
 \ChemModuleEnd
 \ChemModule{nomenclature}{2020/11/29 chemical names}
 
-\RequirePackage{scrlfile}
-
-\bool_new:N      \l__chemmacros_iupac_restricted_bool
-\bool_new:N      \l__chemmacros_iupac_strict_bool
+\bool_new:N \l__chemmacros_iupac_restricted_bool
+\bool_new:N \l__chemmacros_iupac_strict_bool
 
 \msg_new:nnn {chemmacros} {new-iupac}
   {
@@ -1807,8 +1804,6 @@
 
 \msg_new:nnn {chemmacros} {no-iupac-command}
   { \\ >~ \token_to_str:N #1=not~ defined~ as~ iupac~ macro }
-
-\cs_generate_variant:Nn \msg_show:nnnn {nnnV}
 
 % --------------------------------------------------------------------------
 \prop_new:N \l__chemmacros_iupac_prop
@@ -2502,12 +2497,12 @@
 \cs_new_protected:Npn \chemmacros_tikz_shadedraw:n #1    { \shadedraw[{#1}] }
 \cs_new_protected:Npn \chemmacros_tikz_node_in_draw:n #1 { node[{#1}] }
 
-\cs_generate_variant:Nn \chemmacros_tikz_picture:nn     { xn }
-\cs_generate_variant:Nn \chemmacros_tikz_draw:n         { x }
-\cs_generate_variant:Nn \chemmacros_tikz_node:n         { x }
-\cs_generate_variant:Nn \chemmacros_tikz_shade:n        { x }
-\cs_generate_variant:Nn \chemmacros_tikz_shadedraw:n    { x }
-\cs_generate_variant:Nn \chemmacros_tikz_node_in_draw:n { x }
+\cs_generate_variant:Nn \chemmacros_tikz_picture:nn     {xn}
+\cs_generate_variant:Nn \chemmacros_tikz_draw:n         {x}
+\cs_generate_variant:Nn \chemmacros_tikz_node:n         {x}
+\cs_generate_variant:Nn \chemmacros_tikz_shade:n        {x}
+\cs_generate_variant:Nn \chemmacros_tikz_shadedraw:n    {x}
+\cs_generate_variant:Nn \chemmacros_tikz_node_in_draw:n {x}
 
 % --------------------------------------------------------------------------
 % arrow tips for electron movement
@@ -5579,9 +5574,6 @@
 \cs_generate_variant:Nn \chemnum_init:nn {ne}
 \cs_generate_variant:Nn \chemnum_get_subcompound:nn {nV}
 
-\cs_generate_variant:Nn \seq_item:Nn {NV}
-\cs_generate_variant:Nn \seq_put_right:Nn {Ne}
-
 % --------------------------------------------------------------------------
 \msg_new:nnn {chemmacros} {reactant-name}
   {
@@ -6462,7 +6454,6 @@
       { #1 \l_chemnum_compound_separator_tl #2 }
       {bookmark}
       { \msg_expandable_error:nnn {chemmacros} {reactant-bookmark} {#1.#2} }
-    % TODO: no internal chemnum macros:
     \texorpdfstring
       {
         \__chemmacros_reactants_item:nn
@@ -6505,7 +6496,6 @@
     \chemmacros_if_package_loaded:nF {xltabular} 
     \group_begin:
       \chemmacros_set_keys:nn {reactants} { switch = false }
-      % TODO: no internal chemnum macros:
       \int_step_variable:nNn
         { \seq_count:N \g_chemnum_initiated_compounds_seq }
         \l__chemmacros_reactants_tmpa_tl 
@@ -6513,10 +6503,8 @@
           \seq_put_right:Nx 
             \l__chemmacros_reactants_tmpa_seq
             {
-              % TODO: expl3-command
-              \refcmpd
+              \chemnum_cmpd:nnne { \c_false_bool } { \c_true_bool } {}
                 {
-                  % TODO: no internal chemnum macros:
                   \seq_item:NV
                     \g_chemnum_initiated_compounds_seq
                     \l__chemmacros_reactants_tmpa_tl
@@ -6524,16 +6512,14 @@
               & 
               \bool_if:nT {#1}
                 {
-                  % TODO: no internal chemnum macros:
                   \seq_item:NV
                     \g_chemnum_initiated_compounds_seq
                     \l__chemmacros_reactants_tmpa_tl
                   &
                 }
-              % TODO: expl3-command
+              % TODO: expl3-command ??
               \solvent
                 {
-                  % TODO: no internal chemnum macros:
                   \seq_item:NV
                     \g_chemnum_initiated_compounds_seq
                     \l__chemmacros_reactants_tmpa_tl
@@ -6543,7 +6529,6 @@
           \tl_set:Nx
             \l__chemmacros_reactants_tmpb_tl
             {
-              % TODO: no internal chemnum macros:
               \seq_item:NV
                 \g_chemnum_initiated_compounds_seq
                 \l__chemmacros_reactants_tmpa_tl
@@ -6554,7 +6539,7 @@
         }
       % TODO: longtable ?
       %       table customizable?
-	  % first draft of two styles
+      % first draft of two styles
       \par
       \noindent
       \bool_if:NT \l__chemmacros_reactants_printreactants_style_bool
@@ -6633,11 +6618,10 @@
             \seq_put_right:Nx 
             \l__chemmacros_reactants_tmpa_seq
               {
-                 % TODO: expl3-command, no internal chemnum variables
-                \refcmpd
+                \chemnum_cmpd:nnne { \c_false_bool } { \c_true_bool } {}
                   {
-                    #1
-                    \l_chemnum_compound_separator_tl
+                    \exp_not:n {#1}
+                    \exp_not:V \l_chemnum_compound_separator_tl
                     \chemnum_get_subcompound:nV
                       {#1}
                       \l__chemmacros_reactants_tmpa_tl
@@ -6646,14 +6630,13 @@
                 \bool_if:nT {#2}
                   {
                     #1
-                    % TODO: no internal chemnum variables
                     \l_chemnum_compound_separator_tl
                     \chemnum_get_subcompound:nV
                       {#1}
                       \l__chemmacros_reactants_tmpa_tl
                     &
                   }
-                % TODO: expl3-command, no internal chemnum variables
+                % TODO: expl3-command ??
                 \solvent
                   {
                     #1

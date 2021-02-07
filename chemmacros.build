@@ -21,7 +21,7 @@
 
 pkgname="chemmacros"
 moduleext="code.tex"
-modulename="${pkgname}.module"
+modulename="${pkgname}"
 styname="${pkgname}.sty"
 program="arara --verbose"
 manualfile="$pkgname-manual"

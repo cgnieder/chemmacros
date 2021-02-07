@@ -1,14 +1,10 @@
 \ChemModule{errorcheck}{2020/11/29 error checking for unloaded modules}
 
-\RequirePackage{scrlfile}
-
 \msg_new:nnn {chemmacros} {undefined}
   {
     The~ #1~ `#2'~ is~ undefined.~ You~ need~ to~ load~ the~
     `#3'~ module.
   }
-
-\cs_generate_variant:Nn \msg_error:nnnnn {nnnx}
 
 \cs_new_protected:Npn \chemmacros_requires_module:nNn #1#2#3
   {

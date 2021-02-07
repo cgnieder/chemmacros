@@ -1,9 +1,7 @@
 \ChemModule{nomenclature}{2020/11/29 chemical names}
 
-\RequirePackage{scrlfile}
-
-\bool_new:N      \l__chemmacros_iupac_restricted_bool
-\bool_new:N      \l__chemmacros_iupac_strict_bool
+\bool_new:N \l__chemmacros_iupac_restricted_bool
+\bool_new:N \l__chemmacros_iupac_strict_bool
 
 \msg_new:nnn {chemmacros} {new-iupac}
   {
@@ -46,8 +44,6 @@
 
 \msg_new:nnn {chemmacros} {no-iupac-command}
   { \\ >~ \token_to_str:N #1=not~ defined~ as~ iupac~ macro }
-
-\cs_generate_variant:Nn \msg_show:nnnn {nnnV}
 
 % --------------------------------------------------------------------------
 \prop_new:N \l__chemmacros_iupac_prop
