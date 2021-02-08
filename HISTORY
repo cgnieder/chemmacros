@@ -402,3 +402,4 @@ Version history
                            - use LaTeX's new hook mechanism
                            - get rid of scrlfile dependency
                            - update to l3text
+                           - rename \Torr -> \torr

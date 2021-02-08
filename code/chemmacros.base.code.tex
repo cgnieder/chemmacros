@@ -321,7 +321,7 @@
 \bool_new:N \l__chemmacros_in_document_bool
 \bool_new:N \l__chemmacros_chemstyle_bool
 
-\hook_gput_code:nnn {begindocument/after} {chemmacros}
+\hook_gput_code:nnn {begindocument/before} {chemmacros}
   {
     \bool_set_true:N \l__chemmacros_in_document_bool
     \chemmacros_if_package_loaded:nT {chemstyle}

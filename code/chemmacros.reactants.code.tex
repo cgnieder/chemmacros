@@ -1,5 +1,5 @@
 \ChemModule{reactants}{2020/12/20 typeset reactants and data}
-% idea and main development of this module: Leandriis
+% idea and main development of this module: Sonja K.
 
 \RequirePackage {chemnum}
 
@@ -110,8 +110,8 @@
     initiate .bool_set:N = \l__chemmacros_reactants_initiate_bool ,
     initiate .initial:n  = false ,
     %%
-    noequivalents .bool_set:N = \l__chemmacros_reactants_noequivalents_bool ,
-    noequivalents .initial:n  = false ,
+    equivalents .bool_set_inverse:N = \l__chemmacros_reactants_noequivalents_bool ,
+    equivalents .initial:n  = true,
     %%
     reactant-output-style .choice: , 
     reactant-output-style / name-main-other .code:n =
@@ -126,7 +126,6 @@
       \bool_set_false:N \l__chemmacros_reactants_nmo_bool
       \bool_set_false:N \l__chemmacros_reactants_mno_bool
       \bool_set_true:N \l__chemmacros_reactants_mon_bool ,
-    % reactant-output-style .default:n  = name-main-other ,
     reactant-output-style .initial:n  = name-main-other ,
     %%
     solvent-output-style .choice: ,
@@ -137,7 +136,6 @@
         \bool_set_true:N \l__chemmacros_reactants_snm_bool
         \bool_set_false:N \l__chemmacros_reactants_smn_bool
       } ,
-    % solvent-output-style .default:n  = main-name , 
     solvent-output-style .initial:n  = main-name ,
     %%
     main .choice: , 
@@ -162,7 +160,7 @@
       \bool_set_false:N \l__chemmacros_reactants_acronym_support_bool
       \str_clear:N \l__chemmacros_reactants_acronym_support_str ,
     acronym-support .initial:n  = none ,
-	  printreactants-style .choice: , 
+    printreactants-style .choice: , 
     printreactants-style / xltabular .code:n =
       \bool_set_true:N \l__chemmacros_reactants_printreactants_style_bool
       \str_set:Nn \l__chemmacros_reactants_printreactants_style_str {xltabular}

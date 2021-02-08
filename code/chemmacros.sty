@@ -366,11 +366,8 @@
 % #2: description
 \cs_new_protected:Npn \ChemModule #1#2
   {
-    \tl_map_inline:Nn \g__chemmacros_module_stop_tl
-      {
-        \str_if_eq:nnT {##1} {#1}
-          { \tl_map_break:n { \__chemmacros_gobble_module:w } }
-      }
+    \str_if_in:NnT \g__chemmacros_module_stop_tl {{#1}}
+      { \__chemmacros_gobble_module:w }
     \msg_log:nnnn {chemmacros} {loading-module} {#1} {#2}
     \msg_term:nnnn {chemmacros} {loading-module} {#1} {#2}
     \tl_gput_right:Nn \g__chemmacros_modules_loaded_tl {{#1}}
@@ -713,7 +710,7 @@
 \bool_new:N \l__chemmacros_in_document_bool
 \bool_new:N \l__chemmacros_chemstyle_bool
 
-\hook_gput_code:nnn {begindocument/after} {chemmacros}
+\hook_gput_code:nnn {begindocument/before} {chemmacros}
   {
     \bool_set_true:N \l__chemmacros_in_document_bool
     \chemmacros_if_package_loaded:nT {chemstyle}
@@ -1930,16 +1927,17 @@
 % --------------------------------------------------------------------------
 \chemmacros_define_keys:nn {nomenclature}
   {
-    iupac              .choice: ,
-    iupac / restricted .code:n     =
+    iupac .choice: ,
+    iupac / restricted .code:n =
       \bool_set_true:N \l__chemmacros_iupac_restricted_bool
       \bool_set_false:N \l__chemmacros_iupac_strict_bool ,
-    iupac / auto       .code:n     =
+    iupac / auto .code:n =
       \bool_set_false:N \l__chemmacros_iupac_restricted_bool
       \bool_set_false:N \l__chemmacros_iupac_strict_bool ,
-    iupac / strict     .code:n     =
+    iupac / strict .code:n =
       \bool_set_false:N \l__chemmacros_iupac_restricted_bool
       \bool_set_true:N \l__chemmacros_iupac_strict_bool ,
+    iupac .initial:n = auto
   }
 
 % --------------------------------------------------------------------------
@@ -5566,7 +5564,7 @@
 % --------------------------------------------------------------------------
 \ChemModuleEnd
 \ChemModule{reactants}{2020/12/20 typeset reactants and data}
-% idea and main development of this module: Leandriis
+% idea and main development of this module: Sonja K.
 
 \RequirePackage {chemnum}
 

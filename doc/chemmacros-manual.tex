@@ -31,49 +31,50 @@
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
 \documentclass{chemmacros-manual}
+\usepackage[T1]{fontenc}
 
 \DeclareAcronym{ghs}{
   short     = ghs ,
   long      = Globally Harmonized System of Classification and Labelling of
     Chemicals ,
   pdfstring = GHS ,
-  accsupp   = GHS
+  short-acc = GHS
 }
 \DeclareAcronym{eu}{
-  short     = EU ,
+  short     = eu ,
   long      = European Union ,
   pdfstring = EU ,
-  accsupp   = EU
+  short-acc = EU
 }
 \DeclareAcronym{iupac}{
   short     = iupac ,
   long      = International Union of Pure and Applied Chemistry ,
   pdfstring = IUPAC ,
-  accsupp   = IUPAC
+  short-acc = IUPAC
 }
 \DeclareAcronym{UN}{
   short     = un ,
   long      = United Nations ,
   pdfstring = UN ,
-  accsupp   = UN
+  short-acc = UN
 }
 \DeclareAcronym{dvi}{
   short     = dvi ,
   long      = device independent file format ,
   pdfstring = DVI ,
-  accsupp   = DVO
+  short-acc = DVI
 }
 \DeclareAcronym{pdf}{
   short     = pdf ,
   long      = portable document file ,
   pdfstring = PDF ,
-  accsupp   = PDF
+  short-acc = PDF
 }
 \DeclareAcronym{id}{
   short     = id ,
   long      = identification string ,
   pdfstring = ID ,
-  accsupp   = ID
+  short-acc = ID
 }
 
 \chemsetup{
@@ -203,20 +204,15 @@
 }
 \providecommand*\XyMTeX{\XyM\kern-.1em\TeX}
 
-% \NewChemPhase{\aqi}{aq,$\infty$}% aqueous solution at infinite dilution
-% \NewChemPhase{\cd}{cd}% condensed phase
-% \NewChemPhase{\lc}{lc}% liquid crystal
-
 \newname\hensel{Martin Hensel}
 \newname\pedersen{Bj\o rn Pedersen}
+\newname\leandriis{Sonja K.}
 
 \newcommand*\iupaccs[3][]{%
   \command{#2}[\quad\iupac{\csuse{#2}}]
     #3\ifblank{#1}{}{\ifblank{#3}{}{ }An alias for this command is \cs{#1}.}%
 }
 
-% \undef\module
-% \undef\moduleidx
 \newidxcmd\chemmodule{\code{#1}}[ (module)]
 \newidxcmd\tikzdecoration{\code{#1}}[ (\TikZ\ decoration)]
 \AtEndPreamble{%
@@ -230,8 +226,6 @@
 \def\cnltx@bash@listings@style{
   language         = bash,
   basicstyle       = {\sourceformat\color{black}},
-  % numbers          = left,
-  % numberstyle      = \tiny,
   xleftmargin      = 1em,
   numbersep        = .75em,
   gobble           = \cnltx@gobble ,
@@ -319,13 +313,8 @@
 \begin{document}
 
 \part{Preliminaries}
-\section{Licence, Requirements and \textsc{README}}\label{sec:licence-requ-readme}
+\section{Licence}\label{sec:licence-requ-readme}
 \license
-
-\chemmacros\ loads the packages \pkg{expl3}~\cite{bnd:l3kernel} and
-\pkg{xparse}~\cite{bnd:l3packages}.  Depending on your usage other packages
-will be loaded.  They are mentioned when the corresponding module using the
-package is described.
 
 \section{Motivation and Background}\label{sec:motiv-backgr}
 This package grew from a small collection of personal helper macros back
@@ -366,44 +355,34 @@ will also allow for easy and quick extension in the future.  In a way it is a
 logical consequence from \chemmacros' history: since version~2.0, \ie, since
 the fall of~2011 \chemmacros\ already had modular options.
 
-The different modules of \chemmacros\ are divided into two groups:
+Since version~6.0 the different modules of \chemmacros\ are divided into three
+groups:
 \begin{enumerate}
-  \item Internal modules which provide underlying functionality or basic
+  \item Core modules which provide underlying functionality or basic
     functionality which is not of direct interest from a user perspective but
     might be if you plan to write a module yourself (see
     section~\ref{sec:own-modules} for details).
-  \item User modules which provide all the stuff for typesetting.
+  \item Main modules which provide all the stuff for typesetting and which are
+    always loaded.
+  \item Additional modules which are also loaded in the default setup. They
+    are not loaded if \chemmacros\ is loaded with the minimal setup:
+    \cs*{usepackage}\Oarg{minimal}\Marg{chemmacros}.
 \end{enumerate}
-Both groups each are subdivided into two groups: preloaded modules and modules
-which have to be loaded by the programmer (internal modules) or by the
-document author (user modules).  Those modules are described in
-parts~\ref{part:preloaded-modules} (preloaded modules)
-and~\ref{part:additional-modules} (additional modules) of this manual.
 
-The above means that not all functionality is available per default.  If you
-want to load \emph{all} modules no matter what then you can say:
-\begin{sourcecode}
-  \usechemmodule{all}
-\end{sourcecode}
-or
-\begin{sourcecode}
-  \chemsetup{modules=all}
-\end{sourcecode}
-which will load all modules which are part of \chemmacros\ (also see
-section~\vref{sec:all-module}). Own modules (see
-section~\vref{sec:own-modules}) are \emph{not} loaded through this, though,
-and still have to be loaded additionally.
 
-In part~\vref{part:preloaded-modules} the preloaded modules are described,
-first the user modules then the internal ones, in
-part~\vref{part:additional-modules} the other available modules are described,
-again the user modules first.  In each section the modules are described in
-an alphabetical order.
-
-\subsection{Using \chemmacros' Options}\label{sec:using-chemm-opti}
+\subsection{\chemmacros' Options}\label{sec:using-chemm-opti}
 Prior to v5.0 \chemmacros\ had quite a number of package options.
-\chemmacros\ v5.0 or higher has none!  All of \chemmacros' options are set
-using the command
+\chemmacros\ v6.0 has only two:
+\begin{options}
+  \keybool{minimal}\Default{false}
+    Loads \chemmacros\ with the basic preset of modules.
+  \keyval{modules}{comma separated list of module names}\Default
+    When \option{minimal} is used this option allows to load additional
+    modules.
+\end{options}
+These are load-time option that only can be used in the optional argument of
+\cs*{usepackage}. \emph{All} other of \chemmacros' options are set using the
+command
 \begin{commands}
   \command{chemsetup}[\oarg{module}\marg{option list}]
     \chemmacros' setup command.
@@ -447,6 +426,19 @@ set in two ways:
 The second way allows to set options belonging to different modules with one
 call of \cs{chemsetup}.
 
+\chemmacros\ has some core options which don't belong to any of the modules
+described in parts~\ref{part:main-modules} and~\ref{part:additional-modules}.
+Those options have no module denoted in the left margin next to their
+descriptions and are also set without specifying a module:
+\begin{sourcecode}
+  \chemsetup{
+    option1 = value ,
+    option2 = value
+  }
+\end{sourcecode}
+Some internal modules may also define core options, \eg, the \chemmodule{lang}
+module, see section~\vref{sec:lang-module}.
+
 \subsection{Support Package \chemformula}
 \chemformula\ provides means of typesetting chemical formulas and reactions.
 You will see its macros \cs{ch} and \cs{chcpd} every now and then in this
@@ -454,206 +446,34 @@ manual.  When using \chemmacros\ you can consider the \chemformula\
 package~\cite{pkg:chemformula} to be loaded as \chemmacros\ makes use of it in
 various places.  \chemmacros\ and \chemformula\ are tightly intertwined.
 Nevertheless you should be able to use the \pkg{mhchem}~\cite{pkg:mhchem}
-package with \chemmacros. Please see section~\vref{sec:using-mhchem} for
-details and \latin{caveat}s.  \emph{The recommendation is to use
-  \chemformula.}
+package with \chemmacros\ without problems. Please see
+section~\vref{sec:using-mhchem} for details and \latin{caveat}s.  \emph{The
+  recommendation is to use \chemformula.}
 
 A historical note: \chemformula\ started as a part of \chemmacros\ in
 January~2012.  Since July~2013 it is a completely independent package -- from
 \chemformula's point of view.  It is maintained independently and has a manual
 of its own.
 
-\subsection{Upgrading from version $<5.0$}
-People upgrading from versions $<5.0$ will find that almost everything they
-know from earlier versions is the same in versions $\geq5.0$.  But there are
+\subsection{Upgrading from version $5.x$}
+People upgrading from versions $<6.0$ will find that almost everything they
+know from earlier versions is the same in versions $6.x$.  But there are
 important and \emph{breaking} differences:
 \begin{itemize}
-  \item \chemmacros\ has no package options any more, all options are set via
-    \cs{chemsetup}, also see section~\vref{sec:using-chemm-opti}.
-  \item Not all of the features are available per default any more, for some
-    the corresponding module has to be loaded explicitly, see
-    section~\ref{sec:general-options}.  If suddenly some commands or
-    environments seem to be undefined this is the most likely reason.
-  \item Some option modules have been renamed (\eg, \module*{iupac} is now
-    \module{nomenclature}).  If you experience strange errors when you upgrade
-    your document this is the most likely source.
-  \item The command family \cs*{NewChem\ldots}, \cs*{RenewChem\ldots} and
-    \cs*{DeclareChem\ldots} has a new member \cs*{ProvideChem\ldots}.
-  \item In \cs{iupac} the macro \cs*{-} no longer gives a dash with breaking
-    point.  Instead \sym*{-} can be used directly\footnote{\cs*{-} is provided
-      up to and including v5.2 but is dropped in higher versions.}.
-  \item The macro \cs{ox} has another default behaviour (\keyis{pos}{super})
-    and the starred version has another effect (\keyis{pos}{top}) than the
-    same macro in earlier versions.  Now the default behaviour follows
-    \acs{iupac} recommendations.  A second change is that the atom is now
-    treated as a \chemformula\ input (this depends on the setting of the
-    \option{formula} option, see~\vref{sec:chemformula-module}).
-  \item The syntax of \cs{NewChemReaction} and friends is now different from
-    what it used to be.  If you have defined your own reaction environments
-    you need to adapt!
-  \item \chemmacros\ offers a macro \cs{state} which is similar to but
-    different from the earlier macro \cs*{State}.  \cs*{State} is deprecated.
-    There are also differences in the syntax of \cs{enthalpy} \vs\ the earlier
-    \cs*{Enthalpy}, \cs{entropy} \vs\ \cs*{Entropy} and \cs{gibbs} \vs\
-    \cs*{Gibbs}.  The uppercase versions are deprecated. The  macro
-    \cs{NewChemState} also has a different syntax now.
-  \item At various places in the code improvements and fixes have been made,
-    too many to list them here.  You should keep an open eye and first of all
-    read the manual closely.
+  \item The compatibility mode and all its commands has been dropped.
+  \item The option \option{modules} now is a load-time option and cannot be
+    set through \cs{chemsetup} any more.  The command \cs{usechemmodule} has
+    been dropped.
+  \item Per default \emph{all} modules are now loaded.
+  \item A new module \module{reactants} has been added, thanks to \leandriis.
 \end{itemize}
 
-\subsection{Compatibility Mode}
+\part{Main Modules}\label{part:main-modules}
 
-\subsubsection{For Users}
-It is actually not true that \chemmacros' has no package options any more.  It
-has one very important package option:
-\begin{options}
-  \keychoice{compatibility}{\meta{version},newest,latest}\Default{\chemmacrosversion}
-    Let's you specify the version of \chemmacros\ you want to use.  Any
-    version earlier than 5.0 will load v4.7. \ie, the last version before
-    \chemmacros\ got its modular structure\footnote{Mostly: the loaded v4.7
-      has got a few fixes}.  Not using the option will always load the newest
-    version.
+The modules described in this part are always loaded by \chemmacros, even in
+the minimal setup.
 
-    Both values \code{newest} and \code{latest} will choose the latest version
-    available.
-\end{options}
-
-In your document you can check for the compatibility mode.  For the following
-functions it is important to understand the rules: \emph{greater} means
-\emph{newer}.  The version number is \emph{not} a usual decimal number!  The
-syntax for \meta{version} is \meta{major}\code{.}\meta{minor}\meta{optional
-  subrelease}.  This means that a version~5.11 is \emph{newer} than a
-version~5.7!  In the same way \emph{less} means \emph{older}.  As last
-example: 5.10~is \emph{newer} (greater) than~5.1.  \meta{optional subrelease}
-is a lowercase letter which might or might not be present in a version number.
-Version~5.7b is newer than~5.7a which in turn is newer than~5.7.
-\begin{commands}
-  \expandable\command{IfChemCompatibilityTF}[\marg{comp}\marg{version}%
-  \marg{true}\marg{false}]
-    Checks the value given through the option \option{compatibility} against
-    \meta{version} using \meta{comp} and either leaves \meta{true} or
-    \meta{false} in the input stream. \meta{comp} can be one of \code{<},
-    \code{<=}, \code{=}, \code{>=} or \code{>}.
-  \expandable\command{IfChemCompatibilityT}[\marg{comp}\marg{version}\marg{true}]
-    Checks the value given through the option \option{compatibility} against
-    \meta{version} using \meta{comp} and leaves \meta{true} in the input
-    stream if the check is logically true.  \meta{comp} can be one of
-    \code{<}, \code{<=}, \code{=}, \code{>=} or \code{>}.
-  \expandable\command{IfChemCompatibilityF}[\marg{comp}\marg{version}\marg{false}]
-    Checks the value given through the option \option{compatibility} against
-    \meta{version} using \meta{comp} and leaves \meta{false} in the input
-    stream if the check is logically false.  \meta{comp} can be one of
-    \code{<}, \code{<=}, \code{=}, \code{>=} or \code{>}.
-\end{commands}
-
-A possible usage:
-\begin{sourcecode}
-  \IfChemCompatibilityT{>=}{5.0}{\usechemmodule{all}}
-\end{sourcecode}
-
-Loading \chemmacros\ with \keyis{compatibility}{4.7} also allows to use the
-package options from that version:
-\begin{sourcecode}
-  \usepackage[compatibility=4.7,language=german]{chemmacros}
-\end{sourcecode}
-
-\subsubsection{For Module Writers}
-For future versions the aim is not to make such breaking changes again.  While
-we never know what the future actually will bring \chemmacros\ now has the
-tools for tying code to a version number:
-\begin{commands}
-  \expandable\explcommand{chemmacros_if_compatibility:nn}[\TF\ \marg{comp}
-  \marg{version} \marg{true} \marg{false}]
-    expl3 version of \cs{IfChemCompatibilityTF}.
-\end{commands}
-
-In modules one can try adding code for a certain version or range of versions:
-\begin{commands}
-  \command{ChemCompatibility}[\marg{version} \meta{code} \cs{EndChemCompatibility}]
-    Leaves \meta{code} in the input stream if the compatibility version $x$
-    given by \option{compatibility} matches \meta{version}
-    ($x=\text{\meta{version}}$).
-  \command{ChemCompatibilityFrom}[\marg{version} \meta{code} \cs{EndChemCompatibility}]
-    Leaves \meta{code} in the input stream if the compatibility version $x$
-    given by \option{compatibility} matches \meta{version} or newer.  This
-    means \meta{version} is the \emph{oldest} version allowed
-    ($x\geq\text{\meta{version}}$).
-  \command{ChemCompatibilityTo}[\marg{version} \meta{code} \cs{EndChemCompatibility}]
-    \changedversion{5.8a}Leaves \meta{code} in the input stream if the
-    compatibility version $x$ given by \option{compatibility} matches any
-    version up to and \emph{excluding} \meta{version}. This means
-    \meta{version} is the \emph{oldest} version \emph{not} allowed
-    ($x<\text{\meta{version}}$).
-  \command{ChemCompatibilityBetween}[\marg{version 1}\marg{version 2} \meta{code}
-  \cs{EndChemCompatibility}]
-    \changedversion{5.8a}Leaves \meta{code} in the input stream if the
-    compatibility version $x$ given by \option{compatibility} lies between and
-    \emph{including} \meta{version 1} up to and \emph{excluding} \meta{version 2}
-    ($\text{\meta{version 1}}\leq x<\text{\meta{version 2}}$).
-  \command{EndChemCompatibility}
-    This macro \emph{must} end each of the \cs*{ChemCompatibility\ldots}
-    macros.
-\end{commands}
-
-You may refer to the current version of \chemmacros\ with the following
-tokenlists:
-\begin{commands}
-  \explcommand{c_chemmacros_date_tl}
-    The current release date: \enquote{\csname
-      c_chemmacros_date_tl\endcsname}.
-  \explcommand{c_chemmacros_version_major_number_tl}
-    The current major version: \enquote{\csname
-    c_chemmacros_version_major_number_tl\endcsname}.
-  \explcommand{c_chemmacros_version_minor_number_tl}
-    The current minor version: \enquote{\csname
-    c_chemmacros_version_minor_number_tl\endcsname}.
-  \explcommand{c_chemmacros_version_number_tl}
-    The current version number: \enquote{\csname
-    c_chemmacros_version_number_tl\endcsname}.
-  \explcommand{c_chemmacros_version_subrelease_tl}
-    The current sub-release: \enquote{\csname
-    c_chemmacros_version_subrelease_tl\endcsname}.
-  \explcommand{c_chemmacros_version_tl}
-    The current version: \enquote{\csname c_chemmacros_version_tl\endcsname}.
-  \explcommand{c_chemmacros_info_tl}
-    The package information: \enquote{\csname
-      c_chemmacros_info_tl\endcsname}.
-\end{commands}
-
-\section{General Options}\label{sec:general-options}
-
-\chemmacros\ has some core options which don't belong to any of the modules
-described in parts~\ref{part:preloaded-modules}
-and~\ref{part:additional-modules}.  Those options have no module denoted in
-the left margin next to their descriptions and are also set without specifying
-a module:
-\begin{sourcecode}
-  \chemsetup{
-    option1 = value ,
-    option2 = value
-  }
-\end{sourcecode}
-
-Two of those options are explained now:
-\begin{options}
-  \keyval{modules}{comma separated list of module names}\Default
-    With this option you can specify which modules you want to load.
-    Alternatively you can use \cs{usechemmodule}\marg{comma separated list of
-      module names}.
-  \keyval{greek}{mapping}\Default
-    Explicitly specify which mapping should be used by the \chemgreek\
-    package~\cite{pkg:chemgreek}.  For details about what this means please
-    refer to section~\vref{sec:greek-module}.
-\end{options}
-
-Some internal modules may also define core options, \eg, the \chemmodule{lang}
-module, see section~\vref{sec:lang-module}.
-
-\part{The Preloaded Modules}\label{part:preloaded-modules}
-
-\section{User Modules}
-\subsection{The \chemmodule*{acid-base} Module}\label{sec:acid-base-module}
+\section{The \chemmodule*{acid-base} Module}\label{sec:acid-base-module}
 
 Easy representation of \pH, \pKa \ldots
 \begin{commands}
@@ -737,11 +557,11 @@ This is how \cs{Ka} is defined:
   \NewChemEqConstant\Ka{K-acid}{\mathrm{a}}
 \end{sourcecode}
 
-\subsection{The \chemmodule*{charges} Module}\label{sec:charges-module}
+\section{The \chemmodule*{charges} Module}\label{sec:charges-module}
 
 The \chemmodule{charges} module loads the module \chemmodule{chemformula}.
 
-\subsubsection{Charge Symbols}
+\subsection{Charge Symbols}
 \begin{commands}
   \command{fplus} \fplus\ formal positive charge
   \command{fminus} \fminus\ formal negative charge
@@ -759,7 +579,7 @@ The \chemmodule{charges} module loads the module \chemmodule{chemformula}.
     usage in \pkg{chemfig}'s formulas).
 \end{commands}
 
-\subsubsection{Ion Charges}\label{sec:ion-charges}
+\subsection{Ion Charges}\label{sec:ion-charges}
 Simple displaying of (real) charges.  It is worth noting that these commands
 really are relicts from a time when \chemmacros\ tried hard to be compliant
 with \pkg{mhchem} and \chemformula\ didn't exist, yet.  \textbf{They are still
@@ -780,7 +600,7 @@ with \pkg{mhchem} and \chemformula\ didn't exist, yet.  \textbf{They are still
   A\pch\ B\mch[3] C\fpch[2] D\fmch
 \end{example}
 
-\subsubsection{Partial Charges and Similar Stuff}\label{sec:part-charg-simil}
+\subsection{Partial Charges and Similar Stuff}\label{sec:part-charg-simil}
 
 The next ones probably are seldomly needed but nevertheless useful:
 \begin{commands}
@@ -802,7 +622,7 @@ section~\vref{sec:redox-module}) or with the \pkg{chemfig} package:
   \chemfig{\chemabove[3pt]{\lewis{246,Br}}{\delm}-\chemabove[3pt]{H}{\delp}}
 \end{example}
 
-\subsubsection{Charge Options}
+\subsection{Charge Options}
 
 \begin{options}
   \keychoice{circled}{formal,\default{all},none}\Module{charges}\Default{formal}
@@ -819,7 +639,7 @@ section~\vref{sec:redox-module}) or with the \pkg{chemfig} package:
     section~\ref{sec:own-charge-macros}).
 \end{options}
 
-\subsubsection{Own Charge Macros}\label{sec:own-charge-macros}
+\subsection{Own Charge Macros}\label{sec:own-charge-macros}
 Just in case the existing macros don't fit you needs there are commands for
 defining new ones or modifying the existing ones.  These commands define
 macros like those described in section~\vref{sec:ion-charges}.
@@ -862,13 +682,13 @@ An example of usage is the definition of the existing partial charge macros:
   \NewChemPartialCharge\fdelm{\fminus}
 \end{sourcecode}
 
-\subsection{The \chemmodule*{nomenclature} Module}\label{sec:nomenclature-module}
+\section{The \chemmodule*{nomenclature} Module}\label{sec:nomenclature-module}
 
 The \chemmodule{nomenclature} module loads the \chemmodule{tikz} module.  It
 also loads the package \pkg{scrlfile} which is part of the
 \KOMAScript\ bundle~\cite{bnd:koma-script}.
 
-\subsubsection{The \cs*{iupac} Command}
+\subsection{The \cs*{iupac} Command}
 
 Similar to the \pkg{bpchem} package~\cite{pkg:bpchem} \chemmacros\ provides a
 command\footnote{The idea and initial implementation is shamelessly borrowed
@@ -980,9 +800,9 @@ Table~\vref{tab:iupac_modes} demonstrates the different modes.
   \end{tabular}
 \end{table}
 
-\subsubsection{Macros Defined (Not Only) For Usage in \cs*{iupac}}
+\subsection{Macros Defined (Not Only) For Usage in \cs*{iupac}}
 
-\paragraph{One-letter Macros}\label{sec:one-letter-commands}
+\subsection{One-letter Macros}\label{sec:one-letter-commands}
 For some of the macros explained in this section one-letter commands are
 defined -- with a \latin{caveat} in mind, though: they are not actively
 recommended.  One-letter commands seldomly have meaningful names and often
@@ -994,7 +814,7 @@ the command \cs{p} (for things like \pH) which is and will remain an official
 command (see section~\vref{sec:acid-base-module}).  For all other one-letter
 macros alternatives with more meaningful names exist.
 
-\paragraph{Greek Letters}\label{par:greek_letters}
+\subsection{Greek Letters}\label{par:greek_letters}
 
 Greek letters in compound names are typeset upright.  Here are a few examples
 for the existing macros:
@@ -1041,7 +861,7 @@ to use which use above mentioned commands to print Greek letters inside
     -chloro|poly(1,4-phenylene|methylene)}
 \end{example}
 
-\paragraph{Hetero Atoms and added Hydrogen}
+\subsection{Hetero Atoms and added Hydrogen}
 
 Attachments to hetero atoms and added hydrogen atoms are indicated by italic
 letters~\cite{iupac:greenbook}.  \chemmacros\ defines a few macros for the
@@ -1061,7 +881,7 @@ most common ones.
   \iupac{\oxygen-ethyl hexanethioate}
 \end{example}
 
-\paragraph{Cahn-Ingold-Prelog}\label{par:cip}
+\subsection{Cahn-Ingold-Prelog}\label{par:cip}
 \begin{commands}
   \command{cip}[\marg{conf}]
     Typeset Cahn-Ingol-Prelog descriptors, \eg: \cs{cip}\Marg{R,S}
@@ -1091,13 +911,13 @@ further:
     additive to the outer format and is applied to arabic figures only.
 \end{options}
 
-\paragraph{Fischer}
+\subsection{Fischer}
 \begin{commands}
   \iupaccs[D]{dexter}{The dexter descriptor.}
   \iupaccs[L]{laevus}{The laevus descriptor.}
 \end{commands}
 
-\paragraph{cis/trans, zusammen/entgegen, syn/anti \& tert}
+\subsection{cis/trans, zusammen/entgegen, syn/anti \& tert}
 \begin{itemize}
   \item \cs{cis}   \iupac{\cis} \quad \cs{trans} \iupac{\trans}
   \item \cs{fac}   \iupac{\fac} \quad \cs{mer}   \iupac{\mer}
@@ -1109,7 +929,7 @@ further:
 An alias for \cs{entgegen} is \cs{E} and an alias for \cs{zusammen} is
 \cs{Z}.
 
-\paragraph{ortho/meta/para}
+\subsection{ortho/meta/para}
 \begin{center}
     \cs{ortho} \iupac{\ortho} \quad
     \cs{meta}  \iupac{\meta} \quad
@@ -1127,7 +947,7 @@ Although these commands are provided I like to cite
   names.
 \end{cnltxquote}
 
-\paragraph{Absolute Configuration}
+\subsection{Absolute Configuration}
 \begin{commands}
   \command{Rconf}[\oarg{letter}]
     \cs{Rconf}: \Rconf \quad \cs{Rconf}\oarg{}: \Rconf[]
@@ -1135,7 +955,7 @@ Although these commands are provided I like to cite
     \cs{Sconf}: \Sconf \quad \cs{Sconf}\oarg{}: \Sconf[]
 \end{commands}
 
-\paragraph{Coordination Chemistry}
+\subsection{Coordination Chemistry}
 
 \chemmacros\ provides a few commands useful in coordination chemistry:
 \begin{commands}
@@ -1163,7 +983,7 @@ Two options allow customization:
 The default behaviour\sinceversion{5.8} of \cs{hapto} and \cs{dento} has
 changed with version~5.8 to follow \ac{iupac} recommendations.
 
-\paragraph{Examples}
+\subsection{Examples}
 \begin{example}
   \iupac{\dexter-Wein|s\"aure} =
   \iupac{\cip{2S,3S}-Wein|s\"aure} \par
@@ -1176,7 +996,7 @@ changed with version~5.8 to follow \ac{iupac} recommendations.
   \iupac{1,3-Di|methyl|benzene}
 \end{example}
 
-\subsubsection{Own \cs*{iupac} Macros And Shorthands}
+\subsection{Own \cs*{iupac} Macros And Shorthands}
 
 If you find any commands missing you can define them using
 \begin{commands}
@@ -1236,7 +1056,7 @@ existing ones:
     Deletes an existing \ac{iupac} shorthand.
 \end{commands}
 
-\subsubsection{Latin Phrases}
+\subsection{Latin Phrases}
 
 \chemmacros\ provides a command for typesetting latin phrases:
 \begin{commands}
@@ -1272,12 +1092,12 @@ You can change the appearance with this option:
     \changedversion{5.7}Sets the format for the latin phrases.
 \end{options}
 
-\subsection{The \chemmodule*{particles} Module}\label{sec:particles-module}
+\section{The \chemmodule*{particles} Module}\label{sec:particles-module}
 
 The \chemmodule{particles} module loads the modules \chemmodule{charges} and
 \chemmodule{chemformula}.
 
-\subsubsection{Provided Particle Macros}
+\subsection{Provided Particle Macros}
 The \chemmodule{particles} defines a number of macros which can be used for
 typesetting common particles in the running text.  Most of them don't make
 much sense in \pkg{chemformula}~\cite{pkg:chemformula}'s \cs{ch}, though,
@@ -1308,7 +1128,7 @@ Both options can of course also be set with \cs{chemsetup}.
   \ba\ \Nuc
 \end{example}
 
-\subsubsection{Defining Own Particle Macros}\label{sec:defin-own-part}
+\subsection{Defining Own Particle Macros}\label{sec:defin-own-part}
 
 There are two sets of macros, one for defining particles and one for defining
 nucleophiles.
@@ -1372,11 +1192,11 @@ An example of usage is the definition of the existing nucleophile macros:
 A macro defined this way will have an optional argument for the
 \option{elpair} option.
 
-\subsection{The \chemmodule*{phases} Module}\label{sec:phases-module}
+\section{The \chemmodule*{phases} Module}\label{sec:phases-module}
 
 The \chemmodule{phases} module loads the \chemmodule{chemformula} modul.
 
-\subsubsection{Basics}
+\subsection{Basics}
 
 These commands are intended to indicate the phase of a compound.
 \begin{center}
@@ -1423,7 +1243,7 @@ There is also a generic phase command:
     denote a phase for which there is no phase command, yet.
 \end{commands}
 
-\subsubsection{Define Own Phases}
+\subsection{Define Own Phases}
 Depending on the subject of your document you might need to indicate other
 states of aggregation.  You can easily define them.
 \begin{commands}
@@ -1455,7 +1275,7 @@ states of aggregation.  You can easily define them.
   \ch{NaOH\aqi} \ch{H2O\cd} \ch{U\phase{cr}} \ch{A\lc}
 \end{example}
 
-\subsubsection{Language Dependencies}\label{sec:lang-depend}
+\subsection{Language Dependencies}\label{sec:lang-depend}
 For each phase command a translation into the custom language can be defined.
 If a phase is declared with \cs{NewChemPhase} no translation exists and
 for every \pkg{babel} language the literal string is used that was provided
@@ -1476,7 +1296,7 @@ phase command you defined without leading backslash.
 See section~\vref{sec:lang-module} for predefined translations and general
 language options of \chemmacros.
 
-\subsection{The \chemmodule*{symbols} Module}\label{sec:symbols-module}
+\section{The \chemmodule*{symbols} Module}\label{sec:symbols-module}
 
 The \chemmodule{symbols} module defines a few symbols chemists need now and
 then.  It loads the package \pkg{amstext}~\cite{pkg:amstext}.
@@ -1489,8 +1309,1648 @@ then.  It loads the package \pkg{amstext}~\cite{pkg:amstext}.
     The uppercase delta used in \state[superscript=]{H} for example.
 \end{commands}
 
-\section{Internal Modules}
-\subsection{The \chemmodule*{base} Module}\label{sec:base-module}
+\section{The \chemmodule*{chemformula} Module}\label{sec:chemformula-module}
+
+The \chemmodule{chemformula} module loads the \pkg{amstext}
+package~\cite{pkg:amstext} and the \chemmodule{charges} module.
+
+\subsection{For Users}
+There are different packages which provide means for typesetting chemical
+formulas:
+\begin{itemize}
+  \item \pkg{chemformula}~\cite{pkg:chemformula}.  This is probably well known
+    to users of \chemmacros.
+  \item \pkg{mhchem}~\cite{pkg:mhchem}.  This is the \enquote{older brother} of
+    \chemformula.
+  \item \pkg{chemfig}~\cite{pkg:chemfig}.  The easiest and most complete of the
+    packages for drawing skeletal formulas.
+  \item \XyMTeX~\cite{pkg:xymtex}.  A very comprehensive alternative for
+    typesetting chemistry.
+\end{itemize}
+In order to help authors getting a consistent layout \chemmacros\ does not
+make a choice which package to use for typesetting formulas.  Although
+\chemformula\ is well tested and preferred users can choose other packages if
+they like.
+
+this is done with the following general option:
+\begin{options}
+  \keyval{formula}{method}\Default{chemformula}
+    This\sinceversion{5.1} option let's you choose how chemical formulas are
+    typeset.  Available methods are
+    \begin{itemize}
+      \item \pkg{chemformula}
+      \item \pkg{mhchem}
+      \item \pkg{chemist}\sinceversion{5.6} (from the \XyMTeX\ bundle)
+      \item \pkg{chemfig}\sinceversion{5.6}
+    \end{itemize}
+    The corresponding package with the same name is loaded.
+\end{options}
+If you explicitly set this option the corresponding package is loaded
+immediately and the method is set up.  Otherwise the option will be set by
+\chemmacros\ at the end of the preamble.
+
+If\sinceversion{5.2} you load a method package in a way that a unique choice
+is possible then \chemmacros\ will set the method accordingly if you haven't
+set the option by yourself.  If \emph{no} unique choice is possible
+\chemmacros\ will raise a warning and choose \pkg{chemformula} regardless if
+the package is loaded or not.  In this case if you want to use another method
+you'll have to choose manually. \emph{All automatic choices only happen at the
+  end of the preamble}.
+
+\subsection{Using the \pkg*{chemformula} Package}
+If you set \keyis{formula}{chemformula} the \chemmodule{chemformula} module
+makes it possible that you can set all \chemformula\ options via the
+\cs{chemsetup} command using the module \module{chemformula}, for example:
+\begin{sourcecode}
+  \chemsetup[chemformula]{format=\sffamily}
+\end{sourcecode}
+
+Everywhere where \chemmacros\ typesets chemical formulas \chemformula's macros
+\cs{chcpd} or \cs{ch} are used, for example in the reaction environments
+provided by the \chemmodule{reactions} module.
+
+\emph{This method is the recommended choice!}
+
+\subsection{Using the \pkg*{mhchem} Package}\sinceversion{5.1}\label{sec:using-mhchem}
+If you set \keyis{formula}{mhchem} the \chemmodule{chemformula} module makes
+it possible that you can set all of \pkg{mhchem}'s options via the
+\cs{chemsetup} command using the module \module{mhchem}, for example:
+\begin{sourcecode}
+  \chemsetup[mhchem]{format=\sffamily}
+\end{sourcecode}
+
+Everywhere where \chemmacros\ typesets chemical formulas \pkg{mhchem}'s macro
+\cs{ce} is used, for example in the reaction environments provided by the
+\chemmodule{reactions} module.
+
+There are some \latin{caveat}s if you use this method:
+\begin{itemize}
+  \item This method has not been extensively tested, yet.  There may be errors
+     and wrong output at unexpected places.
+  \item Using this method effectively disables the different values of the
+    \module{particles} option \option{elpair} (see
+    section~\ref{sec:particles-module}).
+  \item The different kinds of formal charges provided by the
+    \chemmodule{charges} module (see section~\ref{sec:ion-charges}) are
+    disabled.  Formal charges always use the math method now.
+  \item There may also be other incompatibilities (\eg, \pkg{mhchem} has it's
+    own method of setting upright Greek letters so it may or may not disable
+    \chemmacros' mechanism).
+\end{itemize}
+
+\subsection{Using the \pkg*{chemfig} Package}\sinceversion{5.6}\label{sec:using-chemfig}
+Everywhere where \chemmacros\ typesets chemical formulas \pkg{chemfig}'s macro
+\cs{printatom} is used, for example in the reaction environments provided by
+the \chemmodule{reactions} module.
+
+There are some \latin{caveat}s if you use this method:
+\begin{itemize}
+  \item This method has not been extensively tested, yet.  There may be errors
+     and wrong output at unexpected places.
+  \item Using this method effectively disables the different values of the
+    \module{particles} option \option{elpair} (see
+    section~\ref{sec:particles-module}).
+  \item The different kinds of formal charges provided by the
+    \chemmodule{charges} module (see section~\ref{sec:ion-charges}) are
+    disabled.  Formal charges always use the math method now.
+  \item The reaction environments by the \chemmodule{reactions} module may
+    work only to a limited respect.  If you plan to use them consider using
+    methods \pkg{chemformula} or \pkg{mhchem} instead.
+\end{itemize}
+
+\subsection{Using the \pkg*{chemist} Package}\sinceversion{5.6}\label{sec:using-chemist}
+Everywhere where \chemmacros\ typesets chemical formulas \pkg{chemist}'s macro
+\cs{ChemForm} is used, for example in the reaction environments provided by
+the \chemmodule{reactions} module.
+
+There are some \latin{caveat}s if you use this method:
+\begin{itemize}
+  \item This method has not been extensively tested, yet.  There may be errors
+     and wrong output at unexpected places.
+  \item Using this method effectively disables the different values of the
+    \module{particles} option \option{elpair} (see
+    section~\ref{sec:particles-module}).
+  \item The different kinds of formal charges provided by the
+    \chemmodule{charges} module (see section~\ref{sec:ion-charges}) are
+    disabled.  Formal charges always use the math method now.
+  \item The reaction environments by the \chemmodule{reactions} module may
+    work only to a limited respect.  If you plan to use them consider using
+    methods \pkg{chemformula} or \pkg{mhchem} instead\footnote{On the other
+      hand \XyMTeX\ (and especially the \pkg{chemist} package) provides quite
+      a number of chemical reaction environments itself.}.
+\end{itemize}
+
+\subsection{For Module Writers}
+
+There are two macros for module writers:
+\begin{commands}
+  \explcommand{chemmacros_chemformula:n}[ \marg{formula}]
+    This is only a wrapper for \cs{chcpd} or \cs{ce}.  It is recommended that
+    module writers use this macro (or a variant thereof) inside of
+    \chemmacros' macros whenever they want to display a chemical formula.
+    Writers who prefer traditional \LaTeXe\ programming over expl3 should use
+    \cs*{chemmacros@formula}.
+  \explcommand{chemmacros_reaction:n}[ \marg{reaction}]
+    This is only a wrapper for \cs{ch} or \cs{ce}.  It is recommended that
+    module writers use this macro (or a variant thereof) inside of
+    \chemmacros' macros whenever they want to display a chemical reaction.
+    Writers who prefer traditional \LaTeXe\ programming over expl3 should use
+    \cs*{chemmacros@reaction}.
+\end{commands}
+
+\section{The \chemmodule*{greek} Module}\label{sec:greek-module}
+
+The \chemmodule{greek} module loads the \pkg{chemgreek}
+package~\cite{pkg:chemgreek}.
+
+This module provides one option:
+\begin{options}
+  \keyval{greek}{mapping}
+    A valid value is any valid \chemgreek\ \meta{mapping}.  \chemmacros\ will
+    warn you if no mapping has been chosen or if you are using the
+    \code{default} or the \code{var-default} mapping because this means that
+    no upright Greek letters are available.
+\end{options}
+If you load a \chemgreek\ support package which allows an unambiguous choice
+of a mapping \chemgreek\ will make this choice automatically.  This means if
+you say
+\begin{sourcecode}
+  \usepackage{upgreek}
+  \usepackage{chemmacros}
+\end{sourcecode}
+then \chemmacros\ will use \pkg{upgreek}'s upright Greek letters.  If you
+have
+\begin{sourcecode}
+  \usepackage{upgreek}
+  \usepackage{chemmacros}
+  \usepackage{textgreek}
+\end{sourcecode}
+then no unambiguous choice is possible and you should choose a mapping
+yourself, for example:
+\begin{sourcecode}
+  \usepackage{upgreek}
+  \usepackage{chemmacros}
+  \usepackage{textgreek}
+  \chemsetup{greek=textgreek}
+\end{sourcecode}
+For further details on mappings please refer to \chemgreek's manual.
+
+\part{Additional Modules}\label{part:additional-modules}
+
+The modules described in this part are not part of \chemmacros' minimal setup.
+
+\section{The \chemmodule*{isotopes} Module}\label{sec:isotopes-module}
+
+The \chemmodule{isotope} module loads the \pkg{elements}
+package~\cite{pkg:elements}.  This module defines one user command:
+\begin{commands}
+  \command{isotope}[\sarg\marg{input}]
+    \meta{input} can either be the \emph{symbol} of an element or the
+    \emph{name} of an element.  Be aware that \emph{the name is language
+      dependent}, refer to the manual of the \pkg{elements} package for
+    details.  To be on the safe side use the element symbol.
+
+    \meta{input} can also be comma separated list:
+    \cs{isotope}\Marg{\meta{nuc},\meta{symbol}}.  If you leave \meta{nuc} out
+    then \cs{isotope} will display the most common isotope.  Otherwise
+    \meta{nuc} will be used.  If \meta{nuc} is an isotope unknown to the
+    \pkg{elements} package \cs{isotope} will write a warning to the log file.
+
+    The starred variant omits the element number.
+\end{commands}
+
+\begin{example}[side-by-side]
+  \isotope{C}
+  \isotope*{C}
+  \isotope{14,C}
+  \isotope*{14,C}
+\end{example}
+
+As input for the element symbol you can choose any of the elements known to
+the \pkg{elements} package.
+
+There are options which allow you to determine how the isotope is printed:
+\begin{options}
+  \keychoice{format}{super,side}\Module{isotopes}\Default{super}
+    Either print the isotope number as superscript or to the right of the
+    element symbol.
+  \keyval{side-connect}{input}\Module{isotopes}\Default{-}
+    Determine what is printed between the element symbol and the isotope
+    number if \keyis{format}{side}.
+\end{options}
+
+\begin{example}[side-by-side]
+  \isotope{C}
+  \chemsetup[isotopes]{format=side}
+  \isotope{C}
+  \chemsetup[isotopes]{side-connect=}
+  \isotope{C}
+\end{example}
+
+\section{The \chemmodule*{mechanisms} Module}\label{sec:mechanisms-module}
+
+The module \chemmodule{mechanisms} loads the package
+\pkg{amstext}~\cite{pkg:amstext}.  It provides one macro:
+
+\begin{commands}
+  \command{mech}[\oarg{type}]
+    Allows to specify the most common reaction mechanisms.
+\end{commands}
+\meta{type} can have one of the following values:
+\begin{commands}
+  \command{mech}
+    (empty, no opt. argument) nucleophilic substitution \mech
+  \command{mech}[\Oarg{1}]
+    unimolecular nucleophilic substitution \mech[1]
+  \command{mech}[\Oarg{2}]
+    bimolecular nucleophilic substitution \mech[2]
+  \command{mech}[\Oarg{se}]
+    electrophilic substitution \mech[se]
+  \command{mech}[\Oarg{1e}]
+    unimolecular electrophilic substitution \mech[1e]
+  \command{mech}[\Oarg{2e}]
+    bimolecular electrophilic substitution \mech[2e]
+  \command{mech}[\Oarg{ar}]
+    electrophilic aromatic substitution \mech[ar]
+  \command{mech}[\Oarg{e}]
+    elimination \mech[e]
+  \command{mech}[\Oarg{e1}]
+    unimolecular elimination \mech[e1]
+  \command{mech}[\Oarg{e2}]
+    bimolecular elimination \mech[e2]
+  \command{mech}[\Oarg{cb}]
+    unimolecular elimination \enquote{conjugated base}, \ie, via carbanion
+    \mech[cb]
+\end{commands}
+
+\section{The \chemmodule*{newman} Module}\label{sec:newman-module}
+The \chemmodule{newman} module provides a command for drawing Newman
+projections.  It loads the \chemmodule{tikz} module.
+\begin{commands}
+  \command{newman}[\oarg{options}\darg{angle}%
+    \Marg{\meta{1},\meta{2},\meta{3},\meta{4},\meta{5},\meta{6}}]
+    Create Newman projections.  This command uses \TikZ\ internally.
+    \meta{angle} rotates the back atoms counter clockwise with respect to the
+    front atoms and is an optional argument.  \meta{1} to \meta{6} are the
+    positions, the first three are the front atoms, the last three the back
+    atoms.
+\end{commands}
+
+\begin{example}
+  \newman{} \newman(170){}
+  \newman{1,2,3,4,5,6} \newman{1,2,3} \newman{,,,4,5,6}
+\end{example}
+
+Several options allow customization:
+\begin{options}
+  \keyval{angle}{angle}\Module{newman}\Default{0}
+    Default angle.
+  \keyval{scale}{factor}\Module{newman}\Default{1}
+    Scale the whole projection by factor \meta{factor}.
+  \keyval{ring}{tikz}\Module{newman}\Default
+    Customize the ring with \TikZ\ keys.
+  \keyval{atoms}{tikz}\Module{newman}\Default
+    Customize the nodes within which the atoms are set with \TikZ\ keys.
+  \keyval{back-atoms}{tikz}\Module{newman}\Default
+    Explicitly customize the nodes of the back atoms with \TikZ\ keys.
+\end{options}
+
+\begin{example}
+  \chemsetup[newman]{angle=45} \newman{}
+  \newman[scale=.75,ring={draw=blue,fill=blue!20}]{}
+\end{example}
+
+\begin{example}
+  \chemsetup[newman]{atoms={draw=red,fill=red!20,inner sep=2pt,rounded corners}}
+  \newman{1,2,3,4,5,6}
+\end{example}
+
+\begin{example}
+  \chemsetup[newman]{
+    atoms = {draw=red,fill=red!20,inner sep=2pt,rounded corners},
+    back-atoms = {draw=blue,fill=blue!20,inner sep=2pt,rounded corners}
+  }
+  \newman{1,2,3,4,5,6} \newman(170){1,2,3,4,5,6}
+\end{example}
+
+\section{The \chemmodule*{orbital} Module}\label{sec:orbital-module}
+The \chemmodule{orbital} module loads the \chemmodule{tikz} module.  It
+provides the following command to create orbitals:
+\begin{commands}
+  \command{orbital}[\oarg{options}\marg{type}]
+    Draw an orbital shape of type \meta{type}.  This command uses \TikZ\
+    internally.
+\end{commands}
+
+There are the following types available for \meta{type}:
+\begin{center}
+  \code{s} \quad
+  \code{p} \quad
+  \code{sp} \quad
+  \code{sp2} \quad
+  \code{sp3}
+\end{center}
+
+\begin{example}
+  \orbital{s} \orbital{p} \orbital{sp} \orbital{sp2} \orbital{sp3}
+\end{example}
+
+Depending on the type you have different options to modify the orbitals:
+\begin{options}
+  \keychoice{phase}{+,-}\Module{orbital}\Default{+}
+    changes the phase of the orbital (all types)
+  \keyval{scale}{factor}\Module{orbital}\Default{1}
+    changes the size of the orbital (all types)
+  \keyval{color}{color}\Module{orbital}\Default{black}
+    changes the color of the orbital (all types)
+  \keyval{angle}{angle}\Module{orbital}\Default{0}
+    rotates the orbitals with a p contribution counter clockwise (all types
+    except \code{s})
+  \keybool{half}\Module{orbital}\Default{false}
+    displays only half an orbital (only \code{p})
+\end{options}
+
+\begin{example}
+  \orbital{s} \orbital[phase=-]{s} 
+  \orbital{p} \orbital[phase=-]{p}
+  \orbital{sp3} \orbital[phase=-]{sp3}
+ 
+  \orbital[angle=0]{p} \orbital[color=red!50]{p}
+  \orbital[angle=135,scale=1.5]{p} \orbital[half]{p}
+\end{example}
+
+Additionally there are two options, with which the \TikZ\ behaviour can be
+changed.
+\begin{options}
+  \keybool{overlay}\Module{orbital}
+    The orbital \enquote{doesn't need space}; it is displayed with the \TikZ\
+    option \code{overlay}.
+  \keyval{opacity}{num}\Module{orbital}
+    The orbital becomes transparent; \meta{value} can have values between
+    \code{1} (fully opaque) to \code{0} (invisible).
+\end{options}
+\begin{example}
+  \vspace{7mm}
+  \chemsetup[orbital]{
+    overlay,
+    p/color = black!70
+  }
+  \setchemfig{bond offset=0pt}
+  \chemfig{
+    ?\orbital{p}
+    -[,1.3]{\orbital[phase=-]{p}}
+    -[:30,1.1]\orbital{p}
+    -[:150,.9]{\orbital[phase=-]{p}}
+    -[4,1.3]\orbital{p}
+    -[:-150,1.1]{\orbital[phase=-]{p}}?
+  }
+  \vspace{7mm}
+\end{example}
+
+\begin{example}
+  \vspace{7mm}
+  \setchemfig{bond offset = 0pt}
+  \chemsetup[orbital]{
+    overlay ,
+    opacity = .75 ,
+    p/scale = 1.6 ,
+    s/color = blue!50 ,
+    s/scale = 1.6
+  }
+  \chemfig{
+    \orbital{s}
+    -[:-20]{\orbital[scale=2]{p}}
+           {\orbital[half,angle=0]{p}}
+           {\orbital[angle=170,half]{p}}
+           {\orbital[angle=-150,half]{p}}
+    (-[:-150]\orbital{s})-\orbital{s}
+  }
+  \vspace{1cm}
+\end{example}
+
+\section{The \chemmodule*{polymers} Module}\label{sec:polymers-module}
+The\sinceversion{5.5} \chemmodule{polymers} module loads the
+\chemmodule{nomenclature} and the \chemmodule{tikz} modules.
+
+\subsection{Nomenclature}
+
+The \chemmodule{polymers} module defines a number of \ac{iupac} macros for
+usage inside \cs{iupac} which are used in polymer chemistry.
+
+\subsection{Copolymers}
+\begin{commands}
+  \iupaccs[co]{copolymer}{unspecified copolymer.}
+  \iupaccs[stat]{statistical}{statistical copolymer.}
+  \iupaccs[ran]{random}{random copolymer.}
+  \iupaccs[alt]{alternating}{alternating copolymer.}
+  \iupaccs[per]{periodic}{periodic copolymer.}
+  \iupaccs{block}{block copolymer.}
+  \iupaccs{graft}{graft copolymer.}
+\end{commands}
+
+\subsection{Non-linear (Co) Polymers and Polymer Assemblies}
+\begin{commands}
+  \iupaccs{blend}{The blend qualifier.}
+  \iupaccs{comb}{The comb qualifier.}
+  \iupaccs[compl]{complex}{The complex qualifier.}
+  \iupaccs[cyclo]{cyclic}{The cyclic qualifier.}
+  \iupaccs{branch}{The branch qualifier.}
+  \iupaccs[net]{network}{The network qualifier.}
+  \iupaccs[ipn]{ipnetwork}{The interpenetrating network qualifier.}
+  \iupaccs[sipn]{sipnetwork}{The semi-interpenetrating network qualifier.}
+  \iupaccs{star}{The star qualifier.}
+\end{commands}
+
+\subsection{Polymer Denotations in \pkg*{chemfig}'s Molecules}
+The \pkg{chemfig} manual proposes some code defining the macros
+\cs*{setpolymerdelim} and \cs*{makebraces} which make it possible to add
+delimiters to \pkg{chemfig} molecules.  The \chemmodule{polymers} module
+implements the following macro based on the same idea:
+\begin{commands}
+  \command{makepolymerdelims}[\oarg{options}\marg{height}\oarg{depth}\marg{opening
+    node}\marg{closing node}]
+    The value of \meta{depth} is the same as \meta{height} unless it is
+    specified explicitly.  \meta{opening node} and \meta{closing node} are the
+    names of \TikZ' nodes where the delimites are placed.
+\end{commands}
+\begin{options}
+  \keychoice{delimiters}{\Marg{\meta{left}\meta{right}}}\Module{polymers}\Default{[]}
+    This option demands two tokens as argument, the first being the opening
+    brace, the second the closing brace.  A dot (\code{.}) denotes an empty
+    delimiter.
+  \keyval{subscript}{subscript}\Module{polymers}\Default{\$n\$}
+    Subscript to the right delimiter.
+  \keyval{superscript}{superscript}\Module{polymers}
+    Superscript to the right delimiter.
+\end{options}
+
+\begin{example}
+  \setchemfig{atom sep=2em}
+  \chemfig{-[@{op,.75}]CH_2-CH(-[6]Cl)-[@{cl,0.25}]}
+  \makepolymerdelims{5pt}[27pt]{op}{cl}
+  \chemfig{-[@{op,.75}]CH_2-CH(-[6]Cl)-[@{cl,0.25}]}
+  \makepolymerdelims[delimiters=()]{5pt}[27pt]{op}{cl}
+\end{example}
+
+\section{The \chemmodule*{reactions} Module}\label{sec:reactions-module}
+The \chemmodule{reactions} module loads the \chemmodule{chemformula} module
+and the \pkg{mathtools} package~\cite{pkg:mathtools}.
+
+\subsection{Predefined Environments}
+
+You can use these environments for numbered\ldots
+\begin{environments}
+  \environment{reaction}
+    A single reaction where \chemformula\ code is placed directly in the
+    environment body.  A wrapper around the \env*{equation} environment.  The
+    environment body is parsed with \cs{ch} or \cs{ce} depending on the value
+    of the \option{formula} option, see
+    section~\vref{sec:chemformula-module}.
+  \environment{reactions}
+    Several aligned reactions.  A wrapper around \pkg{amsmath}'s \env*{align}
+    environment.  The environment body is parsed with \cs{ch} or \cs{ce}
+    depending on the value of the \option{formula} option, see
+    section~\vref{sec:chemformula-module}.
+\end{environments}
+
+\ldots and their starred versions for unnumbered reactions.
+\begin{environments}
+  \environment{reaction*}
+    A wrapper around the \env*{equation*} environment.  The environment body
+    is parsed with \cs{ch} or \cs{ce} depending on the value of the
+    \option{formula} option, see section~\vref{sec:chemformula-module}.
+  \environment{reactions*}
+    A wrapper around \pkg{amsmath}'s \env*{align*} environment.  The
+    environment body is parsed with \cs{ch} or \cs{ce} depending on the value
+    of the \option{formula} option, see
+    section~\vref{sec:chemformula-module}.
+\end{environments}
+
+With those environments you can create (un)numbered reaction equations similar
+to mathematical equations.
+
+Theses environments use the \env*{equation}/\env*{equation*} environments or
+the \env*{align}/\env*{align*} environments, respectively, to display the
+reactions.
+
+\begin{example}
+  Reaction with counter:
+  \begin{reaction}
+    A -> B
+  \end{reaction}
+\end{example}
+
+\begin{example}
+  Reaction without counter:
+  \begin{reaction*}
+    C -> D
+  \end{reaction*}
+\end{example}
+
+\begin{example}
+  Several aligned reactions with counter:
+  \begin{reactions}
+    A     &-> B + C \\
+    D + E &-> F
+  \end{reactions}
+\end{example}
+
+\begin{example}
+  Several aligned reactions without counter:
+  \begin{reactions*}
+    G     &-> H + I \\
+    J + K &-> L
+  \end{reactions*}
+\end{example}
+
+If you want to change the layout of the counter tags, you can use
+\begin{commands}
+  \command*{renewtagform}[\marg{tagname}\oarg{format}\marg{left
+    delimiter}\marg{right delimiter}]
+    Provided by the \pkg{mathtools} package.
+\end{commands}
+or use the following options:
+\begin{options}
+  \keyval{tag-open}{left delimiter}\Module{reactions}\Default{\{}
+    \sinceversion{5.6}The left delimiter.
+  \keyval{tag-close}{right delimiter}\Module{reactions}\Default{\}}
+    \sinceversion{5.6}The right delimiter.
+  \keyval{before-tag}{format}\Module{reactions}\Default
+    \sinceversion{5.6}Code inserted before the tags.
+\end{options}
+
+\begin{example}
+  \chemsetup[reactions]{
+    before-tag = R \textbf ,
+    tag-open = [ ,
+    tag-close = ]
+  }
+  \begin{reaction}
+    H2O + CO2 <<=> H2CO3
+  \end{reaction}
+\end{example}
+
+The use of \AmS math's \cs{intertext} is possible:
+\begin{example}
+  \begin{reactions}
+    A + 2 B &-> 3 C + D "\label{rxn:test}"
+    \intertext{Some text in between aligned reactions}
+    3 E + F &<=> G + 1/2 H
+  \end{reactions}
+  See reaction~\ref{rxn:test}.
+\end{example}
+
+If\sinceversion{5.6} you are using either \pkg{cleveref} or \pkg{fancyref} the
+\env{reaction} counter is supported already.  For \pkg{fancyref} use the
+prefix \code{rct}.
+
+\subsection{Own Reactions}
+You can create new types of reactions with the command:
+\begin{commands}
+  \command{NewChemReaction}[\marg{name}\oarg{number of arguments}\marg{math name}]
+    \meta{name} will be the name of the new chem environment. \meta{math name} is
+    the underlying math environment.  Gives an error if \meta{name} already
+    exists.
+  \command{RenewChemReaction}[\marg{name}\oarg{number of arguments}\marg{math name}]
+    \meta{name} is the name of the renewed chem environment. \meta{math name} is
+    the underlying math environment.  Gives an error if \meta{name} does not exist.
+  \command{DeclareChemReaction}[\marg{name}\oarg{number of arguments}\marg{math name}]
+    \meta{name} will be the name of the chem environment. \meta{math name} is
+    the underlying math environment.
+  \command{ProvideChemReaction}[\marg{name}\oarg{number of arguments}\marg{math name}]
+    \meta{name} will be the name of the new chem environment. \meta{math name} is
+    the underlying math environment.  The new environment is only defined if
+    it doesn't exist, yet.
+\end{commands}
+
+\begin{sourcecode}
+  \NewChemReaction{reaction}  {equation}
+  \NewChemReaction{reaction*} {equation*}
+  \NewChemReaction{reactions} {align}
+  \NewChemReaction{reactions*}{align*}
+\end{sourcecode}
+
+Let's suppose, you'd like to have the alignment behaviour of the \env{alignat}
+environment for \chemformula\ reactions.  You could do the following:
+
+\begin{sourcecode}
+  \NewChemReaction{reactionsat}[1]{alignat}
+\end{sourcecode}
+
+With this the \env{reactionsat} environment is defined.
+\begin{example}
+  \NewChemReaction{reactionsat}[1]{alignat}
+  \NewChemReaction{reactionsat*}[1]{alignat*}
+  \begin{reactionsat}{3}
+    A     &-> B     &&-> C     &&-> D \\
+    aaaaa &-> bbbbb &&-> ccccc &&-> ddddd
+  \end{reactionsat}
+  \begin{reactionsat*}{2}
+    A     &-> B     & C            &-> D  \\
+    aaaaa &-> bbbbb &\quad{} ccccc &-> ddddd
+  \end{reactionsat*}
+\end{example}
+
+\subsection{List of Reactions}
+
+The \chemmodule{reactions} module also provides a command to display a list of
+the reactions created with the \env{reaction} environment.
+\begin{commands}
+  \command{listofreactions}
+    Print a list of reactions.
+\end{commands}
+\begin{example}
+  \listofreactions
+\end{example}
+
+The output of this list can be modified by two options:
+\begin{options}
+  \keyval{list-name}{name of the
+    list}\Module{reactions}\Default{\cs*{ChemTranslate}\Marg{{list-of-reactions}}}
+    Let's you set the name of the list manually.  The default name is language
+    dependent, see section~\vref{sec:lang-module}.
+  \keyval{list-entry}{prefix to each
+    entry}\Module{reactions}\Default{\cs*{ChemTranslate}\Marg{reaction}}
+    Let's you set a prefix to each list entry.  The default name is language
+    dependent, see section~\vref{sec:lang-module}.
+  \keyval{list-heading-cmd}{code}\Module{reactions}\Default{\cs*{section}\sarg\Marg{\#1}}
+    The\sinceversion{5.2} macro that is called at the beginning of the list.
+    Inside of \meta{code} \code{\#1} refers to the actual heading of the list.
+    The default setting is not entirely true: if a macro \cs*{chapter} is
+    defined \code{\cs*{chapter}\sarg\Marg{\#1}} is used.
+  \keybool{tocbasic}\Module{reactions}\Default{false}
+    \sinceversion{5.6}If you use a \KOMAScript\ class \emph{or} if you load
+    the \pkg{tocbasic} package \emph{or} if you set this option to \code{true}
+    the list of reactions will be set up using the \pkg{tocbasic} package.
+    This \emph{disables} the \option{list-heading-cmd} option.  For a
+    \KOMAScript\ class this means that the list of reactions obeys
+    \KOMAScript's \option*{listof} option.
+\end{options}
+Instead of using the option \option{list-name} you also could redefine
+\cs{reactionlistname}.
+
+The list lists all reactions with a number and disregards reactions without
+number.  All reaction environments without star have an optional argument
+which let's you add a description (or caption) for the entry in the list.
+\begin{example}
+  \begin{reaction}[Autoprotolyse]
+    2 H2O <<=> H3O+ + OH-
+  \end{reaction}
+\end{example}
+
+If you use the \env{reactions} environment this will not work, though.  In
+this case you can use
+\begin{commands}
+  \command{AddRxnDesc}[\marg{description}]
+    Add a description to a reaction.
+\end{commands}
+
+\begin{example}
+  \begin{reactions}
+    "\chlewis{0.}{Cl}" + CH4  &
+      -> HCl + "\chlewis{180.}{C}" H3 \AddRxnDesc{first~step~of~chain} \\
+    "\chlewis{180.}{C}" H3 + Cl2 &
+      -> CH3Cl + "\chlewis{0.}{Cl}" \AddRxnDesc{second~step~of~chain}
+  \end{reactions}
+\end{example}
+
+\section{The \chemmodule*{reactions} Module}\label{sec:reactions-module}
+\sinceversion{6.0}Idea for this module is by \leandriis, who also does the
+main development of the module.  Many thanks for all her work!
+
+\subsection{Idea}
+
+\subsection{Commands}
+
+\begin{commands}
+  \command{DeclareChemReactant}\marg{id}\marg{properties}
+    This command defines the reactant \meta{id} with the properties
+    \meta{properties}.
+\end{commands}
+Valid properties are
+\begin{option}
+  \keyval{name}{name}
+  \keyval{short}{abbreviation}
+  \keyval{bookmark}{replacement in \ac{pdf} bookmarks}
+\end{option}
+
+\subsection{Options}
+
+\subsubsection{Units}
+\begin{options}
+  \keyval{mass-unit}{unit}\Module{reactants}\Default{\cs*{gram}}
+  \keyval{volume-unit}{unit}\Module{reactants}\Default{\cs*{milli}\cs*{liter}}
+  \keyval{amount-unit}{unit}\Module{reactants}\Default{\cs*{milli}\cs*{mole}}
+  \keyval{concentration-unit}{unit}\Module{reactants}\Default{\cs*{Molar}}
+  \keyval{equiv-unit}{unit}\Module{reactants}\Default{\code{eq}}
+  \keyval{fraction-unit}{unit}\Module{reactants}\Default{\code{w/w \cs*{percent}}}
+  \keyval{purity-unit}{unit}\Module{reactants}\Default{\cs*{percent}}
+\end{options}
+
+\subsubsection{Output and Behavior}
+\begin{options}
+  \keyval{solution-name}{name}\Module{reactants}\Default{}
+  \keybool{switch}\Module{reactants}\Default{false}
+  \keybool{initiate}\Module{reactants}\Default{false}
+  \keybool{equivalents}\Module{reactants}\Default{true}
+  \keychoice{reactant-output-style}{name-main-other,main-name-other,main-other-name}%
+    \Module{reactants}\Default{name-main-other}
+  \keychoice{solvent-output-style}{main-name,name-main}\Module{reactants}\Default{main-name}
+  \keychoice{main}{default,amount,equiv}\Module{reactants}\Default{default}
+  \keychoice{acronym-support}{acro,glossaries,none}\Module{reactants}\Default{none}
+  \keychoice{printreactants-style}{xltabular,longtable,none}\Module{reactants}\Default{none}
+\end{options}
+
+\section{The \chemmodule*{redox} Module}\label{sec:redox-module}
+
+The \chemmodule{redox} module loads the modules \chemmodule{tikz} and
+\chemmodule{xfrac}. It also loads the packages
+\pkg{mathtools}~\cite{pkg:mathtools} and \pkg{relsize}~\cite{pkg:relsize}.
+
+\subsection{Oxidation Numbers}\label{sec:oxidation-numbers}
+
+Regarding the typesetting of oxidation numbers
+\citetitle{iupac:greenbook}~\cite{iupac:greenbook} says the following:
+\begin{cnltxquote}[{\cite[][p.\,50]{iupac:greenbook}}]
+  Oxidation numbers are denoted by positive or negative Roman numerals or by
+  zero \textelp{}
+
+  \textit{Examples}\quad \ox{7,Mn}, \ox[pos=side]{7,manganese}, \ox{-2,O},
+  \ox{0,Ni}
+\end{cnltxquote}
+
+The following command is provided to set oxidation numbers:
+\begin{commands}
+  \command{ox}[\sarg\oarg{options}\Marg{\meta{number},\meta{atom}}]
+    Places \meta{number} as right superscript to \meta{atom}; \meta{number}
+    has to be a (rational) number!  \meta{atom} is treated as a \chemformula\
+    formula, like it would be in \cs{chcpd} (this depends on the setting of
+    the \option{formula} option, see~\vref{sec:chemformula-module}).
+\end{commands}
+
+\begin{example}
+  \ox{+1,Na}, \ox{2,Ca}, \ox{-2,S}, \ox{-1,F}
+\end{example}
+
+There are a number of options that can be used to modify the typeset result:
+\begin{options}
+  \keyval{format}{code}\Module{redox}
+    \sinceversion{5.11}Allows to apply arbitrary \meta{code} in front of the
+    typeset oxidation numbers.  The last command may expect the oxidation
+    number as an argument.  An example might be \cs*{textcolor}\Marg{red}.
+  \keybool{parse}\Module{redox}\Default{true}
+    When \code{false} an arbitrary entry can be used for \code{<number>}.
+  \keybool{roman}\Module{redox}\Default{false}
+    Switches from roman to arabic numbers.
+  \keychoice{pos}{top,super,side}\Module{redox}\Default{super}
+    \code{top} places \meta{number} above \meta{atom}, \code{super} to the
+    upper right as superscript and \code{side} to the right and inside
+    brackets.  Both \code{super} and \code{side} follow \ac{iupac}
+    recommendation, \code{top} does not!
+  \keybool{explicit-sign}\Module{redox}\Default{false}
+    Shows the $+$ for positiv numbers and the $\pm$ for $0$.
+  \keybool{explizit-zero-sign}\Module{redox}\Default{true}
+    Only\sinceversion{5.4} if both \option{explicit-sign} and
+    \option{explicit-zero-sign} are set to \code{true} $\pm0$ will be
+    printed.
+  \keychoice{decimal-marker}{comma,point}\Module{redox}\Default{point}
+    Choice for the decimal marker for formal oxidation numbers like \ox{1.2,X}.
+  \keychoice{align}{center,right}\Module{redox}\Default{center}
+    Center the oxidation number relative to the atom or right-align it.
+  \keyval{side-connect}{code}\Module{redox}\Default{\cs*{,}}
+    Code that is inserted between atom and oxidation number if
+    \keyis{pos}{side} is used.
+  \keyval{text-frac}{cs}\Module{redox}\Default{\cs{chemfrac}\Oarg{text}\Marg{\#1}\Marg{\#2}}
+    The fraction macro that is used for fractions if \keyis{pos}{side} is
+    used.  \meta{cs} must be a macro that takes two mandatory arguments, the
+    first for the numerator and the second for the denominator.
+  \keyval{super-frac}{cs}\Module{redox}\Default{\cs{chemfrac}\Oarg{superscript}%
+    \Marg{\#1}\Marg{\#2}}
+    The fraction macro that is used for fractions if \keyis{pos}{top} or
+    \keyis{pos}{super} is used.  \meta{cs} must be a macro that takes two
+    mandatory arguments, the first for the numerator and the second for the
+    denominator.
+\end{options}
+
+\begin{example}[side-by-side]
+  \ox[roman=false]{2,Ca} \ox{2,Ca} \\
+  \ox[pos=top]{3,Fe}-Oxide \\
+  \ox[pos=side]{3,Fe}-Oxide \\
+  \ox[parse=false]{?,Mn} \\
+  \ox[pos=top,align=right]{2,Ca}
+\end{example}
+
+The \keyis{pos}{top} variant also can be set with the shortcut \cs{ox}\sarg:
+\begin{example}[side-by-side]
+  \ox{3,Fe} \ox*{3,Fe}
+\end{example}
+
+Using the \option{explicit-sign} option will always show the sign of the
+oxidation number:
+\begin{example}
+  \chemsetup[redox]{explicit-sign = true}
+  \ox{+1,Na}, \ox{2,Ca}, \ox{-2,S}, \ch{"\ox{0,F}" {}2}
+\end{example}
+
+\begin{example}
+  \chemsetup[redox]{pos=top}
+  Compare \ox{-1,O2^2-} to \ch{"\ox{-1,O}" {}2^2-}
+\end{example}
+
+Sometimes one might want to use formal oxidation numbers like \num{.5} or
+\chemfrac{1}{3}:
+\begin{example}[side-by-side]
+  \chemsetup[redox]{pos=top}
+  \ox{.5,Br2}
+  \ch{"\ox{1/3,I}" {}3+}
+
+  \chemsetup[redox]{pos=side}
+  \ox{1/3,I3+}
+\end{example}
+
+The fraction is displayed with the help of the \pkg{xfrac}
+package~\cite{bnd:l3packages}.  For more details on how \chemmacros\ uses it
+read section~\vref{sec:xfrac-module}.
+
+\subsection{Redox Reactions}\label{sec:redox-reactions}
+
+\chemmacros\ provides two commands to visualize the transfer of electrons in
+redox reactions.  Both commands are using \TikZ.
+\begin{commands}
+  \command{OX}[\Marg{\meta{name},\meta{atom}}]
+    Label \meta{atom} with the label \meta{name}.
+  \command{redox}[\Darg{\meta{name1},\meta{name2}}\oarg{tikz}\oarg{num}\marg{text}]
+    Connect two \meta{atom}s previously labelled with \cs{OX}.  Only the first
+    argument \Darg{\meta{name1},\meta{name2}} is required, the others are all
+    optional.
+\end{commands}
+
+\cs{OX} places \meta{atom} into a node, which is named with \meta{name}.  If
+you have set two \cs{OX}, they can be connected with a line using \cs{redox}.
+To do so the names of the two nodes that are to be connected are written in
+the round braces.  Since \cs{redox} draws a \code{tikzpicture} with options
+\code{remember picture,overlay}, the document needs to be \emph{compiled at
+  least two times}.
+
+\begin{example}
+  \vspace{7mm}
+  \OX{a,Na} $\rightarrow$ \OX{b,Na}\pch\redox(a,b){oxidation}
+\end{example}
+
+This line can be customized using \TikZ\ keys in \oarg{tikz}:
+\begin{example}
+  \vspace{7mm}
+  \OX{a,Na} $\rightarrow$ \OX{b,Na}\pch\redox(a,b)[->,red]{ox}
+\end{example}
+
+With the argument \oarg{num} the length of the vertical parts of the line can
+be adjusted.  The default length is \code{.6em}.  This length is multiplied
+with \meta{num}.  If you use a negative value the line is placed \emph{below}
+the text.
+\begin{example}
+  \vspace{7mm}
+  \OX{a,Na} $\rightarrow$ \OX{b,Na}\pch
+  \redox(a,b)[->,red]{ox}
+  \redox(a,b)[<-,blue][-1]{red}
+  \vspace{7mm}
+\end{example}
+
+The default length of the vertical lines can be customized with the option
+\begin{options}
+  \keyval{dist}{dim}\Module{redox}\Default{.6em}
+    A \TeX\ dimension.
+\end{options}
+
+\begin{example}
+  \vspace{7mm}
+  \chemsetup{redox/dist=1em}
+  \OX{a,Na} $\rightarrow$ \OX{b,Na}\pch\redox(a,b)[->,red]{ox}
+\end{example}
+
+\begin{options}
+  \keyval{sep}{dim}\Module{redox}\Default{.2em}
+    The option can be used to change the distance between the atom and the
+    beginning of the line.
+\end{options}
+
+\begin{example}
+  \vspace{7mm}
+  \chemsetup{redox/sep=.5em}
+  \OX{a,Na} $\rightarrow$ \OX{b,Na}\pch\redox(a,b)[->,red]{ox}
+\end{example}
+
+\subsection{Examples}
+\begin{example}
+  \vspace{7mm}
+  \ch{
+    2 "\OX{o1,Na}" + "\OX{r1,Cl}" {}2
+    ->
+    2 "\OX{o2,Na}" {}+ + 2 "\OX{r2,Cl}" {}-
+  }
+  \redox(o1,o2){\small OX: $- 2\el$}
+  \redox(r1,r2)[][-1]{\small RED: $+ 2\el$}
+  \vspace{7mm}
+\end{example}
+
+\begin{example}
+  \vspace{7mm}
+  \ch{
+    2 "\OX{o1,\ox*{0,Na}}" + "\OX{r1,\ox*{0,Cl}}" {}2
+    ->
+    2 "\OX{o2,\ox*{+1,Na}}" {}+ + 2 "\OX{r2,\ox*{-1,Cl}}" {}-
+  }
+  \redox(o1,o2){\small OX: $- 2\el$}
+  \redox(r1,r2)[][-1]{\small RED: $+ 2\el$}
+  \vspace{7mm}
+\end{example}
+
+\begin{example}
+  \vspace{14mm}
+  \ch{
+    2 "\OX{o1,\ox*{0,Na}}" + "\OX{r1,\ox*{0,Cl}}" {}2
+    ->
+    2 "\OX{o2,\ox*{+1,Na}}" {}+ + 2 "\OX{r2,\ox*{-1,Cl}}" {}-
+  }
+  \redox(o1,o2)[draw=red,->][3.33]{\small OX: $- 2\el$}
+  \redox(r1,r2)[draw=blue,->]{\small RED: $+ 2\el$}
+\end{example}
+
+\begin{example}
+  \vspace{7mm}
+  \ch{
+    2 "\OX{o1,\ox*{0,Na}}" + "\OX{r1,\ox*{0,Cl}}" {}2
+    -> 2 "\OX{o2,\ox*{+1,Na}}" {}+ + 2 "\OX{r2,\ox*{-1,Cl}}" {}-
+  }
+  \redox(o1,o2)[green,-stealth]{\small OX}
+  \redox(r1,r2)[purple,-stealth][-1]{\small RED}
+  \vspace{7mm}
+\end{example}
+
+\section{The \chemmodule*{scheme} Module}\label{sec:scheme-module}
+
+The \chemmodule{scheme} module loads the \pkg{chemnum}
+package~\cite{pkg:chemnum} and defines a floating environment
+\showenv{scheme}.  That is, it \emph{only} defines this float if no
+environment \env{scheme} exists at the end of the preamble.  The module checks
+for different available float defining methods, in \emph{this} order:
+\begin{itemize}
+  \item If the current class is a \KOMAScript\ class \cs*{DeclareNewTOC} will
+    be used.
+  \item If the current class is \cls{memoir}, \cls{memoir}'s methods are used.
+  \item If the package \pkg{tocbasic} has been loaded \cs*{DeclareNewTOC} will
+    be used.
+  \item If the package \pkg{newfloat} has been loaded
+    \cs*{DeclareFloatingEnvironment} will be used.
+  \item \sinceversion{5.1}If the package \pkg{floatrow} has been loaded its
+    method will be used.
+  \item If the package \pkg{float} has been loaded its method will be used.
+  \item If neither of the above the \enquote{manual} method is used.  This
+    means the environment is defined the same way like \env*{figure} is
+    defined in the \cls*{article} class or the \cls*{book} class, depending if
+    \cs*{chapter} is defined or not.
+\end{itemize}
+
+The list name and the caption name both are translated to the language
+specified according to the \option{lang} option and the provided translations,
+see section~\vref{sec:lang-module} for details. If you want to manually change
+them then redefine these macros after begin document:
+\begin{commands}
+  \command{listschemename}
+    The name of the list of schemes.
+  \command{schemename}
+    The name used in captions.
+\end{commands}
+The list of schemes is printed as expected with
+\begin{commands}
+  \command{listofschemes}
+\end{commands}
+
+If\sinceversion{5.6} you are using either \pkg{cleveref} or \pkg{fancyref} the
+\env{scheme} environment (or rather its captions) are supported already.  For
+\pkg{fancyref} use the prefix \code{sch}.
+
+\section{The \chemmodule*{spectroscopy} Module}\label{sec:spectroscopy-module}
+
+The \chemmodule{spectroscopy} module loads the \chemmodule{chemformula} module
+and the \pkg{siunitx} package~\cite{pkg:siunitx}.
+
+\subsection{The \cs*{NMR} Command}
+
+When you're trying to find out if a compound is the one you think it is often
+NMR spectroscopy is used.  The experimental data are typeset similar to this:
+\begin{center}
+  \NMR(400)[CDCl3] = \num{1.59}
+\end{center}
+The \chemmodule{spectroscopy} module provides a command which simplifies the
+input.
+
+\begin{commands}
+  \command{NMR}[\sarg\Marg{\meta{num},\meta{element}}%
+    \Darg{\meta{num},\meta{unit}}\oarg{solvent}]
+    Typeset nuclear magnetic resonance data. \meta{num} is a valid
+    \pkg{siunitx} number input, \meta{unit} is a valid \pkg{siunitx} unit
+    input.  \meta{solvent} is any valid \chemformula\ input as in \cs{chcpd}
+    (this depends on the setting of the \option{formula} option,
+    see~\vref{sec:chemformula-module}).
+\end{commands}
+
+\emph{All} Argument are optional! Without arguments we get:
+\begin{example}[side-by-side]
+  \NMR \par
+  \NMR*
+\end{example}
+
+The first argument specifies the kind of NMR:
+\begin{example}[side-by-side]
+  \NMR{13,C}
+\end{example}
+
+The second argument sets the frequency (in \si{\mega\hertz}):
+\begin{example}[side-by-side]
+  \NMR(400)
+\end{example}
+You can choose another unit:
+\begin{example}[side-by-side]
+  \NMR(4e8,\hertz)
+\end{example}
+Please note that the setup of \pkg{siunitx} also affects this command:
+\begin{example}[side-by-side]
+  \sisetup{exponent-product=\cdot}
+  \NMR(4e8,\hertz)
+\end{example}
+
+The third argument specifies the solvent:
+\begin{example}[side-by-side]
+  \NMR[CDCl3]
+\end{example}
+
+\subsection{Short Cuts}
+
+It is possible to define short cut commands for specific nuclei.
+\begin{commands}
+  \command{NewChemNMR}[\marg{cs}\Marg{\meta{num},\meta{atom}}]
+    Define a new shortcut macro for typesetting a certain type of magnetic
+    resonence data.  Gives an error if \meta{cs} already exists.
+  \command{DeclareChemNMR}[\marg{cs}\Marg{\meta{num},\meta{atom}}]
+    Define a new shortcut macro for typesetting a certain type of magnetic
+    resonence data.  Overwrites an existing macro.
+  \command{RenewChemNMR}[\marg{cs}\Marg{\meta{num},\meta{atom}}]
+    Redefine an existing shortcut macro for typesetting a certain type of
+    magnetic resonence data.  Gives an error if \meta{cs} doesn't exist.
+  \command{ProvideChemNMR}[\marg{cs}\Marg{\meta{num},\meta{atom}}]
+    Define a new shortcut macro for typesetting a certain type of magnetic
+    resonence data.  \meta{cs} is only defined if it doesn't exist, yet.
+\end{commands}
+
+This defines a command with the same arguments as \cs{NMR} \emph{except} for
+\Marg{\meta{num},\meta{atom}}:
+\begin{example}[side-by-side]
+  \NewChemNMR\HNMR{1,H}%
+  \NewChemNMR\CNMR{13,C}%
+  \CNMR*(100) \par
+  \HNMR*(400)
+\end{example}
+
+\subsection{An Environment to Typeset Experimental Data}
+
+The \chemmodule{spectroscopy} module provides an environment to ease the input
+of experimental data.
+\begin{environments}
+  \environment{experimental}
+    Environment for the output of experimental data.  Inside the environment
+    the following commands are defined.
+\end{environments}
+\begin{commands}
+  \command{data}[\marg{type}\oarg{specification}]
+    Type of data, \eg\ IR, MS\ldots\  The optional argument takes further
+    specifications which are output in parentheses.
+  \command{data}[\sarg\marg{type}\oarg{specification}]
+    Like \cs{data} but changes the \code{=} into a \code{:}, given that
+    \keyis{use-equal}{true} is used.
+  \command{NMR}[\Marg{\meta{num},\meta{elem}\oarg{coupling
+      core}}\Darg{\meta{num},\meta{unit}}\oarg{solvent}]
+    This command gets an additional argument:
+    \cs{NMR}\Marg{13,C[\textasciicircum 1H]} \NMR{13,C[^1H]}
+  \command{J}[\Darg{\meta{bonds};\meta{nuclei}}\oarg{unit}\marg{list of nums}]
+    Coupling constant, values are input separated by \code{;} (NMR).  The
+    arguments \Darg{\meta{bonds};\meta{nuclei}} and \oarg{unit} are optional
+    and enable further specifications of the coupling.
+  \command{\#}[\marg{num}]
+    Number of nuclei (NMR).
+  \command{pos}[\marg{num}]
+    Position of nuclues (NMR).
+  \command{val}[\marg{num}]
+    A number, an alias of \pkg{siunitx}' \cs*{num}\marg{num}.
+  \command{val}[\Marg{\meta{num1}--\meta{num2}}]
+    An alias of \pkg{siunitx}' \cs*{numrange}\marg{num1}\marg{num2}.
+\end{commands}
+
+\begin{example}
+  \begin{experimental}
+    \data{type1} Data.
+    \data{type2}[specifications] More data.
+    \data*{type3} Even more data.
+  \end{experimental}
+\end{example}
+
+\subsection{Customization}\label{sec:experimental-customization}
+
+The output of the environment and of the NMR commands can be customized be a
+number of options.  For historical reasons they all belong to the module
+\module{nmr}.
+\begin{options}
+  \keyval{unit}{unit}\Module{spectroscopy}\Default{\cs*{mega}\cs*{hertz}}
+    The used default unit.
+  \keychoice{nucleus}{\Marg{\meta{num},\meta{atom}}}\Module{spectroscopy}\Default{\Marg{1,H}}
+    The used default nucleus.
+  \keyval{connector}{code}\Module{spectroscopy}\Default{-}
+    Places \meta{code} between the nucleus and the method.
+  \keyval{method}{code}\Module{spectroscopy}\Default{NMR}
+    The measuring method.
+  \keyval{format}{commands}\Module{spectroscopy}\Default
+    For example \cs*{bfseries}.
+  \keyval{nmr-base-format}{commands}\Module{spectroscopy}\Default
+    \sinceversion{5.8}Formatting instructions for the NMR base.
+  \keychoice{pos-number}{side,sub,super}\Module{spectroscopy}\Default{side}
+    Position of the number next to the atom.
+  \keyval{coupling-symbol}{code}\Module{spectroscopy}\Default{J}
+    The symbol used for the coupling constant.
+  \keyval{coupling-unit}{unit}\Module{spectroscopy}\Default{\cs*{hertz}}
+    A \pkg{siunitx} unit.
+  \keychoice{coupling-pos}{side,sub}\Module{spectroscopy}\Default{side}
+    Placement of the coupling nuclei next to the symbol $J$ (or rather the
+    symbol specified with option \option{coupling-symbol}).
+  \keyval{coupling-nuclei-pre}{code}\Module{spectroscopy}\Default{(}
+    Code inserted before the coupling nuclei when \keyis{coupling-pos}{side}.
+  \keyval{coupling-nuclei-post}{code}\Module{spectroscopy}\Default{)}
+    Code inserted after the coupling nuclei when \keyis{coupling-pos}{side}.
+  \keyval{coupling-bonds-pre}{code}\Module{spectroscopy}\Default
+    Code inserted before the coupling bonds.
+  \keyval{coupling-bonds-post}{code}\Module{spectroscopy}\Default{\cs*{!}}
+    Code inserted after the coupling bonds.
+  \keyval{coupling-pos-cs}{cs}\Module{spectroscopy}\Default{\cs*{@firstofone}}
+    Set the macro that prints the number set with the \cs{pos} macro.  This
+    needs to be a command with one mandatory argument.
+  \keyval{atom-number-cs}{cs}\Module{spectroscopy}\Default{\cs*{@firstofone}}
+    Set the macro that prints the number set with the \cs{\#} macro.  This
+    needs to be a command with one mandatory argument.
+  \keyval{atom-number-space}{dim}\Module{spectroscopy}\Default{.16667em}
+    Horizontal\sinceversion{5.3} space inserted between number and atom
+    (printed by \cs{\#}).
+  \keybool{parse}\Module{spectroscopy}\Default{true}
+    Treat the solvent as \chemformula\ formula (this depends on the setting of
+    the \option{formula} option, see~\vref{sec:chemformula-module}) or not.
+  \keyval{delta}{tokens}\Module{spectroscopy}\Default
+    The \meta{tokens} are added after $\delta$.
+  \keybool{list}\Module{spectroscopy}\Default{false}
+    The environment \env{nmr}[<options>]{} is formatted as a list
+  \keyval{list-setup}{setup}\Module{spectroscopy}
+    Setup of the list. See below for the default settings.
+  \keybool{use-equal}\Module{spectroscopy}\Default{false}
+    Add egual sign after \cs{NMR} and \cs{data}.
+\end{options}
+
+The default setup of the list:
+\begin{sourcecode}
+  \topsep\z@skip \partopsep\z@skip 
+  \itemsep\z@ \parsep\z@ \itemindent\z@
+  \leftmargin\z@
+\end{sourcecode}
+
+\begin{example}
+  \begin{experimental}[format=\bfseries]
+    \data{type1} Data.
+    \data{type2}[specifications] More data.
+    \data*{type3} Even more data.
+  \end{experimental}
+\end{example}
+
+The command \cs{NMR} and all commands defined through \cs{NewChemNMR}
+can be used like \cs{data} for the NMR data.
+
+\begin{example}
+  \begin{experimental}[format=\bfseries,use-equal]
+    \data{type1} Data.
+    \data{type2}[specifications] More data.
+    \NMR Even more data.
+  \end{experimental}
+\end{example}
+
+\subsection{An Example}
+The code below is shown with different specifications for \meta{options}.
+Of course options can also be chosen with \cs{chemsetup}.
+
+\begin{sourcecode}
+  \sisetup{separate-uncertainty,per-mode=symbol,detect-all,range-phrase=--}
+  \begin{experimental}[<optionen>]
+    \data*{yield} \SI{17}{\milli\gram} yellow needles (\SI{0.04}{\milli\mole},
+      \SI{13}{\percent}).
+    %
+    \data{mp.} \SI{277}{\celsius} (DSC).
+    %
+    \NMR(600)[CDCl3] \val{2.01} (s, \#{24}, \pos{5}), \val{2.31} (s, \#{12},
+    \pos{1}), \val{6.72--6.74} (m, \#{2}, \pos{11}), \val{6.82} (s, \#{8},
+    \pos{3}), \val{7.05--7.07} (m, \#{2}, \pos{12}), \val{7.39--7.41} (m, \#{4},
+    \pos{9}), \val{7.48--7.49} (m, \#{4}, \pos{8}).
+    %
+    \NMR{13,C}(150)[CDCl3] \val{21.2} ($+$, \#{4}, \pos{1}), \val{23.4} ($+$,
+    \#{8}, \pos{5}), \val{126.0} ($+$, \#{4}, \pos{9}), \val{128.2} ($+$, \#{8},
+    \pos{3}), \val{130.8} ($+$, \#{2}, \pos{12}), \val{133.6} ($+$, \#{2},
+    \pos{11}), \val{137.0} ($+$, \#{4}, \pos{8}), \val{138.6} (q, \#{4},
+    \pos{2}), \val{140.6} (q, \#{2}, \pos{10}), \val{140.8} (q, \#{8}, \pos{4}),
+    \val{141.8} (q, \#{4}, \pos{6}), \val{145.6} (q, \#{2}, \pos{7}).
+    %
+    \data{MS}[DCP, EI, \SI{60}{\electronvolt}] \val{703} (2, \ch{M+}), \val{582}
+    (1), \val{462} (1), \val{249} (13), \val{120} (41), \val{105} (100).
+    %
+    \data{MS}[\ch{MeOH + H2O + KI}, ESI, \SI{10}{\electronvolt}] \val{720} (100,
+    \ch{M+ + OH-}), \val{368} (\ch{M+ + 2 OH-}).
+    %
+    \data{IR}[KBr] \val{3443} (w), \val{3061} (w), \val{2957} (m), \val{2918}
+    (m), \val{2856} (w), \val{2729} (w), \val{1725} (w), \val{1606} (s),
+    \val{1592} (s), \val{1545} (w), \val{1446} (m), \val{1421} (m), \val{1402}
+    (m), \val{1357} (w), \val{1278} (w), \val{1238} (s), \val{1214} (s),
+    \val{1172} (s), \val{1154} (m), \val{1101} (w), \val{1030} (w), \val{979}
+    (m), \val{874} (m), \val{846} (s), \val{818} (w), \val{798} (m), \val{744}
+    (w), \val{724} (m), \val{663} (w), \val{586} (w), \val{562} (w), \val{515}
+    (w).
+    %
+    \data*{UV-Vis} \SI{386}{\nano\metre} ($\varepsilon = \val{65984}$),
+    \SI{406}{\nano\metre} ($\varepsilon = \val{65378}$).
+    %
+    \data*{quantum yield} $\Phi = \val{0.74+-0.1}$\,.
+  \end{experimental}
+\end{sourcecode}
+
+\subsection{Nearly Standard}
+Output with these options:
+
+\begin{sourcecode}
+  delta=(ppm),pos-number=sub,use-equal
+\end{sourcecode}
+
+\begin{experimental}[delta=(ppm),pos-number=sub,use-equal]
+  \sisetup{separate-uncertainty,per-mode=symbol,detect-all,range-phrase=--}
+  \data*{yield} \SI{17}{\milli\gram} yellow needles (\SI{0.04}{\milli\mole},
+  \SI{13}{\percent}).
+  %
+  \data{mp.} \SI{277}{\celsius} (DSC).
+  %
+  \NMR(600)[CDCl3] \val{2.01} (s, \#{24}, \pos{5}), \val{2.31} (s, \#{12},
+  \pos{1}), \val{6.72--6.74} (m, \#{2}, \pos{11}), \val{6.82} (s, \#{8},
+  \pos{3}), \val{7.05--7.07} (m, \#{2}, \pos{12}), \val{7.39--7.41} (m, \#{4},
+  \pos{9}), \val{7.48--7.49} (m, \#{4}, \pos{8}).
+  %
+  \NMR{13,C}(150)[CDCl3] \val{21.2} ($+$, \#{4}, \pos{1}), \val{23.4} ($+$,
+  \#{8}, \pos{5}), \val{126.0} ($+$, \#{4}, \pos{9}), \val{128.2} ($+$, \#{8},
+  \pos{3}), \val{130.8} ($+$, \#{2}, \pos{12}), \val{133.6} ($+$, \#{2},
+  \pos{11}), \val{137.0} ($+$, \#{4}, \pos{8}), \val{138.6} (q, \#{4},
+  \pos{2}), \val{140.6} (q, \#{2}, \pos{10}), \val{140.8} (q, \#{8}, \pos{4}),
+  \val{141.8} (q, \#{4}, \pos{6}), \val{145.6} (q, \#{2}, \pos{7}).
+  %
+  \data{MS}[DCP, EI, \SI{60}{\electronvolt}] \val{703} (2, \ch{M+}), \val{582}
+  (1), \val{462} (1), \val{249} (13), \val{120} (41), \val{105} (100).
+  %
+  \data{MS}[\ch{MeOH + H2O + KI}, ESI, \SI{10}{\electronvolt}] \val{720} (100,
+  \ch{M+ + OH-}), \val{368} (\ch{M+ + 2 OH-}).
+  %
+  \data{IR}[KBr] \val{3443} (w), \val{3061} (w), \val{2957} (m), \val{2918}
+  (m), \val{2856} (w), \val{2729} (w), \val{1725} (w), \val{1606} (s),
+  \val{1592} (s), \val{1545} (w), \val{1446} (m), \val{1421} (m), \val{1402}
+  (m), \val{1357} (w), \val{1278} (w), \val{1238} (s), \val{1214} (s),
+  \val{1172} (s), \val{1154} (m), \val{1101} (w), \val{1030} (w), \val{979}
+  (m), \val{874} (m), \val{846} (s), \val{818} (w), \val{798} (m), \val{744}
+  (w), \val{724} (m), \val{663} (w), \val{586} (w), \val{562} (w), \val{515}
+  (w).
+  %
+  \data*{UV-Vis} \SI{386}{\nano\metre} ($\varepsilon = \val{65984}$),
+  \SI{406}{\nano\metre} ($\varepsilon = \val{65378}$).
+  %
+  \data*{quantum yield} $\Phi = \val{0.74+-0.1}$\,.
+\end{experimental}
+
+\subsection{Formatted List}
+Output with these options:
+
+\begin{sourcecode}
+  format=\bfseries,delta=(ppm),list=true,use-equal
+\end{sourcecode}
+
+\begin{experimental}[format=\bfseries,delta=(ppm),list=true,use-equal]
+  \sisetup{separate-uncertainty,per-mode=symbol,detect-all,range-phrase=--}
+  \data*{yield} \SI{17}{\milli\gram} yellow needles (\SI{0.04}{\milli\mole},
+  \SI{13}{\percent}).
+  %
+  \data{mp.} \SI{277}{\celsius} (DSC).
+  %
+  \NMR(600)[CDCl3] \val{2.01} (s, \#{24}, \pos{5}), \val{2.31} (s, \#{12},
+  \pos{1}), \val{6.72--6.74} (m, \#{2}, \pos{11}), \val{6.82} (s, \#{8},
+  \pos{3}), \val{7.05--7.07} (m, \#{2}, \pos{12}), \val{7.39--7.41} (m, \#{4},
+  \pos{9}), \val{7.48--7.49} (m, \#{4}, \pos{8}).
+  %
+  \NMR{13,C}(150)[CDCl3] \val{21.2} ($+$, \#{4}, \pos{1}), \val{23.4} ($+$,
+  \#{8}, \pos{5}), \val{126.0} ($+$, \#{4}, \pos{9}), \val{128.2} ($+$, \#{8},
+  \pos{3}), \val{130.8} ($+$, \#{2}, \pos{12}), \val{133.6} ($+$, \#{2},
+  \pos{11}), \val{137.0} ($+$, \#{4}, \pos{8}), \val{138.6} (q, \#{4},
+  \pos{2}), \val{140.6} (q, \#{2}, \pos{10}), \val{140.8} (q, \#{8}, \pos{4}),
+  \val{141.8} (q, \#{4}, \pos{6}), \val{145.6} (q, \#{2}, \pos{7}).
+  %
+  \data{MS}[DCP, EI, \SI{60}{\electronvolt}] \val{703} (2, \ch{M+}), \val{582}
+  (1), \val{462} (1), \val{249} (13), \val{120} (41), \val{105} (100).
+  %
+  \data{MS}[\ch{MeOH + H2O + KI}, ESI, \SI{10}{\electronvolt}] \val{720} (100,
+  \ch{M+ + OH-}), \val{368} (\ch{M+ + 2 OH-}).
+  %
+  \data{IR}[KBr] \val{3443} (w), \val{3061} (w), \val{2957} (m), \val{2918}
+  (m), \val{2856} (w), \val{2729} (w), \val{1725} (w), \val{1606} (s),
+  \val{1592} (s), \val{1545} (w), \val{1446} (m), \val{1421} (m), \val{1402}
+  (m), \val{1357} (w), \val{1278} (w), \val{1238} (s), \val{1214} (s),
+  \val{1172} (s), \val{1154} (m), \val{1101} (w), \val{1030} (w), \val{979}
+  (m), \val{874} (m), \val{846} (s), \val{818} (w), \val{798} (m), \val{744}
+  (w), \val{724} (m), \val{663} (w), \val{586} (w), \val{562} (w), \val{515}
+  (w).
+  %
+  \data*{UV-Vis} \SI{386}{\nano\metre} ($\varepsilon = \val{65984}$),
+  \SI{406}{\nano\metre} ($\varepsilon = \val{65378}$).
+  %
+  \data*{quantum yield} $\Phi = \val{0.74+-0.1}$\,.
+\end{experimental}
+
+\subsection{Crazy}
+Output for these options:
+
+\begin{sourcecode}
+  format=\color{red}\itshape,
+  list=true,
+  delta=\textcolor{green}{\ch{M+ + H2O}},
+  pos-number=side,
+  coupling-unit=\mega\gram\per\square\second,
+  list-setup=,
+  use-equal
+\end{sourcecode}
+
+\begin{experimental}[
+    format=\color{red}\itshape,
+    list=true,
+    delta=\textcolor{green}{\ch{M+ + H2O}},
+    pos-number=side,
+    coupling-unit=\mega\gram\per\square\second,
+    list-setup=,use-equal]
+  \sisetup{separate-uncertainty,per-mode=symbol,detect-all,range-phrase=--}
+  \data*{yield} \SI{17}{\milli\gram} yellow needles (\SI{0.04}{\milli\mole},
+  \SI{13}{\percent}).
+  %
+  \data{mp.} \SI{277}{\celsius} (DSC).
+  %
+  \NMR(600)[CDCl3] \val{2.01} (s, \#{24}, \pos{5}), \val{2.31} (s, \#{12},
+  \pos{1}), \val{6.72--6.74} (m, \#{2}, \pos{11}), \val{6.82} (s, \#{8},
+  \pos{3}), \val{7.05--7.07} (m, \#{2}, \pos{12}), \val{7.39--7.41} (m, \#{4},
+  \pos{9}), \val{7.48--7.49} (m, \#{4}, \pos{8}).
+  %
+  \NMR{13,C}(150)[CDCl3] \val{21.2} ($+$, \#{4}, \pos{1}), \val{23.4} ($+$,
+  \#{8}, \pos{5}), \val{126.0} ($+$, \#{4}, \pos{9}), \val{128.2} ($+$, \#{8},
+  \pos{3}), \val{130.8} ($+$, \#{2}, \pos{12}), \val{133.6} ($+$, \#{2},
+  \pos{11}), \val{137.0} ($+$, \#{4}, \pos{8}), \val{138.6} (q, \#{4},
+  \pos{2}), \val{140.6} (q, \#{2}, \pos{10}), \val{140.8} (q, \#{8}, \pos{4}),
+  \val{141.8} (q, \#{4}, \pos{6}), \val{145.6} (q, \#{2}, \pos{7}).
+  %
+  \data{MS}[DCP, EI, \SI{60}{\electronvolt}] \val{703} (2, \ch{M+}), \val{582}
+  (1), \val{462} (1), \val{249} (13), \val{120} (41), \val{105} (100).
+  %
+  \data{MS}[\ch{MeOH + H2O + KI}, ESI, \SI{10}{\electronvolt}] \val{720} (100,
+  \ch{M+ + OH-}), \val{368} (\ch{M+ + 2 OH-}).
+  %
+  \data{IR}[KBr] \val{3443} (w), \val{3061} (w), \val{2957} (m), \val{2918}
+  (m), \val{2856} (w), \val{2729} (w), \val{1725} (w), \val{1606} (s),
+  \val{1592} (s), \val{1545} (w), \val{1446} (m), \val{1421} (m), \val{1402}
+  (m), \val{1357} (w), \val{1278} (w), \val{1238} (s), \val{1214} (s),
+  \val{1172} (s), \val{1154} (m), \val{1101} (w), \val{1030} (w), \val{979}
+  (m), \val{874} (m), \val{846} (s), \val{818} (w), \val{798} (m), \val{744}
+  (w), \val{724} (m), \val{663} (w), \val{586} (w), \val{562} (w), \val{515}
+  (w).
+  %
+  \data*{UV-Vis} \SI{386}{\nano\metre} ($\varepsilon = \val{65984}$),
+  \SI{406}{\nano\metre} ($\varepsilon = \val{65378}$).
+  %
+  \data*{quantum yield} $\Phi = \val{0.74+-0.1}$\,.
+\end{experimental}
+
+\section{The \chemmodule*{thermodynamics} Module}\label{sec:thermodynamics-module}
+
+The \chemmodule{thermodynamics} module loads the \pkg{siunitx}
+package~\cite{pkg:siunitx}.
+
+\subsection{The \cs*{state} Macro}
+
+\begin{commands}
+  \command{state}[\oarg{options}\marg{symbol}]
+    Typeset a state variable.
+\end{commands}
+
+This macro can be used to write the thermodynamic state variables.
+\begin{example}
+  \state{A}, \state[subscript-left=f]{G} ,
+  \state[subscript-right=\ch{Na}]{E},
+  \state[superscript-right=\SI{1000}{\celsius}]{H}
+\end{example}
+
+These options are available:
+\begin{options}
+  \keyval{pre}{text}\Module{thermodynamics}\Default{\cs{changestate}}
+    Code inserted before the variable.  Inserted in text mode.
+  \keyval{post}{text}\Module{thermodynamics}\Default
+    Code inserted after the variable. Inserted in text mode.
+  \keyval{superscript-left}{text}\Module{thermodynamics}\Default
+    The left superscript. Inserted in text mode.
+  \keyval{superscript-right}{text}\Module{thermodynamics}\Default{\cs{standardstate}}
+    The right superscript. Inserted in text mode.
+  \keyval{superscript}{text}\Module{thermodynamics}
+    An alias of \option{superscript-right}.
+  \keyval{subscript-left}{text}\Module{thermodynamics}\Default
+    The left subscript. Inserted in text mode.
+  \keyval{subscript-right}{text}\Module{thermodynamics}\Default
+    The right subscript. Inserted in text mode.
+  \keyval{subscript}{text}\Module{thermodynamics}
+    An alias of \option{subscript-left}.
+\end{options}
+
+\subsection{Thermodynamic Variables}
+
+The \chemmodule{thermodynamics} module provides a few commands for specific
+thermodynamic variables:
+\begin{commands}
+  \command{enthalpy}[\sarg\oarg{options}\darg{subscript}\marg{value}]
+    Typeset the amount of enthalpy.
+  \command{entropy}[\sarg\oarg{options}\darg{subscript}\marg{value}]
+    Typeset the amount of entropy.
+  \command{gibbs}[\sarg\oarg{options}\darg{subscript}\marg{value}]
+    Typeset the amount of Gibbs enthalpy.
+\end{commands}
+
+Their usage is pretty much self-explaining:
+\begin{example}[side-by-side]
+  \enthalpy{123} \par
+  \entropy{123} \par
+  \gibbs{123}
+\end{example}
+The argument \darg{subscript} adds a subscript for specification, \sarg\ hides
+number and unit:
+\begin{example}[side-by-side]
+    \enthalpy(r){123} \par
+    \enthalpy*{123} \par
+\end{example}
+
+\begin{options}
+  \keyval{pre}{text}\Module{thermodynamics}\Default{\cs{changestate}}
+    Code inserted before the variable.  Inserted in text mode.
+  \keyval{post}{text}\Module{thermodynamics}\Default
+    Code inserted after the variable.  Inserted in text mode.
+  \keyval{superscript-left}{text}\Module{thermodynamics}\Default
+    The left superscript.  Inserted in text mode.
+  \keyval{superscript-right}{text}\Module{thermodynamics}\Default{\cs{standardstate}}
+    The right superscript. Inserted in text mode.
+  \keyval{superscript}{text}\Module{thermodynamics}
+    An alias of \option{superscript-right}.
+  \keyval{subscript-left}{text}\Module{thermodynamics}\Default
+    The left subscript.  Inserted in text mode.
+  \keyval{subscript-right}{text}\Module{thermodynamics}\Default
+    The right subscript.  Inserted in text mode.
+  \keyval{subscript}{text}\Module{thermodynamics}
+    An alias of \option{subscript-left}.
+  \keychoice{subscript-pos}{left,right}\Module{thermodynamics}\Default{left}
+    Determines wether the subscript given in \darg{subscript} is placed to the
+    left or the right of the variable.
+  \keyval{symbol}{symbol}\Module{thermodynamics}\Default
+    The symbol of the variable.  Inserted in math mode.
+  \keyval{unit}{unit}\Module{thermodynamics}\Default
+    A valid \pkg{siunitx} unit.
+\end{options}
+
+The default values depend on the command.
+\begin{example}[side-by-side]
+  \enthalpy[unit=\kilo\joule]{-285} \par
+  \gibbs[pre=]{0} \par
+  \entropy[pre=$\Delta$,superscript=]{56.7}
+\end{example}
+The unit is set corresponding to the rules of \pkg{siunitx} and depends on
+its settings:
+\begin{example}[side-by-side]
+  \enthalpy{-1234.56e3} \par
+  \sisetup{
+    per-mode=symbol,
+    exponent-product=\cdot,
+    output-decimal-marker={,},
+    group-four-digits=true
+  }
+  \enthalpy{-1234.56e3}
+\end{example}
+
+\subsection{Create New Variables or Redefine Existing Ones}
+
+\begin{commands}
+  \command{NewChemState}[\marg{cs}\marg{options}]
+    Define new state commands like \cs{enthalpy}.  Gives an error is \meta{cs}
+    already exists.
+  \command{RenewChemState}[\marg{cs}\marg{options}]
+    Redefine existing state commands.
+  \command{DeclareChemState}[\marg{cs}\marg{options}]
+    Like \cs{NewChemState} but gives now error if \meta{cs} already exists.
+  \command{ProvideChemState}[\marg{cs}\marg{options}]
+    Define new state commands like \cs{enthalpy}.  Defines \meta{cs} only if
+    it is not defined, yet.
+\end{commands}
+The argument \meta{options} is a comma separated list of key/value options:
+\begin{options}
+  \keyval{pre}{text}\Module{thermodynamics}\Default{\cs{changestate}}
+    Code inserted before the variable.  Inserted in text mode.
+  \keyval{post}{text}\Module{thermodynamics}\Default
+    Code inserted after the variable.  Inserted in text mode.
+  \keyval{superscript-left}{text}\Module{thermodynamics}\Default
+    The left superscript.  Inserted in text mode.
+  \keyval{superscript-right}{text}\Module{thermodynamics}\Default{\cs{standardstate}}
+    The right superscript.
+  \keyval{superscript}{text}\Module{thermodynamics}
+    An alias of \option{superscript-right}.
+  \keyval{subscript-left}{text}\Module{thermodynamics}\Default
+    The left subscript.  Inserted in text mode.
+  \keyval{subscript-right}{text}\Module{thermodynamics}\Default
+    The right subscript.  Inserted in text mode.
+  \keyval{subscript}{text}\Module{thermodynamics}
+    An alias of \option{subscript-left}.
+  \keychoice{subscript-pos}{left,right}\Module{thermodynamics}\Default{left}
+    Determines wether the subscript given in \darg{subscript} is placed to the
+    left or the right of the variable.
+  \keyval{symbol}{symbol}\Module{thermodynamics}\Default
+    The symbol of the variable.
+  \keyval{unit}{unit}\Module{thermodynamics}\Default
+    A valid \pkg{siunitx} unit.
+\end{options}
+
+\begin{example}
+  \NewChemState\Helmholtz{ symbol=A , unit=\kilo\joule\per\mole }
+  \NewChemState\ElPot{ symbol=E , subscript-pos=right , superscript= , unit=\volt }
+  \Helmholtz{123.4} \par
+  \ElPot{-1.1} \par
+  \ElPot[superscript=0]($\ch{Sn}|\ch{Sn^2+}||\ch{Pb^2+}|\ch{Pb}$){0.01} \par
+  \RenewChemState\enthalpy{ symbol=h , unit=\joule} \par
+  \enthalpy(f){12.5}
+\end{example}
+
+The existing commands have been defined like this:
+\begin{sourcecode}
+  \NewChemState \enthalpy{ symbol = H, unit = \kilo\joule\per\mole }
+  \NewChemState \entropy { symbol = S, unit = \joule\per\kelvin\per\mole, pre = }
+  \NewChemState \gibbs   { symbol = G, unit = \kilo\joule\per\mole }
+\end{sourcecode}
+
+So -- for following thermodynamic conventions -- one could define a molar and
+an absolute variable:
+\begin{example}
+  \RenewChemState\enthalpy{symbol=h,superscript=,unit=\kilo\joule\per\mole}% molar
+  \NewChemState\Enthalpy{symbol=H,superscript=,unit=\kilo\joule}% absolute
+  \enthalpy{-12.3} \Enthalpy{-12.3}
+\end{example}
+
+\section{The \chemmodule*{units} Module}\label{sec:units-module}
+
+The \chemmodule{units} module loads the \pkg{siunitx}
+package~\cite{pkg:siunitx}.
+
+In chemistry some non-SI units are very common.  \pkg{siunitx} provides the
+command
+\begin{commands}
+  \command*{DeclareSIUnit}[\marg{cs}\marg{unit}]
+    Define \meta{cs} to be a valid unit command inside \pkg{siunitx}' macros
+    \cs*{SI} and \cs*{si} which represents \meta{unit}.
+\end{commands}
+to add arbitrary units.  \chemmacros\ uses that command to provide some
+units.  Like all \pkg{siunitx} units they're only valid inside
+\cs*{SI}\marg{num}\marg{unit} and \cs*{si}\marg{unit}.
+\begin{commands}
+  \command{atmosphere} \si{\atmosphere}
+  \command{atm} \si{\atm}
+  \command{calory} \si{\calory}
+  \command{cal} \si{\cal}
+  \command{cmc} \si{\cmc} \par
+    The units \cs{cmc}, \cs{molar}, and \cs{Molar} are defined by the
+    package \pkg{chemstyle} as well.  \chemmacros\ only defines them, if
+    \pkg{chemstyle} is not loaded.
+  \command{molar} \si{\molar}
+  \command{moLar} \si{\moLar}
+  \command{Molar} \si{\Molar}
+  \command{MolMass} \si{\MolMass}
+  \command{normal} \si{\normal}
+  \command{torr} \si{\torr}
+\end{commands}
+
+By the way: \cs*{mmHg} \si{\mmHg} already is defined by \pkg{siunitx}.
+
+\part{Core Modules}
+
+The modules described in this part are always loaded and mainly concern module
+writers.
+
+\section{The \chemmodule*{base} Module}\label{sec:base-module}
 
 The \chemmodule{base} module is the core module of \chemmacros. It defines
 some tools which can (and should) be used in other modules.  This means this
@@ -1613,203 +3073,17 @@ The following macros strictly speaking are not provided by the
     the command is used then \meta{code} is inserted immediately.
 \end{commands}
 
-\subsection{The \chemmodule*{chemformula} Module}\label{sec:chemformula-module}
-
-The \chemmodule{chemformula} module loads the \pkg{amstext}
-package~\cite{pkg:amstext} and the \chemmodule{charges} module.
-
-\subsubsection{For Users}
-There are different packages which provide means for typesetting chemical
-formulas:
-\begin{itemize}
-  \item \pkg{chemformula}~\cite{pkg:chemformula}.  This is probably well known
-    to users of \chemmacros.
-  \item \pkg{mhchem}~\cite{pkg:mhchem}.  This is the \enquote{older brother} of
-    \chemformula.
-  \item \pkg{chemfig}~\cite{pkg:chemfig}.  The easiest and most complete of the
-    packages for drawing skeletal formulas.
-  \item \XyMTeX~\cite{pkg:xymtex}.  A very comprehensive alternative for
-    typesetting chemistry.
-\end{itemize}
-In order to help authors getting a consistent layout \chemmacros\ does not
-make a choice which package to use for typesetting formulas.  Although
-\chemformula\ is well tested and preferred users can choose other packages if
-they like.
-
-this is done with the following general option:
-\begin{options}
-  \keyval{formula}{method}\Default{chemformula}
-    This\sinceversion{5.1} option let's you choose how chemical formulas are
-    typeset.  Available methods are
-    \begin{itemize}
-      \item \pkg{chemformula}
-      \item \pkg{mhchem}
-      \item \pkg{chemist}\sinceversion{5.6} (from the \XyMTeX\ bundle)
-      \item \pkg{chemfig}\sinceversion{5.6}
-    \end{itemize}
-    The corresponding package with the same name is loaded.
-\end{options}
-If you explicitly set this option the corresponding package is loaded
-immediately and the method is set up.  Otherwise the option will be set by
-\chemmacros\ at the end of the preamble.
-
-If\sinceversion{5.2} you load a method package in a way that a unique choice
-is possible then \chemmacros\ will set the method accordingly if you haven't
-set the option by yourself.  If \emph{no} unique choice is possible
-\chemmacros\ will raise a warning and choose \pkg{chemformula} regardless if
-the package is loaded or not.  In this case if you want to use another method
-you'll have to choose manually. \emph{All automatic choices only happen at the
-  end of the preamble}.
-
-\paragraph{Using the \pkg*{chemformula} Package}
-If you set \keyis{formula}{chemformula} the \chemmodule{chemformula} module
-makes it possible that you can set all \chemformula\ options via the
-\cs{chemsetup} command using the module \module{chemformula}, for example:
-\begin{sourcecode}
-  \chemsetup[chemformula]{format=\sffamily}
-\end{sourcecode}
-
-Everywhere where \chemmacros\ typesets chemical formulas \chemformula's macros
-\cs{chcpd} or \cs{ch} are used, for example in the reaction environments
-provided by the \chemmodule{reactions} module.
-
-\emph{This method is the recommended choice!}
-
-\paragraph{Using the \pkg*{mhchem} Package}\sinceversion{5.1}\label{sec:using-mhchem}
-If you set \keyis{formula}{mhchem} the \chemmodule{chemformula} module makes
-it possible that you can set all of \pkg{mhchem}'s options via the
-\cs{chemsetup} command using the module \module{mhchem}, for example:
-\begin{sourcecode}
-  \chemsetup[mhchem]{format=\sffamily}
-\end{sourcecode}
-
-Everywhere where \chemmacros\ typesets chemical formulas \pkg{mhchem}'s macro
-\cs{ce} is used, for example in the reaction environments provided by the
-\chemmodule{reactions} module.
-
-There are some \latin{caveat}s if you use this method:
-\begin{itemize}
-  \item This method has not been extensively tested, yet.  There may be errors
-     and wrong output at unexpected places.
-  \item Using this method effectively disables the different values of the
-    \module{particles} option \option{elpair} (see
-    section~\ref{sec:particles-module}).
-  \item The different kinds of formal charges provided by the
-    \chemmodule{charges} module (see section~\ref{sec:ion-charges}) are
-    disabled.  Formal charges always use the math method now.
-  \item There may also be other incompatibilities (\eg, \pkg{mhchem} has it's
-    own method of setting upright Greek letters so it may or may not disable
-    \chemmacros' mechanism).
-\end{itemize}
-
-\paragraph{Using the \pkg*{chemfig} Package}\sinceversion{5.6}\label{sec:using-chemfig}
-Everywhere where \chemmacros\ typesets chemical formulas \pkg{chemfig}'s macro
-\cs{printatom} is used, for example in the reaction environments provided by
-the \chemmodule{reactions} module.
-
-There are some \latin{caveat}s if you use this method:
-\begin{itemize}
-  \item This method has not been extensively tested, yet.  There may be errors
-     and wrong output at unexpected places.
-  \item Using this method effectively disables the different values of the
-    \module{particles} option \option{elpair} (see
-    section~\ref{sec:particles-module}).
-  \item The different kinds of formal charges provided by the
-    \chemmodule{charges} module (see section~\ref{sec:ion-charges}) are
-    disabled.  Formal charges always use the math method now.
-  \item The reaction environments by the \chemmodule{reactions} module may
-    work only to a limited respect.  If you plan to use them consider using
-    methods \pkg{chemformula} or \pkg{mhchem} instead.
-\end{itemize}
-
-\paragraph{Using the \pkg*{chemist} Package}\sinceversion{5.6}\label{sec:using-chemist}
-Everywhere where \chemmacros\ typesets chemical formulas \pkg{chemist}'s macro
-\cs{ChemForm} is used, for example in the reaction environments provided by
-the \chemmodule{reactions} module.
-
-There are some \latin{caveat}s if you use this method:
-\begin{itemize}
-  \item This method has not been extensively tested, yet.  There may be errors
-     and wrong output at unexpected places.
-  \item Using this method effectively disables the different values of the
-    \module{particles} option \option{elpair} (see
-    section~\ref{sec:particles-module}).
-  \item The different kinds of formal charges provided by the
-    \chemmodule{charges} module (see section~\ref{sec:ion-charges}) are
-    disabled.  Formal charges always use the math method now.
-  \item The reaction environments by the \chemmodule{reactions} module may
-    work only to a limited respect.  If you plan to use them consider using
-    methods \pkg{chemformula} or \pkg{mhchem} instead\footnote{On the other
-      hand \XyMTeX\ (and especially the \pkg{chemist} package) provides quite
-      a number of chemical reaction environments itself.}.
-\end{itemize}
-
-\subsubsection{For Module Writers}
-
-There are two macros for module writers:
-\begin{commands}
-  \explcommand{chemmacros_chemformula:n}[ \marg{formula}]
-    This is only a wrapper for \cs{chcpd} or \cs{ce}.  It is recommended that
-    module writers use this macro (or a variant thereof) inside of
-    \chemmacros' macros whenever they want to display a chemical formula.
-    Writers who prefer traditional \LaTeXe\ programming over expl3 should use
-    \cs*{chemmacros@formula}.
-  \explcommand{chemmacros_reaction:n}[ \marg{reaction}]
-    This is only a wrapper for \cs{ch} or \cs{ce}.  It is recommended that
-    module writers use this macro (or a variant thereof) inside of
-    \chemmacros' macros whenever they want to display a chemical reaction.
-    Writers who prefer traditional \LaTeXe\ programming over expl3 should use
-    \cs*{chemmacros@reaction}.
-\end{commands}
-
-\subsection{The \chemmodule*{errorcheck} Module}\label{sec:errorcheck-module}
+\section{The \chemmodule*{errorcheck} Module}\label{sec:errorcheck-module}
 The\sinceversion{5.2} \chemmodule{errorcheck} module provides some rudimentary
 support for giving users more meaningful messages when they use a command or
 environment provided by a module that they haven't loaded.
 
-\subsection{The \chemmodule*{greek} Module}\label{sec:greek-module}
-
-The \chemmodule{greek} module loads the \pkg{chemgreek}
-package~\cite{pkg:chemgreek}.
-
-This module provides one option:
-\begin{options}
-  \keyval{greek}{mapping}
-    A valid value is any valid \chemgreek\ \meta{mapping}.  \chemmacros\ will
-    warn you if no mapping has been chosen or if you are using the
-    \code{default} or the \code{var-default} mapping because this means that
-    no upright Greek letters are available.
-\end{options}
-If you load a \chemgreek\ support package which allows an unambiguous choice
-of a mapping \chemgreek\ will make this choice automatically.  This means if
-you say
-\begin{sourcecode}
-  \usepackage{upgreek}
-  \usepackage{chemmacros}
-\end{sourcecode}
-then \chemmacros\ will use \pkg{upgreek}'s upright Greek letters.  If you
-have
-\begin{sourcecode}
-  \usepackage{upgreek}
-  \usepackage{chemmacros}
-  \usepackage{textgreek}
-\end{sourcecode}
-then no unambiguous choice is possible and you should choose a mapping
-yourself, for example:
-\begin{sourcecode}
-  \usepackage{upgreek}
-  \usepackage{chemmacros}
-  \usepackage{textgreek}
-  \chemsetup{greek=textgreek}
-\end{sourcecode}
-For further details on mappings please refer to \chemgreek's manual.
-
-\subsection{The \chemmodule*{lang} Module}\label{sec:lang-module}
+\section{The \chemmodule*{lang} Module}\label{sec:lang-module}
 
 The \chemmodule{lang} module provides language support for \chemmacros.  It
 loads the package \pkg{translations}~\cite{pkg:translations}.
 
-\subsubsection{Information For Users}\label{sec:information-users}
+\subsection{Information For Users}\label{sec:information-users}
 
 This module defines the following option:
 \begin{options}
@@ -1828,7 +3102,7 @@ places when the corresponding function of \chemmacros\ is explained.
 Translation is done with the help of the \pkg{translations} package, available
 translation keys are listed in section~\vref{sec:avail-transl-keys}.
 
-\subsubsection{Available Translation Keys}\label{sec:avail-transl-keys}
+\subsection{Available Translation Keys}\label{sec:avail-transl-keys}
 
 Table~\vref{tab:translation-keys} lists all predefined translations of the
 available keys.  \emph{Some of the translations have changed in
@@ -1893,7 +3167,7 @@ translations for your language I'll gladly add them to the next release of
   \chemtranslationtable
 \end{longtable}
   
-\subsubsection{Information For Module Writers}
+\subsection{Information For Module Writers}
 
 In addition to the commands from section~\vref{sec:avail-transl-keys} the
 following macros are available:
@@ -1917,1428 +3191,12 @@ following macros are available:
     The expl3 version of \cs{DeclareChemTranslations}.
 \end{commands}
 
-\clearpage
-
-\part{Additional Modules}\label{part:additional-modules}
-
-\section{User Modules}
-\subsection{The \chemmodule*{all} \emph{pseudo}-module}\label{sec:all-module}
-
-The \chemmodule{all} module is a pseudo module: it doesn't define any
-functionality at all.  It does however load all other modules.  So you can say
-\begin{sourcecode}
-  \chemsetup{ modules = all }
-\end{sourcecode}
-to ensure that every module is available.  This \emph{will not} load personal
-modules!
-
-\subsection{The \chemmodule*{isotopes} Module}\label{sec:isotopes-module}
-
-The \chemmodule{isotope} module loads the \pkg{elements}
-package~\cite{pkg:elements}.  This module defines one user command:
-\begin{commands}
-  \command{isotope}[\sarg\marg{input}]
-    \meta{input} can either be the \emph{symbol} of an element or the
-    \emph{name} of an element.  Be aware that \emph{the name is language
-      dependent}, refer to the manual of the \pkg{elements} package for
-    details.  To be on the safe side use the element symbol.
-
-    \meta{input} can also be comma separated list:
-    \cs{isotope}\Marg{\meta{nuc},\meta{symbol}}.  If you leave \meta{nuc} out
-    then \cs{isotope} will display the most common isotope.  Otherwise
-    \meta{nuc} will be used.  If \meta{nuc} is an isotope unknown to the
-    \pkg{elements} package \cs{isotope} will write a warning to the log file.
-
-    The starred variant omits the element number.
-\end{commands}
-
-\begin{example}[side-by-side]
-  \isotope{C}
-  \isotope*{C}
-  \isotope{14,C}
-  \isotope*{14,C}
-\end{example}
-
-As input for the element symbol you can choose any of the elements known to
-the \pkg{elements} package.
-
-There are options which allow you to determine how the isotope is printed:
-\begin{options}
-  \keychoice{format}{super,side}\Module{isotopes}\Default{super}
-    Either print the isotope number as superscript or to the right of the
-    element symbol.
-  \keyval{side-connect}{input}\Module{isotopes}\Default{-}
-    Determine what is printed between the element symbol and the isotope
-    number if \keyis{format}{side}.
-\end{options}
-
-\begin{example}[side-by-side]
-  \isotope{C}
-  \chemsetup[isotopes]{format=side}
-  \isotope{C}
-  \chemsetup[isotopes]{side-connect=}
-  \isotope{C}
-\end{example}
-
-\subsection{The \chemmodule*{mechanisms} Module}\label{sec:mechanisms-module}
-
-The module \chemmodule{mechanisms} loads the package
-\pkg{amstext}~\cite{pkg:amstext}.  It provides one macro:
-
-\begin{commands}
-  \command{mech}[\oarg{type}]
-    Allows to specify the most common reaction mechanisms.
-\end{commands}
-\meta{type} can have one of the following values:
-\begin{commands}
-  \command{mech}
-    (empty, no opt. argument) nucleophilic substitution \mech
-  \command{mech}[\Oarg{1}]
-    unimolecular nucleophilic substitution \mech[1]
-  \command{mech}[\Oarg{2}]
-    bimolecular nucleophilic substitution \mech[2]
-  \command{mech}[\Oarg{se}]
-    electrophilic substitution \mech[se]
-  \command{mech}[\Oarg{1e}]
-    unimolecular electrophilic substitution \mech[1e]
-  \command{mech}[\Oarg{2e}]
-    bimolecular electrophilic substitution \mech[2e]
-  \command{mech}[\Oarg{ar}]
-    electrophilic aromatic substitution \mech[ar]
-  \command{mech}[\Oarg{e}]
-    elimination \mech[e]
-  \command{mech}[\Oarg{e1}]
-    unimolecular elimination \mech[e1]
-  \command{mech}[\Oarg{e2}]
-    bimolecular elimination \mech[e2]
-  \command{mech}[\Oarg{cb}]
-    unimolecular elimination \enquote{conjugated base}, \ie, via carbanion
-    \mech[cb]
-\end{commands}
-
-\subsection{The \chemmodule*{newman} Module}\label{sec:newman-module}
-The \chemmodule{newman} module provides a command for drawing Newman
-projections.  It loads the \chemmodule{tikz} module.
-\begin{commands}
-  \command{newman}[\oarg{options}\darg{angle}%
-    \Marg{\meta{1},\meta{2},\meta{3},\meta{4},\meta{5},\meta{6}}]
-    Create Newman projections.  This command uses \TikZ\ internally.
-    \meta{angle} rotates the back atoms counter clockwise with respect to the
-    front atoms and is an optional argument.  \meta{1} to \meta{6} are the
-    positions, the first three are the front atoms, the last three the back
-    atoms.
-\end{commands}
-
-\begin{example}
-  \newman{} \newman(170){}
-  \newman{1,2,3,4,5,6} \newman{1,2,3} \newman{,,,4,5,6}
-\end{example}
-
-Several options allow customization:
-\begin{options}
-  \keyval{angle}{angle}\Module{newman}\Default{0}
-    Default angle.
-  \keyval{scale}{factor}\Module{newman}\Default{1}
-    Scale the whole projection by factor \meta{factor}.
-  \keyval{ring}{tikz}\Module{newman}\Default
-    Customize the ring with \TikZ\ keys.
-  \keyval{atoms}{tikz}\Module{newman}\Default
-    Customize the nodes within which the atoms are set with \TikZ\ keys.
-  \keyval{back-atoms}{tikz}\Module{newman}\Default
-    Explicitly customize the nodes of the back atoms with \TikZ\ keys.
-\end{options}
-
-\begin{example}
-  \chemsetup[newman]{angle=45} \newman{}
-  \newman[scale=.75,ring={draw=blue,fill=blue!20}]{}
-\end{example}
-
-\begin{example}
-  \chemsetup[newman]{atoms={draw=red,fill=red!20,inner sep=2pt,rounded corners}}
-  \newman{1,2,3,4,5,6}
-\end{example}
-
-\begin{example}
-  \chemsetup[newman]{
-    atoms = {draw=red,fill=red!20,inner sep=2pt,rounded corners},
-    back-atoms = {draw=blue,fill=blue!20,inner sep=2pt,rounded corners}
-  }
-  \newman{1,2,3,4,5,6} \newman(170){1,2,3,4,5,6}
-\end{example}
-
-\subsection{The \chemmodule*{orbital} Module}\label{sec:orbital-module}
-The \chemmodule{orbital} module loads the \chemmodule{tikz} module.  It
-provides the following command to create orbitals:
-\begin{commands}
-  \command{orbital}[\oarg{options}\marg{type}]
-    Draw an orbital shape of type \meta{type}.  This command uses \TikZ\
-    internally.
-\end{commands}
-
-There are the following types available for \meta{type}:
-\begin{center}
-  \code{s} \quad
-  \code{p} \quad
-  \code{sp} \quad
-  \code{sp2} \quad
-  \code{sp3}
-\end{center}
-
-\begin{example}
-  \orbital{s} \orbital{p} \orbital{sp} \orbital{sp2} \orbital{sp3}
-\end{example}
-
-Depending on the type you have different options to modify the orbitals:
-\begin{options}
-  \keychoice{phase}{+,-}\Module{orbital}\Default{+}
-    changes the phase of the orbital (all types)
-  \keyval{scale}{factor}\Module{orbital}\Default{1}
-    changes the size of the orbital (all types)
-  \keyval{color}{color}\Module{orbital}\Default{black}
-    changes the color of the orbital (all types)
-  \keyval{angle}{angle}\Module{orbital}\Default{0}
-    rotates the orbitals with a p contribution counter clockwise (all types
-    except \code{s})
-  \keybool{half}\Module{orbital}\Default{false}
-    displays only half an orbital (only \code{p})
-\end{options}
-
-\begin{example}
-  \orbital{s} \orbital[phase=-]{s} 
-  \orbital{p} \orbital[phase=-]{p}
-  \orbital{sp3} \orbital[phase=-]{sp3}
- 
-  \orbital[angle=0]{p} \orbital[color=red!50]{p}
-  \orbital[angle=135,scale=1.5]{p} \orbital[half]{p}
-\end{example}
-
-Additionally there are two options, with which the \TikZ\ behaviour can be
-changed.
-\begin{options}
-  \keybool{overlay}\Module{orbital}
-    The orbital \enquote{doesn't need space}; it is displayed with the \TikZ\
-    option \code{overlay}.
-  \keyval{opacity}{num}\Module{orbital}
-    The orbital becomes transparent; \meta{value} can have values between
-    \code{1} (fully opaque) to \code{0} (invisible).
-\end{options}
-\begin{example}
-  \vspace{7mm}
-  \chemsetup[orbital]{
-    overlay,
-    p/color = black!70
-  }
-  \setchemfig{bond offset=0pt}
-  \chemfig{
-    ?\orbital{p}
-    -[,1.3]{\orbital[phase=-]{p}}
-    -[:30,1.1]\orbital{p}
-    -[:150,.9]{\orbital[phase=-]{p}}
-    -[4,1.3]\orbital{p}
-    -[:-150,1.1]{\orbital[phase=-]{p}}?
-  }
-  \vspace{7mm}
-\end{example}
-
-\begin{example}
-  \vspace{7mm}
-  \setchemfig{bond offset = 0pt}
-  \chemsetup[orbital]{
-    overlay ,
-    opacity = .75 ,
-    p/scale = 1.6 ,
-    s/color = blue!50 ,
-    s/scale = 1.6
-  }
-  \chemfig{
-    \orbital{s}
-    -[:-20]{\orbital[scale=2]{p}}
-           {\orbital[half,angle=0]{p}}
-           {\orbital[angle=170,half]{p}}
-           {\orbital[angle=-150,half]{p}}
-    (-[:-150]\orbital{s})-\orbital{s}
-  }
-  \vspace{1cm}
-\end{example}
-
-\subsection{The \chemmodule*{polymers} Module}\label{sec:polymers-module}
-The\sinceversion{5.5} \chemmodule{polymers} module loads the
-\chemmodule{nomenclature} and the \chemmodule{tikz} modules.
-
-\subsubsection{Nomenclature}
-
-The \chemmodule{polymers} module defines a number of \ac{iupac} macros for
-usage inside \cs{iupac} which are used in polymer chemistry.
-
-\paragraph{Copolymers}
-\begin{commands}
-  \iupaccs[co]{copolymer}{unspecified copolymer.}
-  \iupaccs[stat]{statistical}{statistical copolymer.}
-  \iupaccs[ran]{random}{random copolymer.}
-  \iupaccs[alt]{alternating}{alternating copolymer.}
-  \iupaccs[per]{periodic}{periodic copolymer.}
-  \iupaccs{block}{block copolymer.}
-  \iupaccs{graft}{graft copolymer.}
-\end{commands}
-
-\paragraph{Non-linear (Co) Polymers and Polymer Assemblies}
-\begin{commands}
-  \iupaccs{blend}{The blend qualifier.}
-  \iupaccs{comb}{The comb qualifier.}
-  \iupaccs[compl]{complex}{The complex qualifier.}
-  \iupaccs[cyclo]{cyclic}{The cyclic qualifier.}
-  \iupaccs{branch}{The branch qualifier.}
-  \iupaccs[net]{network}{The network qualifier.}
-  \iupaccs[ipn]{ipnetwork}{The interpenetrating network qualifier.}
-  \iupaccs[sipn]{sipnetwork}{The semi-interpenetrating network qualifier.}
-  \iupaccs{star}{The star qualifier.}
-\end{commands}
-
-\subsubsection{Polymer Denotations in \pkg*{chemfig}'s Molecules}
-The \pkg{chemfig} manual proposes some code defining the macros
-\cs*{setpolymerdelim} and \cs*{makebraces} which make it possible to add
-delimiters to \pkg{chemfig} molecules.  The \chemmodule{polymers} module
-implements the following macro based on the same idea:
-\begin{commands}
-  \command{makepolymerdelims}[\oarg{options}\marg{height}\oarg{depth}\marg{opening
-    node}\marg{closing node}]
-    The value of \meta{depth} is the same as \meta{height} unless it is
-    specified explicitly.  \meta{opening node} and \meta{closing node} are the
-    names of \TikZ' nodes where the delimites are placed.
-\end{commands}
-\begin{options}
-  \keychoice{delimiters}{\Marg{\meta{left}\meta{right}}}\Module{polymers}\Default{[]}
-    This option demands two tokens as argument, the first being the opening
-    brace, the second the closing brace.  A dot (\code{.}) denotes an empty
-    delimiter.
-  \keyval{subscript}{subscript}\Module{polymers}\Default{\$n\$}
-    Subscript to the right delimiter.
-  \keyval{superscript}{superscript}\Module{polymers}
-    Superscript to the right delimiter.
-\end{options}
-
-\begin{example}
-  \setchemfig{atom sep=2em}
-  \chemfig{-[@{op,.75}]CH_2-CH(-[6]Cl)-[@{cl,0.25}]}
-  \makepolymerdelims{5pt}[27pt]{op}{cl}
-  \chemfig{-[@{op,.75}]CH_2-CH(-[6]Cl)-[@{cl,0.25}]}
-  \makepolymerdelims[delimiters=()]{5pt}[27pt]{op}{cl}
-\end{example}
-
-\subsection{The \chemmodule*{reactions} Module}\label{sec:reactions-module}
-The \chemmodule{reactions} module loads the \chemmodule{chemformula} module
-and the \pkg{mathtools} package~\cite{pkg:mathtools}.
-
-\subsubsection{Predefined Environments}
-
-You can use these environments for numbered\ldots
-\begin{environments}
-  \environment{reaction}
-    A single reaction where \chemformula\ code is placed directly in the
-    environment body.  A wrapper around the \env*{equation} environment.  The
-    environment body is parsed with \cs{ch} or \cs{ce} depending on the value
-    of the \option{formula} option, see
-    section~\vref{sec:chemformula-module}.
-  \environment{reactions}
-    Several aligned reactions.  A wrapper around \pkg{amsmath}'s \env*{align}
-    environment.  The environment body is parsed with \cs{ch} or \cs{ce}
-    depending on the value of the \option{formula} option, see
-    section~\vref{sec:chemformula-module}.
-\end{environments}
-
-\ldots and their starred versions for unnumbered reactions.
-\begin{environments}
-  \environment{reaction*}
-    A wrapper around the \env*{equation*} environment.  The environment body
-    is parsed with \cs{ch} or \cs{ce} depending on the value of the
-    \option{formula} option, see section~\vref{sec:chemformula-module}.
-  \environment{reactions*}
-    A wrapper around \pkg{amsmath}'s \env*{align*} environment.  The
-    environment body is parsed with \cs{ch} or \cs{ce} depending on the value
-    of the \option{formula} option, see
-    section~\vref{sec:chemformula-module}.
-\end{environments}
-
-With those environments you can create (un)numbered reaction equations similar
-to mathematical equations.
-
-Theses environments use the \env*{equation}/\env*{equation*} environments or
-the \env*{align}/\env*{align*} environments, respectively, to display the
-reactions.
-
-\begin{example}
-  Reaction with counter:
-  \begin{reaction}
-    A -> B
-  \end{reaction}
-\end{example}
-
-\begin{example}
-  Reaction without counter:
-  \begin{reaction*}
-    C -> D
-  \end{reaction*}
-\end{example}
-
-\begin{example}
-  Several aligned reactions with counter:
-  \begin{reactions}
-    A     &-> B + C \\
-    D + E &-> F
-  \end{reactions}
-\end{example}
-
-\begin{example}
-  Several aligned reactions without counter:
-  \begin{reactions*}
-    G     &-> H + I \\
-    J + K &-> L
-  \end{reactions*}
-\end{example}
-
-If you want to change the layout of the counter tags, you can use
-\begin{commands}
-  \command*{renewtagform}[\marg{tagname}\oarg{format}\marg{left
-    delimiter}\marg{right delimiter}]
-    Provided by the \pkg{mathtools} package.
-\end{commands}
-or use the following options:
-\begin{options}
-  \keyval{tag-open}{left delimiter}\Module{reactions}\Default{\{}
-    \sinceversion{5.6}The left delimiter.
-  \keyval{tag-close}{right delimiter}\Module{reactions}\Default{\}}
-    \sinceversion{5.6}The right delimiter.
-  \keyval{before-tag}{format}\Module{reactions}\Default
-    \sinceversion{5.6}Code inserted before the tags.
-\end{options}
-
-\begin{example}
-  \chemsetup[reactions]{
-    before-tag = R \textbf ,
-    tag-open = [ ,
-    tag-close = ]
-  }
-  \begin{reaction}
-    H2O + CO2 <<=> H2CO3
-  \end{reaction}
-\end{example}
-
-The use of \AmS math's \cs{intertext} is possible:
-\begin{example}
-  \begin{reactions}
-    A + 2 B &-> 3 C + D "\label{rxn:test}"
-    \intertext{Some text in between aligned reactions}
-    3 E + F &<=> G + 1/2 H
-  \end{reactions}
-  See reaction~\ref{rxn:test}.
-\end{example}
-
-If\sinceversion{5.6} you are using either \pkg{cleveref} or \pkg{fancyref} the
-\env{reaction} counter is supported already.  For \pkg{fancyref} use the
-prefix \code{rct}.
-
-\subsubsection{Own Reactions}
-You can create new types of reactions with the command:
-\begin{commands}
-  \command{NewChemReaction}[\marg{name}\oarg{number of arguments}\marg{math name}]
-    \meta{name} will be the name of the new chem environment. \meta{math name} is
-    the underlying math environment.  Gives an error if \meta{name} already
-    exists.
-  \command{RenewChemReaction}[\marg{name}\oarg{number of arguments}\marg{math name}]
-    \meta{name} is the name of the renewed chem environment. \meta{math name} is
-    the underlying math environment.  Gives an error if \meta{name} does not exist.
-  \command{DeclareChemReaction}[\marg{name}\oarg{number of arguments}\marg{math name}]
-    \meta{name} will be the name of the chem environment. \meta{math name} is
-    the underlying math environment.
-  \command{ProvideChemReaction}[\marg{name}\oarg{number of arguments}\marg{math name}]
-    \meta{name} will be the name of the new chem environment. \meta{math name} is
-    the underlying math environment.  The new environment is only defined if
-    it doesn't exist, yet.
-\end{commands}
-
-\begin{sourcecode}
-  \NewChemReaction{reaction}  {equation}
-  \NewChemReaction{reaction*} {equation*}
-  \NewChemReaction{reactions} {align}
-  \NewChemReaction{reactions*}{align*}
-\end{sourcecode}
-
-Let's suppose, you'd like to have the alignment behaviour of the \env{alignat}
-environment for \chemformula\ reactions.  You could do the following:
-
-\begin{sourcecode}
-  \NewChemReaction{reactionsat}[1]{alignat}
-\end{sourcecode}
-
-With this the \env{reactionsat} environment is defined.
-\begin{example}
-  \NewChemReaction{reactionsat}[1]{alignat}
-  \NewChemReaction{reactionsat*}[1]{alignat*}
-  \begin{reactionsat}{3}
-    A     &-> B     &&-> C     &&-> D \\
-    aaaaa &-> bbbbb &&-> ccccc &&-> ddddd
-  \end{reactionsat}
-  \begin{reactionsat*}{2}
-    A     &-> B     & C            &-> D  \\
-    aaaaa &-> bbbbb &\quad{} ccccc &-> ddddd
-  \end{reactionsat*}
-\end{example}
-
-\subsubsection{List of Reactions}
-
-The \chemmodule{reactions} module also provides a command to display a list of
-the reactions created with the \env{reaction} environment.
-\begin{commands}
-  \command{listofreactions}
-    Print a list of reactions.
-\end{commands}
-\begin{example}
-  \listofreactions
-\end{example}
-
-The output of this list can be modified by two options:
-\begin{options}
-  \keyval{list-name}{name of the
-    list}\Module{reactions}\Default{\cs*{ChemTranslate}\Marg{{list-of-reactions}}}
-    Let's you set the name of the list manually.  The default name is language
-    dependent, see section~\vref{sec:lang-module}.
-  \keyval{list-entry}{prefix to each
-    entry}\Module{reactions}\Default{\cs*{ChemTranslate}\Marg{reaction}}
-    Let's you set a prefix to each list entry.  The default name is language
-    dependent, see section~\vref{sec:lang-module}.
-  \keyval{list-heading-cmd}{code}\Module{reactions}\Default{\cs*{section}\sarg\Marg{\#1}}
-    The\sinceversion{5.2} macro that is called at the beginning of the list.
-    Inside of \meta{code} \code{\#1} refers to the actual heading of the list.
-    The default setting is not entirely true: if a macro \cs*{chapter} is
-    defined \code{\cs*{chapter}\sarg\Marg{\#1}} is used.
-  \keybool{tocbasic}\Module{reactions}\Default{false}
-    \sinceversion{5.6}If you use a \KOMAScript\ class \emph{or} if you load
-    the \pkg{tocbasic} package \emph{or} if you set this option to \code{true}
-    the list of reactions will be set up using the \pkg{tocbasic} package.
-    This \emph{disables} the \option{list-heading-cmd} option.  For a
-    \KOMAScript\ class this means that the list of reactions obeys
-    \KOMAScript's \option*{listof} option.
-\end{options}
-Instead of using the option \option{list-name} you also could redefine
-\cs{reactionlistname}.
-
-The list lists all reactions with a number and disregards reactions without
-number.  All reaction environments without star have an optional argument
-which let's you add a description (or caption) for the entry in the list.
-\begin{example}
-  \begin{reaction}[Autoprotolyse]
-    2 H2O <<=> H3O+ + OH-
-  \end{reaction}
-\end{example}
-
-If you use the \env{reactions} environment this will not work, though.  In
-this case you can use
-\begin{commands}
-  \command{AddRxnDesc}[\marg{description}]
-    Add a description to a reaction.
-\end{commands}
-
-\begin{example}
-  \begin{reactions}
-    "\chlewis{0.}{Cl}" + CH4  &
-      -> HCl + "\chlewis{180.}{C}" H3 \AddRxnDesc{first~step~of~chain} \\
-    "\chlewis{180.}{C}" H3 + Cl2 &
-      -> CH3Cl + "\chlewis{0.}{Cl}" \AddRxnDesc{second~step~of~chain}
-  \end{reactions}
-\end{example}
-
-\subsection{The \chemmodule*{redox} Module}\label{sec:redox-module}
-
-The \chemmodule{redox} module loads the modules \chemmodule{tikz} and
-\chemmodule{xfrac}. It also loads the packages
-\pkg{mathtools}~\cite{pkg:mathtools} and \pkg{relsize}~\cite{pkg:relsize}.
-
-\subsubsection{Oxidation Numbers}\label{sec:oxidation-numbers}
-
-Regarding the typesetting of oxidation numbers
-\citetitle{iupac:greenbook}~\cite{iupac:greenbook} says the following:
-\begin{cnltxquote}[{\cite[][p.\,50]{iupac:greenbook}}]
-  Oxidation numbers are denoted by positive or negative Roman numerals or by
-  zero \textelp{}
-
-  \textit{Examples}\quad \ox{7,Mn}, \ox[pos=side]{7,manganese}, \ox{-2,O},
-  \ox{0,Ni}
-\end{cnltxquote}
-
-The following command is provided to set oxidation numbers:
-\begin{commands}
-  \command{ox}[\sarg\oarg{options}\Marg{\meta{number},\meta{atom}}]
-    Places \meta{number} as right superscript to \meta{atom}; \meta{number}
-    has to be a (rational) number!  \meta{atom} is treated as a \chemformula\
-    formula, like it would be in \cs{chcpd} (this depends on the setting of
-    the \option{formula} option, see~\vref{sec:chemformula-module}).
-\end{commands}
-
-\begin{example}
-  \ox{+1,Na}, \ox{2,Ca}, \ox{-2,S}, \ox{-1,F}
-\end{example}
-
-There are a number of options that can be used to modify the typeset result:
-\begin{options}
-  \keyval{format}{code}\Module{redox}
-    \sinceversion{5.11}Allows to apply arbitrary \meta{code} in front of the
-    typeset oxidation numbers.  The last command may expect the oxidation
-    number as an argument.  An example might be \cs*{textcolor}\Marg{red}.
-  \keybool{parse}\Module{redox}\Default{true}
-    When \code{false} an arbitrary entry can be used for \code{<number>}.
-  \keybool{roman}\Module{redox}\Default{false}
-    Switches from roman to arabic numbers.
-  \keychoice{pos}{top,super,side}\Module{redox}\Default{super}
-    \code{top} places \meta{number} above \meta{atom}, \code{super} to the
-    upper right as superscript and \code{side} to the right and inside
-    brackets.  Both \code{super} and \code{side} follow \ac{iupac}
-    recommendation, \code{top} does not!
-  \keybool{explicit-sign}\Module{redox}\Default{false}
-    Shows the $+$ for positiv numbers and the $\pm$ for $0$.
-  \keybool{explizit-zero-sign}\Module{redox}\Default{true}
-    Only\sinceversion{5.4} if both \option{explicit-sign} and
-    \option{explicit-zero-sign} are set to \code{true} $\pm0$ will be
-    printed.
-  \keychoice{decimal-marker}{comma,point}\Module{redox}\Default{point}
-    Choice for the decimal marker for formal oxidation numbers like \ox{1.2,X}.
-  \keychoice{align}{center,right}\Module{redox}\Default{center}
-    Center the oxidation number relative to the atom or right-align it.
-  \keyval{side-connect}{code}\Module{redox}\Default{\cs*{,}}
-    Code that is inserted between atom and oxidation number if
-    \keyis{pos}{side} is used.
-  \keyval{text-frac}{cs}\Module{redox}\Default{\cs{chemfrac}\Oarg{text}\Marg{\#1}\Marg{\#2}}
-    The fraction macro that is used for fractions if \keyis{pos}{side} is
-    used.  \meta{cs} must be a macro that takes two mandatory arguments, the
-    first for the numerator and the second for the denominator.
-  \keyval{super-frac}{cs}\Module{redox}\Default{\cs{chemfrac}\Oarg{superscript}%
-    \Marg{\#1}\Marg{\#2}}
-    The fraction macro that is used for fractions if \keyis{pos}{top} or
-    \keyis{pos}{super} is used.  \meta{cs} must be a macro that takes two
-    mandatory arguments, the first for the numerator and the second for the
-    denominator.
-\end{options}
-
-\begin{example}[side-by-side]
-  \ox[roman=false]{2,Ca} \ox{2,Ca} \\
-  \ox[pos=top]{3,Fe}-Oxide \\
-  \ox[pos=side]{3,Fe}-Oxide \\
-  \ox[parse=false]{?,Mn} \\
-  \ox[pos=top,align=right]{2,Ca}
-\end{example}
-
-The \keyis{pos}{top} variant also can be set with the shortcut \cs{ox}\sarg:
-\begin{example}[side-by-side]
-  \ox{3,Fe} \ox*{3,Fe}
-\end{example}
-
-Using the \option{explicit-sign} option will always show the sign of the
-oxidation number:
-\begin{example}
-  \chemsetup[redox]{explicit-sign = true}
-  \ox{+1,Na}, \ox{2,Ca}, \ox{-2,S}, \ch{"\ox{0,F}" {}2}
-\end{example}
-
-\begin{example}
-  \chemsetup[redox]{pos=top}
-  Compare \ox{-1,O2^2-} to \ch{"\ox{-1,O}" {}2^2-}
-\end{example}
-
-Sometimes one might want to use formal oxidation numbers like \num{.5} or
-\chemfrac{1}{3}:
-\begin{example}[side-by-side]
-  \chemsetup[redox]{pos=top}
-  \ox{.5,Br2}
-  \ch{"\ox{1/3,I}" {}3+}
-
-  \chemsetup[redox]{pos=side}
-  \ox{1/3,I3+}
-\end{example}
-
-The fraction is displayed with the help of the \pkg{xfrac}
-package~\cite{bnd:l3packages}.  For more details on how \chemmacros\ uses it
-read section~\vref{sec:xfrac-module}.
-
-\subsubsection{Redox Reactions}\label{sec:redox-reactions}
-
-\chemmacros\ provides two commands to visualize the transfer of electrons in
-redox reactions.  Both commands are using \TikZ.
-\begin{commands}
-  \command{OX}[\Marg{\meta{name},\meta{atom}}]
-    Label \meta{atom} with the label \meta{name}.
-  \command{redox}[\Darg{\meta{name1},\meta{name2}}\oarg{tikz}\oarg{num}\marg{text}]
-    Connect two \meta{atom}s previously labelled with \cs{OX}.  Only the first
-    argument \Darg{\meta{name1},\meta{name2}} is required, the others are all
-    optional.
-\end{commands}
-
-\cs{OX} places \meta{atom} into a node, which is named with \meta{name}.  If
-you have set two \cs{OX}, they can be connected with a line using \cs{redox}.
-To do so the names of the two nodes that are to be connected are written in
-the round braces.  Since \cs{redox} draws a \code{tikzpicture} with options
-\code{remember picture,overlay}, the document needs to be \emph{compiled at
-  least two times}.
-
-\begin{example}
-  \vspace{7mm}
-  \OX{a,Na} $\rightarrow$ \OX{b,Na}\pch\redox(a,b){oxidation}
-\end{example}
-
-This line can be customized using \TikZ\ keys in \oarg{tikz}:
-\begin{example}
-  \vspace{7mm}
-  \OX{a,Na} $\rightarrow$ \OX{b,Na}\pch\redox(a,b)[->,red]{ox}
-\end{example}
-
-With the argument \oarg{num} the length of the vertical parts of the line can
-be adjusted.  The default length is \code{.6em}.  This length is multiplied
-with \meta{num}.  If you use a negative value the line is placed \emph{below}
-the text.
-\begin{example}
-  \vspace{7mm}
-  \OX{a,Na} $\rightarrow$ \OX{b,Na}\pch
-  \redox(a,b)[->,red]{ox}
-  \redox(a,b)[<-,blue][-1]{red}
-  \vspace{7mm}
-\end{example}
-
-The default length of the vertical lines can be customized with the option
-\begin{options}
-  \keyval{dist}{dim}\Module{redox}\Default{.6em}
-    A \TeX\ dimension.
-\end{options}
-
-\begin{example}
-  \vspace{7mm}
-  \chemsetup{redox/dist=1em}
-  \OX{a,Na} $\rightarrow$ \OX{b,Na}\pch\redox(a,b)[->,red]{ox}
-\end{example}
-
-\begin{options}
-  \keyval{sep}{dim}\Module{redox}\Default{.2em}
-    The option can be used to change the distance between the atom and the
-    beginning of the line.
-\end{options}
-
-\begin{example}
-  \vspace{7mm}
-  \chemsetup{redox/sep=.5em}
-  \OX{a,Na} $\rightarrow$ \OX{b,Na}\pch\redox(a,b)[->,red]{ox}
-\end{example}
-
-\paragraph{Examples}
-\begin{example}
-  \vspace{7mm}
-  \ch{
-    2 "\OX{o1,Na}" + "\OX{r1,Cl}" {}2
-    ->
-    2 "\OX{o2,Na}" {}+ + 2 "\OX{r2,Cl}" {}-
-  }
-  \redox(o1,o2){\small OX: $- 2\el$}
-  \redox(r1,r2)[][-1]{\small RED: $+ 2\el$}
-  \vspace{7mm}
-\end{example}
-
-\begin{example}
-  \vspace{7mm}
-  \ch{
-    2 "\OX{o1,\ox*{0,Na}}" + "\OX{r1,\ox*{0,Cl}}" {}2
-    ->
-    2 "\OX{o2,\ox*{+1,Na}}" {}+ + 2 "\OX{r2,\ox*{-1,Cl}}" {}-
-  }
-  \redox(o1,o2){\small OX: $- 2\el$}
-  \redox(r1,r2)[][-1]{\small RED: $+ 2\el$}
-  \vspace{7mm}
-\end{example}
-
-\begin{example}
-  \vspace{14mm}
-  \ch{
-    2 "\OX{o1,\ox*{0,Na}}" + "\OX{r1,\ox*{0,Cl}}" {}2
-    ->
-    2 "\OX{o2,\ox*{+1,Na}}" {}+ + 2 "\OX{r2,\ox*{-1,Cl}}" {}-
-  }
-  \redox(o1,o2)[draw=red,->][3.33]{\small OX: $- 2\el$}
-  \redox(r1,r2)[draw=blue,->]{\small RED: $+ 2\el$}
-\end{example}
-
-\begin{example}
-  \vspace{7mm}
-  \ch{
-    2 "\OX{o1,\ox*{0,Na}}" + "\OX{r1,\ox*{0,Cl}}" {}2
-    -> 2 "\OX{o2,\ox*{+1,Na}}" {}+ + 2 "\OX{r2,\ox*{-1,Cl}}" {}-
-  }
-  \redox(o1,o2)[green,-stealth]{\small OX}
-  \redox(r1,r2)[purple,-stealth][-1]{\small RED}
-  \vspace{7mm}
-\end{example}
-
-\subsection{The \chemmodule*{scheme} Module}\label{sec:scheme-module}
-
-The \chemmodule{scheme} module loads the \pkg{chemnum}
-package~\cite{pkg:chemnum} and defines a floating environment
-\showenv{scheme}.  That is, it \emph{only} defines this float if no
-environment \env{scheme} exists at the end of the preamble.  The module checks
-for different available float defining methods, in \emph{this} order:
-\begin{itemize}
-  \item If the current class is a \KOMAScript\ class \cs*{DeclareNewTOC} will
-    be used.
-  \item If the current class is \cls{memoir}, \cls{memoir}'s methods are used.
-  \item If the package \pkg{tocbasic} has been loaded \cs*{DeclareNewTOC} will
-    be used.
-  \item If the package \pkg{newfloat} has been loaded
-    \cs*{DeclareFloatingEnvironment} will be used.
-  \item \sinceversion{5.1}If the package \pkg{floatrow} has been loaded its
-    method will be used.
-  \item If the package \pkg{float} has been loaded its method will be used.
-  \item If neither of the above the \enquote{manual} method is used.  This
-    means the environment is defined the same way like \env*{figure} is
-    defined in the \cls*{article} class or the \cls*{book} class, depending if
-    \cs*{chapter} is defined or not.
-\end{itemize}
-
-The list name and the caption name both are translated to the language
-specified according to the \option{lang} option and the provided translations,
-see section~\vref{sec:lang-module} for details. If you want to manually change
-them then redefine these macros after begin document:
-\begin{commands}
-  \command{listschemename}
-    The name of the list of schemes.
-  \command{schemename}
-    The name used in captions.
-\end{commands}
-The list of schemes is printed as expected with
-\begin{commands}
-  \command{listofschemes}
-\end{commands}
-
-If\sinceversion{5.6} you are using either \pkg{cleveref} or \pkg{fancyref} the
-\env{scheme} environment (or rather its captions) are supported already.  For
-\pkg{fancyref} use the prefix \code{sch}.
-
-\subsection{The \chemmodule*{spectroscopy} Module}\label{sec:spectroscopy-module}
-
-The \chemmodule{spectroscopy} module loads the \chemmodule{chemformula} module
-and the \pkg{siunitx} package~\cite{pkg:siunitx}.
-
-\subsubsection{The \cs*{NMR} Command}
-
-When you're trying to find out if a compound is the one you think it is often
-NMR spectroscopy is used.  The experimental data are typeset similar to this:
-\begin{center}
-  \NMR(400)[CDCl3] = \num{1.59}
-\end{center}
-The \chemmodule{spectroscopy} module provides a command which simplifies the
-input.
-
-\begin{commands}
-  \command{NMR}[\sarg\Marg{\meta{num},\meta{element}}%
-    \Darg{\meta{num},\meta{unit}}\oarg{solvent}]
-    Typeset nuclear magnetic resonance data. \meta{num} is a valid
-    \pkg{siunitx} number input, \meta{unit} is a valid \pkg{siunitx} unit
-    input.  \meta{solvent} is any valid \chemformula\ input as in \cs{chcpd}
-    (this depends on the setting of the \option{formula} option,
-    see~\vref{sec:chemformula-module}).
-\end{commands}
-
-\emph{All} Argument are optional! Without arguments we get:
-\begin{example}[side-by-side]
-  \NMR \par
-  \NMR*
-\end{example}
-
-The first argument specifies the kind of NMR:
-\begin{example}[side-by-side]
-  \NMR{13,C}
-\end{example}
-
-The second argument sets the frequency (in \si{\mega\hertz}):
-\begin{example}[side-by-side]
-  \NMR(400)
-\end{example}
-You can choose another unit:
-\begin{example}[side-by-side]
-  \NMR(4e8,\hertz)
-\end{example}
-Please note that the setup of \pkg{siunitx} also affects this command:
-\begin{example}[side-by-side]
-  \sisetup{exponent-product=\cdot}
-  \NMR(4e8,\hertz)
-\end{example}
-
-The third argument specifies the solvent:
-\begin{example}[side-by-side]
-  \NMR[CDCl3]
-\end{example}
-
-\subsubsection{Short Cuts}
-
-It is possible to define short cut commands for specific nuclei.
-\begin{commands}
-  \command{NewChemNMR}[\marg{cs}\Marg{\meta{num},\meta{atom}}]
-    Define a new shortcut macro for typesetting a certain type of magnetic
-    resonence data.  Gives an error if \meta{cs} already exists.
-  \command{DeclareChemNMR}[\marg{cs}\Marg{\meta{num},\meta{atom}}]
-    Define a new shortcut macro for typesetting a certain type of magnetic
-    resonence data.  Overwrites an existing macro.
-  \command{RenewChemNMR}[\marg{cs}\Marg{\meta{num},\meta{atom}}]
-    Redefine an existing shortcut macro for typesetting a certain type of
-    magnetic resonence data.  Gives an error if \meta{cs} doesn't exist.
-  \command{ProvideChemNMR}[\marg{cs}\Marg{\meta{num},\meta{atom}}]
-    Define a new shortcut macro for typesetting a certain type of magnetic
-    resonence data.  \meta{cs} is only defined if it doesn't exist, yet.
-\end{commands}
-
-This defines a command with the same arguments as \cs{NMR} \emph{except} for
-\Marg{\meta{num},\meta{atom}}:
-\begin{example}[side-by-side]
-  \NewChemNMR\HNMR{1,H}%
-  \NewChemNMR\CNMR{13,C}%
-  \CNMR*(100) \par
-  \HNMR*(400)
-\end{example}
-
-\subsubsection{An Environment to Typeset Experimental Data}
-
-The \chemmodule{spectroscopy} module provides an environment to ease the input
-of experimental data.
-\begin{environments}
-  \environment{experimental}
-    Environment for the output of experimental data.  Inside the environment
-    the following commands are defined.
-\end{environments}
-\begin{commands}
-  \command{data}[\marg{type}\oarg{specification}]
-    Type of data, \eg\ IR, MS\ldots\  The optional argument takes further
-    specifications which are output in parentheses.
-  \command{data}[\sarg\marg{type}\oarg{specification}]
-    Like \cs{data} but changes the \code{=} into a \code{:}, given that
-    \keyis{use-equal}{true} is used.
-  \command{NMR}[\Marg{\meta{num},\meta{elem}\oarg{coupling
-      core}}\Darg{\meta{num},\meta{unit}}\oarg{solvent}]
-    This command gets an additional argument:
-    \cs{NMR}\Marg{13,C[\textasciicircum 1H]} \NMR{13,C[^1H]}
-  \command{J}[\Darg{\meta{bonds};\meta{nuclei}}\oarg{unit}\marg{list of nums}]
-    Coupling constant, values are input separated by \code{;} (NMR).  The
-    arguments \Darg{\meta{bonds};\meta{nuclei}} and \oarg{unit} are optional
-    and enable further specifications of the coupling.
-  \command{\#}[\marg{num}]
-    Number of nuclei (NMR).
-  \command{pos}[\marg{num}]
-    Position of nuclues (NMR).
-  \command{val}[\marg{num}]
-    A number, an alias of \pkg{siunitx}' \cs*{num}\marg{num}.
-  \command{val}[\Marg{\meta{num1}--\meta{num2}}]
-    An alias of \pkg{siunitx}' \cs*{numrange}\marg{num1}\marg{num2}.
-\end{commands}
-
-\begin{example}
-  \begin{experimental}
-    \data{type1} Data.
-    \data{type2}[specifications] More data.
-    \data*{type3} Even more data.
-  \end{experimental}
-\end{example}
-
-\paragraph{Customization}\label{sec:experimental-customization}
-
-The output of the environment and of the NMR commands can be customized be a
-number of options.  For historical reasons they all belong to the module
-\module{nmr}.
-\begin{options}
-  \keyval{unit}{unit}\Module{spectroscopy}\Default{\cs*{mega}\cs*{hertz}}
-    The used default unit.
-  \keychoice{nucleus}{\Marg{\meta{num},\meta{atom}}}\Module{spectroscopy}\Default{\Marg{1,H}}
-    The used default nucleus.
-  \keyval{connector}{code}\Module{spectroscopy}\Default{-}
-    Places \meta{code} between the nucleus and the method.
-  \keyval{method}{code}\Module{spectroscopy}\Default{NMR}
-    The measuring method.
-  \keyval{format}{commands}\Module{spectroscopy}\Default
-    For example \cs*{bfseries}.
-  \keyval{nmr-base-format}{commands}\Module{spectroscopy}\Default
-    \sinceversion{5.8}Formatting instructions for the NMR base.
-  \keychoice{pos-number}{side,sub,super}\Module{spectroscopy}\Default{side}
-    Position of the number next to the atom.
-  \keyval{coupling-symbol}{code}\Module{spectroscopy}\Default{J}
-    The symbol used for the coupling constant.
-  \keyval{coupling-unit}{unit}\Module{spectroscopy}\Default{\cs*{hertz}}
-    A \pkg{siunitx} unit.
-  \keychoice{coupling-pos}{side,sub}\Module{spectroscopy}\Default{side}
-    Placement of the coupling nuclei next to the symbol $J$ (or rather the
-    symbol specified with option \option{coupling-symbol}).
-  \keyval{coupling-nuclei-pre}{code}\Module{spectroscopy}\Default{(}
-    Code inserted before the coupling nuclei when \keyis{coupling-pos}{side}.
-  \keyval{coupling-nuclei-post}{code}\Module{spectroscopy}\Default{)}
-    Code inserted after the coupling nuclei when \keyis{coupling-pos}{side}.
-  \keyval{coupling-bonds-pre}{code}\Module{spectroscopy}\Default
-    Code inserted before the coupling bonds.
-  \keyval{coupling-bonds-post}{code}\Module{spectroscopy}\Default{\cs*{!}}
-    Code inserted after the coupling bonds.
-  \keyval{coupling-pos-cs}{cs}\Module{spectroscopy}\Default{\cs*{@firstofone}}
-    Set the macro that prints the number set with the \cs{pos} macro.  This
-    needs to be a command with one mandatory argument.
-  \keyval{atom-number-cs}{cs}\Module{spectroscopy}\Default{\cs*{@firstofone}}
-    Set the macro that prints the number set with the \cs{\#} macro.  This
-    needs to be a command with one mandatory argument.
-  \keyval{atom-number-space}{dim}\Module{spectroscopy}\Default{.16667em}
-    Horizontal\sinceversion{5.3} space inserted between number and atom
-    (printed by \cs{\#}).
-  \keybool{parse}\Module{spectroscopy}\Default{true}
-    Treat the solvent as \chemformula\ formula (this depends on the setting of
-    the \option{formula} option, see~\vref{sec:chemformula-module}) or not.
-  \keyval{delta}{tokens}\Module{spectroscopy}\Default
-    The \meta{tokens} are added after $\delta$.
-  \keybool{list}\Module{spectroscopy}\Default{false}
-    The environment \env{nmr}[<options>]{} is formatted as a list
-  \keyval{list-setup}{setup}\Module{spectroscopy}
-    Setup of the list. See below for the default settings.
-  \keybool{use-equal}\Module{spectroscopy}\Default{false}
-    Add egual sign after \cs{NMR} and \cs{data}.
-\end{options}
-
-The default setup of the list:
-\begin{sourcecode}
-  \topsep\z@skip \partopsep\z@skip 
-  \itemsep\z@ \parsep\z@ \itemindent\z@
-  \leftmargin\z@
-\end{sourcecode}
-
-\begin{example}
-  \begin{experimental}[format=\bfseries]
-    \data{type1} Data.
-    \data{type2}[specifications] More data.
-    \data*{type3} Even more data.
-  \end{experimental}
-\end{example}
-
-The command \cs{NMR} and all commands defined through \cs{NewChemNMR}
-can be used like \cs{data} for the NMR data.
-
-\begin{example}
-  \begin{experimental}[format=\bfseries,use-equal]
-    \data{type1} Data.
-    \data{type2}[specifications] More data.
-    \NMR Even more data.
-  \end{experimental}
-\end{example}
-
-\paragraph{An Example}
-The code below is shown with different specifications for \meta{options}.
-Of course options can also be chosen with \cs{chemsetup}.
-
-\begin{sourcecode}
-  \sisetup{separate-uncertainty,per-mode=symbol,detect-all,range-phrase=--}
-  \begin{experimental}[<optionen>]
-    \data*{yield} \SI{17}{\milli\gram} yellow needles (\SI{0.04}{\milli\mole},
-      \SI{13}{\percent}).
-    %
-    \data{mp.} \SI{277}{\celsius} (DSC).
-    %
-    \NMR(600)[CDCl3] \val{2.01} (s, \#{24}, \pos{5}), \val{2.31} (s, \#{12},
-    \pos{1}), \val{6.72--6.74} (m, \#{2}, \pos{11}), \val{6.82} (s, \#{8},
-    \pos{3}), \val{7.05--7.07} (m, \#{2}, \pos{12}), \val{7.39--7.41} (m, \#{4},
-    \pos{9}), \val{7.48--7.49} (m, \#{4}, \pos{8}).
-    %
-    \NMR{13,C}(150)[CDCl3] \val{21.2} ($+$, \#{4}, \pos{1}), \val{23.4} ($+$,
-    \#{8}, \pos{5}), \val{126.0} ($+$, \#{4}, \pos{9}), \val{128.2} ($+$, \#{8},
-    \pos{3}), \val{130.8} ($+$, \#{2}, \pos{12}), \val{133.6} ($+$, \#{2},
-    \pos{11}), \val{137.0} ($+$, \#{4}, \pos{8}), \val{138.6} (q, \#{4},
-    \pos{2}), \val{140.6} (q, \#{2}, \pos{10}), \val{140.8} (q, \#{8}, \pos{4}),
-    \val{141.8} (q, \#{4}, \pos{6}), \val{145.6} (q, \#{2}, \pos{7}).
-    %
-    \data{MS}[DCP, EI, \SI{60}{\electronvolt}] \val{703} (2, \ch{M+}), \val{582}
-    (1), \val{462} (1), \val{249} (13), \val{120} (41), \val{105} (100).
-    %
-    \data{MS}[\ch{MeOH + H2O + KI}, ESI, \SI{10}{\electronvolt}] \val{720} (100,
-    \ch{M+ + OH-}), \val{368} (\ch{M+ + 2 OH-}).
-    %
-    \data{IR}[KBr] \val{3443} (w), \val{3061} (w), \val{2957} (m), \val{2918}
-    (m), \val{2856} (w), \val{2729} (w), \val{1725} (w), \val{1606} (s),
-    \val{1592} (s), \val{1545} (w), \val{1446} (m), \val{1421} (m), \val{1402}
-    (m), \val{1357} (w), \val{1278} (w), \val{1238} (s), \val{1214} (s),
-    \val{1172} (s), \val{1154} (m), \val{1101} (w), \val{1030} (w), \val{979}
-    (m), \val{874} (m), \val{846} (s), \val{818} (w), \val{798} (m), \val{744}
-    (w), \val{724} (m), \val{663} (w), \val{586} (w), \val{562} (w), \val{515}
-    (w).
-    %
-    \data*{UV-Vis} \SI{386}{\nano\metre} ($\varepsilon = \val{65984}$),
-    \SI{406}{\nano\metre} ($\varepsilon = \val{65378}$).
-    %
-    \data*{quantum yield} $\Phi = \val{0.74+-0.1}$\,.
-  \end{experimental}
-\end{sourcecode}
-
-\paragraph{Nearly Standard}
-Output with these options:
-
-\begin{sourcecode}
-  delta=(ppm),pos-number=sub,use-equal
-\end{sourcecode}
-
-\begin{experimental}[delta=(ppm),pos-number=sub,use-equal]
-  \sisetup{separate-uncertainty,per-mode=symbol,detect-all,range-phrase=--}
-  \data*{yield} \SI{17}{\milli\gram} yellow needles (\SI{0.04}{\milli\mole},
-  \SI{13}{\percent}).
-  %
-  \data{mp.} \SI{277}{\celsius} (DSC).
-  %
-  \NMR(600)[CDCl3] \val{2.01} (s, \#{24}, \pos{5}), \val{2.31} (s, \#{12},
-  \pos{1}), \val{6.72--6.74} (m, \#{2}, \pos{11}), \val{6.82} (s, \#{8},
-  \pos{3}), \val{7.05--7.07} (m, \#{2}, \pos{12}), \val{7.39--7.41} (m, \#{4},
-  \pos{9}), \val{7.48--7.49} (m, \#{4}, \pos{8}).
-  %
-  \NMR{13,C}(150)[CDCl3] \val{21.2} ($+$, \#{4}, \pos{1}), \val{23.4} ($+$,
-  \#{8}, \pos{5}), \val{126.0} ($+$, \#{4}, \pos{9}), \val{128.2} ($+$, \#{8},
-  \pos{3}), \val{130.8} ($+$, \#{2}, \pos{12}), \val{133.6} ($+$, \#{2},
-  \pos{11}), \val{137.0} ($+$, \#{4}, \pos{8}), \val{138.6} (q, \#{4},
-  \pos{2}), \val{140.6} (q, \#{2}, \pos{10}), \val{140.8} (q, \#{8}, \pos{4}),
-  \val{141.8} (q, \#{4}, \pos{6}), \val{145.6} (q, \#{2}, \pos{7}).
-  %
-  \data{MS}[DCP, EI, \SI{60}{\electronvolt}] \val{703} (2, \ch{M+}), \val{582}
-  (1), \val{462} (1), \val{249} (13), \val{120} (41), \val{105} (100).
-  %
-  \data{MS}[\ch{MeOH + H2O + KI}, ESI, \SI{10}{\electronvolt}] \val{720} (100,
-  \ch{M+ + OH-}), \val{368} (\ch{M+ + 2 OH-}).
-  %
-  \data{IR}[KBr] \val{3443} (w), \val{3061} (w), \val{2957} (m), \val{2918}
-  (m), \val{2856} (w), \val{2729} (w), \val{1725} (w), \val{1606} (s),
-  \val{1592} (s), \val{1545} (w), \val{1446} (m), \val{1421} (m), \val{1402}
-  (m), \val{1357} (w), \val{1278} (w), \val{1238} (s), \val{1214} (s),
-  \val{1172} (s), \val{1154} (m), \val{1101} (w), \val{1030} (w), \val{979}
-  (m), \val{874} (m), \val{846} (s), \val{818} (w), \val{798} (m), \val{744}
-  (w), \val{724} (m), \val{663} (w), \val{586} (w), \val{562} (w), \val{515}
-  (w).
-  %
-  \data*{UV-Vis} \SI{386}{\nano\metre} ($\varepsilon = \val{65984}$),
-  \SI{406}{\nano\metre} ($\varepsilon = \val{65378}$).
-  %
-  \data*{quantum yield} $\Phi = \val{0.74+-0.1}$\,.
-\end{experimental}
-
-\paragraph{Formatted List}
-Output with these options:
-
-\begin{sourcecode}
-  format=\bfseries,delta=(ppm),list=true,use-equal
-\end{sourcecode}
-
-\begin{experimental}[format=\bfseries,delta=(ppm),list=true,use-equal]
-  \sisetup{separate-uncertainty,per-mode=symbol,detect-all,range-phrase=--}
-  \data*{yield} \SI{17}{\milli\gram} yellow needles (\SI{0.04}{\milli\mole},
-  \SI{13}{\percent}).
-  %
-  \data{mp.} \SI{277}{\celsius} (DSC).
-  %
-  \NMR(600)[CDCl3] \val{2.01} (s, \#{24}, \pos{5}), \val{2.31} (s, \#{12},
-  \pos{1}), \val{6.72--6.74} (m, \#{2}, \pos{11}), \val{6.82} (s, \#{8},
-  \pos{3}), \val{7.05--7.07} (m, \#{2}, \pos{12}), \val{7.39--7.41} (m, \#{4},
-  \pos{9}), \val{7.48--7.49} (m, \#{4}, \pos{8}).
-  %
-  \NMR{13,C}(150)[CDCl3] \val{21.2} ($+$, \#{4}, \pos{1}), \val{23.4} ($+$,
-  \#{8}, \pos{5}), \val{126.0} ($+$, \#{4}, \pos{9}), \val{128.2} ($+$, \#{8},
-  \pos{3}), \val{130.8} ($+$, \#{2}, \pos{12}), \val{133.6} ($+$, \#{2},
-  \pos{11}), \val{137.0} ($+$, \#{4}, \pos{8}), \val{138.6} (q, \#{4},
-  \pos{2}), \val{140.6} (q, \#{2}, \pos{10}), \val{140.8} (q, \#{8}, \pos{4}),
-  \val{141.8} (q, \#{4}, \pos{6}), \val{145.6} (q, \#{2}, \pos{7}).
-  %
-  \data{MS}[DCP, EI, \SI{60}{\electronvolt}] \val{703} (2, \ch{M+}), \val{582}
-  (1), \val{462} (1), \val{249} (13), \val{120} (41), \val{105} (100).
-  %
-  \data{MS}[\ch{MeOH + H2O + KI}, ESI, \SI{10}{\electronvolt}] \val{720} (100,
-  \ch{M+ + OH-}), \val{368} (\ch{M+ + 2 OH-}).
-  %
-  \data{IR}[KBr] \val{3443} (w), \val{3061} (w), \val{2957} (m), \val{2918}
-  (m), \val{2856} (w), \val{2729} (w), \val{1725} (w), \val{1606} (s),
-  \val{1592} (s), \val{1545} (w), \val{1446} (m), \val{1421} (m), \val{1402}
-  (m), \val{1357} (w), \val{1278} (w), \val{1238} (s), \val{1214} (s),
-  \val{1172} (s), \val{1154} (m), \val{1101} (w), \val{1030} (w), \val{979}
-  (m), \val{874} (m), \val{846} (s), \val{818} (w), \val{798} (m), \val{744}
-  (w), \val{724} (m), \val{663} (w), \val{586} (w), \val{562} (w), \val{515}
-  (w).
-  %
-  \data*{UV-Vis} \SI{386}{\nano\metre} ($\varepsilon = \val{65984}$),
-  \SI{406}{\nano\metre} ($\varepsilon = \val{65378}$).
-  %
-  \data*{quantum yield} $\Phi = \val{0.74+-0.1}$\,.
-\end{experimental}
-
-\paragraph{Crazy}
-Output for these options:
-
-\begin{sourcecode}
-  format=\color{red}\itshape,
-  list=true,
-  delta=\textcolor{green}{\ch{M+ + H2O}},
-  pos-number=side,
-  coupling-unit=\mega\gram\per\square\second,
-  list-setup=,
-  use-equal
-\end{sourcecode}
-
-\begin{experimental}[
-    format=\color{red}\itshape,
-    list=true,
-    delta=\textcolor{green}{\ch{M+ + H2O}},
-    pos-number=side,
-    coupling-unit=\mega\gram\per\square\second,
-    list-setup=,use-equal]
-  \sisetup{separate-uncertainty,per-mode=symbol,detect-all,range-phrase=--}
-  \data*{yield} \SI{17}{\milli\gram} yellow needles (\SI{0.04}{\milli\mole},
-  \SI{13}{\percent}).
-  %
-  \data{mp.} \SI{277}{\celsius} (DSC).
-  %
-  \NMR(600)[CDCl3] \val{2.01} (s, \#{24}, \pos{5}), \val{2.31} (s, \#{12},
-  \pos{1}), \val{6.72--6.74} (m, \#{2}, \pos{11}), \val{6.82} (s, \#{8},
-  \pos{3}), \val{7.05--7.07} (m, \#{2}, \pos{12}), \val{7.39--7.41} (m, \#{4},
-  \pos{9}), \val{7.48--7.49} (m, \#{4}, \pos{8}).
-  %
-  \NMR{13,C}(150)[CDCl3] \val{21.2} ($+$, \#{4}, \pos{1}), \val{23.4} ($+$,
-  \#{8}, \pos{5}), \val{126.0} ($+$, \#{4}, \pos{9}), \val{128.2} ($+$, \#{8},
-  \pos{3}), \val{130.8} ($+$, \#{2}, \pos{12}), \val{133.6} ($+$, \#{2},
-  \pos{11}), \val{137.0} ($+$, \#{4}, \pos{8}), \val{138.6} (q, \#{4},
-  \pos{2}), \val{140.6} (q, \#{2}, \pos{10}), \val{140.8} (q, \#{8}, \pos{4}),
-  \val{141.8} (q, \#{4}, \pos{6}), \val{145.6} (q, \#{2}, \pos{7}).
-  %
-  \data{MS}[DCP, EI, \SI{60}{\electronvolt}] \val{703} (2, \ch{M+}), \val{582}
-  (1), \val{462} (1), \val{249} (13), \val{120} (41), \val{105} (100).
-  %
-  \data{MS}[\ch{MeOH + H2O + KI}, ESI, \SI{10}{\electronvolt}] \val{720} (100,
-  \ch{M+ + OH-}), \val{368} (\ch{M+ + 2 OH-}).
-  %
-  \data{IR}[KBr] \val{3443} (w), \val{3061} (w), \val{2957} (m), \val{2918}
-  (m), \val{2856} (w), \val{2729} (w), \val{1725} (w), \val{1606} (s),
-  \val{1592} (s), \val{1545} (w), \val{1446} (m), \val{1421} (m), \val{1402}
-  (m), \val{1357} (w), \val{1278} (w), \val{1238} (s), \val{1214} (s),
-  \val{1172} (s), \val{1154} (m), \val{1101} (w), \val{1030} (w), \val{979}
-  (m), \val{874} (m), \val{846} (s), \val{818} (w), \val{798} (m), \val{744}
-  (w), \val{724} (m), \val{663} (w), \val{586} (w), \val{562} (w), \val{515}
-  (w).
-  %
-  \data*{UV-Vis} \SI{386}{\nano\metre} ($\varepsilon = \val{65984}$),
-  \SI{406}{\nano\metre} ($\varepsilon = \val{65378}$).
-  %
-  \data*{quantum yield} $\Phi = \val{0.74+-0.1}$\,.
-\end{experimental}
-
-\subsection{The \chemmodule*{thermodynamics} Module}\label{sec:thermodynamics-module}
-
-The \chemmodule{thermodynamics} module loads the \pkg{siunitx}
-package~\cite{pkg:siunitx}.
-
-\subsubsection{The \cs*{state} Macro}
-
-\begin{commands}
-  \command{state}[\oarg{options}\marg{symbol}]
-    Typeset a state variable.
-\end{commands}
-
-This macro can be used to write the thermodynamic state variables.
-\begin{example}
-  \state{A}, \state[subscript-left=f]{G} ,
-  \state[subscript-right=\ch{Na}]{E},
-  \state[superscript-right=\SI{1000}{\celsius}]{H}
-\end{example}
-
-These options are available:
-\begin{options}
-  \keyval{pre}{text}\Module{thermodynamics}\Default{\cs{changestate}}
-    Code inserted before the variable.  Inserted in text mode.
-  \keyval{post}{text}\Module{thermodynamics}\Default
-    Code inserted after the variable. Inserted in text mode.
-  \keyval{superscript-left}{text}\Module{thermodynamics}\Default
-    The left superscript. Inserted in text mode.
-  \keyval{superscript-right}{text}\Module{thermodynamics}\Default{\cs{standardstate}}
-    The right superscript. Inserted in text mode.
-  \keyval{superscript}{text}\Module{thermodynamics}
-    An alias of \option{superscript-right}.
-  \keyval{subscript-left}{text}\Module{thermodynamics}\Default
-    The left subscript. Inserted in text mode.
-  \keyval{subscript-right}{text}\Module{thermodynamics}\Default
-    The right subscript. Inserted in text mode.
-  \keyval{subscript}{text}\Module{thermodynamics}
-    An alias of \option{subscript-left}.
-\end{options}
-
-\subsubsection{Thermodynamic Variables}
-
-The \chemmodule{thermodynamics} module provides a few commands for specific
-thermodynamic variables:
-\begin{commands}
-  \command{enthalpy}[\sarg\oarg{options}\darg{subscript}\marg{value}]
-    Typeset the amount of enthalpy.
-  \command{entropy}[\sarg\oarg{options}\darg{subscript}\marg{value}]
-    Typeset the amount of entropy.
-  \command{gibbs}[\sarg\oarg{options}\darg{subscript}\marg{value}]
-    Typeset the amount of Gibbs enthalpy.
-\end{commands}
-
-Their usage is pretty much self-explaining:
-\begin{example}[side-by-side]
-  \enthalpy{123} \par
-  \entropy{123} \par
-  \gibbs{123}
-\end{example}
-The argument \darg{subscript} adds a subscript for specification, \sarg\ hides
-number and unit:
-\begin{example}[side-by-side]
-    \enthalpy(r){123} \par
-    \enthalpy*{123} \par
-\end{example}
-
-\begin{options}
-  \keyval{pre}{text}\Module{thermodynamics}\Default{\cs{changestate}}
-    Code inserted before the variable.  Inserted in text mode.
-  \keyval{post}{text}\Module{thermodynamics}\Default
-    Code inserted after the variable.  Inserted in text mode.
-  \keyval{superscript-left}{text}\Module{thermodynamics}\Default
-    The left superscript.  Inserted in text mode.
-  \keyval{superscript-right}{text}\Module{thermodynamics}\Default{\cs{standardstate}}
-    The right superscript. Inserted in text mode.
-  \keyval{superscript}{text}\Module{thermodynamics}
-    An alias of \option{superscript-right}.
-  \keyval{subscript-left}{text}\Module{thermodynamics}\Default
-    The left subscript.  Inserted in text mode.
-  \keyval{subscript-right}{text}\Module{thermodynamics}\Default
-    The right subscript.  Inserted in text mode.
-  \keyval{subscript}{text}\Module{thermodynamics}
-    An alias of \option{subscript-left}.
-  \keychoice{subscript-pos}{left,right}\Module{thermodynamics}\Default{left}
-    Determines wether the subscript given in \darg{subscript} is placed to the
-    left or the right of the variable.
-  \keyval{symbol}{symbol}\Module{thermodynamics}\Default
-    The symbol of the variable.  Inserted in math mode.
-  \keyval{unit}{unit}\Module{thermodynamics}\Default
-    A valid \pkg{siunitx} unit.
-\end{options}
-
-The default values depend on the command.
-\begin{example}[side-by-side]
-  \enthalpy[unit=\kilo\joule]{-285} \par
-  \gibbs[pre=]{0} \par
-  \entropy[pre=$\Delta$,superscript=]{56.7}
-\end{example}
-The unit is set corresponding to the rules of \pkg{siunitx} and depends on
-its settings:
-\begin{example}[side-by-side]
-  \enthalpy{-1234.56e3} \par
-  \sisetup{
-    per-mode=symbol,
-    exponent-product=\cdot,
-    output-decimal-marker={,},
-    group-four-digits=true
-  }
-  \enthalpy{-1234.56e3}
-\end{example}
-
-\subsubsection{Create New Variables or Redefine Existing Ones}
-
-\begin{commands}
-  \command{NewChemState}[\marg{cs}\marg{options}]
-    Define new state commands like \cs{enthalpy}.  Gives an error is \meta{cs}
-    already exists.
-  \command{RenewChemState}[\marg{cs}\marg{options}]
-    Redefine existing state commands.
-  \command{DeclareChemState}[\marg{cs}\marg{options}]
-    Like \cs{NewChemState} but gives now error if \meta{cs} already exists.
-  \command{ProvideChemState}[\marg{cs}\marg{options}]
-    Define new state commands like \cs{enthalpy}.  Defines \meta{cs} only if
-    it is not defined, yet.
-\end{commands}
-The argument \meta{options} is a comma separated list of key/value options:
-\begin{options}
-  \keyval{pre}{text}\Module{thermodynamics}\Default{\cs{changestate}}
-    Code inserted before the variable.  Inserted in text mode.
-  \keyval{post}{text}\Module{thermodynamics}\Default
-    Code inserted after the variable.  Inserted in text mode.
-  \keyval{superscript-left}{text}\Module{thermodynamics}\Default
-    The left superscript.  Inserted in text mode.
-  \keyval{superscript-right}{text}\Module{thermodynamics}\Default{\cs{standardstate}}
-    The right superscript.
-  \keyval{superscript}{text}\Module{thermodynamics}
-    An alias of \option{superscript-right}.
-  \keyval{subscript-left}{text}\Module{thermodynamics}\Default
-    The left subscript.  Inserted in text mode.
-  \keyval{subscript-right}{text}\Module{thermodynamics}\Default
-    The right subscript.  Inserted in text mode.
-  \keyval{subscript}{text}\Module{thermodynamics}
-    An alias of \option{subscript-left}.
-  \keychoice{subscript-pos}{left,right}\Module{thermodynamics}\Default{left}
-    Determines wether the subscript given in \darg{subscript} is placed to the
-    left or the right of the variable.
-  \keyval{symbol}{symbol}\Module{thermodynamics}\Default
-    The symbol of the variable.
-  \keyval{unit}{unit}\Module{thermodynamics}\Default
-    A valid \pkg{siunitx} unit.
-\end{options}
-
-\begin{example}
-  \NewChemState\Helmholtz{ symbol=A , unit=\kilo\joule\per\mole }
-  \NewChemState\ElPot{ symbol=E , subscript-pos=right , superscript= , unit=\volt }
-  \Helmholtz{123.4} \par
-  \ElPot{-1.1} \par
-  \ElPot[superscript=0]($\ch{Sn}|\ch{Sn^2+}||\ch{Pb^2+}|\ch{Pb}$){0.01} \par
-  \RenewChemState\enthalpy{ symbol=h , unit=\joule} \par
-  \enthalpy(f){12.5}
-\end{example}
-
-The existing commands have been defined like this:
-\begin{sourcecode}
-  \NewChemState \enthalpy{ symbol = H, unit = \kilo\joule\per\mole }
-  \NewChemState \entropy { symbol = S, unit = \joule\per\kelvin\per\mole, pre = }
-  \NewChemState \gibbs   { symbol = G, unit = \kilo\joule\per\mole }
-\end{sourcecode}
-
-So -- for following thermodynamic conventions -- one could define a molar and
-an absolute variable:
-\begin{example}
-  \RenewChemState\enthalpy{symbol=h,superscript=,unit=\kilo\joule\per\mole}% molar
-  \NewChemState\Enthalpy{symbol=H,superscript=,unit=\kilo\joule}% absolute
-  \enthalpy{-12.3} \Enthalpy{-12.3}
-\end{example}
-
-\subsection{The \chemmodule*{units} Module}\label{sec:units-module}
-
-The \chemmodule{units} module loads the \pkg{siunitx}
-package~\cite{pkg:siunitx}.
-
-In chemistry some non-SI units are very common.  \pkg{siunitx} provides the
-command
-\begin{commands}
-  \command*{DeclareSIUnit}[\marg{cs}\marg{unit}]
-    Define \meta{cs} to be a valid unit command inside \pkg{siunitx}' macros
-    \cs*{SI} and \cs*{si} which represents \meta{unit}.
-\end{commands}
-to add arbitrary units.  \chemmacros\ uses that command to provide some
-units.  Like all \pkg{siunitx} units they're only valid inside
-\cs*{SI}\marg{num}\marg{unit} and \cs*{si}\marg{unit}.
-\begin{commands}
-  \command{atmosphere} \si{\atmosphere}
-  \command{atm} \si{\atm}
-  \command{calory} \si{\calory}
-  \command{cal} \si{\cal}
-  \command{cmc} \si{\cmc} \par
-    The units \cs{cmc}, \cs{molar}, and \cs{Molar} are defined by the
-    package \pkg{chemstyle} as well.  \chemmacros\ only defines them, if
-    \pkg{chemstyle} is not loaded.
-  \command{molar} \si{\molar}
-  \command{moLar} \si{\moLar}
-  \command{Molar} \si{\Molar}
-  \command{MolMass} \si{\MolMass}
-  \command{normal} \si{\normal}
-  \command{Torr} \si{\Torr}
-\end{commands}
-
-By the way: \cs*{mmHg} \si{\mmHg} already is defined by \pkg{siunitx}.
-
-\section{Internal Modules}
-
-\subsection{The \chemmodule*{tikz} Module}\label{sec:tikz-module}
+\section{The \chemmodule*{tikz} Module}\label{sec:tikz-module}
 
 The \chemmodule{tikz} module loads the \pkg{tikz} package~\cite{pkg:pgf} and
 the \TikZ\ library \code{calc}.
 
-\subsubsection{For Users}
+\subsection{For Users}
 The \chemmodule{tikz} module defines a few arrow tips:
 \begin{tikzcode}
   \arrowtip{el}
@@ -3361,7 +3219,7 @@ defining a new decoration \tikzdecoration{wave}.
   \end{tikzpicture}
 \end{example}
 
-\subsubsection{For Module Writers}
+\subsection{For Module Writers}
 The \chemmodule{tikz} module provides some macros for common \TikZ\
 functions.  This allows to use expl3's powerful function variants for
 expansion control.
@@ -3387,7 +3245,7 @@ expansion control.
     Defined as \verbcode+node[{#1}]+.
 \end{commands}
 
-\subsection{The \chemmodule*{xfrac} Module}\label{sec:xfrac-module}
+\section{The \chemmodule*{xfrac} Module}\label{sec:xfrac-module}
 
 The \chemmodule{xfrac} module loads the package
 \pkg{xfrac}~\cite{bnd:l3packages}.  For the following explanations it will be
@@ -3499,10 +3357,6 @@ want:
   \ChemModule{foo}{2015/10/14 description of foo}[5.2]
 \end{sourcecode}
 
-You should be aware that your module \emph{will not be loaded} with
-\verbcode+\usechemmodule{all}+! The pseudo-module \chemmodule{all} contains a
-manually maintained list of the modules that are loaded by it.
-
 If you decide to write your module \chemmodule*{foo} using expl3 and add
 options you want to be able to set using
 \cs{chemsetup}\Oarg{foo}\marg{options} please make sure you define (and set)
@@ -3552,7 +3406,7 @@ directly.  In the best case you also have a short piece of documentation.
 
 \section{Suggestions, Bug Reports, Support}\label{sec:sugg-bug-reports}
 
-\paragraph{Support}
+\subsection{Support}
 If you need support or help with anything regarding \chemmacros\ please use
 the usual support forums
 \begin{itemize}
@@ -3567,12 +3421,12 @@ or go the \emph{dedicated support forum}
 \end{itemize}
 where you can be sure that I will see the question.
   
-\paragraph{Suggestions}
+\subsection{Suggestions}
 If you have any suggestions on how \chemmacros\ could be improved, adding
 missing features \etc, please feel free to contact me via
 \email{contact@mychemistry.eu}.
 
-\paragraph{Bug reports}
+\subsection{Bug reports}
 If you find any bugs, \ie, errors (something not working as described,
 conflicts with other packages, \ldots) then please go to
 \url{https://github.com/cgnieder/chemmacros/issues/} and open a new issue

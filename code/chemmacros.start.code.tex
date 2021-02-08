@@ -366,11 +366,8 @@
 % #2: description
 \cs_new_protected:Npn \ChemModule #1#2
   {
-    \tl_map_inline:Nn \g__chemmacros_module_stop_tl
-      {
-        \str_if_eq:nnT {##1} {#1}
-          { \tl_map_break:n { \__chemmacros_gobble_module:w } }
-      }
+    \str_if_in:NnT \g__chemmacros_module_stop_tl {{#1}}
+      { \__chemmacros_gobble_module:w }
     \msg_log:nnnn {chemmacros} {loading-module} {#1} {#2}
     \msg_term:nnnn {chemmacros} {loading-module} {#1} {#2}
     \tl_gput_right:Nn \g__chemmacros_modules_loaded_tl {{#1}}

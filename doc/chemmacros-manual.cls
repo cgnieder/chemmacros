@@ -26,18 +26,17 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ProvidesClass{chemmacros-manual}[2020/11/29]
+\ProvidesClass{chemmacros-manual}[2021/02/06]
 
 \LoadClass[load-preamble,add-index]{cnltx-doc}
 \RequirePackage{imakeidx}
 
-\RequirePackage[compatibility=newest]{chemmacros}
+\RequirePackage{chemmacros}
 \setcnltx{
   package  = {chemmacros},
   info     = {comprehensive support for typesetting chemistry documents},
   url      = https://github.com/cgnieder/chemmacros ,
-  authors  = Clemens Niederberger ,
-  email    = contact@mychemistry.eu ,
+  authors  = {Clemens Niederberger[contact@mychemistry.eu], Sonja K.} ,
   abstract = {%
     \centering
     \includegraphics{chemmacros-logo.pdf}
@@ -148,11 +147,8 @@
 \ChangeEmph{[}[,.02em]{]}[.055em,-.08em]
 \ChangeEmph{(}[-.01em,.04em]{)}[.04em,-.05em]
 
-\RequirePackage[accsupp]{acro}
-\acsetup{
-  long-format  = \scshape ,
-  short-format = \scshape
-}
+\RequirePackage{acro}
+\acsetup{ format  = \scshape }
 
 \RequirePackage{fontawesome}
 \RequirePackage{datetime2}
@@ -380,5 +376,6 @@
 \chemmacros@add@version{2020-03-07}{5.11}
 \chemmacros@add@version{2020-11-21}{5.11a}
 \chemmacros@add@version{2020-11-29}{5.12}
+\chemmacros@add@version{2021-02-06}{6.0}
 
 \endinput

@@ -22,39 +22,39 @@
 \bool_new:N      \l__chemmacros_orbital_opacity_bool
 
 \tl_new:N  \l__chemmacros_orbital_s_color_tl
-\tl_set:Nn \l__chemmacros_orbital_s_color_tl { black }
+\tl_set:Nn \l__chemmacros_orbital_s_color_tl {black}
 \tl_new:N  \l__chemmacros_orbital_s_phase_color_tl
 \tl_new:N  \l__chemmacros_orbital_p_color_tl
-\tl_set:Nn \l__chemmacros_orbital_p_color_tl { black }
+\tl_set:Nn \l__chemmacros_orbital_p_color_tl {black}
 \tl_new:N  \l__chemmacros_orbital_p_pphase_color_tl
 \tl_new:N  \l__chemmacros_orbital_p_mphase_color_tl
 \tl_new:N  \l__chemmacros_orbital_sp_color_tl
-\tl_set:Nn \l__chemmacros_orbital_sp_color_tl { black }
+\tl_set:Nn \l__chemmacros_orbital_sp_color_tl {black}
 \tl_new:N  \l__chemmacros_orbital_sp_pphase_color_tl
 \tl_new:N  \l__chemmacros_orbital_sp_mphase_color_tl
 \tl_new:N  \l__chemmacros_orbital_sptwo_color_tl
-\tl_set:Nn \l__chemmacros_orbital_sptwo_color_tl { black }
+\tl_set:Nn \l__chemmacros_orbital_sptwo_color_tl {black}
 \tl_new:N  \l__chemmacros_orbital_sptwo_pphase_color_tl
 \tl_new:N  \l__chemmacros_orbital_sptwo_mphase_color_tl
 \tl_new:N  \l__chemmacros_orbital_spthree_color_tl
-\tl_set:Nn \l__chemmacros_orbital_spthree_color_tl { black }
+\tl_set:Nn \l__chemmacros_orbital_spthree_color_tl {black}
 \tl_new:N  \l__chemmacros_orbital_spthree_pphase_color_tl
 \tl_new:N  \l__chemmacros_orbital_spthree_mphase_color_tl
 \tl_new:N  \l__chemmacros_orbital_s_scale_tl
-\tl_set:Nn \l__chemmacros_orbital_s_scale_tl { 1 }
+\tl_set:Nn \l__chemmacros_orbital_s_scale_tl {1}
 \tl_new:N  \l__chemmacros_orbital_p_scale_tl
-\tl_set:Nn \l__chemmacros_orbital_p_scale_tl { 1 }
+\tl_set:Nn \l__chemmacros_orbital_p_scale_tl {1}
 \tl_new:N  \l__chemmacros_orbital_sp_scale_tl
-\tl_set:Nn \l__chemmacros_orbital_sp_scale_tl { 1 }
+\tl_set:Nn \l__chemmacros_orbital_sp_scale_tl {1}
 \tl_new:N  \l__chemmacros_orbital_sptwo_scale_tl
-\tl_set:Nn \l__chemmacros_orbital_sptwo_scale_tl { 1 }
+\tl_set:Nn \l__chemmacros_orbital_sptwo_scale_tl {1}
 \tl_new:N  \l__chemmacros_orbital_spthree_scale_tl
-\tl_set:Nn \l__chemmacros_orbital_spthree_scale_tl { 1 }
+\tl_set:Nn \l__chemmacros_orbital_spthree_scale_tl {1}
 
 \fp_new:N  \l__chemmacros_orbital_angle_fp
-\fp_set:Nn \l__chemmacros_orbital_angle_fp { 90 }
+\fp_set:Nn \l__chemmacros_orbital_angle_fp {90}
 \fp_new:N  \l__chemmacros_orbital_opacity_fp
-\fp_set:Nn \l__chemmacros_orbital_opacity_fp { 0.5 }
+\fp_set:Nn \l__chemmacros_orbital_opacity_fp {0.5}
 
 \cs_new:Npn \__chemmacros_orbital_options:
   {
@@ -66,7 +66,7 @@
   }
 
 \cs_new:Npn \__chemmacros_orbital_overlay:
-  { \bool_if:NT \l__chemmacros_orbital_overlay_bool { overlay } }
+  { \bool_if:NT \l__chemmacros_orbital_overlay_bool {overlay} }
 
 \cs_new:Npn \__chemmacros_orbital_opacity:
   {
@@ -433,7 +433,7 @@
     \chemmacros_set_keys:nn {orbital/sp3} {#1}
     \bool_if:NTF \l__chemmacros_orbital_spthree_phase_bool
       {
-        \tl_if_in:NnTF \l__chemmacros_orbital_spthree_color_tl { ! }
+        \tl_if_in:NnTF \l__chemmacros_orbital_spthree_color_tl {!}
           {
             \tl_set:Nn \l__chemmacros_orbital_spthree_pphase_color_tl
               { \tl_use:N \l__chemmacros_orbital_spthree_color_tl }
@@ -442,12 +442,10 @@
             \tl_set:Nn \l__chemmacros_orbital_spthree_pphase_color_tl
               { \tl_use:N \l__chemmacros_orbital_spthree_color_tl ! 90 }
           }
-        \tl_set:Nn \l__chemmacros_orbital_spthree_mphase_color_tl
-          { black ! 5 }
-        
+        \tl_set:Nn \l__chemmacros_orbital_spthree_mphase_color_tl {black!5}
       }
       {
-        \tl_if_in:NnTF \l__chemmacros_orbital_spthree_color_tl { ! }
+        \tl_if_in:NnTF \l__chemmacros_orbital_spthree_color_tl {!}
           {
             \tl_set:Nn \l__chemmacros_orbital_spthree_mphase_color_tl
               { \tl_use:N \l__chemmacros_orbital_spthree_color_tl }
@@ -456,8 +454,7 @@
             \tl_set:Nn \l__chemmacros_orbital_spthree_mphase_color_tl
               { \tl_use:N \l__chemmacros_orbital_spthree_color_tl ! 90 }
           }
-        \tl_set:Nn \l__chemmacros_orbital_spthree_pphase_color_tl
-          { black ! 5 }
+        \tl_set:Nn \l__chemmacros_orbital_spthree_pphase_color_tl {black!5}
       }
     \chemmacros_tikz_picture:xn
       { \__chemmacros_orbital_options: }
@@ -508,7 +505,7 @@
         \fp_compare:nTF { #1 = 1 }
           { \bool_set_false:N \l__chemmacros_orbital_opacity_bool }
           { \bool_set_true:N \l__chemmacros_orbital_opacity_bool }
-        \fp_set:Nn \l__chemmacros_orbital_opacity_fp { #1 }
+        \fp_set:Nn \l__chemmacros_orbital_opacity_fp {#1}
       }
   }
 
@@ -524,15 +521,15 @@
 \cs_new_protected:Npn \chemmacros_orbital:n #1
   {
     \bool_if:NT \l__chemmacros_orbital_type_s_bool
-      { \__chemmacros_orbital_s_draw:n { #1 } }
+      { \__chemmacros_orbital_s_draw:n {#1} }
     \bool_if:NT \l__chemmacros_orbital_type_p_bool
-      { \__chemmacros_orbital_p_draw:n { #1 } }
+      { \__chemmacros_orbital_p_draw:n {#1} }
     \bool_if:NT \l__chemmacros_orbital_type_sp_bool
-      { \__chemmacros_orbital_sp_draw:n { #1 } }
+      { \__chemmacros_orbital_sp_draw:n {#1} }
     \bool_if:NT \l__chemmacros_orbital_type_sptwo_bool
-      { \__chemmacros_orbital_sptwo_draw:n { #1 } }
+      { \__chemmacros_orbital_sptwo_draw:n {#1} }
     \bool_if:NT \l__chemmacros_orbital_type_spthree_bool
-      { \__chemmacros_orbital_spthree_draw:n { #1 } }
+      { \__chemmacros_orbital_spthree_draw:n {#1} }
   }
 
 \NewDocumentCommand \orbital {om}

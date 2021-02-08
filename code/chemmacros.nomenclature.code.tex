@@ -170,16 +170,17 @@
 % --------------------------------------------------------------------------
 \chemmacros_define_keys:nn {nomenclature}
   {
-    iupac              .choice: ,
-    iupac / restricted .code:n     =
+    iupac .choice: ,
+    iupac / restricted .code:n =
       \bool_set_true:N \l__chemmacros_iupac_restricted_bool
       \bool_set_false:N \l__chemmacros_iupac_strict_bool ,
-    iupac / auto       .code:n     =
+    iupac / auto .code:n =
       \bool_set_false:N \l__chemmacros_iupac_restricted_bool
       \bool_set_false:N \l__chemmacros_iupac_strict_bool ,
-    iupac / strict     .code:n     =
+    iupac / strict .code:n =
       \bool_set_false:N \l__chemmacros_iupac_restricted_bool
       \bool_set_true:N \l__chemmacros_iupac_strict_bool ,
+    iupac .initial:n = auto
   }
 
 % --------------------------------------------------------------------------
