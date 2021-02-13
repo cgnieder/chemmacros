@@ -403,3 +403,4 @@ Version history
                            - get rid of scrlfile dependency
                            - update to l3text
                            - rename \Torr -> \torr
+                           - new iupac command \normal

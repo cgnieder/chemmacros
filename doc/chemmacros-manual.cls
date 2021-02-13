@@ -26,7 +26,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ProvidesClass{chemmacros-manual}[2021/02/06]
+\ProvidesClass{chemmacros-manual}[2021/02/13]
 
 \LoadClass[load-preamble,add-index]{cnltx-doc}
 \RequirePackage{imakeidx}
@@ -36,7 +36,7 @@
   package  = {chemmacros},
   info     = {comprehensive support for typesetting chemistry documents},
   url      = https://github.com/cgnieder/chemmacros ,
-  authors  = {Clemens Niederberger[contact@mychemistry.eu], Sonja K.} ,
+  authors  = {Clemens Niederberger[contact@mychemistry.eu], Sonja K.[leandriis@gmx.de]} ,
   abstract = {%
     \centering
     \includegraphics{chemmacros-logo.pdf}
@@ -55,8 +55,8 @@
       DeclareChemCharge, DeclareChemEqConstant, declarechemgreekmapping,
       DeclareChemIUPAC, DeclareChemIUPACShorthand, DeclareChemLatin,
       DeclareChemNMR, DeclareChemNucleophile, DeclareChemPartialCharge,
-      DeclareChemParticle, DeclareChemPhase, DeclareChemReaction,
-      DeclareChemState,
+      DeclareChemParticle, DeclareChemPhase, DeclareChemReactant,
+      DeclareChemReaction, DeclareChemState,
       delm, delp, Delta, dexter, Dfi,
     el, ElPot, endo, entgegen, Enthalpy, enthalpy, entropy,
     fdelm, fdelp, fmch, fminus, fpch, fplus, fscrm, fscrp,
@@ -72,7 +72,7 @@
       NewChemIUPACShorthand, NewChemLatin, NewChemMacroset, NewChemNMR,
       NewChemNucleophile, NewChemPartialCharge, NewChemParticle, NewChemPhase,
       NewChemReaction, NewChemState,
-      newman, nitrogen, NMR, Nu, Nuc,
+      newman, nitrogen, NMR, normal, Nu, Nuc,
     orbital, ortho, ox, OX, oxygen,
     para, pch, per, pH, phase, phosphorus, photon, pKa, pKb, pOH, pos,
       positron, Pot, ProvideChemArrow, ProvideChemBond, ProvideChemCharge,
@@ -86,8 +86,9 @@
       RenewChemIUPAC, RenewChemIUPACShorthand, RenewChemLatin, RenewChemNMR,
       RenewChemNucleophile, RenewChemPartialCharge, RenewChemParticle,
       RenewChemPhase, RenewChemState,
+      reactant,
     Sf, scrm, scrp, second, selectchemgreekmapping, setchemformula,
-      ShowChemArrow, ShowChemBond, sld, Sod, state, sulfur,
+      ShowChemArrow, ShowChemBond, sld, Sod, solvent, state, sulfur,
     trans,
     usechemmodule,
     val,
@@ -97,7 +98,7 @@
     addplot,
     bottomrule,
     cancel, cdot, ce, cee, celsius, centering, chemfig, chemname, clap,
-      cnsetup, code, color, cstack, cstsetup,
+      cmpd, cnsetup, code, color, cstack, cstsetup,
     DeclareInstance, DeclareSIUnit, definecolor, draw,
     electronvolt, endtikzpicture,
     footnotesize,
@@ -124,7 +125,7 @@
   makeindex-setup = { columns = 2 , columnsep = 1em }
 }
 
-\RequirePackage{booktabs,array,longtable}
+\RequirePackage{booktabs,array,longtable,collcell}
 
 \RequirePackage{chemfig,cancel,varioref,csquotes}
 
@@ -143,10 +144,6 @@
 \RequirePackage[libertine]{newtxmath}
 \def\libertine@figurestyle{OsF}
 
-\RequirePackage[biblatex]{embrac}
-\ChangeEmph{[}[,.02em]{]}[.055em,-.08em]
-\ChangeEmph{(}[-.01em,.04em]{)}[.04em,-.05em]
-
 \RequirePackage{acro}
 \acsetup{ format  = \scshape }
 
@@ -160,6 +157,18 @@
     \csdef{chemmacros@ver@#2}{\DTMdate{#1}}%
   }%
 }
+
+\DeclareInstance{xfrac}{chemformula-text-frac}{text}{
+  scale-factor        = 1 ,
+  denominator-bot-sep = -.2ex ,
+  denominator-format  = \scriptsize #1 ,
+  numerator-top-sep   = -.2ex ,
+  numerator-format    = \scriptsize #1 ,
+  slash-right-kern    = .05em ,
+  slash-left-kern     = .05em
+}
+
+\newcommand*\chemmacrosversion{\csname c_chemmacros_version_tl\endcsname}
 
 \newrobustcmd*\chemmacros@date[1]{%
   \ifcsdef{chemmacros@ver@#1used}{}{ (\csuse{chemmacros@ver@#1})}}
@@ -187,10 +196,23 @@
     \cnltxlist
   }
   {\endcnltxlist}
+
+\renewcommand*\AmS{\hologo{AmS}}
+\newcommand*\TikZ{Ti\textit{k}Z}
+\newcommand*\tablehead[1]{\textnormal{\color{black}\bfseries#1}}
+
+\providecommand*\XyM{%
+  X\kern-.30em
+  \smash{\raise.50ex\hbox{\char'7}}%
+  \kern-.30em M%
+}
+\providecommand*\XyMTeX{\XyM\kern-.1em\TeX}
   
 \RequirePackage{tcolorbox,xsimverb}
 \tcbuselibrary{skins,breakable}
 \tcbset{enhanced,enhanced jigsaw}
+
+\usetikzlibrary{calc,positioning,decorations.pathmorphing,patterns}
 
 \newtcolorbox{bewareofthedog}{
   colback  = white ,
@@ -299,6 +321,89 @@
     \endcnltxcode
   }
 
+\newcommand*\iupaccs[3][]{%
+  \command{#2}[\quad\iupac{\csuse{#2}}]
+    #3\ifblank{#1}{}{\ifblank{#3}{}{ }An alias for this command is \cs{#1}.}%
+}
+
+\newidxcmd\chemmodule{\code{#1}}[ (module)]
+\newidxcmd\tikzdecoration{\code{#1}}[ (\TikZ\ decoration)]
+\AtEndPreamble{%
+  \pdfstringdefDisableCommands{%
+    \def\chemmodule*#1{\textquotedblleft#1\textquotedblright}%
+  }%
+}
+\newidxcmd\sym{\code{#1}}[ (symbol)]
+
+\def\cnltx@bash@listings@style{
+  language         = bash,
+  basicstyle       = {\sourceformat\color{black}},
+  xleftmargin      = 1em,
+  numbersep        = .75em,
+  gobble           = \cnltx@gobble ,
+  columns          = fullflexible,
+  literate         =
+    {ä}{{\"a}}1
+    {ö}{{\"o}}1
+    {ü}{{\"u}}1
+    {Ä}{{\"A}}1
+    {Ö}{{\"O}}1
+    {Ü}{{\"U}}1
+    {ß}{{\ss}}1 ,
+  breaklines       = true,
+  keepspaces       = true,
+  breakindent      = 1em,
+  commentstyle     = \color{comment},
+  keywordstyle     = \color{black}\bfseries ,
+  stringstyle      = \color{black} ,
+  showstringspaces = false ,
+  morekeywords     = texdoc
+}
+
+\cnltx@expandargs(nx)\lstdefinestyle
+  {bash}
+  {\expandonce\cnltx@bash@listings@style}
+
+\newcommand*\prompt{}
+\patchcmd\lst@NewLine
+  {\hbox{}}% search
+  {\hbox{}\prompt}% replace
+  {}% success
+  {}% failure
+\newsourcecodeenv[
+  code-only,
+  sourcecode-options = {
+    style = bash ,
+    deleteindex = [5][keyword5] ,
+    deleteindex = [6][keyword6]
+  },
+  pre-code           = \def\prompt{\textasciitilde\space\$\space}  
+]{lbash}
+
+\newrobustcmd*\explcsformat[1]{%
+  \code{\textbackslash\textcolor{cs}{\detokenize{#1}}}%
+}
+\newidxcmd\explcs{\explcsformat{#1}}[ (expl3)]
+
+\cnltx@deflistitem{\cnltx@explcommand}{\explcs}
+\renewenvironment{commands}
+  {%
+    \let\command\cnltx@command
+    \let\explcommand\cnltx@explcommand
+    \cnltxlist
+  }
+  {\endcnltxlist}
+\newenvironment{tikzcode}
+  {%
+    \def\arrowtip{\@cnltx@option@item\code}%
+    \cnltxlist
+  }
+  {\endcnltxlist}
+
+\newrobustcmd*\showenv[1]{\beginenv*\code{\{}\env{#1}\code{\}}}
+
+\newcommand*\TF{\textcolor{red}{\uline{\code{\textcolor{cs}{\textit{TF}}}}}}
+
 \RequirePackage[
   backend=biber,
   style=cnltx,
@@ -307,9 +412,17 @@
 \RequirePackage{csquotes,varioref}
 \defbibheading{bibliography}{\section{References}}
 
-\RequirePackage[biblatex]{embrac}[2012/06/29]
+\RequirePackage[biblatex]{embrac}
 \ChangeEmph{[}[,.02em]{]}[.055em,-.08em]
 \ChangeEmph{(}[-.01em,.04em]{)}[.04em,-.05em]
+
+\ExplSyntaxOn
+\cs_new_protected:Npn \chemboldchecks #1
+  {
+    \seq_set_map:NNn \l_tmpa_seq \l__chemmacros_if_bf_seq { \code {##1} }
+    \seq_use:Nnnn \l_tmpa_seq {,~} {,~} {~#1~}
+  }
+\ExplSyntaxOff
 
 \chemmacros@add@version{2012-01-28}{3.0}
 \chemmacros@add@version{2012-01-30}{3.0a}
@@ -376,6 +489,6 @@
 \chemmacros@add@version{2020-03-07}{5.11}
 \chemmacros@add@version{2020-11-21}{5.11a}
 \chemmacros@add@version{2020-11-29}{5.12}
-\chemmacros@add@version{2021-02-06}{6.0}
+\chemmacros@add@version{2021-02-13}{6.0}
 
 \endinput

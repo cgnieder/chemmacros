@@ -89,7 +89,6 @@
   text-rm=\libertineLF
 }
 
-\defbibheading{bibliography}{\section{References}}
 \addbibresource{\jobname.bib}
 \addbibresource{cnltx.bib}
 
@@ -174,141 +173,24 @@
 }  
 \end{filecontents*}
 
-\DeclareInstance{xfrac}{chemformula-text-frac}{text}
-  {
-    scale-factor        = 1 ,
-    denominator-bot-sep = -.2ex ,
-    denominator-format  = \scriptsize #1 ,
-    numerator-top-sep   = -.2ex ,
-    numerator-format    = \scriptsize #1 ,
-    slash-right-kern    = .05em ,
-    slash-left-kern     = .05em
-  }
-
-\usetikzlibrary{calc,positioning,decorations.pathmorphing,patterns}
-
-% \newpackagename\chemmacros{chemmacros}
-\newcommand*\chemmacrosversion{\csname c_chemmacros_version_tl\endcsname}
 \newpackagename\chemformula{chemformula}
 \newpackagename\ghsystem{ghsystem}
 \newpackagename\chemgreek{chemgreek}
-
-\renewcommand*\AmS{\hologo{AmS}}
-\newcommand*\TikZ{Ti\textit{k}Z}
-\newcommand*\tablehead[1]{\textrm{\bfseries#1}}
-
-\providecommand*\XyM{%
-  X\kern-.30em
-  \smash{\raise.50ex\hbox{\char'7}}%
-  \kern-.30em M%
-}
-\providecommand*\XyMTeX{\XyM\kern-.1em\TeX}
 
 \newname\hensel{Martin Hensel}
 \newname\pedersen{Bj\o rn Pedersen}
 \newname\leandriis{Sonja K.}
 
-\newcommand*\iupaccs[3][]{%
-  \command{#2}[\quad\iupac{\csuse{#2}}]
-    #3\ifblank{#1}{}{\ifblank{#3}{}{ }An alias for this command is \cs{#1}.}%
-}
-
-\newidxcmd\chemmodule{\code{#1}}[ (module)]
-\newidxcmd\tikzdecoration{\code{#1}}[ (\TikZ\ decoration)]
-\AtEndPreamble{%
-  \pdfstringdefDisableCommands{%
-    \def\chemmodule*#1{\textquotedblleft#1\textquotedblright}%
-  }%
-}
-\newidxcmd\sym{\code{#1}}[ (symbol)]
-
-\makeatletter
-\def\cnltx@bash@listings@style{
-  language         = bash,
-  basicstyle       = {\sourceformat\color{black}},
-  xleftmargin      = 1em,
-  numbersep        = .75em,
-  gobble           = \cnltx@gobble ,
-  columns          = fullflexible,
-  literate         =
-    {ä}{{\"a}}1
-    {ö}{{\"o}}1
-    {ü}{{\"u}}1
-    {Ä}{{\"A}}1
-    {Ö}{{\"O}}1
-    {Ü}{{\"U}}1
-    {ß}{{\ss}}1 ,
-  breaklines       = true,
-  keepspaces       = true,
-  breakindent      = 1em,
-  commentstyle     = \color{comment},
-  keywordstyle     = \color{black}\bfseries ,
-  stringstyle      = \color{black} ,
-  showstringspaces = false ,
-  morekeywords     = texdoc
-}
-
-\cnltx@expandargs(nx)\lstdefinestyle
-  {bash}
-  {\expandonce\cnltx@bash@listings@style}
-
-\newcommand*\prompt{}
-\patchcmd\lst@NewLine
-  {\hbox{}}% search
-  {\hbox{}\prompt}% replace
-  {}% success
-  {}% failure
-\newsourcecodeenv[
-  code-only,
-  sourcecode-options = {
-    style = bash ,
-    deleteindex = [5][keyword5] ,
-    deleteindex = [6][keyword6]
-  },
-  pre-code           = \def\prompt{\textasciitilde\space\$\space}  
-]{lbash}
-\makeatother
-
 \renewcommand*\dictumauthorformat[1]{#1}
 \renewcommand*\raggeddictumtext{}
-
-\newcommand*\TF{\textcolor{red}{\uline{\code{\textcolor{cs}{\textit{TF}}}}}}
-
-\makeatletter
-\newrobustcmd*\explcsformat[1]{%
-  \code{\textbackslash\textcolor{cs}{\detokenize{#1}}}%
-}
-\newidxcmd\explcs{\explcsformat{#1}}[ (expl3)]
-
-\cnltx@deflistitem{\cnltx@explcommand}{\explcs}
-\renewenvironment{commands}
-  {%
-    \let\command\cnltx@command
-    \let\explcommand\cnltx@explcommand
-    \cnltxlist
-  }
-  {\endcnltxlist}
-\newenvironment{tikzcode}
-  {%
-    \def\arrowtip{\@cnltx@option@item\code}%
-    \cnltxlist
-  }
-  {\endcnltxlist}
-
-\newrobustcmd*\showenv[1]{\beginenv*\code{\{}\env{#1}\code{\}}}
-\makeatother
-
-\ExplSyntaxOn
-\cs_new_protected:Npn \chemboldchecks #1
-  {
-    \seq_set_map:NNn \l_tmpa_seq \l__chemmacros_if_bf_seq { \code {##1} }
-    \seq_use:Nnnn \l_tmpa_seq {,~} {,~} {~#1~}
-  }
-\ExplSyntaxOff
 
 \AtBeginDocument{\renewcommand*\reftextfaraway[1]{starting on page~\pageref{#1}}}
 
 \usepackage{bookmark}
+
+\DeclareChemReactant{thf}{name={tetrahydrofuran}}
+\DeclareChemReactant{H2SO4}{name={\ch{H2SO4}}}
+\DeclareChemReactant{dichlorpentan}{name={\iupac{2,4-di|chlor|pentan}}}
 
 \begin{document}
 
@@ -2014,11 +1896,28 @@ this case you can use
   \end{reactions}
 \end{example}
 
-\section{The \chemmodule*{reactions} Module}\label{sec:reactions-module}
+\section{The \chemmodule*{reactants} Module}\label{sec:reactants-module}
 \sinceversion{6.0}Idea for this module is by \leandriis, who also does the
 main development of the module.  Many thanks for all her work!
 
-\subsection{Idea}
+\subsection{Idea and Getting Started}
+The \mcodule{reactants} module offers a simplified input syntax for chemical
+reactants in the description of reaction procedures. Reactant and solvent
+names are declared in the preamble removing the need to repeat the same
+\ac{iupac} names multiple times throughout the document. With the help of
+module options the output style (order of name number and data) can be altered
+globally (or locally) to suit your needs, while the data itself is input using
+an easy to use key-value approach and processed by the \pkg{siunitx}
+package. The \module{reactants} module responds to the language declared with
+the \pkg{babel} package and also offers methods to integrate the acronyms of
+used reactants or solvents into the list of acronyms.
+
+The module requires and loads the packages \pkg{chemnum} and
+\pkg{siunitx}. Depending on the selected options the packages \pkg{acro},
+\pkg{glossaries-extra}, \pkg{hyperref}, and/or \pkg{xltabular} might be needed
+for this module. Unlike other needed packages, these have to be loaded by the
+user and will be explicitly mentioned in the corresponding sections of this
+manual.
 
 \subsection{Commands}
 
@@ -2026,26 +1925,56 @@ main development of the module.  Many thanks for all her work!
   \command{DeclareChemReactant}\marg{id}\marg{properties}
     This command defines the reactant \meta{id} with the properties
     \meta{properties}.
+  \command{DeclareChemReactant}\Marg{\meta{main id}.\meta{sub id}}\marg{properties}
+    Analogously to \pkg{chemnum}'s \cs{cmpd} the \cs{DeclareChemReactant} and
+    \cs{reactant} commands accept a combined \meta{id} consisting of a
+    \meta{main id} and \meta{sub id} part.
 \end{commands}
 Valid properties are
 \begin{option}
   \keyval{name}{name}
+    Mandatory property, the name of the substance.
   \keyval{short}{abbreviation}
+    A short form of the name, used when the \module{reactants} module is used
+    in combination with the \option{acronym-support} option.
   \keyval{bookmark}{replacement in \ac{pdf} bookmarks}
+    Replaces \meta{name} in a \ac{pdf} bookmark.  This might be advisable when
+    reactants are used in section titles and the \pkg{hyperref} is used as
+    well.
 \end{option}
 
-\subsection{Options}
+Common declarations will look like this:
+\begin{sourcecode}
+  \DeclareChemReactant{thf}{name={tetrahydrofuran}}
+  \DeclareChemReactant{H2SO4}{name={\ch{H2SO4}}}
+  \DeclareChemReactant{dichlorpentan}{name={\iupac{2,4-di|chlor|pentan}}}
+\end{sourcecode}
 
-\subsubsection{Units}
+\begin{commands}
+  \command{reactant}
+  \command{solvent}
+\end{commands}
+
+\subsection{Options}
 \begin{options}
-  \keyval{mass-unit}{unit}\Module{reactants}\Default{\cs*{gram}}
-  \keyval{volume-unit}{unit}\Module{reactants}\Default{\cs*{milli}\cs*{liter}}
-  \keyval{amount-unit}{unit}\Module{reactants}\Default{\cs*{milli}\cs*{mole}}
-  \keyval{concentration-unit}{unit}\Module{reactants}\Default{\cs*{Molar}}
-  \keyval{equiv-unit}{unit}\Module{reactants}\Default{\code{eq}}
-  \keyval{fraction-unit}{unit}\Module{reactants}\Default{\code{w/w \cs*{percent}}}
-  \keyval{purity-unit}{unit}\Module{reactants}\Default{\cs*{percent}}
+  \keybool{initiate}\Module{reactants}\Default{false}
+    The \pkg{chemnum} package that is internally used for numbering the
+    reactants offers two ways of initiating a new label: either when \cs{cmpd}
+    is first used or through \cs{initcmpd}.  The \module{reactants} module
+    also offers these two methods with initiating a new label upon the first
+    use of \module{reactant} being the default.   If you prefer to initiate a
+    new label through the \cs{DeclareChemReactant} command set this option to
+    true.
+
+    Reactants are automatically numbered in the order of their first
+    appearance, while \option{initiate} numbers the compounds in the order in
+    which they were declared in the preamble or in an external document.
+  \keybool{switch}\Module{reactants}\Default{false}
+    Switches the behavior of the starred vs.\@ the unstarred variant of
+    \cs{reactant}.
 \end{options}
+Other options are described at later places when the corresponding behavior is
+described.
 
 \subsubsection{Output and Behavior}
 \begin{options}
@@ -2060,6 +1989,96 @@ Valid properties are
   \keychoice{acronym-support}{acro,glossaries,none}\Module{reactants}\Default{none}
   \keychoice{printreactants-style}{xltabular,longtable,none}\Module{reactants}\Default{none}
 \end{options}
+
+\subsection{Usage}
+
+In order to use a predefined reactant in the document use
+\cs{reactant}\marg{ID}.  This command will return the name as well as the
+corresponding number of this reactant. The starred variant
+\cs{reactant}\sarg\marg{ID} will, with default settings, return just the name
+of the substance without the number.  Setting \keyis{switch}{true} reverses
+this behavior.
+
+The use of \cs{cmpd}\marg{ID} with an \meta{id} that was previously defined
+with the help of \cs{DeclareChemReactant} will result in the same number as
+using \cs{reactant}\marg{id}.
+
+\begin{example}
+  \reactant{thf}
+  \reactant*{thf}\par
+  \chemsetup{reactants/switch = true}
+  \reactant*{thf}
+  \cmpd{thf}
+\end{example}
+
+Describing synthetic procedures often requires adding a lot of data with the
+corresponding units to each reactant that is used. In order to allow for a
+uniform representation of numbers and units, as well as making the code more
+readable, the \cs{reactant} command offers an optional argument that can be
+used to easily input this data: \cs{reactant}\oarg{list of data}\marg{id}.
+\meta{list of data} accepts a comma separated list of key-value pairs with the
+keys listed in section~\vref{tab:reactant-data}.
+
+\subsubsection{Available Keys, Their Default Units and How to Change Them}\label{sec:unit-keys}
+
+\begin{table}
+  \newcolumntype{K}{>{\collectcell\code}l<{\endcollectcell}}
+  \newcolumntype{O}{>{\collectcell\option*}l<{\endcollectcell}}
+  \centering
+  \caption{Overview of available keys as well as the default units and the
+    option to locally or globally change that default unit}
+  \begin{tabular}{>{KlO}
+    \toprule
+      \tablehead{Key} & \tablehead{default unit} & \tablehead{option} \\
+    \midrule
+      mass          & \si{\gram}  & mass-unit \\
+      volume        & \si{\milli\liter} & volume-unit \\
+      amount        & \si{\milli\mole} & amount-unit \\
+      concentration & \si{\Molar} & concentration-unit \\
+      equiv         & eq & equiv-unit \\
+      fraction      & w/w\% & fraction-unit \\
+      purity        & \% & purity-unit \\
+    \midrule
+      solution-name & solution in & solution-name \\
+    \endrule
+  \end{tabular}
+\end{table}
+\option{solution−name} here refers to the text that links concentration and
+solvent. This text automatically adapts to the document language.
+
+The options that change the units of the properties can be set with
+\cs{chemsetup} or in the optional argument of \cs{reactant}.
+\begin{options}
+  \keyval{mass-unit}{unit}\Module{reactants}\Default{\cs*{gram}}
+    Change the unit of the \code{mass} property.
+  \keyval{volume-unit}{unit}\Module{reactants}\Default{\cs*{milli}\cs*{liter}}
+    Change the unit of the \code{volume} property.
+  \keyval{amount-unit}{unit}\Module{reactants}\Default{\cs*{milli}\cs*{mole}}
+    Change the unit of the \code{amount} property.
+  \keyval{concentration-unit}{unit}\Module{reactants}\Default{\cs*{Molar}}
+    Change the unit of the \code{concentration} property.
+  \keyval{equiv-unit}{unit}\Module{reactants}\Default{\code{eq}}
+    Change the unit of the \code{equiv} property.
+  \keyval{fraction-unit}{unit}\Module{reactants}\Default{\code{w/w \cs*{percent}}}
+    Change the unit of the \code{fraction} property.
+  \keyval{purity-unit}{unit}\Module{reactants}\Default{\cs*{percent}}
+    Change the unit of the \code{purity} property.
+\end{options}
+
+\begin{example}
+  \reactant[volume=5]{thf} \par
+  \reactant[volume=5, volume-unit=\cubic\centi\metre]{thf}
+\end{example}
+
+\begin{example}
+  \DeclareChemReactant{nBuLi}{name={\iupac{\textit{n}=butyllithium}}}
+  \DeclareChemReactant{Br2benzene}{name={\iupac{1,4=di|bromo|benzene}}}
+  \DeclareChemReactant{HBr}{name={\ch{HBr\aq}}}
+  
+  \reactant[volume=5.00, amount=12.5, equiv=1.00, concentration=2.5, solvent=hexanes]{nBuLi}
+  \reactant[mass=3.9, amount=15.6, equiv=1.3, purity=95]{Br2benzene}
+  \reactant[volume=2.0, amount=43.8, equiv=3.5, fraction=65]{HBr}
+\end{example}
 
 \section{The \chemmodule*{redox} Module}\label{sec:redox-module}
 
@@ -3404,7 +3423,7 @@ maintenance (according to the \enquote{maintainer} status of the \lppl).
 Please do \emph{not} submit your module via pull request but send me the files
 directly.  In the best case you also have a short piece of documentation.
 
-\section{Suggestions, Bug Reports, Support}\label{sec:sugg-bug-reports}
+\section{Support, Suggestions and Bug Reports}\label{sec:sugg-bug-reports}
 
 \subsection{Support}
 If you need support or help with anything regarding \chemmacros\ please use
@@ -3415,22 +3434,21 @@ the usual support forums
   \item \url{http://www.latex-community.org/forum/} or
   \item \url{http://tex.stackexchange.com/} if you speak English
 \end{itemize}
-or go the \emph{dedicated support forum}
-\begin{itemize}
-  \item \url{http://www.mychemistry.eu/forums/forum/chemmacros/}
-\end{itemize}
-where you can be sure that I will see the question.
+You can also open an issue on
+\url{https://github.com/cgnieder/chemmacros/issues/} possibly adding the label
+\emph{support}.
   
 \subsection{Suggestions}
-If you have any suggestions on how \chemmacros\ could be improved, adding
-missing features \etc, please feel free to contact me via
-\email{contact@mychemistry.eu}.
+If you have any suggestions on how \chemmacros\ could be improved then please
+go to \url{https://github.com/cgnieder/chemmacros/issues/} and open a new
+issue possibly adding the label \emph{suggestion}.
 
 \subsection{Bug reports}
 If you find any bugs, \ie, errors (something not working as described,
 conflicts with other packages, \ldots) then please go to
 \url{https://github.com/cgnieder/chemmacros/issues/} and open a new issue
-describing the error including a minimal working example.
+describing the error including a minimal working example and possibly adding
+the label \emph{bug}.
 
 \printbibliography
 
