@@ -36,7 +36,7 @@
   package  = {chemmacros},
   info     = {comprehensive support for typesetting chemistry documents},
   url      = https://github.com/cgnieder/chemmacros ,
-  authors  = {Clemens Niederberger[contact@mychemistry.eu], Sonja K.[leandriis@gmx.de]} ,
+  authors  = {Clemens Niederberger[contact@mychemistry.eu], Sonja K.[SonjaK@mein.gmx]} ,
   abstract = {%
     \centering
     \includegraphics{chemmacros-logo.pdf}

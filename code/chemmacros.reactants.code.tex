@@ -1,4 +1,4 @@
-\ChemModule{reactants}{2020/12/20 typeset reactants and data}
+\ChemModule{reactants}{2021/02/14 typeset reactants and data}
 % idea and main development of this module: Sonja K.
 
 \RequirePackage {chemnum}
@@ -34,8 +34,8 @@
   
 \msg_new:nnn {chemmacros} {incompatible-equivalents}
   {
-    Incompatible~ options~ `noequivalents'~ and~ `main=equiv'~ detected.~
-    `noequivalents'~ will~ be~ ignored~ \msg_line_context:
+    Incompatible~ options~ `equivalents=false'~ and~ `main=equiv'~ detected.~
+    `equivalents=false'~ will~ be~ ignored~ \msg_line_context:
   }
   
 \msg_new:nnn {chemmacros} {acronym-support}
@@ -52,7 +52,7 @@
 
 \bool_new:N \l__chemmacros_reactants_switch_bool
 \bool_new:N \l__chemmacros_reactants_initiate_bool
-\bool_new:N \l__chemmacros_reactants_noequivalents_bool
+\bool_new:N \l__chemmacros_reactants_equivalents_bool
 
 \bool_new:N \l__chemmacros_reactants_nmo_bool
 \bool_new:N \l__chemmacros_reactants_mno_bool
@@ -110,7 +110,7 @@
     initiate .bool_set:N = \l__chemmacros_reactants_initiate_bool ,
     initiate .initial:n  = false ,
     %%
-    equivalents .bool_set_inverse:N = \l__chemmacros_reactants_noequivalents_bool ,
+    equivalents .bool_set_inverse:N = \l__chemmacros_reactants_equivalents_bool ,
     equivalents .initial:n  = true,
     %%
     reactant-output-style .choice: , 
@@ -432,13 +432,13 @@
                 {
                   \bool_lazy_and_p:nn
                     { \__chemmacros_reactants_if_property_p:nn {#1} {equiv} }
-                    { !\l__chemmacros_reactants_noequivalents_bool }
+                    { !\l__chemmacros_reactants_equivalents_bool }
                 }
                 { \prg_return_true: }
                 { \prg_return_false: }
             }
             {amount} {
-              \bool_if:NTF \l__chemmacros_reactants_noequivalents_bool
+              \bool_if:NTF \l__chemmacros_reactants_equivalents_bool
                 { \prg_return_false: }
                 {
                   \__chemmacros_reactants_if_property:nnTF {#1} {equiv}
@@ -563,7 +563,7 @@
             {#2}
             {amount-unit}
             \l__chemmacros_amount_unit_tl
-          \bool_if:NF \l__chemmacros_reactants_noequivalents_bool
+          \bool_if:NF \l__chemmacros_reactants_equivalents_bool
             {
               \__chemmacros_reactants_change_unit:nnN
                 {#2}
@@ -589,7 +589,7 @@
                 {amount}
                 \l__chemmacros_amount_unit_tl
             }
-          \bool_if:NTF \l__chemmacros_reactants_noequivalents_bool
+          \bool_if:NTF \l__chemmacros_reactants_equivalents_bool
             {
               \str_if_eq:VnT \l__chemmacros_reactants_main_str {equiv}
                 { \msg_warning:nnn {chemmacros} {incompatible-equivalents} {#1} }
@@ -916,9 +916,8 @@
 % #1: star: include ID in table
 \NewDocumentCommand \printreactants {s}
   {
-    \chemmacros_if_package_loaded:nF {xltabular} 
-    \group_begin:
-      \chemmacros_set_keys:nn {reactants} { switch = false }
+  \group_begin:
+     \chemmacros_set_keys:nn {reactants} { switch = false }
       \int_step_variable:nNn
         { \seq_count:N \g_chemnum_initiated_compounds_seq }
         \l__chemmacros_reactants_tmpa_tl 
@@ -974,57 +973,57 @@
                 \chemmacros_if_package_loaded:nTF {xltabular}
                   {	  
                     \bool_if:nTF {#1}
-                      {
-                        \begin
-                          {xltabular}
-                          { \textwidth }
-                          { @{}ll>{\raggedright\arraybackslash}X@{} }
-                      }
-                      {
-                        \begin
-                          {xltabular}
-                          { \textwidth }
-                          { @{}l>{\raggedright\arraybackslash}X@{} }
-                      }
-                    \seq_use:Nn \l__chemmacros_reactants_tmpa_seq { }
-                    \end{xltabular}
-		  }
-                  {
-                    \msg_error:nnnn
+                    {
+                      \begin
+                        {xltabular}
+                        { \textwidth }
+                        { @{}ll>{\raggedright\arraybackslash}X@{} }
+                    }
+                    {
+                      \begin
+                        {xltabular}
+                        { \textwidth }
+                        { @{}l>{\raggedright\arraybackslash}X@{} }
+                    }
+                   \seq_use:Nn \l__chemmacros_reactants_tmpa_seq { }
+				   \end{xltabular}
+				  }
+				  {
+                    \msg_expandable_error:nnnn
                       {chemmacros}
                       {package-not-loaded}
                       { \printreactants }
                       {xltabular}
-                  }
-              }
+				  }
+			  }
               {longtable}
               {
                 \chemmacros_if_package_loaded:nTF {longtable}
                   {	  
                     \bool_if:nTF {#1}
-                      {
-                        \begin
-                          {longtable}[l]
-                          { @{}ll>{\raggedright\arraybackslash}p{0.6\textwidth}@{} }
-                      }
-                      {
-                        \begin
-                          {longtable}[l]
-                          { @{}l>{\raggedright\arraybackslash}p{0.9\textwidth}@{} }
-                      }
-                    \seq_use:Nn \l__chemmacros_reactants_tmpa_seq { }
-                    \end{longtable}
-                  }
-                  {
-                    \msg_error:nnnn
+                    {
+                      \begin
+                        {longtable}[l]
+                        { @{}ll>{\raggedright\arraybackslash}p{0.6\textwidth}@{} }
+                    }
+                    {
+                      \begin
+                        {longtable}[l]
+                        { @{}l>{\raggedright\arraybackslash}p{0.9\textwidth}@{} }
+                    }
+                  \seq_use:Nn \l__chemmacros_reactants_tmpa_seq { }
+                  \end{longtable}
+				  }
+				  {
+                    \msg_expandable_error:nnnn
                       {chemmacros}
                       {package-not-loaded}
                       { \printreactants }
                       {longtable}
-                  }
-              }
-          }
-      }
+				  }
+			  }
+			}
+	    }
     \group_end:
   }
 

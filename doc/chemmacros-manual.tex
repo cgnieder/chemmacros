@@ -171,6 +171,20 @@
   urldate = {2015-07-16} ,
   date    = {2015-07-15}
 }  
+@package{pkg:glossaries-extra,
+  title    = {glossaries-extra},
+  author   = {Nicola L. C. Talbot},
+  date     = {2020-04-01},
+  version  = {1.45},
+  url      = {https://ctan.org/pkg/glossaries-extra/}
+}
+@package{pkg:xltabular,
+  title    = {xltabular},
+  author   = {Herbert Voß and Rolf Niepraschk},
+  date     = {2020-11-04},
+  version  = {0.2e},
+  url      = {https://ctan.org/pkg/xltabular/}
+}
 \end{filecontents*}
 
 \newpackagename\chemformula{chemformula}
@@ -190,12 +204,12 @@
 
 \DeclareChemReactant{thf}{name={tetrahydrofuran}}
 \DeclareChemReactant{H2SO4}{name={\ch{H2SO4}}}
-\DeclareChemReactant{dichlorpentan}{name={\iupac{2,4-di|chlor|pentan}}}
+\DeclareChemReactant{dichloropentane}{name={\iupac{2,4-di|chloro|pentane}}}
 
 \begin{document}
 
 \part{Preliminaries}
-\section{Licence}\label{sec:licence-requ-readme}
+\section{License}\label{sec:licence-requ-readme}
 \license
 
 \section{Motivation and Background}\label{sec:motiv-backgr}
@@ -1901,7 +1915,7 @@ this case you can use
 main development of the module.  Many thanks for all her work!
 
 \subsection{Idea and Getting Started}
-The \mcodule{reactants} module offers a simplified input syntax for chemical
+The \module{reactants} module offers a simplified input syntax for chemical
 reactants in the description of reaction procedures. Reactant and solvent
 names are declared in the preamble removing the need to repeat the same
 \ac{iupac} names multiple times throughout the document. With the help of
@@ -1912,47 +1926,50 @@ package. The \module{reactants} module responds to the language declared with
 the \pkg{babel} package and also offers methods to integrate the acronyms of
 used reactants or solvents into the list of acronyms.
 
-The module requires and loads the packages \pkg{chemnum} and
-\pkg{siunitx}. Depending on the selected options the packages \pkg{acro},
-\pkg{glossaries-extra}, \pkg{hyperref}, and/or \pkg{xltabular} might be needed
-for this module. Unlike other needed packages, these have to be loaded by the
-user and will be explicitly mentioned in the corresponding sections of this
-manual.
+The module requires and loads the packages \pkg{chemnum}~\cite{pkg:chemnum} and
+\pkg{siunitx}~\cite{pkg:siunitx}. Depending on the selected options the packages 
+\pkg{acro}~\cite{pkg:acro}, \pkg{glossaries-extra}~\cite{pkg:glossaries-extra}, \pkg{hyperref}~\cite{pkg:hyperref}, \pkg{longtable}~\cite{pkg:longtable} and/or 
+\pkg{xltabular}~\cite{pkg:xltabular} might be needed for this module. Unlike 
+other needed packages, these have to be loaded by the user and will be explicitly 
+mentioned in the corresponding sections of this manual.
 
 \subsection{Commands}
 
 \begin{commands}
-  \command{DeclareChemReactant}\marg{id}\marg{properties}
-    This command defines the reactant \meta{id} with the properties
+  \command{DeclareChemReactant}\marg{ID}\marg{properties}
+    This command defines the reactant \meta{ID} with the properties
     \meta{properties}.
-  \command{DeclareChemReactant}\Marg{\meta{main id}.\meta{sub id}}\marg{properties}
+  \command{DeclareChemReactant}\Marg{\meta{main ID}.\meta{sub ID}}\marg{properties}
     Analogously to \pkg{chemnum}'s \cs{cmpd} the \cs{DeclareChemReactant} and
-    \cs{reactant} commands accept a combined \meta{id} consisting of a
-    \meta{main id} and \meta{sub id} part.
+    \cs{reactant} commands accept a combined \meta{ID} consisting of a
+    \meta{main ID} and \meta{sub ID} part.
 \end{commands}
 Valid properties are
-\begin{option}
+\begin{options}
   \keyval{name}{name}
-    Mandatory property, the name of the substance.
+    Mandatory property: the name of the substance.
   \keyval{short}{abbreviation}
-    A short form of the name, used when the \module{reactants} module is used
+    Optional property: a short form of the name, used when the \module{reactants} module is used
     in combination with the \option{acronym-support} option.
   \keyval{bookmark}{replacement in \ac{pdf} bookmarks}
-    Replaces \meta{name} in a \ac{pdf} bookmark.  This might be advisable when
-    reactants are used in section titles and the \pkg{hyperref} is used as
+    Optional property: replaces \meta{name} in a \ac{pdf} bookmark.  This might be advisable when
+    reactants are used in section titles and the \pkg{hyperref} package is used as
     well.
-\end{option}
+    
+\end{options}
 
 Common declarations will look like this:
 \begin{sourcecode}
-  \DeclareChemReactant{thf}{name={tetrahydrofuran}}
+  \DeclareChemReactant{thf}{name={tetrahydrofuran}, short={THF}}
   \DeclareChemReactant{H2SO4}{name={\ch{H2SO4}}}
-  \DeclareChemReactant{dichlorpentan}{name={\iupac{2,4-di|chlor|pentan}}}
+  \DeclareChemReactant{dichloropentane}{name={\iupac{2,4-di|chloro|pentane}}}
 \end{sourcecode}
 
 \begin{commands}
   \command{reactant}
   \command{solvent}
+  \command{printreactants}
+  
 \end{commands}
 
 \subsection{Options}
@@ -1999,9 +2016,9 @@ corresponding number of this reactant. The starred variant
 of the substance without the number.  Setting \keyis{switch}{true} reverses
 this behavior.
 
-The use of \cs{cmpd}\marg{ID} with an \meta{id} that was previously defined
-with the help of \cs{DeclareChemReactant} will result in the same number as
-using \cs{reactant}\marg{id}.
+The use of \cs{cmpd}\marg{ID} with an \meta{ID} that was previously defined
+with the help of the \cs{DeclareChemReactant} command will result in the same number as
+using \cs{reactant}\marg{ID}.
 
 \begin{example}
   \reactant{thf}
@@ -2015,19 +2032,20 @@ Describing synthetic procedures often requires adding a lot of data with the
 corresponding units to each reactant that is used. In order to allow for a
 uniform representation of numbers and units, as well as making the code more
 readable, the \cs{reactant} command offers an optional argument that can be
-used to easily input this data: \cs{reactant}\oarg{list of data}\marg{id}.
+used to easily input this data: \cs{reactant}\oarg{list of data}\marg{ID}.
 \meta{list of data} accepts a comma separated list of key-value pairs with the
-keys listed in section~\vref{tab:reactant-data}.
+keys listed in table~\vref{tab:reactant-data}.
 
 \subsubsection{Available Keys, Their Default Units and How to Change Them}\label{sec:unit-keys}
 
-\begin{table}
+\begin{table}[htbp]
   \newcolumntype{K}{>{\collectcell\code}l<{\endcollectcell}}
-  \newcolumntype{O}{>{\collectcell\option*}l<{\endcollectcell}}
+  \newcolumntype{O}{>{\collectcell\option}l<{\endcollectcell}}
   \centering
   \caption{Overview of available keys as well as the default units and the
     option to locally or globally change that default unit}
-  \begin{tabular}{>{KlO}
+  \label{tab:reactant-data}
+  \begin{tabular}{KlO}
     \toprule
       \tablehead{Key} & \tablehead{default unit} & \tablehead{option} \\
     \midrule
@@ -2040,11 +2058,12 @@ keys listed in section~\vref{tab:reactant-data}.
       purity        & \% & purity-unit \\
     \midrule
       solution-name & solution in & solution-name \\
-    \endrule
+    \bottomrule
   \end{tabular}
 \end{table}
-\option{solution−name} here refers to the text that links concentration and
-solvent. This text automatically adapts to the document language.
+\option{solution-name} here refers to the text that links concentration and
+solvent. This text automatically adapts to the document language. Currently, the  English fallback, as well as the German translation are included in the package.
+If you write in a different language (or don't like the predefined text), you can use \cs{DeclareChemTranslation}\marg{key}\marg{language}\marg{translation} (with \marg{key} = \code{solution}) as described in section~\vref{sec:lang-module}.
 
 The options that change the units of the properties can be set with
 \cs{chemsetup} or in the optional argument of \cs{reactant}.
@@ -2075,7 +2094,7 @@ The options that change the units of the properties can be set with
   \DeclareChemReactant{Br2benzene}{name={\iupac{1,4=di|bromo|benzene}}}
   \DeclareChemReactant{HBr}{name={\ch{HBr\aq}}}
   
-  \reactant[volume=5.00, amount=12.5, equiv=1.00, concentration=2.5, solvent=hexanes]{nBuLi}
+  \reactant[volume=5.00, amount=12.5, equiv=1.00, concentration=2.5, solvent=hexane]{nBuLi}
   \reactant[mass=3.9, amount=15.6, equiv=1.3, purity=95]{Br2benzene}
   \reactant[volume=2.0, amount=43.8, equiv=3.5, fraction=65]{HBr}
 \end{example}
