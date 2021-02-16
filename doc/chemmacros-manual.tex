@@ -1966,10 +1966,37 @@ Common declarations will look like this:
 \end{sourcecode}
 
 \begin{commands}
-  \command{reactant}
-  \command{solvent}
-  \command{printreactants}
-  
+  \command{reactant}\oarg{data and units}\marg{ID}
+  This command is used to insert a predefined reactant with the \meta{ID} in the 
+  text. Depending on the settings and the \option{reactant-output-style} option, 
+  this command will display name and/or number of the reactant in combination  
+  with relevant data. Variants of this command with different suffixes, such as 
+  \code{*}, \code{+}, \code{l}, \code{s} or \code{plain} will be described later.
+  \command{solvent}\oarg{data and units}\marg{ID}
+  Analogous to \cs{reactants}. Can be used to insert solvent names and corresponding 
+  data in the text, depending on the \option{solvent-output-style} option. \code{s} 
+  and \code{l} suffixed variant exist and are discussed later.
+\end{commands}
+
+\meta{data and units} accepts a comma separated list of key-value pairs. Valid keys
+acceptable values as well as their defaults are listed in table~\vref{tab:reactant-data}.
+
+Typical uses will look like this:
+\begin{sourcecode}
+  \reactant{dichloropentane}
+  \reactant[volume=5]{dichloropentane}
+  \reactant[volume=0.5, volume-unit=\L]{dichloropentane}
+  \solvent{thf}
+  \solvent[volume=200]{thf}
+  \solvent[volume=1.5, volume-unit=\L]{thf}
+\end{sourcecode}
+
+\begin{commands}
+  \command{printreactants} Prints a list of number and name of all reactants used
+   throughout the document. The resulting list is sorted by number and also includes
+   compounds numbered with \pkg{chemnum}'s \cs{cmpd} command. The starred variant 
+   also includes the \meta{ID} in the list of reactants. Using \option{printreactants-style} 
+   different styles can be selected.
 \end{commands}
 
 \subsection{Options}
@@ -1987,8 +2014,10 @@ Common declarations will look like this:
     appearance, while \option{initiate} numbers the compounds in the order in
     which they were declared in the preamble or in an external document.
   \keybool{switch}\Module{reactants}\Default{false}
-    Switches the behavior of the starred vs.\@ the unstarred variant of
-    \cs{reactant}.
+    While \cs{reactants} will output name and number of a reactant, its starred variant 
+     \cs{reactant*}, will by default result in the name without the corresponding number. 
+     Setting \keyis{switch}{true}, globally or locally, reverses this behavior and outputs
+      a reactant's number without its name.
 \end{options}
 Other options are described at later places when the corresponding behavior is
 described.
