@@ -5563,7 +5563,7 @@
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd
-\ChemModule{reactants}{2020/12/20 typeset reactants and data}
+\ChemModule{reactants}{2021/02/20 typeset reactants and data}
 % idea and main development of this module: Sonja K.
 
 \RequirePackage {chemnum}
@@ -5607,6 +5607,12 @@
   {
     \token_to_str:N #1 is~ only~ available~ when~ setting~ the~
     `acronym-support'~ option~ accordingly~ \msg_line_context:
+  }
+  
+\msg_new:nnn {chemmacros} {missing-printreactants-style}
+  {
+    \token_to_str:N \printreactants \c_space_tl\token_to_str:N was~ used~ without~ a~ 
+    `printreactants-style'~ option,~ thus~ no~ list~ is~ printed~ \msg_line_context:
   }
   
 \msg_new:nnn {chemmacros} {package-not-loaded}
@@ -6482,7 +6488,6 @@
 \NewDocumentCommand \printreactants {s}
   {
   \group_begin:
-%    \chemmacros_if_package_loaded:nF {xltabular} 
      \chemmacros_set_keys:nn {reactants} { switch = false }
       \int_step_variable:nNn
         { \seq_count:N \g_chemnum_initiated_compounds_seq }
@@ -6530,7 +6535,7 @@
       % first draft of two styles
       \par
       \noindent
-      \bool_if:NT \l__chemmacros_reactants_printreactants_style_bool
+      \bool_if:NTF \l__chemmacros_reactants_printreactants_style_bool
         {
           \str_case:Vn \l__chemmacros_reactants_printreactants_style_str
             {
@@ -6589,6 +6594,9 @@
 				  }
 			  }
 			}
+	    }
+	    {
+	      \msg_warning:nn {chemmacros} {missing-printreactants-style}
 	    }
     \group_end:
   }

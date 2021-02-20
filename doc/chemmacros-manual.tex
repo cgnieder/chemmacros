@@ -88,7 +88,7 @@
   mode=text,
   text-rm=\libertineLF
 }
-
+\chemsetup[reactants]{acronym-support=acro}
 \addbibresource{\jobname.bib}
 \addbibresource{cnltx.bib}
 
@@ -1930,8 +1930,7 @@ The module requires and loads the packages \pkg{chemnum}~\cite{pkg:chemnum} and
 \pkg{siunitx}~\cite{pkg:siunitx}. Depending on the selected options the packages 
 \pkg{acro}~\cite{pkg:acro}, \pkg{glossaries-extra}~\cite{pkg:glossaries-extra}, 
 \pkg{hyperref}~\cite{pkg:hyperref}, \pkg{longtable}~\cite{pkg:longtable} and/or 
-\pkg{xltabular}~\cite{pkg:xltabular} might be needed for this module. Unlike 
-other needed packages, these have to be loaded by the user and will be explicitly 
+\pkg{xltabular}~\cite{pkg:xltabular} might be needed for this module and will be explicitly 
 mentioned in the corresponding sections of this manual.
 
 \subsection{Commands}
@@ -1941,21 +1940,23 @@ mentioned in the corresponding sections of this manual.
     This command defines the reactant \meta{ID} with the properties
     \meta{properties}.
   \command{DeclareChemReactant}\Marg{\meta{main ID}.\meta{sub ID}}\marg{properties}
-    Analogously to \pkg{chemnum}'s \cs{cmpd} the \cs{DeclareChemReactant} and
+    Analogously to \pkg{chemnum}'s \cs{cmpd} command, both the \cs{DeclareChemReactant} and
     \cs{reactant} commands accept a combined \meta{ID} consisting of a
-    \meta{main ID} and \meta{sub ID} part.
+    \meta{main ID} and \meta{sub ID} part. The default separator is a \code{.} here, 
+    but this can be changed using \pkg{chemnum}'s \option{main-sub-sep}~=~\marg{token} option.
 \end{commands}
 Valid properties are
 \begin{options}
   \keyval{name}{name}
     Mandatory property: the name of the substance.
   \keyval{short}{abbreviation}
-    Optional property: a short form of the name, used when the \module{reactants} module is used
-    in combination with the \option{acronym-support} option.
+    Optional property: a short form of the name, used when the \module{reactants} module is 
+    used in combination with the \option{acronym-support} option, see 
+    section~\vref{sec:acronyms-in-reactants}.
   \keyval{bookmark}{replacement in \ac{pdf} bookmarks}
-    Optional property: replaces \meta{name} in a \ac{pdf} bookmark.  This might be advisable when
-    reactants are used in section titles and the \pkg{hyperref} package is used as
-    well.
+    Optional property: replaces \meta{name} in a \ac{pdf} bookmark.  This might be advisable 
+    when reactants are used in section titles and the \pkg{hyperref} package is used as
+    well, see section~\vref{sec:reactants-in-headings}.
 \end{options}
 
 Common declarations will look like this:
@@ -1974,11 +1975,11 @@ Common declarations will look like this:
   \code{*}, \code{+}, \code{l}, \code{s} or \code{plain} will be described later.
   \command{solvent}\oarg{data and units}\marg{ID}
   Analogous to \cs{reactants}. Can be used to insert solvent names and corresponding 
-  data in the text, depending on the \option{solvent-output-style} option. \code{s} 
+  data in the text. Format and order depend on the on the \option{solvent-output-style} option. \code{s} 
   and \code{l} suffixed variant exist and are discussed later.
 \end{commands}
 
-\meta{data and units} accepts a comma separated list of key-value pairs. Valid keys
+\meta{data and units} accepts a comma separated list of key-value pairs. Valid keys,
 acceptable values as well as their defaults are listed in table~\vref{tab:reactant-data}.
 
 Typical uses will look like this:
@@ -1996,7 +1997,7 @@ Typical uses will look like this:
    throughout the document. The resulting list is sorted by number and also includes
    compounds numbered with \pkg{chemnum}'s \cs{cmpd} command. The starred variant 
    also includes the \meta{ID} in the list of reactants. Using \option{printreactants-style} 
-   different styles can be selected.
+   different styles can be selected. (See section~\vref{sec:list-of-reactants}).
 \end{commands}
 
 \subsection{Options}
@@ -2006,7 +2007,7 @@ Typical uses will look like this:
     reactants offers two ways of initiating a new label: either when \cs{cmpd}
     is first used or through \cs{initcmpd}.  The \module{reactants} module
     also offers these two methods with initiating a new label upon the first
-    use of \module{reactant} being the default.   If you prefer to initiate a
+    use of a reactant being the default.   If you prefer to initiate a
     new label through the \cs{DeclareChemReactant} command set this option to
     true.
 
@@ -2027,42 +2028,56 @@ described.
 Describing synthetic procedures often requires adding a lot of data with the
 corresponding units to each reactant/solvent that is used. In order to allow for a
 uniform representation of numbers and units, as well as making the code more
-readable, the \cs{reactant} and \cs{solvent} command offers an optional argument 
-that can be used to easily input this data: \cs{reactant}\oarg{data and units}\marg{ID} 
-\cs{solvent}\oarg{data and units}\marg{ID}.
+readable, the \cs{reactant} and \cs{solvent} commands offer an optional argument 
+that can be used to easily input this data: 
 
-\meta{list of data} accepts a comma separated list of key-value pairs with the available
+\begin{commands}
+   \command{reactant}\oarg{data and units}\marg{ID} 
+  \command{solvent}\oarg{data and units}\marg{ID}
+\end{commands}
+
+
+\meta{data and units} accepts a comma separated list of key-value pairs with the available
 keys and their default units/values listed in table~\vref{tab:reactant-data}. 
-Key-value pairs can be input in any order as they are categorized and rearranged internally.
-Since numbers and their corresponding units are processed using \pkg{siunitx}, the usual 
-\cs{sisetup} command can be used to alter for example the output decimal separator according 
-to your needs. Be aware, though, that you must not use a comma as the the input decimal separator.
-
+Key-value pairs can be input in any order as they are categorized and rearranged internally 
+according to the order in which they are listed in table~\vref{tab:reactant-data}. Customization 
+of this order is thus far somewhat limited. The available customization possibilities are  
+described in section~\vref{sec:output-styles}. Since numbers and their corresponding units are processed 
+using \pkg{siunitx}, the usual \cs{sisetup} command can be used to alter for example the output 
+decimal separator according to your needs. Be aware, though, that you must surround a number with 
+a set of \code{\{\}} if you use a comma as input decimal separator. Otherwise the decimal places 
+will be truncated without a warning. 
 
 \begin{table}[htbp]
   \newcolumntype{K}{>{\collectcell\code}l<{\endcollectcell}}
   \newcolumntype{O}{>{\collectcell\option}l<{\endcollectcell}}
   \centering
   \caption{Overview of available keys as well as the default units and the
-    option to locally or globally change that default unit}
+    option to locally or globally change that default unit.}
   \label{tab:reactant-data}
   \begin{tabular}{KlO}
     \toprule
       \tablehead{Key} & \tablehead{default unit} & \tablehead{option} \\
     \midrule
-      mass          & \si{\gram}                 & mass-unit \\
-      volume        & \si{\milli\liter}          & volume-unit \\
-      amount        & \si{\milli\mole}           & amount-unit \\
+      mass          & \si{\gram}                 & mass-unit          \\
+      volume        & \si{\milli\liter}          & volume-unit        \\
+      fraction      & w/w\%                      & fraction-unit      \\
+      amount        & \si{\milli\mole}           & amount-unit        \\
+      equiv         & eq                         & equiv-unit         \\
+      purity        & \%                         & purity-unit        \\
       concentration & \si{\Molar}                & concentration-unit \\
-      equiv         & eq                         & equiv-unit \\
-      fraction      & w/w\%                      & fraction-unit \\
-      purity        & \%                         & purity-unit \\
-      solvent       & n.a.                       &  \\
+      solvent       & n.a.                       &                    \\
     \midrule
-      solution-name & solution in                & solution \\
+      solution-name & solution in                & solution           \\
     \bottomrule
   \end{tabular}
 \end{table}
+
+\option{solution} here refers to the text that links concentration and solvent. This text 
+automatically adapts to the document language. Currently, the  English fallback, as well as 
+the German translation are included in the package. If you write in a different language (or 
+don't like the predefined text), you can use \cs{DeclareChemTranslation}\marg{key}\marg{language}
+\marg{translation} (with \marg{key} = \code{solution}) as described in section~\vref{sec:lang-module}.
 
 \begin{example}
   \DeclareChemReactant{nBuLi}{name={\iupac{\textit{n}=butyllithium}}}
@@ -2075,20 +2090,21 @@ to your needs. Be aware, though, that you must not use a comma as the the input 
 \end{example}
 
 The options that change the units of the properties can be set with
-\cs{chemsetup} or in the optional argument of \cs{reactant}.
+\cs{chemsetup} or in the optional argument of \cs{reactant}. Accepted units
+are units defined by the \pkg{siunitx} package or by the \module{units} module.
 \begin{options}
   \keyval{mass-unit}{unit}\Module{reactants}\Default{\cs*{gram}}
     Change the unit of the \code{mass} property.
   \keyval{volume-unit}{unit}\Module{reactants}\Default{\cs*{milli}\cs*{liter}}
     Change the unit of the \code{volume} property.
-  \keyval{amount-unit}{unit}\Module{reactants}\Default{\cs*{milli}\cs*{mole}}
-    Change the unit of the \code{amount} property.
-  \keyval{concentration-unit}{unit}\Module{reactants}\Default{\cs*{Molar}}
-    Change the unit of the \code{concentration} property.
-  \keyval{equiv-unit}{unit}\Module{reactants}\Default{\code{eq}}
-    Change the unit of the \code{equiv} property.
   \keyval{fraction-unit}{unit}\Module{reactants}\Default{\code{w/w \cs*{percent}}}
     Change the unit of the \code{fraction} property.
+  \keyval{amount-unit}{unit}\Module{reactants}\Default{\cs*{milli}\cs*{mole}}
+    Change the unit of the \code{amount} property.
+  \keyval{equiv-unit}{unit}\Module{reactants}\Default{\code{eq}}
+    Change the unit of the \code{equiv} property.
+  \keyval{concentration-unit}{unit}\Module{reactants}\Default{\cs*{Molar}}
+    Change the unit of the \code{concentration} property.
   \keyval{purity-unit}{unit}\Module{reactants}\Default{\cs*{percent}}
     Change the unit of the \code{purity} property.
 \end{options} 
@@ -2098,14 +2114,9 @@ The options that change the units of the properties can be set with
   \reactant[volume=5, volume-unit=\cubic\centi\metre]{thf}
 \end{example}
 
-\option{solution} here refers to the text that links concentration and solvent. This text 
-automatically adapts to the document language. Currently, the  English fallback, as well as 
-the German translation are included in the package. If you write in a different language (or 
-don't like the predefined text), you can use \cs{DeclareChemTranslation}\marg{key}\marg{language}
-\marg{translation} (with \marg{key} = \code{solution}) as described in section~
-\vref{sec:lang-module}.
 
-\subsubsection{Output Styles}
+
+\subsubsection{Output Styles}\label{sec:output-styles}
 
 The \module{reactants} module categorizes the data into different categories that are later used 
 to determine the order in which this information is displayed. This behavior can be controlled using
@@ -2129,7 +2140,7 @@ the predefined output styles:
     
 \code{other} here refers to all the other data that is give to the reactant command.
 
-The names of the \option{reactant-output-style} and \option{olvent-output-style} choice options 
+The names of the \option{reactant-output-style} and \option{solvent-output-style} choice options 
 refer to the order in which the contents of the categories are typeset.
 
 \begin{example}
@@ -2148,15 +2159,18 @@ refer to the order in which the contents of the categories are typeset.
 
 \begin{options}
   \keychoice{main}{default,amount,equiv}\Module{reactants}\Default{default}
-  Be default, only \code{mass} and \code{volume} are assigned to the \code{main} category. Using 
-  the \option{main} option,  \code{equiv} or \code{amount} can locally or globally assigned to 
-  the \code{main} category, as well.
+  By default, only \code{mass} and \code{volume} are assigned to the \code{main} category. Using 
+  the \option{main} option,  \code{equiv} or \code{amount} can be added to the main 
+  category, globally or locally. 
 \end{options}
-
+  \chemsetup[reactants]{reactant-output-style=main-name-other}
+  
 \begin{example}
+  \chemsetup[reactants]{main=amount}
+  \reactant[equiv=2.0, amount=5]{dichloropentane}\par
   \chemsetup[reactants]{main=equiv}
   \reactant[equiv=2.0, amount=5]{dichloropentane}\par
-  \reactant[equiv=2.0, amount=5, main=amount]{dichloropentane}\par
+  \chemsetup[reactants]{main=default}
   \reactant[equiv=2.0, amount=5, main=default]{dichloropentane}
 \end{example}
 
@@ -2167,20 +2181,84 @@ refer to the order in which the contents of the categories are typeset.
   \option{equivalents}~=~\code{false} option will be ignored for the corresponding entries.
 \end{options}
 
-\subsection{Use in Section Headings}
+\subsection{Use in Section Headings}\label{sec:reactants-in-headings}
 
-\subsection{Acronyms as Reactant/Solvent Names}
+Using the \cs{reactants} command inside of section headings or captions can mess up the 
+order in which the molecules are numbered, especially when also using a table of contents 
+and/or a list of figures/tables. To prevent this, the \module{reactants} module offers
+the \code{+} suffixed variant of \cs{reactants}, comparably to \pkg{chemnum}'s \cs{cmpd+} 
+command.
+
+\begin{commands}
+  \command{reactant+}\oarg{data and units}\marg{ID}
+  This command is used to insert a predefined reactant with the \meta{ID} in a section 
+  heading or caption.
+\end{commands}
+
+If you also use the \pkg{hyperref} package in combination with \ac{pdf} bookmarks, you might 
+want to use the optional \option{bookmark} option to supply an alternative text to \option{name}
+to be displayed inside of the \ac{pdf} bookmarks. To later use such a predefined solvent or
+reactant, use one of the following three commands, that are defined analogously to 
+\pkg{chemnum}`s \cs{cmpdplain}.
+
+\begin{commands}
+  \command{reactantplain}\marg{ID}
+  Outputs the value of \option{bookmark} instead of the \option{name} in section headings 
+  and captions. 
+  \command{submainreactantplain}\marg{mainID}\marg{subID}
+  Outputs the value of \option{bookmark} instead of the \option{name} in section headings 
+  and captions. Must be used if your \meta{ID} consists of a \meta{mainID} and a \meta{subID} 
+  part. 
+  \command{solventplain}\marg{ID}
+  Outputs the value of \option{bookmark} instead of the \option{name} in section headings 
+  and captions.
+\end{commands}
+
+
+\subsection{Acronyms as Reactant/Solvent Names}\label{sec:acronyms-in-reactants}
+
+In order to integrate solvent/reactant acronyms into one combined list of acronyms, the 
+reactants module offers two different options. While using either of these two options, the 
+user can also explicitly decide if the \option{name} or the \option{short} version of the 
+reactant/solvent should be used. Inspired by the \cs{acs} and \cs{acl} commands from 
+the \pkg{acros} or the \pkg{glossaries-extra} package, the reactants module also offers 
+the following \code{s} and \code{l} suffixed variants:
+
+\begin{commands}
+  \command{reactants}\marg{ID} 
+  Output the \option{short} version of the reactant's name.
+  \command{reactantl}\marg{ID} 
+  Output the \option{name} version of the reactant's name.
+  \command{solvents}\marg{ID}
+  Output the \option{short} version of the solvent's name.
+  \command{solventl}\marg{ID}
+  Output the \option{name} version of the solvent's name.
+\end{commands}
 
 \begin{options}
   \keychoice{acronym-support}{acro,glossaries,none}\Module{reactants}\Default{none}
+  Can be used to select, which of the two packages \pkg{acro} or \pkg{glossaries-extra} 
+  is used in the background in order to format and sort acronyms.
 \end{options}
 
-\subsection{List of Reactants}
+\begin{example}
+  \DeclareChemReactant{dcm}{name={dichloromethane}, short={DCM}}
+  \solvent{dcm}\par
+  \solventl{dcm}\par
+  \solvents{dcm}
+\end{example}
 
+\subsection{List of Reactants}\label{sec:list-of-reactants}
+ As mentioned before, \cs{printreactants} can be used to print a list of all used reactants 
+ and their numbers. The \module{reactants} module internally uses either \pkg{longtable} or 
+ \pkg{xltabular} to typeset this list:
 \begin{options}
   \keychoice{printreactants-style}{xltabular,longtable,none}\Module{reactants}\Default{none}
+  Can be used to switch between \pkg{longtable} and \pkg{xltabular} which are responsible for
+  formatting the list of reactants. Be aware that with \code{longtable}, the column widths are 
+  hard coded, thus you could experience overfull box warnings if you use exceptionally long
+  \meta{ID}s in combination with the starred variant \cs{printreactants*}.
 \end{options}
-
 
 \section{The \chemmodule*{redox} Module}\label{sec:redox-module}
 
