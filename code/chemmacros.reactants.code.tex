@@ -536,7 +536,6 @@
     \group_begin:
       \seq_clear:N \l__chemmacros_tmpa_seq
       \__chemmacros_reactants_set_properties:nn {#2} {#1}
-      % \chemmacros_set_keys:nn {reactants} {#1}
       \keys_set_known:nn {chemmacros/reactants} {#1}
       \bool_lazy_any:nT
         {
@@ -627,7 +626,6 @@
     \group_begin:
       \seq_clear:N \l__chemmacros_tmpa_seq
       \__chemmacros_reactants_set_properties:nn {#2} {#1}
-      % \chemmacros_set_keys:nn {reactants} {#1}
       \keys_set_known:nn {chemmacros/reactants} {#1}
       \bool_lazy_or:nnT
         { \__chemmacros_reactants_if_property_p:nn {#2} {mass-unit} }
@@ -792,7 +790,6 @@
   {
     \group_begin:
       \__chemmacros_reactants_set_properties:nn {#2} {#1}
-      % \chemmacros_set_keys:nn {reactants} {#1}
       \keys_set_known:nn {chemmacros/reactants} {#1}
         \bool_lazy_or:nnT
           { \__chemmacros_reactants_if_property_p:nn {#2} {volume} }
@@ -814,7 +811,6 @@
 \cs_new_protected:Npn \chemmacros_solvent_name:nn #1#2
   {
     \group_begin:
-      % \chemmacros_set_keys:nn {reactants} {#1}
       \keys_set_known:nn {chemmacros/reactants} {#1}
       \str_case:Vn \l__chemmacros_reactants_name_str
         {
