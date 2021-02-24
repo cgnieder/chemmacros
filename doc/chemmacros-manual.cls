@@ -36,7 +36,7 @@
   package  = {chemmacros},
   info     = {comprehensive support for typesetting chemistry documents},
   url      = https://github.com/cgnieder/chemmacros ,
-  authors  = {Clemens Niederberger[contact@mychemistry.eu], Sonja K.[leandriis@gmx.de]} ,
+  authors  = {Clemens Niederberger[contact@mychemistry.eu], Sonja K.[SonjaK@mein.gmx]} ,
   abstract = {%
     \centering
     \includegraphics{chemmacros-logo.pdf}
@@ -80,15 +80,15 @@
       ProvideChemLatin, ProvideChemNMR, ProvideChemNucleophile,
       ProvideChemPartialCharge, ProvideChemParticle, ProvideChemPhase,
       ProvideChemReaction,
-      ProvideChemState, prt,
+      ProvideChemState, prt, printreactants
     Rad, redox, RemoveChemIUPACShorthand, RenewChemArrow, RenewChemBond,
       RenewChemCharge, RenewChemEqConstant, renewchemgreekmapping,
       RenewChemIUPAC, RenewChemIUPACShorthand, RenewChemLatin, RenewChemNMR,
       RenewChemNucleophile, RenewChemPartialCharge, RenewChemParticle,
       RenewChemPhase, RenewChemState,
-      reactant,
+      reactant, reactants, reactantl, reactantplain,
     Sf, scrm, scrp, second, selectchemgreekmapping, setchemformula,
-      ShowChemArrow, ShowChemBond, sld, Sod, solvent, state, sulfur,
+      ShowChemArrow, ShowChemBond, sld, Sod, solvent, solvents, solventl, state, sulfur, submainreactantplain,
     trans,
     usechemmodule,
     val,
@@ -98,7 +98,7 @@
     addplot,
     bottomrule,
     cancel, cdot, ce, cee, celsius, centering, chemfig, chemname, clap,
-      cmpd, cnsetup, code, color, cstack, cstsetup,
+      cmpd, cnsetup, code, color, cstack, cstsetup, cubic, centi,
     DeclareInstance, DeclareSIUnit, definecolor, draw,
     electronvolt, endtikzpicture,
     footnotesize,
