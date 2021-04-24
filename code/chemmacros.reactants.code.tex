@@ -1,4 +1,4 @@
-\ChemModule{reactants}{2021/02/20 typeset reactants and data}
+\ChemModule{reactants}{2021/04/24 typeset reactants and data}
 % idea and main development of this module: Sonja K.
 
 \RequirePackage {chemnum}
@@ -340,6 +340,19 @@
         { \msg_error:nnn {chemmacros} {acronym-support} { \reactantl } }
     \group_end:
   }
+  
+% #1: boolean > no name
+% #2: boolean: if true, allow no properties and use cmpd+ 
+% #3: properties and options
+% #4: key
+\NewDocumentCommand \Reactant {st+O{}m}
+  {
+    \group_begin:
+      \str_set:Nn \l__chemmacros_reactants_name_str {upper}
+      \chemmacros_reactant:nnnn {#1} {#2} {#3} {#4}
+    \group_end:
+  }
+
 
 % #1: boolean > no name
 % #2: boolean: if true, allow no properties and use cmpd+ 
@@ -496,6 +509,8 @@
             {
               {regular}
               { \__chemmacros_reactants_item:nn {#3} {name} }
+              {upper}
+              { \__chemmacros_reactants_item:nn {#3} {upper-name} }
               {short}
               { 
                 \str_case:Vn \l__chemmacros_reactants_acronym_support_str
@@ -766,6 +781,17 @@
         { \msg_error:nnn {chemmacros} {acronym-support} { \solventl } }
     \group_end:
   }
+  
+% #1: properties and options
+% #2: key
+\NewDocumentCommand \Solvent {O{}m}
+  {
+    \group_begin:
+      \str_set:Nn \l__chemmacros_reactants_name_str {upper}
+      \chemmacros_solvent:nn {#1} {#2}
+    \group_end:
+  }
+
 
 % #1: options and properties
 % #3: key  
@@ -822,6 +848,8 @@
         {
           {regular}
           { \__chemmacros_reactants_item:nn {#2} {name} }
+          {upper}
+          { \__chemmacros_reactants_item:nn {#2} {upper-name} }
           {short}
           {
             \str_case:Vn \l__chemmacros_reactants_acronym_support_str
@@ -859,7 +887,25 @@
       { \msg_expandable_error:nnn {chemmacros} {reactant-bookmark} {#1} }
     \texorpdfstring
       { \__chemmacros_reactants_item:nn {#1} {name} ~ \cmpd+ {#1} }
-      { \__chemmacros_reactants_item:nn {#1} {bookmark} ~ \cmpdplain {#1} }
+      { \__chemmacros_reactants_item:nn {#1} {bookmark} \space \cmpdplain {#1} }
+  }
+  
+% #1: full ID
+\DeclareExpandableDocumentCommand \Reactantplain {m}
+  { 
+    \chemmacros_if_package_loaded:nF {hyperref} 
+      {
+        \msg_expandable_error:nnnn
+          {chemmacros}
+          {package-not-loaded}
+          { \reactantplain }
+          {hyperref}
+      }
+    \__chemmacros_reactants_if_property:nnF {#1} {upper-bookmark}
+      { \msg_expandable_error:nnn {chemmacros} {reactant-bookmark} {#1} }
+    \texorpdfstring
+      { \__chemmacros_reactants_item:nn {#1} {upper-name} ~ \cmpd+ {#1} }
+      { \__chemmacros_reactants_item:nn {#1} {upper-bookmark} \space \cmpdplain {#1} }
   }
   
   
@@ -891,10 +937,43 @@
         \__chemmacros_reactants_item:nn
           { #1 \l_chemnum_compound_separator_tl #2 }
           {bookmark}
-        ~ \submaincmpdplain {#1} {#2}
+        \space \submaincmpdplain {#1} {#2}
       }
   }
+  
 
+% #1: main Id
+% #2: sub ID
+\DeclareExpandableDocumentCommand \Submainreactantplain {mm}
+  { 
+    \chemmacros_if_package_loaded:nF {hyperref} 
+      {
+        \msg_expandable_error:nnnn
+          {chemmacros}
+          {package-not-loaded}
+          { \submainreactantplain }
+          {hyperref}
+      }
+    \__chemmacros_reactants_if_property:nnF
+      { #1 \l_chemnum_compound_separator_tl #2 }
+      {upper-bookmark}
+      { \msg_expandable_error:nnn {chemmacros} {reactant-bookmark} {#1.#2} }
+    \texorpdfstring
+      {
+        \__chemmacros_reactants_item:nn
+          { #1 \l_chemnum_compound_separator_tl #2 }
+          {upper-name}
+        \c_space_tl
+        \cmpd+ {#1.#2}
+      }
+      {
+        \__chemmacros_reactants_item:nn
+          { #1 \l_chemnum_compound_separator_tl #2 }
+          {upper-bookmark}
+        \space \submaincmpdplain {#1} {#2}
+      }
+  }
+  
 
 % #1: full ID
 \DeclareExpandableDocumentCommand \solventplain {m}
@@ -912,6 +991,24 @@
     \texorpdfstring
       { \__chemmacros_reactants_item:nn {#1} {name} ~ }
       { \__chemmacros_reactants_item:nn {#1} {bookmark} ~ }
+  } 
+  
+% #1: full ID
+\DeclareExpandableDocumentCommand \Solventplain {m}
+  { 
+    \chemmacros_if_package_loaded:nF {hyperref} 
+      {
+        \msg_expandable_error:nnnn
+          {chemmacros}
+          {package-not-loaded}
+          { \solventplain }
+          {hyperref}
+        }
+      \__chemmacros_reactants_if_property:nnF {#1} {upper-bookmark}
+        { \msg_expandable_error:nnn {chemmacros} {reactant-bookmark} {#1} }
+    \texorpdfstring
+      { \__chemmacros_reactants_item:nn {#1} {upper-name} ~ }
+      { \__chemmacros_reactants_item:nn {#1} {upper-bookmark} ~ }
   } 
   
 % --------------------------------------------------------------------------

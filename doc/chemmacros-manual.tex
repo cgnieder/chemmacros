@@ -515,7 +515,7 @@ section~\vref{sec:redox-module}) or with the \pkg{chemfig} package:
     redox/pos       = top
   }
   \ch{"\ox{\delp,H}" -{} "\ox{\delm,Cl}"} \hspace*{1cm}
-  \chemfig{\chemabove[3pt]{\lewis{246,Br}}{\delm}-\chemabove[3pt]{H}{\delp}}
+  \chemfig{\chemabove[3pt]{\charge{90=\|,180=\|,270=\|}{Br}}{\delm}-\chemabove[3pt]{H}{\delp}}
 \end{example}
 
 \subsection{Charge Options}
@@ -1957,6 +1957,10 @@ Valid \meta{properties} include the following key-value pairs:
     Optional property: replaces \meta{name} in a \ac{pdf} bookmark.  This might be advisable 
     when reactants are used in section titles and the \pkg{hyperref} package is used as
     well, see section~\vref{sec:reactants-in-headings}.
+  \keyval{upper-name}{upper case version of the name}
+    Optional property: The upper case version of a compound's name, e.g. for the use in the beginning of a sentence.
+  \keyval{upper-bookmark}{upper case version of the bookmark text}
+    Optional property: The upper case version of the \meta{name} in a \ac{pdf} bookmark.
 \end{options}
 
 Common declarations will look like this:
@@ -1971,12 +1975,18 @@ Common declarations will look like this:
   This command is used to insert name, number, and, if present, data of a predefined 
   reactant with the \meta{ID} in the text. The order of the information in the output 
   can be controlled through the  \option{reactant-output-style} option, see 
-  section~\vref{sec:output-styles}.  Variants of this command with different suffixes, such 
-  as \code{*}, \code{+}, \code{l}, \code{s} or \code{plain} will be described later.
+  section~\vref{sec:output-styles}.  The upper case version of this command \cs{Reactant}
+  can be used in order to start a sentence with an upper case version of a compound's name. 
+  The corresponding text must be defined through \cs{DeclareChemReactant}'s \option{upper-name}
+  option. Further variants of \cs{reactant} with different suffixes, such as \code{*}, \code{+}, 
+  \code{l}, \code{s} or \code{plain} will be described later.
   \command{solvent}\oarg{data and units}\marg{ID}
   Analogous to \cs{reactants}. Can be used to insert solvent names and corresponding 
-  data in the text. Format and order depend on the on the \option{solvent-output-style} option. \code{s} 
-  and \code{l} suffixed variant exist and are discussed later.
+  data in the text. Format and order depend on the on the \option{solvent-output-style} option. 
+  The upper case version of this command \cs{Solvent} can be used in order to start a sentence 
+  with an upper case version of a solvent's name. The corresponding text must be defined through 
+  \cs{DeclareChemReactant}'s \option{upper-name} option.  \code{s} and \code{l} suffixed 
+  variants exist and are discussed later.
 \end{commands}
 
 \meta{data and units} accepts a comma separated list of key-value pairs. Valid keys,
@@ -2201,7 +2211,10 @@ If you also use the \pkg{hyperref} package in combination with \ac{pdf} bookmark
 want to use the optional \option{bookmark} property of \cs{DeclareChemReactant} to supply 
 an alternative text to \option{name} to be displayed inside of the \ac{pdf} bookmarks. To later 
 use such a predefined solvent or reactant, use one of the following three commands, that are 
-defined analogously to \pkg{chemnum}`s \cs{cmpdplain}.
+defined analogously to \pkg{chemnum}`s \cs{cmpdplain}. All three commands also exist in the upper case 
+variant (\cs{Reactantplain}, \cs{Sumbainreactantplain} and \cs{Solventplain}) which can be used to display
+the upper case version of a reactant or solvent's name. he upper case version of the name must be declared 
+previously through \cs{DeclareChemReactant}'s \option{upper-name} and \option{upper-bookmark} options.
 
 \begin{commands}
   \command{reactantplain}\marg{ID}
@@ -2209,7 +2222,8 @@ defined analogously to \pkg{chemnum}`s \cs{cmpdplain}.
   \option{name} inside of the  section headings. 
   \command{submainreactantplain}\marg{mainID}\marg{subID}
   Outputs the value of \option{bookmark} inside of the \ac{pdf} bookmark, while using the reactant's 
-  \option{name} inside of the  section headings. Must be used if your \meta{ID} consists of a \meta{mainID} and a \meta{subID}   part. 
+  \option{name} inside of the  section headings. Must be used if your \meta{ID} consists of a \meta{mainID}
+  and a \meta{subID}   part. 
   \command{solventplain}\marg{ID}
   Outputs the value of \option{bookmark} inside of the \ac{pdf} bookmark, while using the solvent's 
   \option{name} inside of the  section headings.
