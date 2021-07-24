@@ -1,4 +1,4 @@
-\ChemModule{spectroscopy}{2020/11/29 environment for spectroscopic data}
+\ChemModule{spectroscopy}{2021/07/24 environment for spectroscopic data}
 
 \RequirePackage{siunitx}
 
@@ -433,7 +433,7 @@
       \c_math_toggle_token
         ^{ \l__chemmacros_nmr_coupling_bonds_tl }
         \l__chemmacros_nmr_coupling_symbol_tl
-        \l__chemmacros_nmr_coupling_nuclei_tl = \SIlist {#2} {#1}
+        \l__chemmacros_nmr_coupling_nuclei_tl = \qtylist {#2} {#1}
       \c_math_toggle_token
     \group_end:
   }
@@ -451,7 +451,7 @@
          ^{ \l__chemmacros_nmr_coupling_bonds_tl }
          \l__chemmacros_nmr_coupling_symbol_tl
          \l__chemmacros_nmr_coupling_nuclei_tl
-         = \exp_args:Nno \SIlist {#1} { \l__chemmacros_nmr_coupling_unit_tl }
+         = \exp_args:Nno \qtylist {#1} { \l__chemmacros_nmr_coupling_unit_tl }
       \c_math_toggle_token
     \group_end:
   }

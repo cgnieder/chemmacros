@@ -1,4 +1,4 @@
-\ChemModule{thermodynamics}{2020/11/29 thermodynamics}
+\ChemModule{thermodynamics}{2021/07/24 thermodynamics}
 
 \RequirePackage {siunitx}
 
@@ -95,7 +95,7 @@
             {
               \chemmacros_state:nV {##2} \l__chemmacros_state_symbol_tl
               \chemmacros_set_keys_groups:nnn {thermodynamics} {variables} {##2}
-              \IfBooleanF {##1} { = \SI {##4} { \l__chemmacros_state_unit_tl } }
+              \IfBooleanF {##1} { = \qty {##4} { \l__chemmacros_state_unit_tl } }
             }
         \group_end:
       }

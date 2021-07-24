@@ -1129,7 +1129,7 @@ There are two options to customize the output:
 
 All those phase commands have an optional argument:
 \begin{example}[side-by-side]
-  \ch{H2O "\lqd[\SI{5}{\celsius}]"}
+  \ch{H2O "\lqd[\qty{5}{\celsius}]"}
 \end{example}
 
 There is also a generic phase command:
@@ -2046,6 +2046,30 @@ that can be used to easily input this data:
   \command{solvent}\oarg{data and units}\marg{ID}
 \end{commands}
 
+\begin{table}[bp]
+  \newcolumntype{K}{>{\collectcell\code}l<{\endcollectcell}}
+  \newcolumntype{O}{>{\collectcell\option}l<{\endcollectcell}}
+  \centering
+  \caption{Overview of available keys as well as the default units and the
+    option to locally or globally change that default unit.}
+  \label{tab:reactant-data}
+  \begin{tabular}{KlO}
+    \toprule
+      \tablehead{Key} & \tablehead{default unit} & \tablehead{option} \\
+    \midrule
+      mass          & \unit{\gram}                 & mass-unit          \\
+      volume        & \unit{\milli\liter}          & volume-unit        \\
+      fraction      & w/w\%                      & fraction-unit      \\
+      amount        & \unit{\milli\mole}           & amount-unit        \\
+      equiv         & eq                         & equiv-unit         \\
+      purity        & \%                         & purity-unit        \\
+      concentration & \unit{\Molar}                & concentration-unit \\
+      solvent       & n.a.                       &                    \\
+    \midrule
+      solution-name & solution in                & solution           \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \meta{data and units} accepts a comma separated list of key-value pairs with the available
 keys and their default units/values listed in table~\vref{tab:reactant-data}. 
@@ -2057,31 +2081,6 @@ using \pkg{siunitx}, the usual \cs{sisetup} command can be used to alter, for ex
 decimal separator according to your needs. Be aware, though, that you must surround a number with 
 a set of \code{\{\}} if you use a comma as input decimal separator. Otherwise the decimal places 
 will be truncated without a warning. 
-
-\begin{table}[htbp]
-  \newcolumntype{K}{>{\collectcell\code}l<{\endcollectcell}}
-  \newcolumntype{O}{>{\collectcell\option}l<{\endcollectcell}}
-  \centering
-  \caption{Overview of available keys as well as the default units and the
-    option to locally or globally change that default unit.}
-  \label{tab:reactant-data}
-  \begin{tabular}{KlO}
-    \toprule
-      \tablehead{Key} & \tablehead{default unit} & \tablehead{option} \\
-    \midrule
-      mass          & \si{\gram}                 & mass-unit          \\
-      volume        & \si{\milli\liter}          & volume-unit        \\
-      fraction      & w/w\%                      & fraction-unit      \\
-      amount        & \si{\milli\mole}           & amount-unit        \\
-      equiv         & eq                         & equiv-unit         \\
-      purity        & \%                         & purity-unit        \\
-      concentration & \si{\Molar}                & concentration-unit \\
-      solvent       & n.a.                       &                    \\
-    \midrule
-      solution-name & solution in                & solution           \\
-    \bottomrule
-  \end{tabular}
-\end{table}
 
 \option{solution} here refers to the text that links concentration and solvent. This text 
 automatically adapts to the document language set via \pkg{babel}  or \pkg{polyglossia}. 
@@ -2580,7 +2579,7 @@ The first argument specifies the kind of NMR:
   \NMR{13,C}
 \end{example}
 
-The second argument sets the frequency (in \si{\mega\hertz}):
+The second argument sets the frequency (in \unit{\mega\hertz}):
 \begin{example}[side-by-side]
   \NMR(400)
 \end{example}
@@ -2718,11 +2717,11 @@ number of options.  For historical reasons they all belong to the module
   \keyval{delta}{tokens}\Module{spectroscopy}\Default
     The \meta{tokens} are added after $\delta$.
   \keybool{list}\Module{spectroscopy}\Default{false}
-    The environment \env{nmr}[<options>]{} is formatted as a list
+    The environment \env{experimental} is formatted as a list
   \keyval{list-setup}{setup}\Module{spectroscopy}
     Setup of the list. See below for the default settings.
   \keybool{use-equal}\Module{spectroscopy}\Default{false}
-    Add egual sign after \cs{NMR} and \cs{data}.
+    Add equal sign after \cs{NMR} and \cs{data}.
 \end{options}
 
 The default setup of the list:
@@ -2758,10 +2757,10 @@ Of course options can also be chosen with \cs{chemsetup}.
 \begin{sourcecode}
   \sisetup{separate-uncertainty,per-mode=symbol,detect-all,range-phrase=--}
   \begin{experimental}[<optionen>]
-    \data*{yield} \SI{17}{\milli\gram} yellow needles (\SI{0.04}{\milli\mole},
-      \SI{13}{\percent}).
+    \data*{yield} \qty{17}{\milli\gram} yellow needles (\qty{0.04}{\milli\mole},
+      \qty{13}{\percent}).
     %
-    \data{mp.} \SI{277}{\celsius} (DSC).
+    \data{mp.} \qty{277}{\celsius} (DSC).
     %
     \NMR(600)[CDCl3] \val{2.01} (s, \#{24}, \pos{5}), \val{2.31} (s, \#{12},
     \pos{1}), \val{6.72--6.74} (m, \#{2}, \pos{11}), \val{6.82} (s, \#{8},
@@ -2775,10 +2774,10 @@ Of course options can also be chosen with \cs{chemsetup}.
     \pos{2}), \val{140.6} (q, \#{2}, \pos{10}), \val{140.8} (q, \#{8}, \pos{4}),
     \val{141.8} (q, \#{4}, \pos{6}), \val{145.6} (q, \#{2}, \pos{7}).
     %
-    \data{MS}[DCP, EI, \SI{60}{\electronvolt}] \val{703} (2, \ch{M+}), \val{582}
+    \data{MS}[DCP, EI, \qty{60}{\electronvolt}] \val{703} (2, \ch{M+}), \val{582}
     (1), \val{462} (1), \val{249} (13), \val{120} (41), \val{105} (100).
     %
-    \data{MS}[\ch{MeOH + H2O + KI}, ESI, \SI{10}{\electronvolt}] \val{720} (100,
+    \data{MS}[\ch{MeOH + H2O + KI}, ESI, \qty{10}{\electronvolt}] \val{720} (100,
     \ch{M+ + OH-}), \val{368} (\ch{M+ + 2 OH-}).
     %
     \data{IR}[KBr] \val{3443} (w), \val{3061} (w), \val{2957} (m), \val{2918}
@@ -2790,8 +2789,8 @@ Of course options can also be chosen with \cs{chemsetup}.
     (w), \val{724} (m), \val{663} (w), \val{586} (w), \val{562} (w), \val{515}
     (w).
     %
-    \data*{UV-Vis} \SI{386}{\nano\metre} ($\varepsilon = \val{65984}$),
-    \SI{406}{\nano\metre} ($\varepsilon = \val{65378}$).
+    \data*{UV-Vis} \qty{386}{\nano\metre} ($\varepsilon = \val{65984}$),
+    \qty{406}{\nano\metre} ($\varepsilon = \val{65378}$).
     %
     \data*{quantum yield} $\Phi = \val{0.74+-0.1}$\,.
   \end{experimental}
@@ -2806,10 +2805,10 @@ Output with these options:
 
 \begin{experimental}[delta=(ppm),pos-number=sub,use-equal]
   \sisetup{separate-uncertainty,per-mode=symbol,detect-all,range-phrase=--}
-  \data*{yield} \SI{17}{\milli\gram} yellow needles (\SI{0.04}{\milli\mole},
-  \SI{13}{\percent}).
+  \data*{yield} \qty{17}{\milli\gram} yellow needles (\qty{0.04}{\milli\mole},
+  \qty{13}{\percent}).
   %
-  \data{mp.} \SI{277}{\celsius} (DSC).
+  \data{mp.} \qty{277}{\celsius} (DSC).
   %
   \NMR(600)[CDCl3] \val{2.01} (s, \#{24}, \pos{5}), \val{2.31} (s, \#{12},
   \pos{1}), \val{6.72--6.74} (m, \#{2}, \pos{11}), \val{6.82} (s, \#{8},
@@ -2823,10 +2822,10 @@ Output with these options:
   \pos{2}), \val{140.6} (q, \#{2}, \pos{10}), \val{140.8} (q, \#{8}, \pos{4}),
   \val{141.8} (q, \#{4}, \pos{6}), \val{145.6} (q, \#{2}, \pos{7}).
   %
-  \data{MS}[DCP, EI, \SI{60}{\electronvolt}] \val{703} (2, \ch{M+}), \val{582}
+  \data{MS}[DCP, EI, \qty{60}{\electronvolt}] \val{703} (2, \ch{M+}), \val{582}
   (1), \val{462} (1), \val{249} (13), \val{120} (41), \val{105} (100).
   %
-  \data{MS}[\ch{MeOH + H2O + KI}, ESI, \SI{10}{\electronvolt}] \val{720} (100,
+  \data{MS}[\ch{MeOH + H2O + KI}, ESI, \qty{10}{\electronvolt}] \val{720} (100,
   \ch{M+ + OH-}), \val{368} (\ch{M+ + 2 OH-}).
   %
   \data{IR}[KBr] \val{3443} (w), \val{3061} (w), \val{2957} (m), \val{2918}
@@ -2838,8 +2837,8 @@ Output with these options:
   (w), \val{724} (m), \val{663} (w), \val{586} (w), \val{562} (w), \val{515}
   (w).
   %
-  \data*{UV-Vis} \SI{386}{\nano\metre} ($\varepsilon = \val{65984}$),
-  \SI{406}{\nano\metre} ($\varepsilon = \val{65378}$).
+  \data*{UV-Vis} \qty{386}{\nano\metre} ($\varepsilon = \val{65984}$),
+  \qty{406}{\nano\metre} ($\varepsilon = \val{65378}$).
   %
   \data*{quantum yield} $\Phi = \val{0.74+-0.1}$\,.
 \end{experimental}
@@ -2853,10 +2852,10 @@ Output with these options:
 
 \begin{experimental}[format=\bfseries,delta=(ppm),list=true,use-equal]
   \sisetup{separate-uncertainty,per-mode=symbol,detect-all,range-phrase=--}
-  \data*{yield} \SI{17}{\milli\gram} yellow needles (\SI{0.04}{\milli\mole},
-  \SI{13}{\percent}).
+  \data*{yield} \qty{17}{\milli\gram} yellow needles (\qty{0.04}{\milli\mole},
+  \qty{13}{\percent}).
   %
-  \data{mp.} \SI{277}{\celsius} (DSC).
+  \data{mp.} \qty{277}{\celsius} (DSC).
   %
   \NMR(600)[CDCl3] \val{2.01} (s, \#{24}, \pos{5}), \val{2.31} (s, \#{12},
   \pos{1}), \val{6.72--6.74} (m, \#{2}, \pos{11}), \val{6.82} (s, \#{8},
@@ -2870,10 +2869,10 @@ Output with these options:
   \pos{2}), \val{140.6} (q, \#{2}, \pos{10}), \val{140.8} (q, \#{8}, \pos{4}),
   \val{141.8} (q, \#{4}, \pos{6}), \val{145.6} (q, \#{2}, \pos{7}).
   %
-  \data{MS}[DCP, EI, \SI{60}{\electronvolt}] \val{703} (2, \ch{M+}), \val{582}
+  \data{MS}[DCP, EI, \qty{60}{\electronvolt}] \val{703} (2, \ch{M+}), \val{582}
   (1), \val{462} (1), \val{249} (13), \val{120} (41), \val{105} (100).
   %
-  \data{MS}[\ch{MeOH + H2O + KI}, ESI, \SI{10}{\electronvolt}] \val{720} (100,
+  \data{MS}[\ch{MeOH + H2O + KI}, ESI, \qty{10}{\electronvolt}] \val{720} (100,
   \ch{M+ + OH-}), \val{368} (\ch{M+ + 2 OH-}).
   %
   \data{IR}[KBr] \val{3443} (w), \val{3061} (w), \val{2957} (m), \val{2918}
@@ -2885,8 +2884,8 @@ Output with these options:
   (w), \val{724} (m), \val{663} (w), \val{586} (w), \val{562} (w), \val{515}
   (w).
   %
-  \data*{UV-Vis} \SI{386}{\nano\metre} ($\varepsilon = \val{65984}$),
-  \SI{406}{\nano\metre} ($\varepsilon = \val{65378}$).
+  \data*{UV-Vis} \qty{386}{\nano\metre} ($\varepsilon = \val{65984}$),
+  \qty{406}{\nano\metre} ($\varepsilon = \val{65378}$).
   %
   \data*{quantum yield} $\Phi = \val{0.74+-0.1}$\,.
 \end{experimental}
@@ -2912,10 +2911,10 @@ Output for these options:
     coupling-unit=\mega\gram\per\square\second,
     list-setup=,use-equal]
   \sisetup{separate-uncertainty,per-mode=symbol,detect-all,range-phrase=--}
-  \data*{yield} \SI{17}{\milli\gram} yellow needles (\SI{0.04}{\milli\mole},
-  \SI{13}{\percent}).
+  \data*{yield} \qty{17}{\milli\gram} yellow needles (\qty{0.04}{\milli\mole},
+  \qty{13}{\percent}).
   %
-  \data{mp.} \SI{277}{\celsius} (DSC).
+  \data{mp.} \qty{277}{\celsius} (DSC).
   %
   \NMR(600)[CDCl3] \val{2.01} (s, \#{24}, \pos{5}), \val{2.31} (s, \#{12},
   \pos{1}), \val{6.72--6.74} (m, \#{2}, \pos{11}), \val{6.82} (s, \#{8},
@@ -2929,10 +2928,10 @@ Output for these options:
   \pos{2}), \val{140.6} (q, \#{2}, \pos{10}), \val{140.8} (q, \#{8}, \pos{4}),
   \val{141.8} (q, \#{4}, \pos{6}), \val{145.6} (q, \#{2}, \pos{7}).
   %
-  \data{MS}[DCP, EI, \SI{60}{\electronvolt}] \val{703} (2, \ch{M+}), \val{582}
+  \data{MS}[DCP, EI, \qty{60}{\electronvolt}] \val{703} (2, \ch{M+}), \val{582}
   (1), \val{462} (1), \val{249} (13), \val{120} (41), \val{105} (100).
   %
-  \data{MS}[\ch{MeOH + H2O + KI}, ESI, \SI{10}{\electronvolt}] \val{720} (100,
+  \data{MS}[\ch{MeOH + H2O + KI}, ESI, \qty{10}{\electronvolt}] \val{720} (100,
   \ch{M+ + OH-}), \val{368} (\ch{M+ + 2 OH-}).
   %
   \data{IR}[KBr] \val{3443} (w), \val{3061} (w), \val{2957} (m), \val{2918}
@@ -2944,8 +2943,8 @@ Output for these options:
   (w), \val{724} (m), \val{663} (w), \val{586} (w), \val{562} (w), \val{515}
   (w).
   %
-  \data*{UV-Vis} \SI{386}{\nano\metre} ($\varepsilon = \val{65984}$),
-  \SI{406}{\nano\metre} ($\varepsilon = \val{65378}$).
+  \data*{UV-Vis} \qty{386}{\nano\metre} ($\varepsilon = \val{65984}$),
+  \qty{406}{\nano\metre} ($\varepsilon = \val{65378}$).
   %
   \data*{quantum yield} $\Phi = \val{0.74+-0.1}$\,.
 \end{experimental}
@@ -2966,7 +2965,7 @@ This macro can be used to write the thermodynamic state variables.
 \begin{example}
   \state{A}, \state[subscript-left=f]{G} ,
   \state[subscript-right=\ch{Na}]{E},
-  \state[superscript-right=\SI{1000}{\celsius}]{H}
+  \state[superscript-right=\qty{1000}{\celsius}]{H}
 \end{example}
 
 These options are available:
@@ -3136,29 +3135,37 @@ command
 \begin{commands}
   \command*{DeclareSIUnit}[\marg{cs}\marg{unit}]
     Define \meta{cs} to be a valid unit command inside \pkg{siunitx}' macros
-    \cs*{SI} and \cs*{si} which represents \meta{unit}.
+    \cs*{qty} and \cs*{unit} which represents \meta{unit}.
 \end{commands}
 to add arbitrary units.  \chemmacros\ uses that command to provide some
 units.  Like all \pkg{siunitx} units they're only valid inside
-\cs*{SI}\marg{num}\marg{unit} and \cs*{si}\marg{unit}.
+\cs*{qty}\marg{num}\marg{unit} and \cs*{unit}\marg{unit}.
 \begin{commands}
-  \command{atmosphere} \si{\atmosphere}
-  \command{atm} \si{\atm}
-  \command{calory} \si{\calory}
-  \command{cal} \si{\cal}
-  \command{cmc} \si{\cmc} \par
+  \command{atmosphere} \unit{\atmosphere}
+  \command{atm} \unit{\atm}
+  \command{calory} \unit{\calory}
+  \command{cal} \unit{\cal}
+  \command{cmc} \unit{\cmc} \par
     The units \cs{cmc}, \cs{molar}, and \cs{Molar} are defined by the
     package \pkg{chemstyle} as well.  \chemmacros\ only defines them, if
     \pkg{chemstyle} is not loaded.
-  \command{molar} \si{\molar}
-  \command{moLar} \si{\moLar}
-  \command{Molar} \si{\Molar}
-  \command{MolMass} \si{\MolMass}
-  \command{normal} \si{\normal}
-  \command{torr} \si{\torr}
+  \command{molar} \unit{\molar}
+  \command{moLar} \unit{\moLar}
+  \command{Molar} \unit{\Molar}
+  \command{MolMass} \unit{\MolMass}
+  \command{normal} \unit{\normal}
+  \command{torr} \unit{\torr} 
+  \par
+\sinceversion{6.0}    Since some units still frequently used in chemistry were removed from version 3 of \pkg{siunitx}, 
+   \chemmacros\ also defines these in the same way, older versions of \pkg{siunitx} used to do. 
+    These units are:
+  \command{angstrom} \unit{\angstrom}
+  \command{atomicmassunit} \unit{\atomicmassunit}
+  \command{bar} \unit{\bar}
+  \command{elementarycharge} \unit{\elementarycharge}
+  \command{mmHg} \unit{\mmHg}
 \end{commands}
 
-By the way: \cs*{mmHg} \si{\mmHg} already is defined by \pkg{siunitx}.
 
 \part{Core Modules}
 
