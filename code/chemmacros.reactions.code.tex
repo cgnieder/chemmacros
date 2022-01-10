@@ -1,4 +1,4 @@
-\ChemModule{reactions}{2020/11/29 reaction environments}
+\ChemModule{reactions}{2022/01/10 reaction environments}
 
 \RequirePackage{mathtools}
 
@@ -27,7 +27,7 @@
 % redefine mathtools' command \MT_define_tagform:nwnn to ensure we add an
 % entry to the list of reactions even if the user redefines the reaction tag
 % this should probably be done via patching...
-\hook_gput_code:nnn {package/after/mathtools} {chemmacros}
+\hook_gput_code:nnn {package/mathtools/after} {chemmacros}
   {
     \cs_set_protected:Npn \MT_define_tagform:nwnn #1[#2]#3#4
       {

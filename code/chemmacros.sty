@@ -31,7 +31,7 @@
 
 % --------------------------------------------------------------------------
 % package information:
-\tl_const:Nn \c_chemmacros_date_tl {2021/07/24}
+\tl_const:Nn \c_chemmacros_date_tl {2022/01/10}
 \tl_const:Nn \c_chemmacros_version_major_number_tl {6}
 \tl_const:Nn \c_chemmacros_version_minor_number_tl {0}
 \tl_const:Nn \c_chemmacros_version_subrelease_tl   {beta-2}
@@ -387,7 +387,7 @@
   }
 
 % --------------------------------------------------------------------------
-\ChemModule{base}{2020/11/29 basic chemmacros module}
+\ChemModule{base}{2022/01/10 basic chemmacros module}
 
 % --------------------------------------------------------------------------
 \msg_new:nnn {chemmacros} {command-deprecated}
@@ -617,7 +617,7 @@
 % #5: Plural
 \cs_new_protected:Npn \chemmacros_add_cleveref_support:nnnnn #1#2#3#4#5
   {
-    \hook_gput_code:nnn {package/after/cleveref} {chemmacros}
+    \hook_gput_code:nnn {package/cleveref/after} {chemmacros}
       {
         \cs_if_exist:cF {cref@#1@name}
           {
@@ -677,7 +677,7 @@
 % #3: begin sentence
 \cs_new_protected:Npn \chemmacros_add_fancyref_support:nnn #1#2#3
   {
-    \hook_gput_code:nnn {package/after/fancyref} {chemmacros}
+    \hook_gput_code:nnn {package/fancyref/after} {chemmacros}
       {
         \chemmacros_cs_if_free_new:cpn {fancyref#1labelprefix} {#1}
         \chemmacros_cs_if_free_new:cpn {fref#1name} {#2}
@@ -3843,7 +3843,7 @@
   
 % --------------------------------------------------------------------------
 \ChemModuleEnd
-\ChemModule{reactions}{2020/11/29 reaction environments}
+\ChemModule{reactions}{2022/01/10 reaction environments}
 
 \RequirePackage{mathtools}
 
@@ -3872,7 +3872,7 @@
 % redefine mathtools' command \MT_define_tagform:nwnn to ensure we add an
 % entry to the list of reactions even if the user redefines the reaction tag
 % this should probably be done via patching...
-\hook_gput_code:nnn {package/after/mathtools} {chemmacros}
+\hook_gput_code:nnn {package/mathtools/after} {chemmacros}
   {
     \cs_set_protected:Npn \MT_define_tagform:nwnn #1[#2]#3#4
       {

@@ -1,4 +1,4 @@
-\ChemModule{base}{2020/11/29 basic chemmacros module}
+\ChemModule{base}{2022/01/10 basic chemmacros module}
 
 % --------------------------------------------------------------------------
 \msg_new:nnn {chemmacros} {command-deprecated}
@@ -228,7 +228,7 @@
 % #5: Plural
 \cs_new_protected:Npn \chemmacros_add_cleveref_support:nnnnn #1#2#3#4#5
   {
-    \hook_gput_code:nnn {package/after/cleveref} {chemmacros}
+    \hook_gput_code:nnn {package/cleveref/after} {chemmacros}
       {
         \cs_if_exist:cF {cref@#1@name}
           {
@@ -288,7 +288,7 @@
 % #3: begin sentence
 \cs_new_protected:Npn \chemmacros_add_fancyref_support:nnn #1#2#3
   {
-    \hook_gput_code:nnn {package/after/fancyref} {chemmacros}
+    \hook_gput_code:nnn {package/fancyref/after} {chemmacros}
       {
         \chemmacros_cs_if_free_new:cpn {fancyref#1labelprefix} {#1}
         \chemmacros_cs_if_free_new:cpn {fref#1name} {#2}
