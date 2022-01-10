@@ -12,7 +12,7 @@ contact@mychemistry.eu
 If you have any ideas, questions, suggestions or bugs to report, please
 feel free to contact me.
 --------------------------------------------------------------------------
-Copyright 2011--2021 Clemens Niederberger
+Copyright 2011--2022 Clemens Niederberger
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3c
@@ -395,7 +395,7 @@ Version history
 			   - add option redox/format (redox)
 2020/03/07 - version 5.11a - fix issue #34 (spectroscopy)
                            - fix issue #41 (scheme)
-2021/02/?? - version 6.0   - merge modules into on file
+2022/02/?? - version 6.0   - merge modules into on file
                            - drop compatibility mode
                            - add reactants module
                            - fix issue #42
@@ -404,3 +404,6 @@ Version history
                            - update to l3text
                            - rename \Torr -> \torr
                            - new iupac command \normal
+                           - resolve issue #45
+                           - adapt to siunitx 3.0, implement units that have
+                             been removed from siunitx
