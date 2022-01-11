@@ -1,6 +1,13 @@
 \ChemModule{scheme}{2020/11/29 a scheme floating environment}
 
 \RequirePackage {chemnum}
+\RequirePackage {etoolbox}
+
+\msg_new:nnn {chemmacros} {patch-failed}
+  {
+    Patching~ \token_to_str:N #1 \c_space_tl failed.~
+    Please~ inform~ the~ chemmacros~ package~ authors.
+  }
 
 \bool_new:N \l__chemmacros_float_def_bool
 \tl_new:N   \l__chemmacros_float_method_tl
@@ -223,7 +230,7 @@
                   { \addtocontents }
                   { \addtocontents {#2} { \protect \addvspace {10\p@} } \addtocontents }
                   {}
-                  {}
+                  { \msg_warning:nnn {chemmacros} {patch-failed} { \@chapter } }
               }
               {
                 \cs_new_protected:cpn {listof#1s}
