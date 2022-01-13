@@ -407,3 +407,4 @@ Version history
                            - resolve issue #45
                            - adapt to siunitx 3.0, implement units that have
                              been removed from siunitx
+                           - Danish translations
