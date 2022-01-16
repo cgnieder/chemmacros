@@ -1,4 +1,4 @@
-% !arara: pdflatex
+% !arara: pdflatex: { interaction: nonstopmode }
 % !arara: biber
 % arara: pdflatex: { interaction: nonstopmode }
 % arara: pdflatex: { interaction: nonstopmode }
@@ -34,62 +34,6 @@
 
 \usepackage[T1]{fontenc}
 
-\DeclareAcronym{ghs}{
-  short     = ghs ,
-  long      = Globally Harmonized System of Classification and Labelling of
-    Chemicals ,
-  pdfstring = GHS ,
-  short-acc = GHS
-}
-\DeclareAcronym{eu}{
-  short     = eu ,
-  long      = European Union ,
-  pdfstring = EU ,
-  short-acc = EU
-}
-\DeclareAcronym{iupac}{
-  short     = iupac ,
-  long      = International Union of Pure and Applied Chemistry ,
-  pdfstring = IUPAC ,
-  short-acc = IUPAC
-}
-\DeclareAcronym{UN}{
-  short     = un ,
-  long      = United Nations ,
-  pdfstring = UN ,
-  short-acc = UN
-}
-\DeclareAcronym{dvi}{
-  short     = dvi ,
-  long      = device independent file format ,
-  pdfstring = DVI ,
-  short-acc = DVI
-}
-\DeclareAcronym{pdf}{
-  short     = pdf ,
-  long      = portable document file ,
-  pdfstring = PDF ,
-  short-acc = PDF
-}
-\DeclareAcronym{id}{
-  short     = id ,
-  long      = identification string ,
-  pdfstring = ID ,
-  short-acc = ID
-}
-
-\chemsetup{
-  greek = newtx ,
-  formula = chemformula ,
-  chemformula/format = \libertineLF
-}
-
-\sisetup{
-  detect-mode=false,
-  mode=text,
-  text-rm=\libertineLF
-}
-\chemsetup[reactants]{acronym-support=acro, printreactants-style=longtable}
 \addbibresource{\jobname.bib}
 \addbibresource{cnltx.bib}
 
@@ -203,10 +147,6 @@
 
 \usepackage{bookmark}
 
-\DeclareChemReactant{thf}{name={tetrahydrofuran}}
-\DeclareChemReactant{H2SO4}{name={\ch{H2SO4}}}
-\DeclareChemReactant{dichloropentane}{name={\iupac{2,4-di|chloro|pentane}}}
-
 \begin{document}
 
 \part{Preliminaries}
@@ -265,7 +205,6 @@ groups:
     are not loaded if \chemmacros\ is loaded with the minimal setup:
     \cs*{usepackage}\Oarg{minimal}\Marg{chemmacros}.
 \end{enumerate}
-
 
 \subsection{\chemmacros' Options}\label{sec:using-chemm-opti}
 Prior to v5.0 \chemmacros\ had quite a number of package options.
@@ -357,11 +296,14 @@ People upgrading from versions $<6.0$ will find that almost everything they
 know from earlier versions is the same in versions $6.x$.  But there are
 important and \emph{breaking} differences:
 \begin{itemize}
-  \item The compatibility mode and all its commands has been dropped.
+  \item The compatibility mode and all its commands have been dropped.
   \item The option \option{modules} now is a load-time option and cannot be
     set through \cs{chemsetup} any more.  The command \cs{usechemmodule} has
     been dropped.
-  \item Per default \emph{all} modules are now loaded.
+  \item Per default \emph{all} modules are now loaded.  A new option
+    \option{minimal} allows to load \chemmacros\ with smallest subset
+    necessary. Then additional modules can be added with the
+    \option{modules}.
   \item A new module \module{reactants} has been added, thanks to \leandriis.
 \end{itemize}
 
@@ -1927,39 +1869,44 @@ package. The \module{reactants} module responds to the language declared with
 the \pkg{babel} package and also offers methods to integrate the acronyms of
 used reactants or solvents into the list of acronyms.
 
-The module requires and loads the packages \pkg{chemnum}~\cite{pkg:chemnum} and
-\pkg{siunitx}~\cite{pkg:siunitx}. Depending on the selected options the packages 
-\pkg{acro}~\cite{pkg:acro}, \pkg{glossaries-extra}~\cite{pkg:glossaries-extra}, 
-\pkg{hyperref}~\cite{pkg:hyperref}, \pkg{longtable}~\cite{pkg:longtable} and/or 
-\pkg{xltabular}~\cite{pkg:xltabular} might be needed for this module and will be explicitly 
-mentioned in the corresponding sections of this manual.
+The module requires and loads the packages \pkg{chemnum}~\cite{pkg:chemnum}
+and \pkg{siunitx}~\cite{pkg:siunitx}. Depending on the selected options the
+packages \pkg{acro}~\cite{pkg:acro},
+\pkg{glossaries-extra}~\cite{pkg:glossaries-extra},
+\pkg{hyperref}~\cite{pkg:hyperref}, \pkg{longtable}~\cite{pkg:longtable}
+and/or \pkg{xltabular}~\cite{pkg:xltabular} might be needed for this module
+and will be explicitly mentioned in the corresponding sections of this manual.
 
 \subsection{Basic Commands}
 
 \begin{commands}
-  \command{DeclareChemReactant}\marg{ID}\marg{properties}
+  \command{DeclareChemReactant}[\marg{ID}\marg{properties}]
     This command defines the reactant \meta{ID} with the properties
-    \meta{properties}.
-  \command{DeclareChemReactant}\Marg{\meta{main ID}.\meta{sub ID}}\marg{properties}
-    Analogously to \pkg{chemnum}'s \cs{cmpd} command, both the \cs{DeclareChemReactant} and
-    \cs{reactant} commands accept a combined \meta{ID} consisting of a
-    \meta{main ID} and \meta{sub ID} part. The default separator is a \code{.} here, 
-    but this can be changed using \pkg{chemnum}'s \option{main-sub-sep}~=~\marg{token} option.
+    \meta{properties}.  \emph{Should be used in the preamble. Must be used in
+      the preamble when \pkg{acro} is used as acronym support package.}
+  \command{DeclareChemReactant}[\Marg{\meta{main ID}.\meta{sub ID}}\marg{properties}]
+    Analogously to \pkg{chemnum}'s \cs{cmpd} command, both the
+    \cs{DeclareChemReactant} and \cs{reactant} commands accept a combined
+    \meta{ID} consisting of a \meta{main ID} and \meta{sub ID} part. The
+    default separator is a \code{.} here, but this can be changed using
+    \pkg{chemnum}'s \keyis{main-sub-sep}{token} option.
 \end{commands}
 Valid \meta{properties} include the following key-value pairs:
 \begin{options}
   \keyval{name}{name}
     Mandatory property: the name of the substance.
   \keyval{short}{abbreviation}
-    Optional property: a short form of the name, used when the \module{reactants} module is 
-    used in combination with the \option{acronym-support} option, see 
-    section~\vref{sec:acronyms-in-reactants}.
+    Optional property: a short form of the name, used when the
+    \module{reactants} module is used in combination with the
+    \option{acronym-support} option, see section~\vref{sec:acronyms-in-reactants}.
   \keyval{bookmark}{replacement in \ac{pdf} bookmarks}
-    Optional property: replaces \meta{name} in a \ac{pdf} bookmark.  This might be advisable 
-    when reactants are used in section titles and the \pkg{hyperref} package is used as
-    well, see section~\vref{sec:reactants-in-headings}.
+    Optional property: replaces \meta{name} in a \ac{pdf} bookmark.  This
+    might be advisable when reactants are used in section titles and the
+    \pkg{hyperref} package is used as well, see
+    section~\vref{sec:reactants-in-headings}.
   \keyval{upper-name}{upper case version of the name}
-    Optional property: The upper case version of a compound's name, e.g. for the use in the beginning of a sentence.
+    Optional property: The upper case version of a compound's name, e.g. for
+    the use in the beginning of a sentence.
   \keyval{upper-bookmark}{upper case version of the bookmark text}
     Optional property: The upper case version of the \meta{name} in a \ac{pdf} bookmark.
 \end{options}
@@ -1972,22 +1919,25 @@ Common declarations will look like this:
 \end{sourcecode}
 
 \begin{commands}
-  \command{reactant}\oarg{data and units}\marg{ID}
-  This command is used to insert name, number, and, if present, data of a predefined 
-  reactant with the \meta{ID} in the text. The order of the information in the output 
-  can be controlled through the  \option{reactant-output-style} option, see 
-  section~\vref{sec:output-styles}.  The upper case version of this command \cs{Reactant}
-  can be used in order to start a sentence with an upper case version of a compound's name. 
-  The corresponding text must be defined through \cs{DeclareChemReactant}'s \option{upper-name}
-  option. Further variants of \cs{reactant} with different suffixes, such as \code{*}, \code{+}, 
-  \code{l}, \code{s} or \code{plain} will be described later.
-  \command{solvent}\oarg{data and units}\marg{ID}
-  Analogous to \cs{reactants}. Can be used to insert solvent names and corresponding 
-  data in the text. Format and order depend on the on the \option{solvent-output-style} option. 
-  The upper case version of this command \cs{Solvent} can be used in order to start a sentence 
-  with an upper case version of a solvent's name. The corresponding text must be defined through 
-  \cs{DeclareChemReactant}'s \option{upper-name} option.  \code{s} and \code{l} suffixed 
-  variants exist and are discussed later.
+  \command{reactant}[\oarg{data and units}\marg{ID}]
+    This command is used to insert name, number, and, if present, data of a
+    predefined reactant with the \meta{ID} in the text. The order of the
+    information in the output can be controlled through the
+    \option{reactant-output-style} option, see
+    section~\vref{sec:output-styles}.  The upper case version of this command
+    \cs{Reactant} can be used in order to start a sentence with an upper case
+    version of a compound's name. The corresponding text must be defined
+    through \cs{DeclareChemReactant}'s \option{upper-name} option. Further
+    variants of \cs{reactant} with different suffixes, such as \code{*},
+    \code{+}, \code{l}, \code{s} or \code{plain} will be described later.
+  \command{solvent}[\oarg{data and units}\marg{ID}]
+    Analogous to \cs{reactants}. Can be used to insert solvent names and
+    corresponding data in the text. Format and order depend on the on the
+    \option{solvent-output-style} option. The upper case version of this
+    command \cs{Solvent} can be used in order to start a sentence with an
+    upper case version of a solvent's name. The corresponding text must be
+    defined through  \cs{DeclareChemReactant}'s \option{upper-name} option.
+    \code{s} and \code{l} suffixed variants exist and are discussed later.
 \end{commands}
 
 \meta{data and units} accepts a comma separated list of key-value pairs. Valid keys,
@@ -2004,11 +1954,13 @@ Typical uses will look like this:
 \end{sourcecode}
 
 \begin{commands}
-  \command{printreactants} Prints a list of number and name of all reactants used
-   throughout the document. The resulting list is sorted by number and also includes
-   compounds numbered with \pkg{chemnum}'s \cs{cmpd} command. The starred variant 
-   also includes the \meta{ID} in the list of reactants. Using \option{printreactants-style} 
-   different styles can be selected. (See section~\vref{sec:list-of-reactants}).
+  \command{printreactants}
+    Prints a list of number and name of all reactants used throughout the
+    document. The resulting list is sorted by number and also includes
+    compounds numbered with \pkg{chemnum}'s \cs{cmpd} command. The starred
+    variant also includes the \meta{ID} in the list of reactants. Using
+    \option{printreactants-style} different styles can be selected. (See
+    section~\vref{sec:list-of-reactants}).
 \end{commands}
 
 \subsection{Options}
@@ -2026,10 +1978,11 @@ Typical uses will look like this:
     appearance, while \option{initiate} numbers the compounds in the order in
     which they were declared in the preamble or in an external document.
   \keybool{switch}\Module{reactants}\Default{false}
-    While \cs{reactants} will output name and number of a reactant, its starred variant 
-     \cs{reactant*}, will by default result in the name without the corresponding number. 
-     Setting \keyis{switch}{true}, globally or locally, reverses this behavior and outputs
-      a reactant's number without its name.
+    While \cs{reactants} will output name and number of a reactant, its
+    starred variant \cs{reactant*}, will by default result in the name without
+    the corresponding number. Setting \keyis{switch}{true}, globally or
+    locally, reverses this behavior and outputs a reactant's number without
+    its name.
 \end{options}
 Other options are described at later places when the corresponding behavior is
 described.
@@ -2037,14 +1990,14 @@ described.
 \subsubsection{Data and Units}
 
 Describing synthetic procedures often requires adding a lot of data with the
-corresponding units to each reactant/solvent that is used. In order to allow for a
-uniform representation of numbers and units, as well as making the code more
-readable, the \cs{reactant} and \cs{solvent} commands offer an optional argument 
-that can be used to easily input this data: 
+corresponding units to each reactant/solvent that is used. In order to allow
+for a uniform representation of numbers and units, as well as making the code
+more readable, the \cs{reactant} and \cs{solvent} commands offer an optional
+argument that can be used to easily input this data:
 
 \begin{commands}
-   \command{reactant}\oarg{data and units}\marg{ID} 
-  \command{solvent}\oarg{data and units}\marg{ID}
+  \command{reactant}[\oarg{data and units}\marg{ID}]
+  \command{solvent}[\oarg{data and units}\marg{ID}]
 \end{commands}
 
 \begin{table}[bp]
@@ -2072,30 +2025,34 @@ that can be used to easily input this data:
   \end{tabular}
 \end{table}
 
-\meta{data and units} accepts a comma separated list of key-value pairs with the available
-keys and their default units/values listed in table~\vref{tab:reactant-data}. 
-Key-value pairs can be input in any order as they are categorized and rearranged internally 
-according to the order in which they are listed in table~\vref{tab:reactant-data}. Customization 
-of this order is thus far somewhat limited. The available customization possibilities are  
-described in section~\vref{sec:output-styles}. Since numbers and their corresponding units are processed 
-using \pkg{siunitx}, the usual \cs{sisetup} command can be used to alter, for example, the output 
-decimal separator according to your needs. Be aware, though, that you must surround a number with 
-a set of \code{\{\}} if you use a comma as input decimal separator. Otherwise the decimal places 
-will be truncated without a warning. 
+\meta{data and units} accepts a comma separated list of key-value pairs with
+the available keys and their default units/values listed in
+table~\vref{tab:reactant-data}.  Key-value pairs can be input in any order as
+they are categorized and rearranged internally according to the order in which
+they are listed in table~\vref{tab:reactant-data}. Customization of this order
+is thus far somewhat limited. The available customization possibilities are
+described in section~\vref{sec:output-styles}. Since numbers and their
+corresponding units are processed using \pkg{siunitx}, the usual \cs{sisetup}
+command can be used to alter, for example, the output decimal separator
+according to your needs. Be aware, though, that you must surround a number
+with a set of \code{\{\}} if you use a comma as input decimal
+separator. Otherwise the decimal places will be truncated without a warning.
 
-\option{solution} here refers to the text that links concentration and solvent. This text 
-automatically adapts to the document language set via \pkg{babel}  or \pkg{polyglossia}. 
-Currently, the  English fallback, as well as the German translation are included in the package. 
-If you write in a different language (or just don't like the predefined text), you can use 
-the command \cs{DeclareChemTranslation}\marg{key}\marg{language}\marg{translation} 
-(with \meta{key}~=~\code{solution}) as described in section~\vref{sec:lang-module} in order 
-to supply your own translation.
+\option{solution} here refers to the text that links concentration and
+solvent. This text automatically adapts to the document language set via
+\pkg{babel} or \pkg{polyglossia}.  Currently, the English fallback, as well as
+the German translation are included in the package.  If you write in a
+different language (or just don't like the predefined text), you can use the
+command \cs{DeclareChemTranslation}\marg{key}\marg{language}\marg{translation}
+(with \keyis{\meta{key}}{solution}) as described in
+section~\vref{sec:lang-module} in order to supply your own translation.
 
 \begin{example}
-  \DeclareChemReactant{nBuLi}{name={\iupac{\textit{n}=butyllithium}}}
-  \DeclareChemReactant{Br2benzene}{name={\iupac{1,4=di|bromo|benzene}}}
-  \DeclareChemReactant{HBr}{name={\ch{HBr\aq}}}
-  
+  % in the preamble:
+  % \DeclareChemReactant{nBuLi}{name={\iupac{\textit{n}=butyllithium}}}
+  % \DeclareChemReactant{Br2benzene}{name={\iupac{1,4=di|bromo|benzene}}}
+  % \DeclareChemReactant{HBr}{name={\ch{HBr\aq}}}
+
   \reactant[volume=5.00, amount=12.5, equiv=1.00, concentration=2.5, solvent=hexane]{nBuLi}\par
   \reactant[mass=3.9, amount=15.6, equiv=1.3, purity=95]{Br2benzene}\par
   \reactant[volume=2.0, amount=43.8, equiv=3.5, fraction=65]{HBr}
@@ -2126,34 +2083,36 @@ are units defined by the \pkg{siunitx} package or by the \module{units} module.
   \reactant[volume=5, volume-unit=\cubic\centi\metre]{thf}
 \end{example}
 
-
-
 \subsubsection{Output Styles}\label{sec:output-styles}
 
-The \module{reactants} module categorizes the data into different categories that are later used 
-to determine the order in which this information is displayed. This behavior can be controlled using
-the following predefined output styles:
+The \module{reactants} module categorizes the data into different categories
+that are later used to determine the order in which this information is
+displayed. This behavior can be controlled using the following predefined
+output styles:
 
 \begin{options}
   \keychoice{reactant-output-style}{name-main-other,main-name-other,main-other-name}%
     \Module{reactants}\Default{name-main-other}
-  Select one of the three predefined styles to determine the output style of the data and 
-  their units in the \cs{reactant} command.
+    Select one of the three predefined styles to determine the output style of
+    the data and their units in the \cs{reactant} command.
   \keychoice{solvent-output-style}{main-name,name-main}\Module{reactants}\Default{main-name}
-  Select one of the two predefined styles to determine the output style of the data and 
-  their units in the \cs{solvent} command.
+    Select one of the two predefined styles to determine the output style of
+    the data and their units in the \cs{solvent} command.
 \end{options}
 
-\code{name} here refers to the combination of name and number (or if just one of them is  available,
- to either name or number).
+\code{name} here refers to the combination of name and number (or if just one
+of them is available, to either name or number).
     
-\code{main} here refers to the \code{mass} or \code{volume} of a reactant or solvent. If needed, 
- \code{equiv} and/or \code{amount} can also be assigned to the main category.
+\code{main} here refers to the \code{mass} or \code{volume} of a reactant or
+solvent. If needed, \code{equiv} and/or \code{amount} can also be assigned to
+the main category.
     
-\code{other} here refers to all the other data that is give to the reactant command.
+\code{other} here refers to all the other data that is give to the reactant
+command.
 
-The names of the \option{reactant-output-style} and \option{solvent-output-style} choice options 
-refer to the order in which the contents of the categories are typeset.
+The names of the \option{reactant-output-style} and
+\option{solvent-output-style} choice options refer to the order in which the
+contents of the categories are typeset.
 
 \begin{example}
   \chemsetup[reactants]{reactant-output-style=name-main-other}
@@ -2171,11 +2130,11 @@ refer to the order in which the contents of the categories are typeset.
 
 \begin{options}
   \keychoice{main}{default,amount,equiv}\Module{reactants}\Default{default}
-  By default, only \code{mass} and \code{volume} are assigned to the \code{main} category. Using 
-  the \option{main} option,  \code{equiv} or \code{amount} can be added to the main 
-  category. 
+    By default, only \code{mass} and \code{volume} are assigned to the
+    \code{main} category. Using the \option{main} option,  \code{equiv} or
+    \code{amount} can be added to the main category. 
 \end{options}
-  \chemsetup[reactants]{reactant-output-style=main-name-other}
+\chemsetup[reactants]{reactant-output-style=main-name-other}
   
 \begin{example}
   \chemsetup[reactants]{main=amount}
@@ -2188,92 +2147,101 @@ refer to the order in which the contents of the categories are typeset.
 
 \begin{options}
   \keybool{equivalents}\Module{reactants}\Default{true}
-  Can be used to prevent \code{equiv} from being output while still keeping the corresponding 
-  information in the input code. If you used the \option{main}~=~\code{equiv} option, the 
-  \option{equivalents}~=~\code{false} option will be ignored for the corresponding entries.
+    Can be used to prevent \code{equiv} from being output while still keeping
+    the corresponding information in the input code. If you used the
+    \keyis{main}{equiv} option, the \keyis{equivalents}{false} option will be
+    ignored for the corresponding entries.
 \end{options}
 
 \subsection{Use in Section Headings}\label{sec:reactants-in-headings}
 
-Using the \cs{reactants} command inside of section headings or captions can mess up the 
-order in which the molecules are numbered, especially when also using a table of contents 
-and/or a list of figures/tables. To prevent this, the \module{reactants} module offers
-the \code{+} suffixed variant of \cs{reactants}, comparably to \pkg{chemnum}'s \cs{cmpd+} 
-command.
+Using the \cs{reactants} command inside of section headings or captions can
+mess up the order in which the molecules are numbered, especially when also
+using a table of contents and/or a list of figures/tables. To prevent this,
+the \module{reactants} module offers the \code{+} suffixed variant of
+\cs{reactants}, comparably to \pkg{chemnum}'s \cs{cmpd+} command.
 
 \begin{commands}
-  \command{reactant+}\oarg{data and units}\marg{ID}
-  This command is used to insert name, number, and, if present, data of a predefined 
-  reactant with the \meta{ID} in a section heading or caption.
+  \command{reactant+}[\oarg{data and units}\marg{ID}]
+    This command is used to insert name, number, and, if present, data of a
+    predefined reactant with the \meta{ID} in a section heading or caption.
 \end{commands}
 
-If you also use the \pkg{hyperref} package in combination with \ac{pdf} bookmarks, you might 
-want to use the optional \option{bookmark} property of \cs{DeclareChemReactant} to supply 
-an alternative text to \option{name} to be displayed inside of the \ac{pdf} bookmarks. To later 
-use such a predefined solvent or reactant, use one of the following three commands, that are 
-defined analogously to \pkg{chemnum}`s \cs{cmpdplain}. All three commands also exist in the upper case 
-variant (\cs{Reactantplain}, \cs{Sumbainreactantplain} and \cs{Solventplain}) which can be used to display
-the upper case version of a reactant or solvent's name. he upper case version of the name must be declared 
-previously through \cs{DeclareChemReactant}'s \option{upper-name} and \option{upper-bookmark} options.
+If you also use the \pkg{hyperref} package in combination with \ac{pdf}
+bookmarks, you might want to use the optional \option{bookmark} property of
+\cs{DeclareChemReactant} to supply an alternative text to \option{name} to be
+displayed inside of the \ac{pdf} bookmarks. To later use such a predefined
+solvent or reactant, use one of the following three commands, that are defined
+analogously to \pkg{chemnum}`s \cs{cmpdplain}. All three commands also exist
+in the upper case variant (\cs{Reactantplain}, \cs{Sumbainreactantplain} and
+\cs{Solventplain}) which can be used to display the upper case version of a
+reactant or solvent's name. he upper case version of the name must be declared
+previously through \cs{DeclareChemReactant}'s \option{upper-name} and
+\option{upper-bookmark} options.
 
 \begin{commands}
-  \command{reactantplain}\marg{ID}
-  Outputs the value of \option{bookmark} inside of the \ac{pdf} bookmark, while using the reactant's 
-  \option{name} inside of the  section headings. 
-  \command{submainreactantplain}\marg{mainID}\marg{subID}
-  Outputs the value of \option{bookmark} inside of the \ac{pdf} bookmark, while using the reactant's 
-  \option{name} inside of the  section headings. Must be used if your \meta{ID} consists of a \meta{mainID}
-  and a \meta{subID}   part. 
-  \command{solventplain}\marg{ID}
-  Outputs the value of \option{bookmark} inside of the \ac{pdf} bookmark, while using the solvent's 
-  \option{name} inside of the  section headings.
+  \command{reactantplain}[\marg{ID}]
+    Outputs the value of \option{bookmark} inside of the \ac{pdf} bookmark,
+    while using the reactant's \option{name} inside of the  section headings.
+  \command{submainreactantplain}[\marg{mainID}\marg{subID}]
+     Outputs the value of \option{bookmark} inside of the \ac{pdf} bookmark,
+     while using the reactant's \option{name} inside of the  section
+     headings. Must be used if your \meta{ID} consists of a \meta{mainID}
+    and a \meta{subID}   part. 
+  \command{solventplain}[\marg{ID}]
+    Outputs the value of \option{bookmark} inside of the \ac{pdf} bookmark,
+    while using the solvent's \option{name} inside of the  section headings.
 \end{commands}
 
 
 \subsection{Acronyms as Reactant/Solvent Names}\label{sec:acronyms-in-reactants}
 
-In order to integrate solvent/reactant acronyms into one combined list of acronyms, the 
-reactants module offers two different options. While using either of these two options, the 
-user can also explicitly decide if the \option{name} or the \option{short} version of the 
-reactant/solvent should be used in the text. Inspired by the \cs{acs} and \cs{acl} commands 
-from the \pkg{acro} or the \pkg{glossaries-extra} package, the \module{reactants} module 
-also offers the following \code{s} and \code{l} suffixed variants:
+In order to integrate solvent/reactant acronyms into one combined list of
+acronyms, the reactants module offers two different options. While using
+either of these two options, the user can also explicitly decide if the
+\option{name} or the \option{short} version of the reactant/solvent should be
+used in the text. Inspired by the \cs{acs} and \cs{acl} commands from the
+\pkg{acro} or the \pkg{glossaries-extra} package, the \module{reactants}
+module also offers the following \code{s} and \code{l} suffixed variants:
 
 \begin{commands}
-  \command{reactants}\marg{ID} 
-  Output the \option{short} version of the reactant's name.
-  \command{reactantl}\marg{ID} 
-  Output the \option{name} version of the reactant's name.
-  \command{solvents}\marg{ID}
-  Output the \option{short} version of the solvent's name.
-  \command{solventl}\marg{ID}
-  Output the \option{name} version of the solvent's name.
+  \command{reactants}[\marg{ID}]
+    Output the \option{short} version of the reactant's name.
+  \command{reactantl}[\marg{ID}]
+    Output the \option{name} version of the reactant's name.
+  \command{solvents}[\marg{ID}]
+    Output the \option{short} version of the solvent's name.
+  \command{solventl}[\marg{ID}]
+    Output the \option{name} version of the solvent's name.
 \end{commands}
 
 \begin{options}
   \keychoice{acronym-support}{acro,glossaries,none}\Module{reactants}\Default{none}
-  Can be used to select, which of the two packages \pkg{acro} or \pkg{glossaries-extra} 
-  is used in the background in order to format and sort acronyms.
+    Can be used to select, which of the two packages \pkg{acro} or
+    \pkg{glossaries-extra} is used in the background in order to format and
+    sort acronyms.
 \end{options}
 
 \begin{example}
-  \DeclareChemReactant{dcm}{name={dichloromethane}, short={DCM}}
+  % in the preamble:
+  % \DeclareChemReactant{dcm}{name={dichloromethane}, short={DCM}}
   \solvent{dcm}\par
   \solventl{dcm}\par
   \solvents{dcm}
 \end{example}
 
 \subsection{List of Reactants}\label{sec:list-of-reactants}
- As mentioned before, \cs{printreactants} can be used to print a list of all used reactants 
- and their numbers. The \module{reactants} module internally uses either \pkg{longtable} or 
- \pkg{xltabular} to typeset this list:
+As mentioned before, \cs{printreactants} can be used to print a list of all
+used reactants and their numbers. The \module{reactants} module internally
+uses either \pkg{longtable} or \pkg{xltabular} to typeset this list:
 \begin{options}
   \keychoice{printreactants-style}{xltabular,longtable,none}\Module{reactants}\Default{none}
-  Can be used to switch between \pkg{longtable} and \pkg{xltabular} which are responsible for
-  formatting the list of reactants. Be aware that with \code{longtable}, the column widths are 
-  hard coded, thus you could experience overfull box warnings if you use exceptionally long
-  \meta{ID}s in combination with the starred variant \cs{printreactants*}, which is responsible 
-  for adding the \meta{ID} in resulting list, as well.
+    Can be used to switch between \pkg{longtable} and \pkg{xltabular} which
+    are responsible for formatting the list of reactants. Be aware that with
+    \code{longtable}, the column widths are hard coded, thus you could
+    experience overfull box warnings if you use exceptionally long \meta{ID}s
+    in combination with the starred variant \cs{printreactants*}, which is
+    responsible for adding the \meta{ID} in resulting list, as well.
 \end{options}
 
 \section{The \chemmodule*{redox} Module}\label{sec:redox-module}

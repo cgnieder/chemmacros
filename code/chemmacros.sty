@@ -123,7 +123,7 @@
 \clist_set:Nn \l_chemmacros_modules_clist
   {
     base, errorcheck, lang, greek, chemformula, charges, acid-base, symbols,
-    particles, phases, nomenclature, tikz, xfrac
+    particles, phases, nomenclature, tikz, xfrac, translations
   }
 
 \clist_const:Nn \c_chemmacros_all_modules_clist
@@ -131,14 +131,16 @@
     base, errorcheck, lang, greek, chemformula, charges, acid-base, symbols,
     particles, phases, nomenclature, tikz, isotopes, mechanisms, newman,
     orbital, polymers, reactions, redox, xfrac, scheme, spectroscopy,
-    thermodynamics, units, reactants
+    thermodynamics, units, reactants, translations
   }
 
 \keys_define:nn {chemmacros/package-options}
   {
     minimal .bool_set:N = \l__chemmacros_minimal_bool ,
     minimal .initial:n  = false ,
-    modules .code:n     = \clist_put_right:Nn \l_chemmacros_modules_clist {#1} ,
+    modules .code:n     =
+      \clist_if_in:NF \l_chemmacros_modules_clist
+        { \clist_put_right:Nn \l_chemmacros_modules_clist {#1} } ,
     unknown .code:n     = \__chemmacros_loadtime_warning:n {unknown-option}
   }
 
@@ -400,10 +402,7 @@
 \cs_new_protected:Npn \chemmacros_define_deprecated:NN #1#2
   {
     \cs_set_protected:Npn #1
-      {
-        \msg_warning:nnnn {chemmacros} {command-deprecated} {#1} {#2}
-        #2
-      }
+      { \msg_warning:nnnn {chemmacros} {command-deprecated} {#1} {#2} #2 }
   }
 
 \NewDocumentCommand \DeclareChemDeprecated {mm}

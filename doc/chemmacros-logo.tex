@@ -1,0 +1,50 @@
+% arara: xelatex
+% arara: xelatex
+\documentclass[margin=1cm]{standalone}
+\usepackage{fontspec}
+\usepackage{chemmacros}
+\usetikzlibrary{calc,positioning,decorations.pathmorphing,patterns}
+
+% credits:
+% https://tex.stackexchange.com/a/49961/
+\pgfdeclaredecoration{pencilline}{initial}{
+  \state{initial}[
+    width=+\pgfdecoratedinputsegmentremainingdistance,
+    auto corner on length=1mm
+  ]{
+    \pgfpathcurveto%
+      {% From
+        \pgfqpoint
+          {\pgfdecoratedinputsegmentremainingdistance}
+          {\pgfdecorationsegmentamplitude}
+      }
+      {%  Control 1
+        \pgfmathrand
+        \pgfpointadd
+          {\pgfqpoint{\pgfdecoratedinputsegmentremainingdistance}{0pt}}
+          {%
+            \pgfqpoint
+              {-\pgfdecorationsegmentaspect\pgfdecoratedinputsegmentremainingdistance}%
+              {\pgfmathresult\pgfdecorationsegmentamplitude}
+          }
+      }
+      {%TO 
+        \pgfpointadd
+          {\pgfpointdecoratedinputsegmentlast}
+          {\pgfpoint{1pt}{1pt}}
+      }
+  }
+  \state{final}{}
+}
+\tikzset{pencil/.style={decorate,decoration=pencilline}}
+\begin{document}
+   \ch[font-spec={Augie}]{
+     2 "\OX{o1,\ox{0,Na}}" + "\OX{r1,\ox{0,Cl}}" {}2
+     ->
+     2 "\OX{o2,\ox{+1,Na}}" {}+ + 2 "\OX{r2,\ox{-1,Cl}}" {}-
+   }
+   \redox(o1,o2)[red,pencil,-cf]{%
+     \small\ch[font-spec={[Color=red]Augie},math-space=.3em]{$-$ 2 e-}}
+   \redox(r1,r2)[blue,pencil,-cf][-1]{%
+     \small\ch[font-spec={[Color=blue]Augie},math-space=.3em]{$+$ 2 e-}}
+\end{document}

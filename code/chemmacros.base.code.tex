@@ -11,10 +11,7 @@
 \cs_new_protected:Npn \chemmacros_define_deprecated:NN #1#2
   {
     \cs_set_protected:Npn #1
-      {
-        \msg_warning:nnnn {chemmacros} {command-deprecated} {#1} {#2}
-        #2
-      }
+      { \msg_warning:nnnn {chemmacros} {command-deprecated} {#1} {#2} #2 }
   }
 
 \NewDocumentCommand \DeclareChemDeprecated {mm}

@@ -26,7 +26,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ProvidesClass{chemmacros-manual}[2022/01/13]
+\ProvidesClass{chemmacros-manual}[2022/01/16]
 
 \LoadClass[load-preamble,add-index]{cnltx-doc}
 \RequirePackage{imakeidx}
@@ -158,7 +158,6 @@
   }%
 }
 
-\RequirePackage{chemformula}
 \DeclareInstance{xfrac}{chemformula-text-frac}{text}{
   scale-factor        = 1 ,
   denominator-bot-sep = -.2ex ,
@@ -424,6 +423,72 @@
     \seq_use:Nnnn \l_tmpa_seq {,~} {,~} {~#1~}
   }
 \ExplSyntaxOff
+
+\DeclareAcronym{ghs}{
+  short     = ghs ,
+  long      = Globally Harmonized System of Classification and Labelling of
+    Chemicals ,
+  pdfstring = GHS ,
+  short-acc = GHS
+}
+\DeclareAcronym{eu}{
+  short     = eu ,
+  long      = European Union ,
+  pdfstring = EU ,
+  short-acc = EU
+}
+\DeclareAcronym{iupac}{
+  short     = iupac ,
+  long      = International Union of Pure and Applied Chemistry ,
+  pdfstring = IUPAC ,
+  short-acc = IUPAC
+}
+\DeclareAcronym{UN}{
+  short     = un ,
+  long      = United Nations ,
+  pdfstring = UN ,
+  short-acc = UN
+}
+\DeclareAcronym{dvi}{
+  short     = dvi ,
+  long      = device independent file format ,
+  pdfstring = DVI ,
+  short-acc = DVI
+}
+\DeclareAcronym{pdf}{
+  short     = pdf ,
+  long      = portable document file ,
+  pdfstring = PDF ,
+  short-acc = PDF
+}
+\DeclareAcronym{id}{
+  short     = id ,
+  long      = identification string ,
+  pdfstring = ID ,
+  short-acc = ID
+}
+
+\chemsetup{
+  greek = newtx ,
+  formula = chemformula ,
+  chemformula/format = \libertineLF ,
+  reactants/acronym-support = acro ,
+  reactants/printreactants-style = longtable
+}
+
+\sisetup{
+  detect-mode=false,
+  mode=text,
+  text-font-command=\libertineLF
+}
+
+\DeclareChemReactant{nBuLi}{name={\iupac{\textit{n}=butyllithium}}}
+\DeclareChemReactant{Br2benzene}{name={\iupac{1,4=di|bromo|benzene}}}
+\DeclareChemReactant{HBr}{name={\ch{HBr\aq}}}
+\DeclareChemReactant{dcm}{name={dichloromethane}, short={DCM}}
+\DeclareChemReactant{thf}{name={tetrahydrofuran}}
+\DeclareChemReactant{H2SO4}{name={\ch{H2SO4}}}
+\DeclareChemReactant{dichloropentane}{name={\iupac{2,4-di|chloro|pentane}}}
 
 \chemmacros@add@version{2012-01-28}{3.0}
 \chemmacros@add@version{2012-01-30}{3.0a}
