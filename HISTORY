@@ -395,7 +395,7 @@ Version history
 			   - add option redox/format (redox)
 2020/03/07 - version 5.11a - fix issue #34 (spectroscopy)
                            - fix issue #41 (scheme)
-2022/02/?? - version 6.0   - merge modules into on file
+2022/01/?? - version 6.0   - merge modules into on file
                            - drop compatibility mode
                            - add reactants module
                            - fix issue #42
@@ -408,3 +408,5 @@ Version history
                            - adapt to siunitx 3.0, implement units that have
                              been removed from siunitx
                            - Danish translations
+                           - new `translations' module, move all translation
+                             declarations there

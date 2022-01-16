@@ -26,7 +26,7 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\ProvidesClass{chemmacros-manual}[2021/07/24]
+\ProvidesClass{chemmacros-manual}[2022/01/13]
 
 \LoadClass[load-preamble,add-index]{cnltx-doc}
 \RequirePackage{imakeidx}
@@ -158,6 +158,7 @@
   }%
 }
 
+\RequirePackage{chemformula}
 \DeclareInstance{xfrac}{chemformula-text-frac}{text}{
   scale-factor        = 1 ,
   denominator-bot-sep = -.2ex ,
@@ -489,6 +490,6 @@
 \chemmacros@add@version{2020-03-07}{5.11}
 \chemmacros@add@version{2020-11-21}{5.11a}
 \chemmacros@add@version{2020-11-29}{5.12}
-\chemmacros@add@version{2021-07-24}{6.0}
+\chemmacros@add@version{2022-01-16}{6.0}
 
 \endinput

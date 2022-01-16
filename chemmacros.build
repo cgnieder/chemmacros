@@ -247,13 +247,8 @@ if [ "$build" == true ] ; then
     $modulename.thermodynamics.$moduleext \
     $modulename.units.$moduleext \
     $modulename.reactants.$moduleext \
+    $modulename.translations.$moduleext \
     > $styname
-    # append necessary end:
-    # echo -e "% finish package:\n\
-# \\AtEndDocument { \\\\acro_close_aux: \\\\acro_do_rerun: }\n\
-# %----------------------------------------------------------------------------\n\
-# \\\\file_input_stop:"\
-#     >> $styname
 fi
 
 # build manual

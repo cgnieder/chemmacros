@@ -26,15 +26,15 @@
 %
 % The Current Maintainer of this work is Clemens Niederberger.
 % --------------------------------------------------------------------------
-\RequirePackage{expl3,xparse,l3keys2e}
+\RequirePackage{l3keys2e}
 \ExplSyntaxOn
 
 % --------------------------------------------------------------------------
 % package information:
-\tl_const:Nn \c_chemmacros_date_tl {2022/01/10}
+\tl_const:Nn \c_chemmacros_date_tl {2022/01/16}
 \tl_const:Nn \c_chemmacros_version_major_number_tl {6}
 \tl_const:Nn \c_chemmacros_version_minor_number_tl {0}
-\tl_const:Nn \c_chemmacros_version_subrelease_tl   {beta-2}
+\tl_const:Nn \c_chemmacros_version_subrelease_tl   {}
 \tl_const:Nx \c_chemmacros_version_number_tl
   {
     \c_chemmacros_version_major_number_tl .
@@ -809,7 +809,7 @@
   }
 
 \ChemModuleEnd
-\ChemModule{errorcheck}{2020/11/29 error checking for unloaded modules}
+\ChemModule{errorcheck}{2022/01/16 error checking for unloaded modules}
 
 \msg_new:nnn {chemmacros} {undefined}
   {
@@ -893,7 +893,7 @@
 \chemmacros_command_requires_module:Nn     \schemename     {scheme}
 \chemmacros_command_requires_module:Nn     \listofschemes  {scheme}
 
-\AddToHook {package/chemscheme/before}
+\hook_gput_code:nnn {package/chemscheme/before} {chemmacros}
   {
     \cs_undefine:N \scheme
     \cs_undefine:N \endscheme
@@ -1402,7 +1402,7 @@
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd
-\ChemModule{acid-base}{2020/11/29 acid/base}
+\ChemModule{acid-base}{2022/01/13 acid/base}
 
 % --------------------------------------------------------------------------
 % equilibrium constants:
@@ -1505,13 +1505,6 @@
         \Kb \IfNoValueF {#1}
           { {} \c_math_subscript_token { \chemmacros_bold:n {#1} } }
       }
-  }
-
-% --------------------------------------------------------------------------
-\chemmacros_declare_translations:nn {K-acid}
-  {
-    German = \mathrm {s} ,
-    Dutch  = \mathrm {z}
   }
 
 % --------------------------------------------------------------------------
@@ -1735,27 +1728,8 @@
 \NewChemPhase \aq  {aq}
 
 % --------------------------------------------------------------------------
-\chemmacros_declare_translations:nn {phase-sld}
-  {
-    fallback = s ,
-    German   = f
-  }
-
-\chemmacros_declare_translations:nn {phase-lqd}
-  {
-    fallback = l ,
-    German   = f\/l
-  }
-
-\chemmacros_declare_translations:nn {phase-gas}
-  { fallback = g }
-
-\chemmacros_declare_translations:nn {phase-aq}
-  { fallback = aq }
-
-% --------------------------------------------------------------------------
 \ChemModuleEnd
-\ChemModule{nomenclature}{2020/11/29 chemical names}
+\ChemModule{nomenclature}{2022/01/10 chemical names}
 
 \bool_new:N \l__chemmacros_iupac_restricted_bool
 \bool_new:N \l__chemmacros_iupac_strict_bool
@@ -1960,7 +1934,7 @@
     cip-outer-format  .tl_set:N  = \l__chemmacros_cip_outer_tl ,
     cip-outer-format  .initial:n = \upshape ,
     cip-number-format .tl_set:N  = \l__chemmacros_cip_number_tl ,
-    cip-number-format .initial:n = \itshape
+    cip-number-format .initial:n = \upshape
   }
   
 \cs_new_protected:Npn \__chemmacros_cip:n #1
@@ -3843,7 +3817,7 @@
   
 % --------------------------------------------------------------------------
 \ChemModuleEnd
-\ChemModule{reactions}{2022/01/10 reaction environments}
+\ChemModule{reactions}{2022/01/13 reaction environments}
 
 \RequirePackage{mathtools}
 
@@ -4093,67 +4067,6 @@
 \NewChemReaction {reaction*}  {equation*}
 \NewChemReaction {reactions}  {align}
 \NewChemReaction {reactions*} {align*}
-
-% --------------------------------------------------------------------------
-\chemmacros_declare_translations:nn {list-of-reactions}
-  {
-    fallback  = List~ of~ Reactions ,
-    English   = List~ of~ Reactions ,
-    German    = Reaktionsverzeichnis ,
-    Italian   = Elenco~ delle~ reazioni ,
-    French    = Table~ des~ r\'{e}actions ,
-    Dutch     = Lijst~ van~ reacties ,
-    Norwegian = Reaksjonsliste ,
-    Nynorsk   = Reaksjonsliste
-  }
-
-\chemmacros_declare_translations:nn {reaction}
-  {
-    fallback  = reaction ,
-    English   = reaction ,
-    German    = Reaktion ,
-    Italian   = reazione ,
-    French    = r\'{e}action ,
-    Dutch     = reactie ,
-    Norwegian = reaksjon ,
-    Nynorsk   = reaksjon
-  }
-
-\chemmacros_declare_translations:nn {reactions}
-  {
-    fallback  = reactions ,
-    English   = reactions ,
-    German    = Reaktionen ,
-    Italian   = reazioni ,
-    French    = r\'{e}actions ,
-    Dutch     = reacties ,
-    Norwegian = reaksjoner ,
-    Nynorsk   = reaksjonar
-  }
-
-\chemmacros_declare_translations:nn {Reaction}
-  {
-    fallback  = Reaction ,
-    English   = Reaction ,
-    German    = Reaktion ,
-    Italian   = Reazione ,
-    French    = R\'{e}action ,
-    Dutch     = Reactie ,
-    Norwegian = Reaksjon ,
-    Nynorsk   = Reaksjon
-  }
-
-\chemmacros_declare_translations:nn {Reactions}
-  {
-    fallback = Reactions ,
-    English  = Reactions ,
-    German   = Reaktionen ,
-    Italian  = Reazioni ,
-    French   = R\'{e}actions ,
-    Dutch    = Reacties ,
-    Norwegian = Reaksjoner ,
-    Nynorsk   = Reaksjonar
- }
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd
@@ -4521,7 +4434,7 @@
       }
   }
 
-\NewDocumentCommand \redox { >{\SplitArgument{1}{,}}r()ooG{} }
+\NewDocumentCommand \redox { >{\SplitArgument{1}{,}}r()oom }
   {
     \IfNoValueT {#1}
       {
@@ -4659,9 +4572,16 @@
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd
-\ChemModule{scheme}{2020/11/29 a scheme floating environment}
+\ChemModule{scheme}{2022/01/13 a scheme floating environment}
 
 \RequirePackage {chemnum}
+\RequirePackage {etoolbox}
+
+\msg_new:nnn {chemmacros} {patch-failed}
+  {
+    Patching~ \token_to_str:N #1 \c_space_tl failed.~
+    Please~ inform~ the~ chemmacros~ package~ authors.
+  }
 
 \bool_new:N \l__chemmacros_float_def_bool
 \tl_new:N   \l__chemmacros_float_method_tl
@@ -4884,7 +4804,7 @@
                   { \addtocontents }
                   { \addtocontents {#2} { \protect \addvspace {10\p@} } \addtocontents }
                   {}
-                  {}
+                  { \msg_warning:nnn {chemmacros} {patch-failed} { \@chapter } }
               }
               {
                 \cs_new_protected:cpn {listof#1s}
@@ -4904,61 +4824,6 @@
       }
     \cs_set:cpn {#1name}     {\chemmacros_translate:n {#1-name}}
     \cs_set:cpn {list#1name} {\chemmacros_translate:n {#1-list}}
-  }
-
-% --------------------------------------------------------------------------
-\chemmacros_declare_translations:nn {scheme-name}
-  {
-    fallback = Scheme ,
-    English  = Scheme ,
-    German   = Schema ,
-    Norwegian = Skjema ,
-    Nynorsk   = Skjema
-  }
-
-\chemmacros_declare_translations:nn {scheme-list}
-  {
-    fallback    = List~ of~ Schemes ,
-    English     = List~ of~ Schemes ,
-    German      = Verzeichnis~ der~ Schemata,
-    Norwegian   = Skjemaliste,
-    Nynorsk     = Skjemaliste
-  }
-
-\chemmacros_declare_translations:nn {scheme}
-  {
-    fallback  = scheme ,
-    English   = scheme ,
-    German    = Schema ,
-    Norwegian = skjema ,
-    Nynorsk   = skjema
-  }
-
-\chemmacros_declare_translations:nn {Scheme}
-  {
-    fallback  = Scheme ,
-    English   = Scheme ,
-    German    = Schema ,
-    Norwegian = Skjema ,
-    Nynorsk   = Skjema
-  }
-
-\chemmacros_declare_translations:nn {schemes}
-  {
-    fallback = schemes ,
-    English  = schemes ,
-    German   = Schemata ,
-    Norwegian = skjema ,
-    Nynorsk   = skjema
-  }
-
-\chemmacros_declare_translations:nn {Schemes}
-  {
-    fallback = Schemes ,
-    English  = Schemes ,
-    German   = Schemata ,
-    Norwegian = Skjema ,
-    Nynorsk   = Skjema
   }
 
 % --------------------------------------------------------------------------
@@ -5095,10 +4960,10 @@
   }
 
 \cs_new_protected:Npn \__chemmacros_nmr_frequency_aux_i:w #1,#2 \q_stop
-  { \qty {#1} {#2} }
+  { \SI {#1} {#2} }
 
 \cs_new_protected:Npn \__chemmacros_nmr_frequency_aux_ii:n #1
-  { \qty {#1} { \tl_use:N \l__chemmacros_nmr_unit_tl } }
+  { \SI {#1} { \tl_use:N \l__chemmacros_nmr_unit_tl } }
 
 \cs_new_eq:NN \__chemmacros_nmr_number:n \use:n
 \cs_new_eq:NN \__chemmacros_nmr_position:n \use:n
@@ -5537,7 +5402,7 @@
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd
-\ChemModule{units}{2021/07/24 chemical units}
+\ChemModule{units}{2022/01/16 chemical units}
 
 \RequirePackage{siunitx}
 
@@ -5556,7 +5421,7 @@
 \DeclareSIUnit \normal           {\textsc{n}}
 \DeclareSIUnit \torr             {Torr}
 
-\AddToHook {begindocument/before}
+\hook_gput_code:nnn {begindocument/before} {chemmacros}
   {
     \chemmacros_if_package_loaded:nF {chemstyle}
       {
@@ -6747,12 +6612,172 @@
 \cs_generate_variant:Nn \chemmacros_reactants_list_subreactant:nn {V}
 
 % --------------------------------------------------------------------------
+\ChemModuleEnd
+\ChemModule{lang}{2022/01/16 translations for defined keys at one place}
 
+% --------------------------------------------------------------------------
+\chemmacros_declare_translations:nn {K-acid}
+  {
+    German = \mathrm {s} ,
+    Danish = \mathrm {s} ,
+    Dutch  = \mathrm {z}
+  }
+
+\chemmacros_declare_translations:nn {K-acid}
+  { Danish = \mathrm {v} }
+
+% --------------------------------------------------------------------------
+\chemmacros_declare_translations:nn {phase-sld}
+  {
+    fallback = s ,
+    German   = f
+  }
+
+\chemmacros_declare_translations:nn {phase-lqd}
+  {
+    fallback = l ,
+    German   = f\/l
+  }
+
+\chemmacros_declare_translations:nn {phase-gas}
+  { fallback = g }
+
+\chemmacros_declare_translations:nn {phase-aq}
+  { fallback = aq }
+
+% --------------------------------------------------------------------------
 \chemmacros_declare_translations:nn {solution}
   {
     fallback = solution~ in ,
     English  = solution~ in ,
     German   = L\"osung~ in ,
+  }
+
+% --------------------------------------------------------------------------
+\chemmacros_declare_translations:nn {list-of-reactions}
+  {
+    fallback  = List~ of~ Reactions ,
+    English   = List~ of~ Reactions ,
+    German    = Reaktionsverzeichnis ,
+    Italian   = Elenco~ delle~ reazioni ,
+    French    = Table~ des~ r\'{e}actions ,
+    Dutch     = Lijst~ van~ reacties ,
+    Norwegian = Reaksjonsliste ,
+    Nynorsk   = Reaksjonsliste ,
+    Danish    = Reaktionsliste
+  }
+
+\chemmacros_declare_translations:nn {reaction}
+  {
+    fallback  = reaction ,
+    English   = reaction ,
+    German    = Reaktion ,
+    Italian   = reazione ,
+    French    = r\'{e}action ,
+    Dutch     = reactie ,
+    Norwegian = reaksjon ,
+    Nynorsk   = reaksjon ,
+    Danish    = reaktion
+  }
+
+\chemmacros_declare_translations:nn {reactions}
+  {
+    fallback  = reactions ,
+    English   = reactions ,
+    German    = Reaktionen ,
+    Italian   = reazioni ,
+    French    = r\'{e}actions ,
+    Dutch     = reacties ,
+    Norwegian = reaksjoner ,
+    Nynorsk   = reaksjonar ,
+    Danish    = reaktioner
+  }
+
+\chemmacros_declare_translations:nn {Reaction}
+  {
+    fallback  = Reaction ,
+    English   = Reaction ,
+    German    = Reaktion ,
+    Italian   = Reazione ,
+    French    = R\'{e}action ,
+    Dutch     = Reactie ,
+    Norwegian = Reaksjon ,
+    Nynorsk   = Reaksjon ,
+    Danish    = Reaktion
+  }
+
+\chemmacros_declare_translations:nn {Reactions}
+  {
+    fallback  = Reactions ,
+    English   = Reactions ,
+    German    = Reaktionen ,
+    Italian   = Reazioni ,
+    French    = R\'{e}actions ,
+    Dutch     = Reacties ,
+    Norwegian = Reaksjoner ,
+    Nynorsk   = Reaksjonar ,
+    Danish    = Reaktioner
+ }
+
+% --------------------------------------------------------------------------
+\chemmacros_declare_translations:nn {scheme-name}
+  {
+    fallback  = Scheme ,
+    English   = Scheme ,
+    German    = Schema ,
+    Norwegian = Skjema ,
+    Nynorsk   = Skjema ,
+    Danish    = Skema
+  }
+
+\chemmacros_declare_translations:nn {scheme-list}
+  {
+    fallback  = List~ of~ Schemes ,
+    English   = List~ of~ Schemes ,
+    German    = Verzeichnis~ der~ Schemata ,
+    Norwegian = Skjemaliste ,
+    Nynorsk   = Skjemaliste ,
+    Danish    = Skemaliste
+  }
+
+\chemmacros_declare_translations:nn {scheme}
+  {
+    fallback  = scheme ,
+    English   = scheme ,
+    German    = Schema ,
+    Norwegian = skjema ,
+    Nynorsk   = skjema ,
+    Danish    = skema
+  }
+
+\chemmacros_declare_translations:nn {Scheme}
+  {
+    fallback  = Scheme ,
+    English   = Scheme ,
+    German    = Schema ,
+    Norwegian = Skjema ,
+    Nynorsk   = Skjema ,
+    Danish    = Skema
+  }
+
+\chemmacros_declare_translations:nn {schemes}
+  {
+    fallback  = schemes ,
+    English   = schemes ,
+    German    = Schemata ,
+    Norwegian = skjema ,
+    Nynorsk   = skjema ,
+    Danish    = skemaer
+  }
+
+\chemmacros_declare_translations:nn {Schemes}
+  {
+    fallback  = Schemes ,
+    English   = Schemes ,
+    German    = Schemata ,
+    Norwegian = Skjema ,
+    Nynorsk   = Skjema ,
+    Danish    = Skemaer
   }
 
 % --------------------------------------------------------------------------

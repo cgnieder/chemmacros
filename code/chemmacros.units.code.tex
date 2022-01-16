@@ -1,4 +1,4 @@
-\ChemModule{units}{2021/07/24 chemical units}
+\ChemModule{units}{2022/01/16 chemical units}
 
 \RequirePackage{siunitx}
 
@@ -17,7 +17,7 @@
 \DeclareSIUnit \normal           {\textsc{n}}
 \DeclareSIUnit \torr             {Torr}
 
-\AddToHook {begindocument/before}
+\hook_gput_code:nnn {begindocument/before} {chemmacros}
   {
     \chemmacros_if_package_loaded:nF {chemstyle}
       {
