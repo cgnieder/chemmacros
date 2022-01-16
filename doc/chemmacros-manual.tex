@@ -2639,8 +2639,7 @@ of experimental data.
 \subsection{Customization}\label{sec:experimental-customization}
 
 The output of the environment and of the NMR commands can be customized be a
-number of options.  For historical reasons they all belong to the module
-\module{nmr}.
+number of options.  
 \begin{options}
   \keyval{unit}{unit}\Module{spectroscopy}\Default{\cs*{mega}\cs*{hertz}}
     The used default unit.
@@ -3269,7 +3268,7 @@ The\sinceversion{5.2} \chemmodule{errorcheck} module provides some rudimentary
 support for giving users more meaningful messages when they use a command or
 environment provided by a module that they haven't loaded.
 
-\section{The \chemmodule*{lang} Module}\label{sec:lang-module}
+\section{The \chemmodule*{lang} and \chemmodule*{translations} Modules}\label{sec:lang-module}
 
 The \chemmodule{lang} module provides language support for \chemmacros.  It
 loads the package \pkg{translations}~\cite{pkg:translations}.
@@ -3297,9 +3296,9 @@ translation keys are listed in section~\vref{sec:avail-transl-keys}.
 
 Table~\vref{tab:translation-keys} lists all predefined translations of the
 available keys.  \emph{Some of the translations have changed in
-  version~5.6\changedversion{5.6}.} The \chemmodule{lang} module doesn't
-provide the translations themselves -- they are provided by the corresponding
-modules.  A translation key is a unique string\footnote{That is, a string
+  version~5.6\changedversion{5.6}.} All available translations are provided 
+  by the \chemmodule{translations} module.
+  A translation key is a unique string\footnote{That is, a string
   using the definition for strings used for expl3, i.e., converted to a series
   of category code~12 characters..} of characters.  Each key is used to
 identify a replacement text which depends on the current language or the
