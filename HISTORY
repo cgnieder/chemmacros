@@ -411,3 +411,4 @@ Version history
                            - new `translations' module, move all translation
                              declarations there
 2022/01/?? - version 6.0a  - fix issue #46
+                           - fix bug related to package option `modules='
