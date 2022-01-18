@@ -917,9 +917,11 @@
 % --------------------------------------------------------------------------
 
 \ChemModuleEnd
-\ChemModule{lang}{2020/11/29 language settings for chemmacros}
+\ChemModule{lang}{2022/01/18 language settings for chemmacros}
 
 \RequirePackage{translations}
+
+\hook_gset_rule:nnnn {begindocument/before} {translations} {before} {chemmacros}
 
 \msg_new:nnn {chemmacros} {language-not-defined}
   {

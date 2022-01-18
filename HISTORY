@@ -395,7 +395,7 @@ Version history
 			   - add option redox/format (redox)
 2020/03/07 - version 5.11a - fix issue #34 (spectroscopy)
                            - fix issue #41 (scheme)
-2022/01/?? - version 6.0   - merge modules into on file
+2022/01/16 - version 6.0   - merge modules into on file
                            - drop compatibility mode
                            - add reactants module
                            - fix issue #42
@@ -410,3 +410,4 @@ Version history
                            - Danish translations
                            - new `translations' module, move all translation
                              declarations there
+2022/01/?? - version 6.0a  - fix issue #46
