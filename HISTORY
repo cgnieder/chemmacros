@@ -402,13 +402,14 @@ Version history
                            - use LaTeX's new hook mechanism
                            - get rid of scrlfile dependency
                            - update to l3text
-                           - rename \Torr -> \torr
+                           - rename \Torr -> \torr (units)
                            - new iupac command \normal
                            - resolve issue #45
                            - adapt to siunitx 3.0, implement units that have
-                             been removed from siunitx
+                             been removed from siunitx (units)
                            - Danish translations
                            - new `translations' module, move all translation
                              declarations there
 2022/01/18 - version 6.0a  - fix issue #46
                            - fix bug related to package option `modules='
+2022/??/?? - version 6.1   - extend syntax of \state command (thermodynamics)

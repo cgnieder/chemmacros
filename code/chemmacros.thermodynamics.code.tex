@@ -30,16 +30,17 @@
     unit              .groups:n   = {variables}
   }
 
-\cs_new_protected:Npn \chemmacros_state:nn #1#2
+\cs_new_protected:Npn \chemmacros_state:nnnnnn #1#2#3#4#5#6
   {
-    % pre (\Delta)
-    % post
-    % superscript-left
-    % superscript-right (\standardstate)
-    % subscript-left
-    % subscript-right
     \group_begin:
-      \chemmacros_set_keys:nn {thermodynamics} {#1}
+      \chemmacros_set_keys:ne {thermodynamics}
+        {
+          \exp_not:n {#1} ,
+          \tl_if_novalue:nF {#2} { subscript-left = \exp_not:n {#2} , }
+          \tl_if_novalue:nF {#3} { superscript-left = \exp_not:n {#3} , }
+          \tl_if_novalue:nF {#5} { subscript-right = \exp_not:n {#5} , }
+          \tl_if_novalue:nF {#6} { superscript-right = \exp_not:n {#6} }
+        }
       \ensuremath
         {
           \chemmacros_text:V \l__chemmacros_state_pre_tl
@@ -47,7 +48,7 @@
             { \chemmacros_text:V \l__chemmacros_state_sp_left_tl }
           \c_math_subscript_token
             { \chemmacros_text:V \l__chemmacros_state_sb_left_tl }
-          #2
+          #4
           \c_math_superscript_token
             { \chemmacros_text:V \l__chemmacros_state_sp_right_tl }
           \c_math_subscript_token
@@ -56,10 +57,11 @@
         }
     \group_end:
   }
-\cs_generate_variant:Nn \chemmacros_state:nn { nV }
+\cs_generate_variant:Nn \chemmacros_state:nnnnnn { nVVVVV }
 
-\DeclareDocumentCommand \state { O{}m }
-  { \chemmacros_state:nn {#1} {#2} }
+\exp_args:NNe
+\NewDocumentCommand \state { O{}e{\char_generate:nn {`_}{8}^}me{\char_generate:nn {`_}{8}^} }
+  { \use:c {chemmacros_state:nnnnnn} {#1} {#2} {#3} {#4} {#5} {#6} }
 
 \cs_new_protected:Npn \chemmacros_declare_state:Nn #1#2
   {
@@ -83,17 +85,23 @@
     \DeclareDocumentCommand #1 { sO{}D(){}m }
       {
         \group_begin:
-          \chemmacros_set_keys:xn
+          \chemmacros_set_keys:en
             {thermodynamics/\chemmacros_remove_backslash:N #1}
             {#2}
           \tl_if_blank:nF {##3}
             {
-              \chemmacros_set_keys:nx {thermodynamics}
+              \chemmacros_set_keys:ne {thermodynamics}
                 { subscript-\l__chemmacros_state_sb_pos_tl = \exp_not:n {##3} }
             }
           \ensuremath
             {
-              \chemmacros_state:nV {##2} \l__chemmacros_state_symbol_tl
+              \chemmacros_state:nVVVVV
+                {##2}
+                \c_novalue_tl
+                \c_novalue_tl
+                \l__chemmacros_state_symbol_tl
+                \c_novalue_tl
+                \c_novalue_tl
               \chemmacros_set_keys_groups:nnn {thermodynamics} {variables} {##2}
               \IfBooleanF {##1} { = \qty {##4} { \l__chemmacros_state_unit_tl } }
             }
