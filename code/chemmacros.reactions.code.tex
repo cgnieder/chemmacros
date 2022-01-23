@@ -158,8 +158,8 @@
     \cs_set:Npn \theHequation { R . \theHsection . \theequation }
     \setcounter {chemmacros_save_reaction} { \value {equation} }
     \setcounter {equation} { \value {reaction} }
-    \chemmacros_if_package_loaded:nT {cleveref}
-      { \crefalias {equation} {reaction} }
+    % \chemmacros_if_package_loaded:nT {cleveref}
+    %   { \crefalias {equation} {reaction} }
     \usetagform {reaction}
   }
 

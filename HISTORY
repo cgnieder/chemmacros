@@ -413,3 +413,4 @@ Version history
 2022/01/18 - version 6.0a  - fix issue #46
                            - fix bug related to package option `modules='
 2022/??/?? - version 6.1   - extend syntax of \state command (thermodynamics)
+                           - add `reactants' module to the `errorcheck' module

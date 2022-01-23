@@ -1,4 +1,4 @@
-\ChemModule{errorcheck}{2022/01/16 error checking for unloaded modules}
+\ChemModule{errorcheck}{2022/01/23 error checking for unloaded modules}
 
 \msg_new:nnn {chemmacros} {undefined}
   {
@@ -70,6 +70,24 @@
 \chemmacros_environment_requires_module:nn {reactions*}     {reactions}
 \chemmacros_command_requires_module:Nn     \listofreactions {reactions}
 \chemmacros_command_requires_module:Nn     \AddRxnDesc      {reactions}
+
+% reactants module
+\chemmacros_command_requires_module:Nn \DeclareChemReactant  {reactants}
+\chemmacros_command_requires_module:Nn \reactant             {reactants}
+\chemmacros_command_requires_module:Nn \reactants            {reactants}
+\chemmacros_command_requires_module:Nn \reactantl            {reactants}
+\chemmacros_command_requires_module:Nn \Reactant             {reactants}
+\chemmacros_command_requires_module:Nn \solvent              {reactants}
+\chemmacros_command_requires_module:Nn \solvents             {reactants}
+\chemmacros_command_requires_module:Nn \solventl             {reactants}
+\chemmacros_command_requires_module:Nn \Solvent              {reactants}
+\chemmacros_command_requires_module:Nn \reactantplain        {reactants}
+\chemmacros_command_requires_module:Nn \Reactantplain        {reactants}
+\chemmacros_command_requires_module:Nn \submainreactantplain {reactants}
+\chemmacros_command_requires_module:Nn \Submainreactantplain {reactants}
+\chemmacros_command_requires_module:Nn \solventplain         {reactants}
+\chemmacros_command_requires_module:Nn \Solventplain         {reactants}
+\chemmacros_command_requires_module:Nn \printreactants       {reactants}
 
 % redox module
 \chemmacros_command_requires_module:Nn \ox    {redox}

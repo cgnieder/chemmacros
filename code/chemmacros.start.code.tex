@@ -33,8 +33,8 @@
 % package information:
 \tl_const:Nn \c_chemmacros_date_tl {2022/01/18}
 \tl_const:Nn \c_chemmacros_version_major_number_tl {6}
-\tl_const:Nn \c_chemmacros_version_minor_number_tl {0}
-\tl_const:Nn \c_chemmacros_version_subrelease_tl   {ae}
+\tl_const:Nn \c_chemmacros_version_minor_number_tl {1}
+\tl_const:Nn \c_chemmacros_version_subrelease_tl   {}
 \tl_const:Nx \c_chemmacros_version_number_tl
   {
     \c_chemmacros_version_major_number_tl .
@@ -134,7 +134,7 @@
     thermodynamics, units, reactants, translations
   }
 
-\keys_define:nn {chemmacros/package-options}
+\keys_define:nn {chemmacros/load-time}
   {
     minimal .bool_set:N = \l__chemmacros_minimal_bool ,
     minimal .initial:n  = false ,
@@ -144,7 +144,7 @@
     unknown .code:n     = \__chemmacros_loadtime_warning:n {unknown-option}
   }
 
-\ProcessKeysPackageOptions {chemmacros/package-options}
+\ProcessKeysPackageOptions {chemmacros/load-time}
 
 \keys_define:nn {chemmacros}
   {
@@ -152,8 +152,8 @@
     modules .code:n =
       \msg_warning:nn {chemmacros} {module-mechanism}
       \__chemmacros_loadtime_warning:n {load-time-option} ,
-    package-options / minimal .meta:nn = {chemmacros} {minimal} ,
-    package-options / modules .meta:nn = {chemmacros} {modules}
+    load-time / minimal .meta:nn = {chemmacros} {minimal} ,
+    load-time / modules .meta:nn = {chemmacros} {modules}
   }
 
 \NewDocumentCommand \usechemmodule {m}

@@ -33,8 +33,8 @@
 % package information:
 \tl_const:Nn \c_chemmacros_date_tl {2022/01/18}
 \tl_const:Nn \c_chemmacros_version_major_number_tl {6}
-\tl_const:Nn \c_chemmacros_version_minor_number_tl {0}
-\tl_const:Nn \c_chemmacros_version_subrelease_tl   {ae}
+\tl_const:Nn \c_chemmacros_version_minor_number_tl {1}
+\tl_const:Nn \c_chemmacros_version_subrelease_tl   {}
 \tl_const:Nx \c_chemmacros_version_number_tl
   {
     \c_chemmacros_version_major_number_tl .
@@ -134,7 +134,7 @@
     thermodynamics, units, reactants, translations
   }
 
-\keys_define:nn {chemmacros/package-options}
+\keys_define:nn {chemmacros/load-time}
   {
     minimal .bool_set:N = \l__chemmacros_minimal_bool ,
     minimal .initial:n  = false ,
@@ -144,7 +144,7 @@
     unknown .code:n     = \__chemmacros_loadtime_warning:n {unknown-option}
   }
 
-\ProcessKeysPackageOptions {chemmacros/package-options}
+\ProcessKeysPackageOptions {chemmacros/load-time}
 
 \keys_define:nn {chemmacros}
   {
@@ -152,8 +152,8 @@
     modules .code:n =
       \msg_warning:nn {chemmacros} {module-mechanism}
       \__chemmacros_loadtime_warning:n {load-time-option} ,
-    package-options / minimal .meta:nn = {chemmacros} {minimal} ,
-    package-options / modules .meta:nn = {chemmacros} {modules}
+    load-time / minimal .meta:nn = {chemmacros} {minimal} ,
+    load-time / modules .meta:nn = {chemmacros} {modules}
   }
 
 \NewDocumentCommand \usechemmodule {m}
@@ -748,9 +748,6 @@
       {#1}
   }
 
-\cs_new_protected:Npn \chemmacros_detect_bold:n
-  { \error \chemmacros_bold:n }
-
 % --------------------------------------------------------------------------
 \RequirePackage{amstext}
 
@@ -808,7 +805,7 @@
   }
 
 \ChemModuleEnd
-\ChemModule{errorcheck}{2022/01/16 error checking for unloaded modules}
+\ChemModule{errorcheck}{2022/01/23 error checking for unloaded modules}
 
 \msg_new:nnn {chemmacros} {undefined}
   {
@@ -880,6 +877,24 @@
 \chemmacros_environment_requires_module:nn {reactions*}     {reactions}
 \chemmacros_command_requires_module:Nn     \listofreactions {reactions}
 \chemmacros_command_requires_module:Nn     \AddRxnDesc      {reactions}
+
+% reactants module
+\chemmacros_command_requires_module:Nn \DeclareChemReactant  {reactants}
+\chemmacros_command_requires_module:Nn \reactant             {reactants}
+\chemmacros_command_requires_module:Nn \reactants            {reactants}
+\chemmacros_command_requires_module:Nn \reactantl            {reactants}
+\chemmacros_command_requires_module:Nn \Reactant             {reactants}
+\chemmacros_command_requires_module:Nn \solvent              {reactants}
+\chemmacros_command_requires_module:Nn \solvents             {reactants}
+\chemmacros_command_requires_module:Nn \solventl             {reactants}
+\chemmacros_command_requires_module:Nn \Solvent              {reactants}
+\chemmacros_command_requires_module:Nn \reactantplain        {reactants}
+\chemmacros_command_requires_module:Nn \Reactantplain        {reactants}
+\chemmacros_command_requires_module:Nn \submainreactantplain {reactants}
+\chemmacros_command_requires_module:Nn \Submainreactantplain {reactants}
+\chemmacros_command_requires_module:Nn \solventplain         {reactants}
+\chemmacros_command_requires_module:Nn \Solventplain         {reactants}
+\chemmacros_command_requires_module:Nn \printreactants       {reactants}
 
 % redox module
 \chemmacros_command_requires_module:Nn \ox    {redox}
@@ -3978,8 +3993,8 @@
     \cs_set:Npn \theHequation { R . \theHsection . \theequation }
     \setcounter {chemmacros_save_reaction} { \value {equation} }
     \setcounter {equation} { \value {reaction} }
-    \chemmacros_if_package_loaded:nT {cleveref}
-      { \crefalias {equation} {reaction} }
+    % \chemmacros_if_package_loaded:nT {cleveref}
+    %   { \crefalias {equation} {reaction} }
     \usetagform {reaction}
   }
 
