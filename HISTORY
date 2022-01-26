@@ -7,12 +7,13 @@ the CHEMMACROS package
 Clemens Niederberger
 --------------------------------------------------------------------------
 https://github.org/cgnieder/chemmacros/
-contact@mychemistry.eu
+chemmacros@cnltx.de
 --------------------------------------------------------------------------
 If you have any ideas, questions, suggestions or bugs to report, please
 feel free to contact me.
 --------------------------------------------------------------------------
-Copyright 2011--2022 Clemens Niederberger
+Copyright 2011--2021 Clemens Niederberger
+          2022       Clemens Niederberger & Sonja K.
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3c
@@ -24,7 +25,7 @@ version 2008/05/04 or later.
 
 This work has the LPPL maintenance status `maintained'.
 
-The Current Maintainer of this work is Clemens Niederberger.
+The Current Maintainers of this work are Clemens Niederberger and Sonja K.
 --------------------------------------------------------------------------
 Version history
 2011/05/15 - version 1.0   - CTAN release
@@ -397,7 +398,8 @@ Version history
                            - fix issue #41 (scheme)
 2022/01/16 - version 6.0   - merge modules into on file
                            - drop compatibility mode
-                           - add reactants module
+                           - add reactants module and welcome Sonja K. to the
+                             maintenance team
                            - fix issue #42
                            - use LaTeX's new hook mechanism
                            - get rid of scrlfile dependency
@@ -414,3 +416,4 @@ Version history
                            - fix bug related to package option `modules='
 2022/??/?? - version 6.1   - extend syntax of \state command (thermodynamics)
                            - add `reactants' module to the `errorcheck' module
+                           - fix bug in Danish translation

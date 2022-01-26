@@ -1,14 +1,15 @@
 --------------------------------------------------------------------------
-the CHEMMACROS package v6.0a 2022/01/18
+the CHEMMACROS package v6.1 2022/01/23
 
   comprehensive support for typesetting chemistry documents
 
 --------------------------------------------------------------------------
 Clemens Niederberger
 Web:    https://github.com/cgnieder/chemmacros/
-E-Mail: contact@mychemistry.eu
+E-Mail: chemmacros@cnltx.de
 --------------------------------------------------------------------------
-Copyright 2011--2022 Clemens Niederberger
+Copyright 2011--2021 Clemens Niederberger
+          2022       Clemens Niederberger & Sonja K.
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3c
@@ -20,7 +21,7 @@ version 2008/05/04 or later.
 
 This work has the LPPL maintenance status `maintained'.
 
-The Current Maintainer of this work is Clemens Niederberger.
+The Current Maintainers of this work are Clemens Niederberger and Sonja K.
 --------------------------------------------------------------------------
 The chemmacros package consists of the following files
  == STYLE FILES ==

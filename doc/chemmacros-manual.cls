@@ -1,30 +1,31 @@
 % --------------------------------------------------------------------------
-% the CHEMFORMULA package
+% the CHEMMACROS package
 %
-%   typeset chemical compounds and reactions
+%   comprehensive support for typesetting chemistry documents
 %
 % --------------------------------------------------------------------------
 % Clemens Niederberger
 % --------------------------------------------------------------------------
-% https://github.com/cgnieder/chemformula/
-% contact@mychemistry.eu
+% https://github.org/cgnieder/chemmacros/
+% chemmacros@cnltx.de
 % --------------------------------------------------------------------------
 % If you have any ideas, questions, suggestions or bugs to report, please
 % feel free to contact me.
 % --------------------------------------------------------------------------
-% Copyright 2011--2022 Clemens Niederberger
+% Copyright 2011--2021 Clemens Niederberger
+%           2022       Clemens Niederberger & Sonja K.
 %
 % This work may be distributed and/or modified under the
-% conditions of the LaTeX Project Public License, either version 1.3c
+% conditions of the LaTeX Project Public License, either version 1.3
 % of this license or (at your option) any later version.
 % The latest version of this license is in
 %   http://www.latex-project.org/lppl.txt
 % and version 1.3 or later is part of all distributions of LaTeX
-% version 2008/05/04 or later.
+% version 2005/12/01 or later.
 %
 % This work has the LPPL maintenance status `maintained'.
 %
-% The Current Maintainer of this work is Clemens Niederberger.
+% The Current Maintainers of this work are Clemens Niederberger and Sonja K.
 % --------------------------------------------------------------------------
 \ProvidesClass{chemmacros-manual}[2022/01/18]
 
@@ -36,7 +37,7 @@
   package  = {chemmacros},
   info     = {comprehensive support for typesetting chemistry documents},
   url      = https://github.com/cgnieder/chemmacros ,
-  authors  = {Clemens Niederberger[contact@mychemistry.eu], Sonja K.[SonjaK@mein.gmx]} ,
+  authors  = {Clemens Niederberger[chemmacros@cnltx.de], Sonja K.[SonjaK@mein.gmx]} ,
   abstract = {%
     \centering
     \includegraphics{chemmacros-logo.pdf}
