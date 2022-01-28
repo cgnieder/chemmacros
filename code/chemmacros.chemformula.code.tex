@@ -1,4 +1,4 @@
-\ChemModule{chemformula}{2020/11/29 integration of chemical formulas}
+\ChemModule{chemformula}{2021/01/28 integration of chemical formulas}
 
 \RequirePackage{amstext}
 
@@ -101,7 +101,7 @@
 % add formula methods:
 \chemmacros_add_method_package:nn {chemformula}
   {
-    \chemmacros_integrate_package:nnn {} {chemformula} {2015/09/08}
+    \chemmacros_integrate_package:nnn {} {chemformula} {2022/01/23}
     \cs_set_protected:Npn \chemmacros_chemformula:n #1
       { \chemformula_chcpd:nn {} {#1} }
     \cs_set_protected:Npn \chemmacros_reaction:n #1
@@ -148,14 +148,13 @@
 \chemmacros_add_method_package:nn {chemfig}
   {
     \RequirePackage {chemfig}
-    \cs_set_protected:Npn \chemmacros_chemformula:n #1
-      { \printatom {#1} }
+    \cs_set_protected:Npn \chemmacros_chemformula:n #1 { \printatom {#1} }
     \cs_set_protected:Npn \chemmacros_reaction:n #1
-      { \printatom {#1} }
+      { \schemestart #1 \schemestop }
     \chemmacros_module_after:nn {charges}
       {
         \cs_set_protected:Npn \chemmacros_elpair:n #1
-          { \Lewis { 0: , \printatom {#1} } }
+          { \Charge { 0=\: } {#1} }
         \cs_set_protected:Npn \chemmacros_plus:  { + }
         \cs_set_protected:Npn \chemmacros_minus: { - }
         \cs_set_protected:Npn \chemmacros_formal_plus:  { \ensuremath{\oplus} }
