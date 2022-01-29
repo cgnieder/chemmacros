@@ -417,7 +417,11 @@ Version history
 2022/??/?? - version 6.1   - extend syntax of \state command (thermodynamics)
                            - add `reactants' module to the `errorcheck' module
                            - fix bug in Danish translation
+                           - rename module `chemformula' > `formula'
                            - put reactions in the `chemfig' method in between
-                             \schemestart and \schemestop (chemformula)
+                             \schemestart and \schemestop (formula)
                            - replace deprecated \Lewis with \Charge in method
-                             `chemfig' (chemformula)
+                             `chemfig' (formula)
+                           - choose the formula method if either `mhchem' or
+                             `chemformula' are loaded; choose `chemformula' if
+                             there is a conflict (formula)

@@ -1,4 +1,4 @@
-\ChemModule{chemformula}{2021/01/28 integration of chemical formulas}
+\ChemModule{formula}{2022/01/29 integration of chemical formulas}
 
 \RequirePackage{amstext}
 
@@ -14,10 +14,14 @@
     method~ `chemformula'.
   }
 
+\msg_new:nnn {chemmacros} {formula-method}
+  { Using~ the~ formula~ method~ `#1'. }
+
 \msg_new:nnn {chemmacros} {formula-conflict}
   {
-    You~ have~ loaded~ multiple~ formula~ method~ packages~ but~ haven't~
-    chosen~ which~ method~ to~ use!~ I~ will~ use~ `chemformula'. \\
+    You~ have~ loaded~ both~ `chemformula'~ and~ `mhchem'~ as~ formula~
+    package~ but~ haven't~ chosen~ which~ formula~ method~ to~ use! \\
+    I~ will~ use~ `chemformula'. \\
     You~ should~ decide~ for~ only~ one~ of~ the~ packages~ for~ having~ a~
     consistent~ layout.
   }
@@ -26,10 +30,12 @@
 % generic functions for usage in other packages; those are to be set in each
 % method setup:  
 \cs_new_protected:Npn \chemmacros_reaction:n #1    {#1}
-\cs_new_protected:Npn \chemmacros_chemformula:n #1 {#1}
-\cs_generate_variant:Nn \chemmacros_chemformula:n { x,V }
+\cs_new_protected:Npn \chemmacros_formula:n #1 {#1}
+\cs_generate_variant:Nn \chemmacros_formula:n { x,V,e }
 
-\cs_new_protected:Npn \chemmacros@formula #1  { \chemmacros_chemformula:n {#1} }
+\chemmacros_deprecate_function:NN \chemmacros_chemformula:n \chemmacros_formula:n
+
+\cs_new_protected:Npn \chemmacros@formula #1  { \chemmacros_formula:n {#1} }
 \cs_new_protected:Npn \chemmacros@reaction #1 { \chemmacros_reaction:n {#1} }
 
 % --------------------------------------------------------------------------
@@ -39,22 +45,22 @@
 \tl_new:N \g_chemmacros_formula_method_tl
 \tl_gset:Nn \g_chemmacros_formula_method_tl {chemformula}
 
-\prop_new:N \l__chemmacros_method_packages_prop
+\prop_new:N \l__chemmacros_formula_methods_prop
     
 % #1: package/method name
 % #2: preparations
-\cs_new_protected:Npn \chemmacros_add_method_package:nn #1#2
-  { \prop_put:Nnn \l__chemmacros_method_packages_prop {#1} {#2} }
+\cs_new_protected:Npn \chemmacros_add_formula_method:nn #1#2
+  { \prop_put:Nnn \l__chemmacros_formula_methods_prop {#1} {#2} }
 
-\cs_new_protected:Npn \chemmacros_setup_method_package:n #1
+\cs_new_protected:Npn \chemmacros_setup_formula_method:n #1
   {
-    \prop_item:Nn \l__chemmacros_method_packages_prop {#1}
+    \prop_item:Nn \l__chemmacros_formula_methods_prop {#1}
     \tl_gset:Nn \g_chemmacros_formula_method_tl {#1}
   }
 
-\prg_new_conditional:Npnn \chemmacros_if_method_package:n #1 {p,T,F,TF}
+\prg_new_conditional:Npnn \chemmacros_if_formula_method:n #1 {p,T,F,TF}
   {
-    \prop_if_in:NnTF \l__chemmacros_method_packages_prop {#1}
+    \prop_if_in:NnTF \l__chemmacros_formula_methods_prop {#1}
       { \prg_return_true: }
       { \prg_return_false: }
   }
@@ -64,7 +70,7 @@
     \bool_if:NF \l__chemmacros_formula_method_set_bool
       {
         \bool_set_false:N \l__chemmacros_tmpa_bool
-        \prop_map_inline:Nn \l__chemmacros_method_packages_prop
+        \clist_map_inline:nn {chemformula,mhchem}
           {
             \chemmacros_if_package_loaded:nT {##1}
               {
@@ -87,11 +93,11 @@
 
 \cs_new_protected:Npn \chemmacros_set_formula_method:n #1
   {
-    \chemmacros_if_method_package:nTF {#1}
-      { \chemmacros_setup_method_package:n {#1} }
+    \chemmacros_if_formula_method:nTF {#1}
+      { \chemmacros_setup_formula_method:n {#1} }
       {
         \msg_warning:nnn {chemmacros} {unknown-formula-method} {#1}
-        \chemmacros_setup_method_package:n {chemformula}
+        \chemmacros_setup_formula_method:n {chemformula}
       }
     \bool_set_true:N \l__chemmacros_formula_method_set_bool
   }
@@ -99,19 +105,19 @@
 
 % --------------------------------------------------------------------------
 % add formula methods:
-\chemmacros_add_method_package:nn {chemformula}
+\chemmacros_add_formula_method:nn {chemformula}
   {
     \chemmacros_integrate_package:nnn {} {chemformula} {2022/01/23}
-    \cs_set_protected:Npn \chemmacros_chemformula:n #1
+    \cs_set_protected:Npn \chemmacros_formula:n #1
       { \chemformula_chcpd:nn {} {#1} }
     \cs_set_protected:Npn \chemmacros_reaction:n #1
       { \chemformula_ch:nn {} {#1} }
   }
   
-\chemmacros_add_method_package:nn {mhchem}
+\chemmacros_add_formula_method:nn {mhchem}
   {
     \chemmacros_integrate_package:nnn {version=4} {mhchem} {}
-    \cs_set_protected:Npn \chemmacros_chemformula:n #1 { \ce {#1} }
+    \cs_set_protected:Npn \chemmacros_formula:n #1 { \ce {#1} }
     \cs_set_protected:Npn \chemmacros_reaction:n #1    { \ce {#1} }
     \chemmacros_module_after:nn {charges}
       {
@@ -125,10 +131,10 @@
       }
   }
 
-\chemmacros_add_method_package:nn {chemist}
+\chemmacros_add_formula_method:nn {chemist}
   {
     \RequirePackage {chemist}
-    \cs_set_protected:Npn \chemmacros_chemformula:n #1
+    \cs_set_protected:Npn \chemmacros_formula:n #1
       { \chemmacros_text:n { \ChemForm {#1} } }
     \cs_set_protected:Npn \chemmacros_reaction:n #1
       { \chemmacros_text:n { \ChemForm {#1} } }
@@ -145,10 +151,10 @@
       }
   }
 
-\chemmacros_add_method_package:nn {chemfig}
+\chemmacros_add_formula_method:nn {chemfig}
   {
     \RequirePackage {chemfig}
-    \cs_set_protected:Npn \chemmacros_chemformula:n #1 { \printatom {#1} }
+    \cs_set_protected:Npn \chemmacros_formula:n #1 { \printatom {#1} }
     \cs_set_protected:Npn \chemmacros_reaction:n #1
       { \schemestart #1 \schemestop }
     \chemmacros_module_after:nn {charges}
@@ -169,13 +175,7 @@
   { formula .code:n = \chemmacros_set_formula_method:n {#1} }
 
 \hook_gput_code:nnn {begindocument/before} {chemmacros}
-  {
-    \bool_if:NF \l__chemmacros_formula_method_set_bool
-      {
-        \msg_info:nn {chemmacros} {default-formula-method}
-        \chemmacros_set_formula_method:n {chemformula}
-      }
-  }
+  { \chemmacros_check_formula_method: }
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd

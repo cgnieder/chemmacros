@@ -1,4 +1,4 @@
-\ChemModule{nomenclature}{2022/01/10 chemical names}
+\ChemModule{nomenclature}{2022/01/29 chemical names}
 
 \bool_new:N \l__chemmacros_iupac_restricted_bool
 \bool_new:N \l__chemmacros_iupac_strict_bool
@@ -290,12 +290,12 @@
 % #4: sub-/superscript
 \cs_new_protected:Npn \chemmacros_coordination_symbol:nnnn #1#2#3#4
   {
-    \chemmacros_chemformula:n {#3}
+    \chemmacros_formula:n {#3}
     \tl_if_blank:nF {#4}
       {
         \bool_if:nTF {#2}
-          { \chemmacros_chemformula:n { {}^{#4} } }
-          { \chemmacros_chemformula:n { {}_{#4} } }
+          { \chemmacros_formula:n { {}^{#4} } }
+          { \chemmacros_formula:n { {}_{#4} } }
       }
     \bool_if:nT
       {#1}

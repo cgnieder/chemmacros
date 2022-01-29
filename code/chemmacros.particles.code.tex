@@ -1,4 +1,4 @@
-\ChemModule{particles}{2020/11/29 particles}
+\ChemModule{particles}{2022/01/29 particles}
 
 % --------------------------------------------------------------------------
 % particles
@@ -8,7 +8,7 @@
     \use:x
       {
         \cs_set_protected:Npn \exp_not:N #1
-          { \chemmacros_chemformula:n { \exp_not:V \l__chemmacros_tmpa_tl } }
+          { \chemmacros_formula:n { \exp_not:V \l__chemmacros_tmpa_tl } }
       }
   }
 
@@ -59,9 +59,9 @@
           {
             \chemmacros_elpair:n { #2 }
             \skip_horizontal:N \l__chemmacros_nucleophile_dim
-            \chemmacros_chemformula:n { {}^{-} }
+            \chemmacros_formula:n { {}^{-} }
           }
-          { \chemmacros_chemformula:n { #2^{-} } }
+          { \chemmacros_formula:n { #2^{-} } }
       }
     \DeclareDocumentCommand #1 {o}
       {

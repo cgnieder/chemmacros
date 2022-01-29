@@ -1,4 +1,4 @@
-\ChemModule{spectroscopy}{2021/07/24 environment for spectroscopic data}
+\ChemModule{spectroscopy}{2022/01/29 environment for spectroscopic data}
 
 \RequirePackage{siunitx}
 
@@ -108,11 +108,11 @@
           \tl_put_right:Nn \g__chemmacros_nmr_element_coupled_tl { \} }
         }
       \tl_put_left:Nn \g__chemmacros_nmr_element_coupled_tl {#2}
-      \chemmacros_chemformula:n { ^{#1} }
+      \chemmacros_formula:n { ^{#1} }
       \tl_if_blank:VF \g__chemmacros_nmr_element_coupled_tl
         {
           \bool_if:NTF \l__chemmacros_nmr_parse_bool
-            { \chemmacros_chemformula:V \g__chemmacros_nmr_element_coupled_tl }
+            { \chemmacros_formula:V \g__chemmacros_nmr_element_coupled_tl }
             { \g__chemmacros_nmr_element_coupled_tl }
         }
       \tl_use:N \l__chemmacros_nmr_element_method_connector_tl
@@ -259,7 +259,7 @@
                     \bool_if:NT \l__chemmacros_nmr_comma_bool
                       { , ~ }
                     \bool_if:NT \l__chemmacros_nmr_solvent_bool
-                      { \chemmacros_chemformula:n {#4} }
+                      { \chemmacros_formula:n {#4} }
                     \bool_if:NT \l__chemmacros_nmr_delimiters_bool
                       { ) }
                     \tl_if_blank:nT {#1} {:~}
@@ -287,7 +287,7 @@
                 \bool_if:NT \l__chemmacros_nmr_solvent_bool
                   {
                     \bool_if:NTF \l__chemmacros_nmr_parse_bool
-                      { \chemmacros_chemformula:n {#4} }
+                      { \chemmacros_formula:n {#4} }
                       {#4}
                   }
                 \bool_if:NT \l__chemmacros_nmr_delimiters_bool
@@ -353,12 +353,12 @@
   {
     \__chemmacros_nmr_number:n {#1}
     \chemmacros_skip_nobreak:N \l__chemmacros_nmr_space_skip
-    \chemmacros_chemformula:V \g__chemmacros_nmr_element_tl
+    \chemmacros_formula:V \g__chemmacros_nmr_element_tl
   }
 
 \cs_new_protected:Npn \chemmacros_nmr_position:n #1
   {
-    \chemmacros_chemformula:x
+    \chemmacros_formula:e
       {
         \exp_not:V \g__chemmacros_nmr_element_tl
         \bool_if:NF \l__chemmacros_nmr_position_side_bool
@@ -398,7 +398,7 @@
             \c_math_subscript_token
               {
                 \l__chemmacros_nmr_coupling_nuclei_pre_tl
-                \chemmacros_chemformula:n {#2}
+                \chemmacros_formula:n {#2}
                 \l__chemmacros_nmr_coupling_nuclei_post_tl
               }
           }
@@ -407,7 +407,7 @@
         \tl_set:Nn \l__chemmacros_nmr_coupling_nuclei_tl
           {
             \l__chemmacros_nmr_coupling_nuclei_pre_tl
-            \chemmacros_chemformula:n {#2}
+            \chemmacros_formula:n {#2}
             \l__chemmacros_nmr_coupling_nuclei_post_tl
           }
       }

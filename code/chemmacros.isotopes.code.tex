@@ -1,4 +1,4 @@
-\ChemModule{isotopes}{2020/11/29 a macro to easily print element isotopes}
+\ChemModule{isotopes}{2022/01/29 a macro to easily print element isotopes}
 
 \RequirePackage{elements}
 
@@ -191,9 +191,9 @@
 \cs_new_protected:Npn \chemmacros_isotope_write:nnn #1#2#3
   {
     \bool_if:NTF \l__chemmacros_isotope_super_bool
-      { \chemmacros_chemformula:n { ^{#1}_{#2}#3 } }
+      { \chemmacros_formula:n { ^{#1}_{#2}#3 } }
       {
-        \chemmacros_chemformula:n {#3}
+        \chemmacros_formula:n {#3}
         \tl_use:N \l__chemmacros_isotope_side_connect_tl
         #1
       }

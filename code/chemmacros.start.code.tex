@@ -123,13 +123,13 @@
 \clist_new:N \l_chemmacros_modules_clist
 \clist_set:Nn \l_chemmacros_modules_clist
   {
-    base, errorcheck, lang, greek, chemformula, charges, acid-base, symbols,
+    base, errorcheck, lang, greek, formula, charges, acid-base, symbols,
     particles, phases, nomenclature, tikz, xfrac, translations
   }
 
 \clist_const:Nn \c_chemmacros_all_modules_clist
   {
-    base, errorcheck, lang, greek, chemformula, charges, acid-base, symbols,
+    base, errorcheck, lang, greek, formula, charges, acid-base, symbols,
     particles, phases, nomenclature, tikz, isotopes, mechanisms, newman,
     orbital, polymers, reactions, redox, xfrac, scheme, spectroscopy,
     thermodynamics, units, reactants, translations
@@ -230,6 +230,78 @@
     \cs_if_exist:cTF {ver@#1.sty}
       { \prg_return_true: }
       { \prg_return_false: }
+  }
+
+% ----------------------------------------------------------------------------
+% deprecation & removal
+\msg_new:nnn {chemmacros} {deprecated}
+  {
+    On~ line~ \msg_line_number: : \\
+    The~ #1~ `#2'~ is~ deprecated.~ Use~ #1~ `#3'~ instead .
+  }
+
+\msg_new:nnn {chemmacros} {deprecated-function}
+  { The~ command~ #1~ is~ deprecated.~ Use~ #2 instead . }
+
+\msg_new:nnn {chemmacros} {removed-function}
+  { The~ command~ #1~ has~ been~ removed. }
+
+\msg_new:nnn {chemmacros} {removed}
+  {
+    On~ line~ \msg_line_number: : \\
+    The~ #1~ `#2'~ has~ been~ removed~ from~ chemmacros. \\
+    If~ you~ need~ it~ back~ please~ open~ an~ issue~ on~ \\
+    https://github.com/cgnieder/chemmacros/issues
+    \tl_if_blank:nF {#3} { \\ #3 }
+  }
+
+% #1: type
+% #2: old
+% #3: new
+\cs_new_protected:Npn \__chemmacros_deprecation_warning:nnn #1#2#3
+  { \msg_warning:nnnnn {chemmacros} {deprecated} {#1} {#2} {#3} }
+\cs_generate_variant:Nn \__chemmacros_deprecation_warning:nnn {nne,nV}
+
+% #1: type
+% #2: old
+% #3: additional text
+\cs_new_protected:Npn \chemmacros_removal_warning:nnn #1#2#3
+  { \msg_warning:nnnnn {chemmacros} {removed} {#1} {#2} {#3} }
+\cs_generate_variant:Nn \chemmacros_removal_warning:nnn {nV}
+
+% #1: type
+% #2: old
+\cs_new_protected:Npn \chemmacros_removal_warning:nn #1#2
+  { \msg_warning:nnnn {chemmacros} {removed} {#1} {#2} }
+\cs_generate_variant:Nn \chemmacros_removal_warning:nn {nV}
+
+% #1: new
+\cs_new_protected:Npn \chemmacros_deprecate_option:n #1
+  { \__chemmacros_deprecation_warning:nVn {option} \l_keys_key_str {#1} }
+
+% #1: additional text
+\cs_new_protected:Npn \chemmacros_remove_option:n #1
+  { \chemmacros_removal_warning:nVn {option} \l_keys_key_str {#1} }
+
+\cs_new_protected:Npn \chemmacros_remove_option:
+  { \chemmacros_removal_warning:nV {option} \l_keys_key_str }
+
+% #1: old
+% #2: new
+\cs_new_protected:Npn \chemmacros_deprecate_function:NN #1#2
+  {
+    \cs_set_protected:Npn #1
+      {
+        \msg_error:nnnn {chemmacros} {deprecated-function} {#1} {#2}
+        #2
+      }
+  }
+
+% #1: old
+\cs_new_protected:Npn \chemmacros_remove_function:N #1
+  {
+    \cs_set_protected:Npn #1
+      { \msg_error:nnn {chemmacros} {removed-function} {#1} }
   }
 
 % ----------------------------------------------------------------------------

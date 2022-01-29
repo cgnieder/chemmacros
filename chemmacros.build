@@ -226,7 +226,7 @@ if [ "$build" == true ] ; then
     $modulename.errorcheck.$moduleext \
     $modulename.lang.$moduleext \
     $modulename.greek.$moduleext \
-    $modulename.chemformula.$moduleext \
+    $modulename.formula.$moduleext \
     $modulename.charges.$moduleext \
     $modulename.acid-base.$moduleext \
     $modulename.symbols.$moduleext \

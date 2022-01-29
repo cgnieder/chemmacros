@@ -123,13 +123,13 @@
 \clist_new:N \l_chemmacros_modules_clist
 \clist_set:Nn \l_chemmacros_modules_clist
   {
-    base, errorcheck, lang, greek, chemformula, charges, acid-base, symbols,
+    base, errorcheck, lang, greek, formula, charges, acid-base, symbols,
     particles, phases, nomenclature, tikz, xfrac, translations
   }
 
 \clist_const:Nn \c_chemmacros_all_modules_clist
   {
-    base, errorcheck, lang, greek, chemformula, charges, acid-base, symbols,
+    base, errorcheck, lang, greek, formula, charges, acid-base, symbols,
     particles, phases, nomenclature, tikz, isotopes, mechanisms, newman,
     orbital, polymers, reactions, redox, xfrac, scheme, spectroscopy,
     thermodynamics, units, reactants, translations
@@ -230,6 +230,78 @@
     \cs_if_exist:cTF {ver@#1.sty}
       { \prg_return_true: }
       { \prg_return_false: }
+  }
+
+% ----------------------------------------------------------------------------
+% deprecation & removal
+\msg_new:nnn {chemmacros} {deprecated}
+  {
+    On~ line~ \msg_line_number: : \\
+    The~ #1~ `#2'~ is~ deprecated.~ Use~ #1~ `#3'~ instead .
+  }
+
+\msg_new:nnn {chemmacros} {deprecated-function}
+  { The~ command~ #1~ is~ deprecated.~ Use~ #2 instead . }
+
+\msg_new:nnn {chemmacros} {removed-function}
+  { The~ command~ #1~ has~ been~ removed. }
+
+\msg_new:nnn {chemmacros} {removed}
+  {
+    On~ line~ \msg_line_number: : \\
+    The~ #1~ `#2'~ has~ been~ removed~ from~ chemmacros. \\
+    If~ you~ need~ it~ back~ please~ open~ an~ issue~ on~ \\
+    https://github.com/cgnieder/chemmacros/issues
+    \tl_if_blank:nF {#3} { \\ #3 }
+  }
+
+% #1: type
+% #2: old
+% #3: new
+\cs_new_protected:Npn \__chemmacros_deprecation_warning:nnn #1#2#3
+  { \msg_warning:nnnnn {chemmacros} {deprecated} {#1} {#2} {#3} }
+\cs_generate_variant:Nn \__chemmacros_deprecation_warning:nnn {nne,nV}
+
+% #1: type
+% #2: old
+% #3: additional text
+\cs_new_protected:Npn \chemmacros_removal_warning:nnn #1#2#3
+  { \msg_warning:nnnnn {chemmacros} {removed} {#1} {#2} {#3} }
+\cs_generate_variant:Nn \chemmacros_removal_warning:nnn {nV}
+
+% #1: type
+% #2: old
+\cs_new_protected:Npn \chemmacros_removal_warning:nn #1#2
+  { \msg_warning:nnnn {chemmacros} {removed} {#1} {#2} }
+\cs_generate_variant:Nn \chemmacros_removal_warning:nn {nV}
+
+% #1: new
+\cs_new_protected:Npn \chemmacros_deprecate_option:n #1
+  { \__chemmacros_deprecation_warning:nVn {option} \l_keys_key_str {#1} }
+
+% #1: additional text
+\cs_new_protected:Npn \chemmacros_remove_option:n #1
+  { \chemmacros_removal_warning:nVn {option} \l_keys_key_str {#1} }
+
+\cs_new_protected:Npn \chemmacros_remove_option:
+  { \chemmacros_removal_warning:nV {option} \l_keys_key_str }
+
+% #1: old
+% #2: new
+\cs_new_protected:Npn \chemmacros_deprecate_function:NN #1#2
+  {
+    \cs_set_protected:Npn #1
+      {
+        \msg_error:nnnn {chemmacros} {deprecated-function} {#1} {#2}
+        #2
+      }
+  }
+
+% #1: old
+\cs_new_protected:Npn \chemmacros_remove_function:N #1
+  {
+    \cs_set_protected:Npn #1
+      { \msg_error:nnn {chemmacros} {removed-function} {#1} }
   }
 
 % ----------------------------------------------------------------------------
@@ -1108,7 +1180,7 @@
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd
-\ChemModule{chemformula}{2021/01/28 integration of chemical formulas}
+\ChemModule{formula}{2022/01/29 integration of chemical formulas}
 
 \RequirePackage{amstext}
 
@@ -1124,10 +1196,14 @@
     method~ `chemformula'.
   }
 
+\msg_new:nnn {chemmacros} {formula-method}
+  { Using~ the~ formula~ method~ `#1'. }
+
 \msg_new:nnn {chemmacros} {formula-conflict}
   {
-    You~ have~ loaded~ multiple~ formula~ method~ packages~ but~ haven't~
-    chosen~ which~ method~ to~ use!~ I~ will~ use~ `chemformula'. \\
+    You~ have~ loaded~ both~ `chemformula'~ and~ `mhchem'~ as~ formula~
+    package~ but~ haven't~ chosen~ which~ formula~ method~ to~ use! \\
+    I~ will~ use~ `chemformula'. \\
     You~ should~ decide~ for~ only~ one~ of~ the~ packages~ for~ having~ a~
     consistent~ layout.
   }
@@ -1136,10 +1212,12 @@
 % generic functions for usage in other packages; those are to be set in each
 % method setup:  
 \cs_new_protected:Npn \chemmacros_reaction:n #1    {#1}
-\cs_new_protected:Npn \chemmacros_chemformula:n #1 {#1}
-\cs_generate_variant:Nn \chemmacros_chemformula:n { x,V }
+\cs_new_protected:Npn \chemmacros_formula:n #1 {#1}
+\cs_generate_variant:Nn \chemmacros_formula:n { x,V,e }
 
-\cs_new_protected:Npn \chemmacros@formula #1  { \chemmacros_chemformula:n {#1} }
+\chemmacros_deprecate_function:NN \chemmacros_chemformula:n \chemmacros_formula:n
+
+\cs_new_protected:Npn \chemmacros@formula #1  { \chemmacros_formula:n {#1} }
 \cs_new_protected:Npn \chemmacros@reaction #1 { \chemmacros_reaction:n {#1} }
 
 % --------------------------------------------------------------------------
@@ -1149,22 +1227,22 @@
 \tl_new:N \g_chemmacros_formula_method_tl
 \tl_gset:Nn \g_chemmacros_formula_method_tl {chemformula}
 
-\prop_new:N \l__chemmacros_method_packages_prop
+\prop_new:N \l__chemmacros_formula_methods_prop
     
 % #1: package/method name
 % #2: preparations
-\cs_new_protected:Npn \chemmacros_add_method_package:nn #1#2
-  { \prop_put:Nnn \l__chemmacros_method_packages_prop {#1} {#2} }
+\cs_new_protected:Npn \chemmacros_add_formula_method:nn #1#2
+  { \prop_put:Nnn \l__chemmacros_formula_methods_prop {#1} {#2} }
 
-\cs_new_protected:Npn \chemmacros_setup_method_package:n #1
+\cs_new_protected:Npn \chemmacros_setup_formula_method:n #1
   {
-    \prop_item:Nn \l__chemmacros_method_packages_prop {#1}
+    \prop_item:Nn \l__chemmacros_formula_methods_prop {#1}
     \tl_gset:Nn \g_chemmacros_formula_method_tl {#1}
   }
 
-\prg_new_conditional:Npnn \chemmacros_if_method_package:n #1 {p,T,F,TF}
+\prg_new_conditional:Npnn \chemmacros_if_formula_method:n #1 {p,T,F,TF}
   {
-    \prop_if_in:NnTF \l__chemmacros_method_packages_prop {#1}
+    \prop_if_in:NnTF \l__chemmacros_formula_methods_prop {#1}
       { \prg_return_true: }
       { \prg_return_false: }
   }
@@ -1174,7 +1252,7 @@
     \bool_if:NF \l__chemmacros_formula_method_set_bool
       {
         \bool_set_false:N \l__chemmacros_tmpa_bool
-        \prop_map_inline:Nn \l__chemmacros_method_packages_prop
+        \clist_map_inline:nn {chemformula,mhchem}
           {
             \chemmacros_if_package_loaded:nT {##1}
               {
@@ -1197,11 +1275,11 @@
 
 \cs_new_protected:Npn \chemmacros_set_formula_method:n #1
   {
-    \chemmacros_if_method_package:nTF {#1}
-      { \chemmacros_setup_method_package:n {#1} }
+    \chemmacros_if_formula_method:nTF {#1}
+      { \chemmacros_setup_formula_method:n {#1} }
       {
         \msg_warning:nnn {chemmacros} {unknown-formula-method} {#1}
-        \chemmacros_setup_method_package:n {chemformula}
+        \chemmacros_setup_formula_method:n {chemformula}
       }
     \bool_set_true:N \l__chemmacros_formula_method_set_bool
   }
@@ -1209,19 +1287,19 @@
 
 % --------------------------------------------------------------------------
 % add formula methods:
-\chemmacros_add_method_package:nn {chemformula}
+\chemmacros_add_formula_method:nn {chemformula}
   {
     \chemmacros_integrate_package:nnn {} {chemformula} {2022/01/23}
-    \cs_set_protected:Npn \chemmacros_chemformula:n #1
+    \cs_set_protected:Npn \chemmacros_formula:n #1
       { \chemformula_chcpd:nn {} {#1} }
     \cs_set_protected:Npn \chemmacros_reaction:n #1
       { \chemformula_ch:nn {} {#1} }
   }
   
-\chemmacros_add_method_package:nn {mhchem}
+\chemmacros_add_formula_method:nn {mhchem}
   {
     \chemmacros_integrate_package:nnn {version=4} {mhchem} {}
-    \cs_set_protected:Npn \chemmacros_chemformula:n #1 { \ce {#1} }
+    \cs_set_protected:Npn \chemmacros_formula:n #1 { \ce {#1} }
     \cs_set_protected:Npn \chemmacros_reaction:n #1    { \ce {#1} }
     \chemmacros_module_after:nn {charges}
       {
@@ -1235,10 +1313,10 @@
       }
   }
 
-\chemmacros_add_method_package:nn {chemist}
+\chemmacros_add_formula_method:nn {chemist}
   {
     \RequirePackage {chemist}
-    \cs_set_protected:Npn \chemmacros_chemformula:n #1
+    \cs_set_protected:Npn \chemmacros_formula:n #1
       { \chemmacros_text:n { \ChemForm {#1} } }
     \cs_set_protected:Npn \chemmacros_reaction:n #1
       { \chemmacros_text:n { \ChemForm {#1} } }
@@ -1255,10 +1333,10 @@
       }
   }
 
-\chemmacros_add_method_package:nn {chemfig}
+\chemmacros_add_formula_method:nn {chemfig}
   {
     \RequirePackage {chemfig}
-    \cs_set_protected:Npn \chemmacros_chemformula:n #1 { \printatom {#1} }
+    \cs_set_protected:Npn \chemmacros_formula:n #1 { \printatom {#1} }
     \cs_set_protected:Npn \chemmacros_reaction:n #1
       { \schemestart #1 \schemestop }
     \chemmacros_module_after:nn {charges}
@@ -1279,17 +1357,11 @@
   { formula .code:n = \chemmacros_set_formula_method:n {#1} }
 
 \hook_gput_code:nnn {begindocument/before} {chemmacros}
-  {
-    \bool_if:NF \l__chemmacros_formula_method_set_bool
-      {
-        \msg_info:nn {chemmacros} {default-formula-method}
-        \chemmacros_set_formula_method:n {chemformula}
-      }
-  }
+  { \chemmacros_check_formula_method: }
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd
-\ChemModule{charges}{2020/11/29 charges}
+\ChemModule{charges}{2022/01/29 charges}
 
 % --------------------------------------------------------------------------
 % circled charge signs: they are defined in the `chemformula' package:
@@ -1354,7 +1426,7 @@
 \cs_new_protected:Npn \chemmacros_formal_minus: { \chemformula_formal_minus: }
 
 \cs_new_protected:Npn \chemmacros_charge:n #1
-  { \chemmacros_chemformula:n { {}^{#1} } }
+  { \chemmacros_formula:n { {}^{#1} } }
 
 \cs_new_protected:Npn \chemmacros_new_charge_command:Nn #1#2
   {
@@ -1418,7 +1490,7 @@
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd
-\ChemModule{acid-base}{2022/01/13 acid/base}
+\ChemModule{acid-base}{2022/01/29 acid/base}
 
 % --------------------------------------------------------------------------
 % equilibrium constants:
@@ -1502,8 +1574,8 @@
   }
 
 \NewDocumentCommand \p  {m} { \chemmacros_p:n {#1} }
-\NewDocumentCommand \pH  {} { \chemmacros_p:n { \chemmacros_chemformula:n {H} } }
-\NewDocumentCommand \pOH {} { \chemmacros_p:n { \chemmacros_chemformula:n {OH} } }
+\NewDocumentCommand \pH  {} { \chemmacros_p:n { \chemmacros_formula:n {H} } }
+\NewDocumentCommand \pOH {} { \chemmacros_p:n { \chemmacros_formula:n {OH} } }
 
 \NewDocumentCommand \pKa {o}
   {
@@ -1588,7 +1660,7 @@
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd
-\ChemModule{particles}{2020/11/29 particles}
+\ChemModule{particles}{2022/01/29 particles}
 
 % --------------------------------------------------------------------------
 % particles
@@ -1598,7 +1670,7 @@
     \use:x
       {
         \cs_set_protected:Npn \exp_not:N #1
-          { \chemmacros_chemformula:n { \exp_not:V \l__chemmacros_tmpa_tl } }
+          { \chemmacros_formula:n { \exp_not:V \l__chemmacros_tmpa_tl } }
       }
   }
 
@@ -1649,9 +1721,9 @@
           {
             \chemmacros_elpair:n { #2 }
             \skip_horizontal:N \l__chemmacros_nucleophile_dim
-            \chemmacros_chemformula:n { {}^{-} }
+            \chemmacros_formula:n { {}^{-} }
           }
-          { \chemmacros_chemformula:n { #2^{-} } }
+          { \chemmacros_formula:n { #2^{-} } }
       }
     \DeclareDocumentCommand #1 {o}
       {
@@ -1728,7 +1800,7 @@
   {
     \mode_leave_vertical:
     \bool_if:NTF \l__chemmacros_phases_sub_bool
-      { \chemformula_subscript:n { (#1) } }
+      { \chemmacros_formula:n { {}_{(#1)} } }
       {
         \skip_horizontal:N \l__chemmacros_phases_space_dim
         \chemmacros_text:n { (#1) }
@@ -1745,7 +1817,7 @@
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd
-\ChemModule{nomenclature}{2022/01/10 chemical names}
+\ChemModule{nomenclature}{2022/01/29 chemical names}
 
 \bool_new:N \l__chemmacros_iupac_restricted_bool
 \bool_new:N \l__chemmacros_iupac_strict_bool
@@ -2037,12 +2109,12 @@
 % #4: sub-/superscript
 \cs_new_protected:Npn \chemmacros_coordination_symbol:nnnn #1#2#3#4
   {
-    \chemmacros_chemformula:n {#3}
+    \chemmacros_formula:n {#3}
     \tl_if_blank:nF {#4}
       {
         \bool_if:nTF {#2}
-          { \chemmacros_chemformula:n { {}^{#4} } }
-          { \chemmacros_chemformula:n { {}_{#4} } }
+          { \chemmacros_formula:n { {}^{#4} } }
+          { \chemmacros_formula:n { {}_{#4} } }
       }
     \bool_if:nT
       {#1}
@@ -2468,7 +2540,7 @@
   
 % --------------------------------------------------------------------------
 \ChemModuleEnd
-\ChemModule{tikz}{2020/11/29 upright greek symbols}
+\ChemModule{tikz}{2020/11/29 ease usage of TikZ in chemmacros}
 
 \ExplSyntaxOff
 \RequirePackage{tikz}
@@ -2624,7 +2696,7 @@
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd
-\ChemModule{isotopes}{2020/11/29 a macro to easily print element isotopes}
+\ChemModule{isotopes}{2022/01/29 a macro to easily print element isotopes}
 
 \RequirePackage{elements}
 
@@ -2817,9 +2889,9 @@
 \cs_new_protected:Npn \chemmacros_isotope_write:nnn #1#2#3
   {
     \bool_if:NTF \l__chemmacros_isotope_super_bool
-      { \chemmacros_chemformula:n { ^{#1}_{#2}#3 } }
+      { \chemmacros_formula:n { ^{#1}_{#2}#3 } }
       {
-        \chemmacros_chemformula:n {#3}
+        \chemmacros_formula:n {#3}
         \tl_use:N \l__chemmacros_isotope_side_connect_tl
         #1
       }
@@ -4086,7 +4158,7 @@
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd
-\ChemModule{redox}{2020/11/29 oxidation numbers, redox reactions}
+\ChemModule{redox}{2022/01/29 oxidation numbers, redox reactions}
 
 \RequirePackage{mathtools,relsize}
 
@@ -4230,7 +4302,7 @@
               { \relsize {-3} \__chemmacros_ox_process_number:n {#1} }
           }
       }
-    \hbox_set:Nn \l__chemmacros_tmpb_box { \chemmacros_chemformula:n {#2} }
+    \hbox_set:Nn \l__chemmacros_tmpb_box { \chemmacros_formula:n {#2} }
     \chemmacros_math:n
       {
         \bool_if:NT \l__chemmacros_ox_super_bool
@@ -4844,7 +4916,7 @@
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd
-\ChemModule{spectroscopy}{2021/07/24 environment for spectroscopic data}
+\ChemModule{spectroscopy}{2022/01/29 environment for spectroscopic data}
 
 \RequirePackage{siunitx}
 
@@ -4954,11 +5026,11 @@
           \tl_put_right:Nn \g__chemmacros_nmr_element_coupled_tl { \} }
         }
       \tl_put_left:Nn \g__chemmacros_nmr_element_coupled_tl {#2}
-      \chemmacros_chemformula:n { ^{#1} }
+      \chemmacros_formula:n { ^{#1} }
       \tl_if_blank:VF \g__chemmacros_nmr_element_coupled_tl
         {
           \bool_if:NTF \l__chemmacros_nmr_parse_bool
-            { \chemmacros_chemformula:V \g__chemmacros_nmr_element_coupled_tl }
+            { \chemmacros_formula:V \g__chemmacros_nmr_element_coupled_tl }
             { \g__chemmacros_nmr_element_coupled_tl }
         }
       \tl_use:N \l__chemmacros_nmr_element_method_connector_tl
@@ -5105,7 +5177,7 @@
                     \bool_if:NT \l__chemmacros_nmr_comma_bool
                       { , ~ }
                     \bool_if:NT \l__chemmacros_nmr_solvent_bool
-                      { \chemmacros_chemformula:n {#4} }
+                      { \chemmacros_formula:n {#4} }
                     \bool_if:NT \l__chemmacros_nmr_delimiters_bool
                       { ) }
                     \tl_if_blank:nT {#1} {:~}
@@ -5133,7 +5205,7 @@
                 \bool_if:NT \l__chemmacros_nmr_solvent_bool
                   {
                     \bool_if:NTF \l__chemmacros_nmr_parse_bool
-                      { \chemmacros_chemformula:n {#4} }
+                      { \chemmacros_formula:n {#4} }
                       {#4}
                   }
                 \bool_if:NT \l__chemmacros_nmr_delimiters_bool
@@ -5199,12 +5271,12 @@
   {
     \__chemmacros_nmr_number:n {#1}
     \chemmacros_skip_nobreak:N \l__chemmacros_nmr_space_skip
-    \chemmacros_chemformula:V \g__chemmacros_nmr_element_tl
+    \chemmacros_formula:V \g__chemmacros_nmr_element_tl
   }
 
 \cs_new_protected:Npn \chemmacros_nmr_position:n #1
   {
-    \chemmacros_chemformula:x
+    \chemmacros_formula:e
       {
         \exp_not:V \g__chemmacros_nmr_element_tl
         \bool_if:NF \l__chemmacros_nmr_position_side_bool
@@ -5244,7 +5316,7 @@
             \c_math_subscript_token
               {
                 \l__chemmacros_nmr_coupling_nuclei_pre_tl
-                \chemmacros_chemformula:n {#2}
+                \chemmacros_formula:n {#2}
                 \l__chemmacros_nmr_coupling_nuclei_post_tl
               }
           }
@@ -5253,7 +5325,7 @@
         \tl_set:Nn \l__chemmacros_nmr_coupling_nuclei_tl
           {
             \l__chemmacros_nmr_coupling_nuclei_pre_tl
-            \chemmacros_chemformula:n {#2}
+            \chemmacros_formula:n {#2}
             \l__chemmacros_nmr_coupling_nuclei_post_tl
           }
       }
