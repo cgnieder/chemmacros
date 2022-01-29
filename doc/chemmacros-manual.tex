@@ -8,13 +8,11 @@
 %   comprehensive support for typesetting chemistry documents
 %
 % --------------------------------------------------------------------------
-% Clemens Niederberger
-% --------------------------------------------------------------------------
-% https://github.org/cgnieder/chemmacros/
-% chemmacros@cnltx.de
+% Web:    https://github.org/cgnieder/chemmacros/
+% E-Mail: chemmacros@cnltx.de
 % --------------------------------------------------------------------------
 % If you have any ideas, questions, suggestions or bugs to report, please
-% feel free to contact me.
+% feel free to contact us.
 % --------------------------------------------------------------------------
 % Copyright 2011--2021 Clemens Niederberger
 %           2022       Clemens Niederberger & Sonja K.
@@ -399,7 +397,7 @@ This is how \cs{Ka} is defined:
 
 \section{The \chemmodule*{charges} Module}\label{sec:charges-module}
 
-The \chemmodule{charges} module loads the module \chemmodule{chemformula}.
+The \chemmodule{charges} module loads the module \chemmodule{formula}.
 
 \subsection{Charge Symbols}
 \begin{commands}
@@ -935,7 +933,7 @@ You can change the appearance with this option:
 \section{The \chemmodule*{particles} Module}\label{sec:particles-module}
 
 The \chemmodule{particles} module loads the modules \chemmodule{charges} and
-\chemmodule{chemformula}.
+\chemmodule{formula}.
 
 \subsection{Provided Particle Macros}
 The \chemmodule{particles} defines a number of macros which can be used for
@@ -1034,7 +1032,7 @@ A macro defined this way will have an optional argument for the
 
 \section{The \chemmodule*{phases} Module}\label{sec:phases-module}
 
-The \chemmodule{phases} module loads the \chemmodule{chemformula} modul.
+The \chemmodule{phases} module loads the \chemmodule{formula} modul.
 
 \subsection{Basics}
 
@@ -1149,9 +1147,9 @@ then.  It loads the package \pkg{amstext}~\cite{pkg:amstext}.
     The uppercase delta used in \state[superscript=]{H} for example.
 \end{commands}
 
-\section{The \chemmodule*{chemformula} Module}\label{sec:chemformula-module}
+\section{The \chemmodule*{formula} Module}\label{sec:chemformula-module}
 
-The \chemmodule{chemformula} module loads the \pkg{amstext}
+The \chemmodule{formula} module loads the \pkg{amstext}
 package~\cite{pkg:amstext} and the \chemmodule{charges} module.
 
 \subsection{For Users}
@@ -1198,9 +1196,9 @@ you'll have to choose manually. \emph{All automatic choices only happen at the
   end of the preamble}.
 
 \subsection{Using the \pkg*{chemformula} Package}
-If you set \keyis{formula}{chemformula} the \chemmodule{chemformula} module
+If you set \keyis{formula}{chemformula} the \chemmodule{formula} module
 makes it possible that you can set all \chemformula\ options via the
-\cs{chemsetup} command using the module \module{chemformula}, for example:
+\cs{chemsetup} command using the module \module{formula}, for example:
 \begin{sourcecode}
   \chemsetup[chemformula]{format=\sffamily}
 \end{sourcecode}
@@ -1212,7 +1210,7 @@ provided by the \chemmodule{reactions} module.
 \emph{This method is the recommended choice!}
 
 \subsection{Using the \pkg*{mhchem} Package}\sinceversion{5.1}\label{sec:using-mhchem}
-If you set \keyis{formula}{mhchem} the \chemmodule{chemformula} module makes
+If you set \keyis{formula}{mhchem} the \chemmodule{formula} module makes
 it possible that you can set all of \pkg{mhchem}'s options via the
 \cs{chemsetup} command using the module \module{mhchem}, for example:
 \begin{sourcecode}
@@ -1633,7 +1631,7 @@ implements the following macro based on the same idea:
 \end{example}
 
 \section{The \chemmodule*{reactions} Module}\label{sec:reactions-module}
-The \chemmodule{reactions} module loads the \chemmodule{chemformula} module
+The \chemmodule{reactions} module loads the \chemmodule{formula} module
 and the \pkg{mathtools} package~\cite{pkg:mathtools}.
 
 \subsection{Predefined Environments}
@@ -2516,7 +2514,7 @@ If\sinceversion{5.6} you are using either \pkg{cleveref} or \pkg{fancyref} the
 
 \section{The \chemmodule*{spectroscopy} Module}\label{sec:spectroscopy-module}
 
-The \chemmodule{spectroscopy} module loads the \chemmodule{chemformula} module
+The \chemmodule{spectroscopy} module loads the \chemmodule{formula} module
 and the \pkg{siunitx} package~\cite{pkg:siunitx}.
 
 \subsection{The \cs*{NMR} Command}

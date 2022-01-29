@@ -4,13 +4,11 @@
 %   comprehensive support for typesetting chemistry documents
 %
 % --------------------------------------------------------------------------
-% Clemens Niederberger
-% --------------------------------------------------------------------------
-% https://github.org/cgnieder/chemmacros/
-% chemmacros@cnltx.de
+% Web:    https://github.org/cgnieder/chemmacros/
+% E-Mail: chemmacros@cnltx.de
 % --------------------------------------------------------------------------
 % If you have any ideas, questions, suggestions or bugs to report, please
-% feel free to contact me.
+% feel free to contact us.
 % --------------------------------------------------------------------------
 % Copyright 2011--2021 Clemens Niederberger
 %           2022       Clemens Niederberger & Sonja K.

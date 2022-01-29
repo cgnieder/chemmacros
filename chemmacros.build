@@ -6,9 +6,10 @@
 # --------------------------------------------------------------------------
 # Clemens Niederberger
 # Web:    https://github.com/cgnieder/chemmacros/
-# E-Mail: contact@mychemistry.eu
+# E-Mail: chemmacros@cnltx.de
 # --------------------------------------------------------------------------
-# Copyright 2011--2022 Clemens Niederberger
+# Copyright 2011--2021 Clemens Niederberger
+#           2022       Clemens Niederberger & Sonja K.
 #
 # --------------------------------------------------------------------------
 # this is a personal bash script to build the chemmacros package
