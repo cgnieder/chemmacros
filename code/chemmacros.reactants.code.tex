@@ -1016,8 +1016,8 @@
 % #1: star: include ID in table
 \NewDocumentCommand \printreactants {s}
   {
-  \group_begin:
-     \chemmacros_set_keys:nn {reactants} { switch = false }
+    \group_begin:
+      \chemmacros_set_keys:nn {reactants} { switch = false }
       \int_step_variable:nNn
         { \seq_count:N \g_chemnum_initiated_compounds_seq }
         \l__chemmacros_reactants_tmpa_tl 
@@ -1073,60 +1073,54 @@
                 \chemmacros_if_package_loaded:nTF {xltabular}
                   {	  
                     \bool_if:nTF {#1}
-                    {
-                      \begin
-                        {xltabular}
-                        { \textwidth }
-                        { @{}ll>{\raggedright\arraybackslash}X@{} }
-                    }
-                    {
-                      \begin
-                        {xltabular}
-                        { \textwidth }
-                        { @{}l>{\raggedright\arraybackslash}X@{} }
-                    }
-                   \seq_use:Nn \l__chemmacros_reactants_tmpa_seq { }
-				   \end{xltabular}
-				  }
-				  {
+                      {
+                        \begin {xltabular}
+                          { \textwidth }
+                          { @{}ll>{\raggedright\arraybackslash}X@{} }
+                      }
+                      {
+                        \begin {xltabular}
+                          { \textwidth }
+                          { @{}l>{\raggedright\arraybackslash}X@{} }
+                      }
+                    \seq_use:Nn \l__chemmacros_reactants_tmpa_seq { }
+                    \end{xltabular}
+                  }
+                  {
                     \msg_expandable_error:nnnn
                       {chemmacros}
                       {package-not-loaded}
                       { \printreactants }
                       {xltabular}
-				  }
-			  }
+                  }
+              }
               {longtable}
               {
                 \chemmacros_if_package_loaded:nTF {longtable}
                   {	  
                     \bool_if:nTF {#1}
-                    {
-                      \begin
-                        {longtable}[l]
-                        { @{}ll>{\raggedright\arraybackslash}p{0.6\textwidth}@{} }
-                    }
-                    {
-                      \begin
-                        {longtable}[l]
+                      {
+                        \begin {longtable}[l]
+                          { @{}ll>{\raggedright\arraybackslash}p{0.6\textwidth}@{} }
+                      }
+                      {
+                        \begin {longtable}[l]
                         { @{}l>{\raggedright\arraybackslash}p{0.9\textwidth}@{} }
-                    }
-                  \seq_use:Nn \l__chemmacros_reactants_tmpa_seq { }
-                  \end{longtable}
-				  }
-				  {
+                      }
+                    \seq_use:Nn \l__chemmacros_reactants_tmpa_seq { }
+                    \end{longtable}
+                  }
+                  {
                     \msg_expandable_error:nnnn
                       {chemmacros}
                       {package-not-loaded}
                       { \printreactants }
                       {longtable}
-				  }
-			  }
-			}
-	    }
-	    {
-	      \msg_warning:nn {chemmacros} {missing-printreactants-style}
-	    }
+                  }
+              }
+            }
+	}
+        { \msg_warning:nn {chemmacros} {missing-printreactants-style} }
     \group_end:
   }
 

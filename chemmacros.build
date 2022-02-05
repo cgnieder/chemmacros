@@ -4,13 +4,11 @@
 #   comprehensive support for typesetting chemistry documents
 # 
 # --------------------------------------------------------------------------
-# Clemens Niederberger
 # Web:    https://github.com/cgnieder/chemmacros/
-# E-Mail: chemmacros@cnltx.de
+# E-Mail: clemens@cnltx.de
 # --------------------------------------------------------------------------
 # Copyright 2011--2021 Clemens Niederberger
 #           2022       Clemens Niederberger & Sonja K.
-#
 # --------------------------------------------------------------------------
 # this is a personal bash script to build the chemmacros package
 # and very likely not of use for anybody else

@@ -5,7 +5,7 @@
 %
 % --------------------------------------------------------------------------
 % Web:    https://github.org/cgnieder/chemmacros/
-% E-Mail: chemmacros@cnltx.de
+% E-Mail: clemens@cnltx.de
 % --------------------------------------------------------------------------
 % If you have any ideas, questions, suggestions or bugs to report, please
 % feel free to contact us.
@@ -14,12 +14,12 @@
 %           2022       Clemens Niederberger & Sonja K.
 %
 % This work may be distributed and/or modified under the
-% conditions of the LaTeX Project Public License, either version 1.3
+% conditions of the LaTeX Project Public License, either version 1.3c
 % of this license or (at your option) any later version.
 % The latest version of this license is in
 %   http://www.latex-project.org/lppl.txt
-% and version 1.3 or later is part of all distributions of LaTeX
-% version 2005/12/01 or later.
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2008/05/04 or later.
 %
 % This work has the LPPL maintenance status `maintained'.
 %
@@ -35,7 +35,7 @@
   package  = {chemmacros},
   info     = {comprehensive support for typesetting chemistry documents},
   url      = https://github.com/cgnieder/chemmacros ,
-  authors  = {Clemens Niederberger[chemmacros@cnltx.de], Sonja K.[SonjaK@mein.gmx]} ,
+  authors  = {Clemens Niederberger[clemens@cnltx.de], Sonja K.[SonjaK@mein.gmx]} ,
   abstract = {%
     \centering
     \includegraphics{chemmacros-logo.pdf}
@@ -556,5 +556,6 @@
 \chemmacros@add@version{2020-11-29}{5.12}
 \chemmacros@add@version{2022-01-16}{6.0}
 \chemmacros@add@version{2022-01-18}{6.0a}
+% \chemmacros@add@version{2022-01-18}{6.1}
 
 \endinput

@@ -5,7 +5,7 @@ the CHEMMACROS package
 
 --------------------------------------------------------------------------
 Web:    https://github.org/cgnieder/chemmacros/
-E-Mail: chemmacros@cnltx.de
+E-Mail: clemens@cnltx.de
 --------------------------------------------------------------------------
 If you have any ideas, questions, suggestions or bugs to report, please
 feel free to contact us.
@@ -423,3 +423,6 @@ Version history
                            - choose the formula method if either `mhchem' or
                              `chemformula' are loaded; choose `chemformula' if
                              there is a conflict (formula)
+                           - use last instead of first found method for
+                             defining floats (scheme)
+                           - new option `scheme/float-method'
