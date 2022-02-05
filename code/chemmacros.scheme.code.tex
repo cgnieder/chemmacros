@@ -3,12 +3,6 @@
 \RequirePackage {chemnum}
 \RequirePackage {etoolbox}
 
-\msg_new:nnn {chemmacros} {patch-failed}
-  {
-    Patching~ \token_to_str:N #1 \c_space_tl failed.~
-    Please~ inform~ the~ chemmacros~ package~ authors.
-  }
-
 \bool_new:N \l__chemmacros_float_def_bool
 \tl_new:N   \l__chemmacros_float_method_tl
 \seq_new:N  \l__chemmacros_float_methods_seq
@@ -176,11 +170,9 @@
             \@starttoc {#2}
             \legacy_if:nT {@restonecol} { \twocolumn }
           }
-        \patchcmd \@chapter
+        \chemmacros_patch_cmd:Nnn \@chapter
           { \addtocontents }
           { \addtocontents {#2} { \protect \addvspace {10\p@} } \addtocontents }
-          {}
-          { \msg_warning:nnn {chemmacros} {patch-failed} { \@chapter } }
       }
       {
         \cs_new_protected:cpn {listof#1s}
@@ -245,18 +237,6 @@
       }
   }
 
-% --------------------------------------------------------------------------
-\ChemCleverefSupport {scheme}
-  { \chemmacros_translate:n {scheme} }
-  [ \chemmacros_translate:n {Scheme} ]
-  { \chemmacros_translate:n {schemes} }
-  [ \chemmacros_translate:n {Schemes} ]
-
-\ChemFancyrefSupport {sch}
-  { \chemmacros_translate:n {scheme} }
-  [ \chemmacros_translate:n {Scheme} ]
-
-% --------------------------------------------------------------------------
 % #1: env name
 % #2: file ending
 \cs_new_protected:Npn \chemmacros_define_float:nn #1#2
@@ -284,6 +264,17 @@
         \cs_set:cpn {list#1name} {\chemmacros_translate:n {#1-list}}
       }
   }
+  
+% --------------------------------------------------------------------------
+\ChemCleverefSupport {scheme}
+  { \chemmacros_translate:n {scheme} }
+  [ \chemmacros_translate:n {Scheme} ]
+  { \chemmacros_translate:n {schemes} }
+  [ \chemmacros_translate:n {Schemes} ]
+
+\ChemFancyrefSupport {sch}
+  { \chemmacros_translate:n {scheme} }
+  [ \chemmacros_translate:n {Scheme} ]
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd

@@ -1,21 +1,11 @@
 \ChemModule{base}{2022/01/10 basic chemmacros module}
 
 % --------------------------------------------------------------------------
-\msg_new:nnn {chemmacros} {command-deprecated}
+\msg_new:nnn {chemmacros} {patch-failed}
   {
-    The~ command~ \token_to_str:N #1 \c_space_tl is~ deprecated.~ Use~
-    \token_to_str:N #2 \c_space_tl instead.
+    I~ failed~ to~ patch~ \token_to_str:N #1 .~ Please~ contact~ the~ package~
+    author.
   }
-
-% define a deprecated command with hints to the corresponding new one:
-\cs_new_protected:Npn \chemmacros_define_deprecated:NN #1#2
-  {
-    \cs_set_protected:Npn #1
-      { \msg_warning:nnnn {chemmacros} {command-deprecated} {#1} {#2} #2 }
-  }
-
-\NewDocumentCommand \DeclareChemDeprecated {mm}
-  { \chemmacros_define_deprecated:NN #1 #2 }
 
 % --------------------------------------------------------------------------
 % define a macro set:
@@ -204,6 +194,8 @@
       { \prg_return_true: }
       { \prg_return_false: }
   }
+
+% --------------------------------------------------------------------------
 \cs_new_protected:Npn \chemmacros_cs_if_free_new:Npn #1
   {
     \cs_if_exist:NF #1
@@ -218,6 +210,15 @@
   }
 \cs_generate_variant:Nn \chemmacros_cs_if_free_new_protected:Npn {c}
 
+% --------------------------------------------------------------------------
+\cs_new_protected:Npn \chemmacros_patch_cmd:Nnn #1#2#3
+  {
+    \patchcmd #1 {#2} {#3}
+      {}
+      { \msg_warning:nnn {chemmacros} {patch-failed} {#1} }
+  }
+
+% --------------------------------------------------------------------------
 % #1: counter
 % #2: singular
 % #3: plural

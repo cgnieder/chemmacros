@@ -426,3 +426,11 @@ Version history
                            - use last instead of first found method for
                              defining floats (scheme)
                            - new option `scheme/float-method'
+                           - rename \AddRxnDesc into \ChemReactionDescription
+                             (reactions)
+                           - new option `reactions/own-counter'
+                           - deprecate option `reactions/tocbasic'
+                           - make \autoref work with reaction environments
+                             through some possibly dangerous patches
+                           - reorganization of deprecation, removal, and
+                             patching

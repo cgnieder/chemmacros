@@ -25,7 +25,7 @@
 %
 % The Current Maintainers of this work are Clemens Niederberger and Sonja K.
 % --------------------------------------------------------------------------
-\RequirePackage{l3keys2e}
+\RequirePackage {l3keys2e}
 \ExplSyntaxOn
 
 % --------------------------------------------------------------------------
@@ -279,9 +279,12 @@
   { \msg_warning:nnnn {chemmacros} {removed} {#1} {#2} }
 \cs_generate_variant:Nn \chemmacros_removal_warning:nn {nV}
 
-% #1: new
+% #1: additional text
 \cs_new_protected:Npn \chemmacros_deprecate_option:n #1
   { \__chemmacros_deprecation_warning:nVn {option} \l_keys_key_str {#1} }
+
+\cs_new_protected:Npn \chemmacros_deprecate_option:
+  { \__chemmacros_deprecation_warning:nV {option} \l_keys_key_str }
 
 % #1: additional text
 \cs_new_protected:Npn \chemmacros_remove_option:n #1
@@ -307,6 +310,9 @@
     \cs_set_protected:Npn #1
       { \msg_error:nnn {chemmacros} {removed-function} {#1} }
   }
+
+\NewDocumentCommand \DeclareChemDeprecated {mm}
+  { \chemmacros_deprecate_function:NN #1 #2 }
 
 % ----------------------------------------------------------------------------
 % this is for external file modules called "styles":

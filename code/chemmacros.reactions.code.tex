@@ -1,8 +1,35 @@
-\ChemModule{reactions}{2022/01/13 reaction environments}
+\ChemModule{reactions}{2022/02/05 reaction environments}
 
-\RequirePackage{mathtools}
+\newcounter {reaction}
+\hook_gput_code:nnn {package/hyperref/after} {chemmacros}
+  {
+    \cs_if_exist:NTF \chapter
+      { \cs_set:Npn \theHreaction { \theHchapter . \thereaction } }
+      { \cs_set:Npn \theHreaction { \theHsection . \thereaction } }
+  }
+
+\bool_new:N \l__chemmacros_reactions_counter_bool
+\bool_new:N \l__chemmacros_reactions_tocbasic_bool
+
+\cs_new_eq:NN \l@reaction \l@figure
+\cs_if_exist:NT \KOMAClassName
+  { \bool_set_true:N \l__chemmacros_reactions_tocbasic_bool }
+
+\tl_new:N \g__chemmacros_reaction_description_tl
+\tl_new:N \l__chemmacros_reactions_tag_open_tl
+\tl_new:N \l__chemmacros_reactions_tag_close_tl
+\tl_new:N \l__chemmacros_reactions_before_tag_tl
+\tl_new:N \l__chemmacros_reaction_lorname_tl
+\tl_new:N \reactionlistname
+\tl_new:N \l__chemmacros_reaction_heading_tl
+\tl_new:N \l__chemmacros_reactions_args_tl
 
 % --------------------------------------------------------------------------
+\RequirePackage{mathtools}
+% redefine mathtools' command \MT_define_tagform:nwnn to ensure we add an
+% entry to the list of reactions even if the user redefines the reaction tag
+% this should probably be done via patching...
+
 \cs_new_protected:Npn \__chemmacros_record_for_lor:nnnnn #1#2#3#4#5
   {
     \tl_if_eq:nnT {#1} {reaction}
@@ -24,9 +51,6 @@
       }
   }
 
-% redefine mathtools' command \MT_define_tagform:nwnn to ensure we add an
-% entry to the list of reactions even if the user redefines the reaction tag
-% this should probably be done via patching...
 \hook_gput_code:nnn {package/mathtools/after} {chemmacros}
   {
     \cs_set_protected:Npn \MT_define_tagform:nwnn #1[#2]#3#4
@@ -35,29 +59,36 @@
           {
             % this is the original part:
             \maketag@@@{#3\ignorespaces#2{##1}\unskip\@@italiccorr#4}
-            % this is added => this disturbs hyperref:
+            % this is added (but disturbs hyperref):
             \__chemmacros_record_for_lor:nnnnn
               {#1} {#3} {#2} {##1} {#4}
           }
       }
   }
 
-\tl_new:N \g__chemmacros_reaction_description_tl
+% --------------------------------------------------------------------------
+% create new tagform
+\newtagform {reaction}
+  [\l__chemmacros_reactions_before_tag_tl]
+  {\l__chemmacros_reactions_tag_open_tl}
+  {\l__chemmacros_reactions_tag_close_tl}
 
+% --------------------------------------------------------------------------
 \cs_new_protected:Npn \chemmacros_add_reaction_description:n #1
   {
     \tl_if_blank:nF {#1}
       { \tl_gset:Nn \g__chemmacros_reaction_description_tl {:~#1} }
   }
 
-\NewDocumentCommand \AddRxnDesc {m}
+\NewDocumentCommand \ChemReactionDescription {m}
   { \chemmacros_add_reaction_description:n {#1} }
 
-% define \listofreactions
-\tl_new:N  \l__chemmacros_reaction_lorname_tl
-\tl_new:N  \reactionlistname
-\tl_new:N  \l__chemmacros_reaction_heading_tl
+\chemmacros_deprecate_function:NN
+  \AddRxnDesc
+  \ChemReactionDescription
 
+% --------------------------------------------------------------------------
+% define \listofreactions
 \cs_new:Npn \__chemmacros_reaction_heading:n #1
   { \l__chemmacros_reaction_heading_tl {#1} }
 \cs_generate_variant:Nn \__chemmacros_reaction_heading:n { V }
@@ -67,57 +98,20 @@
 
 \tl_set:Nn \reactionlistname { \chemmacros_translate:n {list-of-reactions} }
 
-\chemmacros_define_keys:nn {reactions}
-  {
-    list-name .tl_set:N = \reactionlistname ,
-    list-entry .tl_set:N = \l__chemmacros_reaction_lorname_tl ,
-    list-heading-cmd .code:n =
-      \cs_set_protected:Npn \__chemmacros_reaction_heading:n ##1 {#1}
-  }
-
-\cs_if_exist:NTF \chapter
-  { \chemmacros_set_keys:nn {reactions} { list-heading-cmd = \chapter* {#1} } }
-  { \chemmacros_set_keys:nn {reactions} { list-heading-cmd = \section* {#1} } }
-
 \cs_new_protected:Npn \listofreactions
   {
     \__chemmacros_reaction_heading:V \reactionlistname
     \@starttoc {lor}
   }
 
-\cs_new_eq:NN \l@reaction \l@figure
-
-\bool_new:N \l__chemmacros_reactions_tocbasic_bool
-\cs_if_exist:NT \KOMAClassName
-  { \bool_set_true:N \l__chemmacros_reactions_tocbasic_bool }
-
-\tl_new:N \l__chemmacros_reactions_tag_open_tl
-\tl_new:N \l__chemmacros_reactions_tag_close_tl
-\tl_new:N \l__chemmacros_reactions_before_tag_tl
-
-\chemmacros_define_keys:nn {reactions}
-  {
-    tocbasic   .bool_set:N = \l__chemmacros_reactions_tocbasic_bool ,
-    tag-open   .tl_set:N   = \l__chemmacros_reactions_tag_open_tl ,
-    tag-open   .initial:n  = \{ ,
-    tag-close  .tl_set:N   = \l__chemmacros_reactions_tag_close_tl ,
-    tag-close  .initial:n  = \} ,
-    before-tag .tl_set:N   = \l__chemmacros_reactions_before_tag_tl
-  }
-
 \hook_gput_code:nnn {package/tocbasic/after} {chemmacros}
   {
-    \bool_lazy_or:nnT
-      { \chemmacros_if_package_loaded_p:n {tocbasic} }
-      { \l__chemmacros_reactions_tocbasic_bool }
-      {
-        \RequirePackage {tocbasic}
-        \addtotoclist [float] {lor}
-        \cs_set_protected:Npn \listofreactions { \listoftoc {lor} }
-        \cs_new:Npn \listoflorname { \reactionlistname }
-      }
+    \addtotoclist [float] {lor}
+    \cs_set_protected:Npn \listofreactions { \listoftoc {lor} }
+    \cs_new:Npn \listoflorname { \reactionlistname }
   }
 
+% --------------------------------------------------------------------------
 \ChemCleverefSupport {reaction}
   { \chemmacros_translate:n {reaction} }
   [ \chemmacros_translate:n {Reaction} ]
@@ -139,73 +133,67 @@
 \ChemFancyrefSupport {rct}
   { \chemmacros_translate:n {reaction} }
   [ \chemmacros_translate:n {Reaction} ]
-  
-% create new tagform
-\newtagform {reaction}
-  [\l__chemmacros_reactions_before_tag_tl]
-  {\l__chemmacros_reactions_tag_open_tl}
-  {\l__chemmacros_reactions_tag_close_tl}
 
-\newcounter {chemmacros_save_reaction}
-\newcounter {reaction}
-
+% --------------------------------------------------------------------------
+% begin and end reaction environments: switch to reaction counter:
 \cs_new_protected:Npn \__chemmacros_begin_reaction:
   {
-    \patchcmd \thereaction {reaction} {equation} {} {}
-    \cs_set_eq:NN \theequation \thereaction
-    \cs_set_eq:NN \r@equation \r@reaction
-    \cs_set_eq:NN \p@equation \p@reaction
-    \cs_set:Npn \theHequation { R . \theHsection . \theequation }
-    \setcounter {chemmacros_save_reaction} { \value {equation} }
-    \setcounter {equation} { \value {reaction} }
-    % \chemmacros_if_package_loaded:nT {cleveref}
-    %   { \crefalias {equation} {reaction} }
-    \usetagform {reaction}
+    \bool_if:NT \l__chemmacros_reactions_counter_bool
+      {
+        \cs_set_eq:NN \r@equation \r@reaction
+        \cs_set_eq:NN \p@equation \p@reaction
+        \cs_set_eq:NN \c@equation \c@reaction
+        \chemmacros_patch_cmd:Nnn \thereaction {reaction} {equation}
+        % this only works if nobody steps counters inside reactions:
+        \chemmacros_patch_cmd:Nnn \refstepcounter
+          { \This@name }
+          { \This@name {reaction} \@gobble }
+        \chemmacros_patch_cmd:Nnn \hyper@refstepcounter
+          { \This@name }
+          { \This@name {reaction} \@gobble }
+        \chemmacros_patch_cmd:Nnn \hyper@refstepcounter
+          { \hyper@makecurrent }
+          { \hyper@makecurrent {reaction} \@gobble }
+        \usetagform {reaction}
+      }
   }
 
-% switch back to equation tags
 \cs_new_protected:Npn \__chemmacros_end_reaction:
-  {
-    \setcounter {reaction} { \value {equation} }
-    \setcounter {equation} { \value {chemmacros_save_reaction} }
-  }
+  { }
 
-\tl_new:N \l__chemmacros_reactions_args_tl
-
+% --------------------------------------------------------------------------
 \cs_new_protected:Npn \__chemmacros_reactions_build_args:n #1
   { \tl_put_right:Nn \l__chemmacros_reactions_args_tl { {## #1} } }
 
 \cs_new_protected:Npn \chemmacros_define_reaction:nnn #1#2#3
   {
+    \tl_clear:N \l__chemmacros_reactions_args_tl
     \int_compare:nNnT {#3+0} > {0}
-      {
-        \tl_clear:N \l__chemmacros_reactions_args_tl
-        \int_step_function:nnnN {2} {1} {#3+1} \__chemmacros_reactions_build_args:n
-      }
-    \chemmacros_declare_reaction_env:nnnV {#1} {#2} {#3} \l__chemmacros_reactions_args_tl
+      { \int_step_function:nnnN {2} {1} {#3+1} \__chemmacros_reactions_build_args:n }
+    \__chemmacros_declare_reaction_env:nnnV {#1} {#2} {#3} \l__chemmacros_reactions_args_tl
   }
 
 % #1: chem
 % #2: math
 % #3: args number
 % #4: argument list ({#2}{#3}...)
-\cs_new_protected:Npn \chemmacros_declare_reaction_env:nnnn #1#2#3#4
+\cs_new_protected:Npn \__chemmacros_declare_reaction_env:nnnn #1#2#3#4
   {
     \exp_args:Nnx \DeclareDocumentEnvironment {#1}
       { \int_compare:nT { #3+0 = 0 } {!} O{} \prg_replicate:nn {#3+0} {m} }
       {
         \chemmacros_add_reaction_description:n {##1}
         \__chemmacros_begin_reaction:
-        \chemmacros_reaction_read:nnw {#2} {#4}
+        \__chemmacros_reaction_read:nnw {#2} {#4}
       }
       {
         \__chemmacros_end_reaction:
         \ignorespacesafterend
       }
   }
-\cs_generate_variant:Nn \chemmacros_declare_reaction_env:nnnn {nnnV}
+\cs_generate_variant:Nn \__chemmacros_declare_reaction_env:nnnn {nnnV}
 
-\cs_new_protected:Npn \chemmacros_reaction_read:nnw #1#2#3 \end
+\cs_new_protected:Npn \__chemmacros_reaction_read:nnw #1#2#3 \end
   {
     \tl_clear:N \l__chemmacros_tmpa_tl
     \seq_clear:N \l__chemmacros_tmpc_seq
@@ -229,17 +217,37 @@
           { \l__chemmacros_tmpa_int = \l__chemmacros_tmpb_int }
           { \tl_put_right:Nn \l__chemmacros_tmpa_tl {\\} }
       }
-    \chemmacros_reaction_write:nnV {#1} {#2} \l__chemmacros_tmpa_tl
+    \__chemmacros_reaction_write:nnV {#1} {#2} \l__chemmacros_tmpa_tl
     \end
   }
 
-\cs_new_protected:Npn \chemmacros_reaction_write:nnn #1#2#3
+\cs_new_protected:Npn \__chemmacros_reaction_write:nnn #1#2#3
   {
     \begin{#1}#2
       #3
     \end{#1}
   }
-\cs_generate_variant:Nn \chemmacros_reaction_write:nnn { nnV }
+\cs_generate_variant:Nn \__chemmacros_reaction_write:nnn { nnV }
+
+\chemmacros_define_keys:nn {reactions}
+  {
+    list-name        .tl_set:N = \reactionlistname ,
+    list-entry       .tl_set:N = \l__chemmacros_reaction_lorname_tl ,
+    list-heading-cmd .code:n =
+      \cs_set_protected:Npn \__chemmacros_reaction_heading:n ##1 {#1} ,
+    tocbasic         .code:n     = \chemmacros_deprecate_option: ,
+    own-counter      .bool_set:N = \l__chemmacros_reactions_counter_bool ,
+    own-counter      .initial:n  = true ,
+    tag-open         .tl_set:N   = \l__chemmacros_reactions_tag_open_tl ,
+    tag-open         .initial:n  = \{ ,
+    tag-close        .tl_set:N   = \l__chemmacros_reactions_tag_close_tl ,
+    tag-close        .initial:n  = \} ,
+    before-tag       .tl_set:N   = \l__chemmacros_reactions_before_tag_tl
+  }
+
+\cs_if_exist:NTF \chapter
+  { \chemmacros_set_keys:nn {reactions} { list-heading-cmd = \chapter* {#1} } }
+  { \chemmacros_set_keys:nn {reactions} { list-heading-cmd = \section* {#1} } }
 
 \NewChemMacroset* {Reaction} {mO{}m}
   { \chemmacros_define_reaction:nnn {#1} {#3} {#2} }
@@ -248,6 +256,6 @@
 \NewChemReaction {reaction*}  {equation*}
 \NewChemReaction {reactions}  {align}
 \NewChemReaction {reactions*} {align*}
-
+  
 % --------------------------------------------------------------------------
 \ChemModuleEnd
