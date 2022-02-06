@@ -1,30 +1,3 @@
-% --------------------------------------------------------------------------
-% the CHEMMACROS package v6.1 2022/02/06
-%
-%   comprehensive support for typesetting chemistry documents
-%
-% --------------------------------------------------------------------------
-% Web:    https://github.org/cgnieder/chemmacros/
-% E-Mail: chemmacros@cnltx.de
-% --------------------------------------------------------------------------
-% If you have any ideas, questions, suggestions or bugs to report, please
-% feel free to contact us.
-% --------------------------------------------------------------------------
-% Copyright 2011--2021 Clemens Niederberger
-%           2022--     Clemens Niederberger & Sonja K.
-%
-% This work may be distributed and/or modified under the
-% conditions of the LaTeX Project Public License, either version 1.3c
-% of this license or (at your option) any later version.
-% The latest version of this license is in
-%   http://www.latex-project.org/lppl.txt
-% and version 1.3c or later is part of all distributions of LaTeX
-% version 2008/05/04 or later.
-%
-% This work has the LPPL maintenance status `maintained'.
-%
-% The Current Maintainers of this work are Clemens Niederberger and Sonja K.
-% --------------------------------------------------------------------------
 % arara: pdflatex: { interaction: nonstopmode }
 % arara: biber
 % arara: pdflatex: { interaction: nonstopmode }
@@ -1881,13 +1854,14 @@ names are declared in the preamble removing the need to repeat the same
 module options the output style (order of name number and data) can be altered
 globally (or locally) to suit your needs, while the data itself is input using
 an easy to use key-value approach and processed by the \pkg{siunitx}
-package. The \module{reactants} module responds to the language declared with
-the \pkg{babel} package and also offers methods to integrate the acronyms of
-used reactants or solvents into the list of acronyms.
+package~\cite{pkg:siunitx}. The \module{reactants} module responds to the
+language declared with the \pkg{babel} package and also offers methods to
+integrate the acronyms of used reactants or solvents into the list of
+acronyms.
 
 The module requires and loads the packages \pkg{chemnum}~\cite{pkg:chemnum}
-and \pkg{siunitx}~\cite{pkg:siunitx}. Depending on the selected options the
-packages \pkg{acro}~\cite{pkg:acro},
+and \pkg{siunitx}. Depending on the selected options the packages
+\pkg{acro}~\cite{pkg:acro},
 \pkg{glossaries-extra}~\cite{pkg:glossaries-extra},
 \pkg{hyperref}~\cite{pkg:hyperref}, \pkg{longtable}~\cite{pkg:longtable}
 and/or \pkg{xltabular}~\cite{pkg:xltabular} might be needed for this module
@@ -2060,7 +2034,7 @@ solvent. This text automatically adapts to the document language set via
 the German translation are included in the package.  If you write in a
 different language (or just don't like the predefined text), you can use the
 command \cs{DeclareChemTranslation}\marg{key}\marg{language}\marg{translation}
-(with \keyis{\meta{key}}{solution}) as described in
+(with \keyis*{\meta{key}}{solution}) as described in
 section~\vref{sec:lang-module} in order to supply your own translation.
 
 \begin{example}
@@ -3161,11 +3135,11 @@ units.  Like all \pkg{siunitx} units they're only valid inside
   \command{Molar} \unit{\Molar}
   \command{MolMass} \unit{\MolMass}
   \command{normal} \unit{\normal}
-  \command{torr} \unit{\torr} 
-  \par
-\sinceversion{6.0}    Since some units still frequently used in chemistry were removed from version 3 of \pkg{siunitx}, 
-   \chemmacros\ also defines these in the same way, older versions of \pkg{siunitx} used to do. 
-    These units are:
+  \command{torr} \unit{\torr}\par
+  %%%
+  \sinceversion{6.0}Since some units still frequently used in chemistry were
+  removed from version 3 of \pkg{siunitx} \chemmacros\ also defines these in
+  the same way, older versions of \pkg{siunitx} used to do. These units are:
   \command{angstrom} \unit{\angstrom}
   \command{atomicmassunit} \unit{\atomicmassunit}
   \command{bar} \unit{\bar}

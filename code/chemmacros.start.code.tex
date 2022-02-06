@@ -1,36 +1,9 @@
-% --------------------------------------------------------------------------
-% the CHEMMACROS package
-%
-%   comprehensive support for typesetting chemistry documents
-%
-% --------------------------------------------------------------------------
-% Web:    https://github.org/cgnieder/chemmacros/
-% E-Mail: chemmacros@cnltx.de
-% --------------------------------------------------------------------------
-% If you have any ideas, questions, suggestions or bugs to report, please
-% feel free to contact us.
-% --------------------------------------------------------------------------
-% Copyright 2011--2021 Clemens Niederberger
-%           2022       Clemens Niederberger & Sonja K.
-%
-% This work may be distributed and/or modified under the
-% conditions of the LaTeX Project Public License, either version 1.3c
-% of this license or (at your option) any later version.
-% The latest version of this license is in
-%   http://www.latex-project.org/lppl.txt
-% and version 1.3c or later is part of all distributions of LaTeX
-% version 2008/05/04 or later.
-%
-% This work has the LPPL maintenance status `maintained'.
-%
-% The Current Maintainers of this work are Clemens Niederberger and Sonja K.
-% --------------------------------------------------------------------------
 \RequirePackage {l3keys2e}
 \ExplSyntaxOn
 
 % --------------------------------------------------------------------------
 % package information:
-\tl_const:Nn \c_chemmacros_date_tl {2022/01/18}
+\tl_const:Nn \c_chemmacros_date_tl {2022/02/06}
 \tl_const:Nn \c_chemmacros_version_major_number_tl {6}
 \tl_const:Nn \c_chemmacros_version_minor_number_tl {1}
 \tl_const:Nn \c_chemmacros_version_subrelease_tl   {}
@@ -279,7 +252,7 @@
   { \msg_warning:nnnn {chemmacros} {removed} {#1} {#2} }
 \cs_generate_variant:Nn \chemmacros_removal_warning:nn {nV}
 
-% #1: additional text
+% #1: new
 \cs_new_protected:Npn \chemmacros_deprecate_option:n #1
   { \__chemmacros_deprecation_warning:nVn {option} \l_keys_key_str {#1} }
 

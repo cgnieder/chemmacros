@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------
-the CHEMMACROS package v6.1 2022/??/??
+the CHEMMACROS package v6.1 2022/02/06
 
   comprehensive support for typesetting chemistry documents
 
@@ -8,7 +8,7 @@ Web:    https://github.com/cgnieder/chemmacros/
 E-Mail: clemens@cnltx.de
 --------------------------------------------------------------------------
 Copyright 2011--2021 Clemens Niederberger
-          2022       Clemens Niederberger & Sonja K.
+          2022--     Clemens Niederberger & Sonja K.
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3c

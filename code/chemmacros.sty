@@ -1,5 +1,5 @@
 % --------------------------------------------------------------------------
-% the CHEMMACROS package
+% the CHEMMACROS package v6.1 2022/02/06
 %
 %   comprehensive support for typesetting chemistry documents
 %
@@ -11,7 +11,7 @@
 % feel free to contact us.
 % --------------------------------------------------------------------------
 % Copyright 2011--2021 Clemens Niederberger
-%           2022       Clemens Niederberger & Sonja K.
+%           2022--     Clemens Niederberger & Sonja K.
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3c
@@ -30,7 +30,7 @@
 
 % --------------------------------------------------------------------------
 % package information:
-\tl_const:Nn \c_chemmacros_date_tl {2022/01/18}
+\tl_const:Nn \c_chemmacros_date_tl {2022/02/06}
 \tl_const:Nn \c_chemmacros_version_major_number_tl {6}
 \tl_const:Nn \c_chemmacros_version_minor_number_tl {1}
 \tl_const:Nn \c_chemmacros_version_subrelease_tl   {}
@@ -279,7 +279,7 @@
   { \msg_warning:nnnn {chemmacros} {removed} {#1} {#2} }
 \cs_generate_variant:Nn \chemmacros_removal_warning:nn {nV}
 
-% #1: additional text
+% #1: new
 \cs_new_protected:Npn \chemmacros_deprecate_option:n #1
   { \__chemmacros_deprecation_warning:nVn {option} \l_keys_key_str {#1} }
 
@@ -1998,43 +1998,14 @@
   { \chemmacros_let_iupac:NN #1 #2 }
 
 % --------------------------------------------------------------------------
-\chemmacros_define_keys:nn {nomenclature}
-  {
-    iupac .choice: ,
-    iupac / restricted .code:n =
-      \bool_set_true:N \l__chemmacros_iupac_restricted_bool
-      \bool_set_false:N \l__chemmacros_iupac_strict_bool ,
-    iupac / auto .code:n =
-      \bool_set_false:N \l__chemmacros_iupac_restricted_bool
-      \bool_set_false:N \l__chemmacros_iupac_strict_bool ,
-    iupac / strict .code:n =
-      \bool_set_false:N \l__chemmacros_iupac_restricted_bool
-      \bool_set_true:N \l__chemmacros_iupac_strict_bool ,
-    iupac .initial:n = auto
-  }
-
-% --------------------------------------------------------------------------
 % stereo descriptors and other nomenclature commands
 % Cahn-Ingold-Prelog
 \dim_new:N  \l__chemmacros_cip_kern_dim
 \dim_set:Nn \l__chemmacros_cip_kern_dim {.075em}
 
-\chemmacros_define_keys:nn {nomenclature}
-  { cip-kern .dim_set:N = \l__chemmacros_cip_kern_dim }
-
 \tl_new:N \l__chemmacros_cip_inner_tl
 \tl_new:N \l__chemmacros_cip_outer_tl
 \tl_new:N \l__chemmacros_cip_number_tl
-
-\chemmacros_define_keys:nn {nomenclature}
-  {
-    cip-inner-format  .tl_set:N  = \l__chemmacros_cip_inner_tl ,
-    cip-inner-format  .initial:n = \itshape ,
-    cip-outer-format  .tl_set:N  = \l__chemmacros_cip_outer_tl ,
-    cip-outer-format  .initial:n = \upshape ,
-    cip-number-format .tl_set:N  = \l__chemmacros_cip_number_tl ,
-    cip-number-format .initial:n = \upshape
-  }
   
 \cs_new_protected:Npn \__chemmacros_cip:n #1
   {
@@ -2102,17 +2073,6 @@
 
 % coordination chemistry
 \bool_new:N \l__chemmacros_bridge_super_bool
-
-\chemmacros_define_keys:nn {nomenclature}
-  {
-    bridge-number         .choice: ,
-    bridge-number / sub   .code:n     =
-      \bool_set_false:N \l__chemmacros_bridge_super_bool ,
-    bridge-number / super .code:n     =
-      \bool_set_true:N \l__chemmacros_bridge_super_bool ,
-    coord-use-hyphen      .bool_set:N = \l__chemmacros_coord_use_hyphen_bool ,
-    coord-use-hyphen      .initial:n  = true
-  }
 
 % #1: boolean - if true hyphen is turned on
 % #2: boolean - if true superscript will be used
@@ -2224,13 +2184,6 @@
 \dim_set:Nn \l__chemmacros_iupac_break_dim { .03em }
 \skip_new:N  \l__chemmacros_iupac_break_skip
 \skip_set:Nn \l__chemmacros_iupac_break_skip { .03em plus .07em }
-
-\chemmacros_define_keys:nn {nomenclature}
-  {
-    hyphen-pre-space  .dim_set:N = \l__chemmacros_iupac_hyphen_pre_dim ,
-    hyphen-post-space .dim_set:N = \l__chemmacros_iupac_hyphen_post_dim ,
-    break-space       .skip_set:N = \l__chemmacros_iupac_break_skip
-  }
 
 \cs_new_protected:Npn \chemmacros_break_point_hyphen:
   {
@@ -2353,17 +2306,8 @@
 \NewDocumentCommand \RemoveChemIUPACShorthand {m} 
   { \chemmacros_remove_shorthand:N #1 }
 
-\NewChemIUPACShorthand ^ \chemmacros_superscript:n
-\NewChemIUPACShorthand | \chemmacros_break_point:
-\NewChemIUPACShorthand - \chemmacros_break_point_hyphen:
-\NewChemIUPACShorthand ( \chemmacros_break_point_opening_paren:
-\NewChemIUPACShorthand ) \chemmacros_break_point_closing_paren:
-\NewChemIUPACShorthand [ \chemmacros_break_point_opening_bracket:
-\NewChemIUPACShorthand ] \chemmacros_break_point_closing_bracket:
-\NewChemIUPAC \chemprime { \ensuremath {{}^{\prime}} }
-\NewChemIUPACShorthand ' \chemprime
-\NewChemIUPAC \nonbreakinghyphen { \mbox{-} \nobreak \hspace{0pt} }
-\NewChemIUPACShorthand = \nonbreakinghyphen
+% --------------------------------------------------------------------------
+\tl_new:N \l__chemmacros_iupac_format_tl
 
 \cs_new_protected:Npn \chemmacros_iupac:nn #1#2
   {
@@ -2376,7 +2320,7 @@
       \tl_set_rescan:Nnn \l__chemmacros_tmpa_tl
         { \chemmacros_activate_all_iupac_shorthands: }
         {#2}
-      \l__chemmacros_tmpa_tl
+      \l__chemmacros_iupac_format_tl { \l__chemmacros_tmpa_tl }
     \group_end:
   }
 
@@ -2386,6 +2330,18 @@
 \NewDocumentCommand \iupac {O{}m} { \chemmacros_iupac:nn {#1} {#2} }
 
 % --------------------------------------------------------------------------
+\NewChemIUPACShorthand ^ \chemmacros_superscript:n
+\NewChemIUPACShorthand | \chemmacros_break_point:
+\NewChemIUPACShorthand - \chemmacros_break_point_hyphen:
+\NewChemIUPACShorthand ( \chemmacros_break_point_opening_paren:
+\NewChemIUPACShorthand ) \chemmacros_break_point_closing_paren:
+\NewChemIUPACShorthand [ \chemmacros_break_point_opening_bracket:
+\NewChemIUPACShorthand ] \chemmacros_break_point_closing_bracket:
+\NewChemIUPAC \chemprime { \ensuremath {{}^{\prime}} }
+\NewChemIUPACShorthand ' \chemprime
+\NewChemIUPAC \nonbreakinghyphen { \mbox{-} \nobreak \hspace{0pt} }
+\NewChemIUPACShorthand = \nonbreakinghyphen
+
 % R(ectus)/S(inister):
 \NewChemIUPAC \rectus   { \cip {R} }
 \NewChemIUPAC \sinister { \cip {S} }
@@ -2469,12 +2425,6 @@
   
 \NewChemMacroset {Latin} {mm}
   { \chemmacros_define_latin:Nn #1 {#2} }
-
-\chemmacros_define_keys:nn {nomenclature}
-  {
-    format .tl_set:N  = \l__chemmacros_latin_format_tl ,
-    format .initial:n = \emph ,
-  }
   
 \cs_new_protected:Npn \chemmacros_write_latin:n #1
   {
@@ -2501,6 +2451,43 @@
 \NewChemLatin \invacuo  {in~vacuo}
 \NewChemLatin \abinitio {ab~initio}
 \NewChemLatin \insitu   {in~situ}
+
+% --------------------------------------------------------------------------
+\chemmacros_define_keys:nn {nomenclature}
+  {
+    iupac .choice: ,
+    iupac / restricted .code:n =
+      \bool_set_true:N \l__chemmacros_iupac_restricted_bool
+      \bool_set_false:N \l__chemmacros_iupac_strict_bool ,
+    iupac / auto .code:n =
+      \bool_set_false:N \l__chemmacros_iupac_restricted_bool
+      \bool_set_false:N \l__chemmacros_iupac_strict_bool ,
+    iupac / strict .code:n =
+      \bool_set_false:N \l__chemmacros_iupac_restricted_bool
+      \bool_set_true:N \l__chemmacros_iupac_strict_bool ,
+    iupac .initial:n = auto ,
+    iupac-format .tl_set:N = \l__chemmacros_iupac_format_tl ,
+    cip-kern .dim_set:N = \l__chemmacros_cip_kern_dim ,
+    cip-inner-format  .tl_set:N  = \l__chemmacros_cip_inner_tl ,
+    cip-inner-format  .initial:n = \itshape ,
+    cip-outer-format  .tl_set:N  = \l__chemmacros_cip_outer_tl ,
+    cip-outer-format  .initial:n = \upshape ,
+    cip-number-format .tl_set:N  = \l__chemmacros_cip_number_tl ,
+    cip-number-format .initial:n = \upshape ,
+    bridge-number         .choice: ,
+    bridge-number / sub   .code:n     =
+      \bool_set_false:N \l__chemmacros_bridge_super_bool ,
+    bridge-number / super .code:n     =
+      \bool_set_true:N \l__chemmacros_bridge_super_bool ,
+    coord-use-hyphen      .bool_set:N = \l__chemmacros_coord_use_hyphen_bool ,
+    coord-use-hyphen      .initial:n  = true ,
+    hyphen-pre-space  .dim_set:N = \l__chemmacros_iupac_hyphen_pre_dim ,
+    hyphen-post-space .dim_set:N = \l__chemmacros_iupac_hyphen_post_dim ,
+    break-space       .skip_set:N = \l__chemmacros_iupac_break_skip ,
+    latin-format .tl_set:N  = \l__chemmacros_latin_format_tl ,
+    latin-format .initial:n = \emph ,
+    format .code:n = \chemmacros_deprecate_option:n {latin-format}
+  }
 
 % --------------------------------------------------------------------------
 % hyperref support
@@ -3939,7 +3926,7 @@
 \tl_new:N \l__chemmacros_reactions_before_tag_tl
 \tl_new:N \l__chemmacros_reaction_lorname_tl
 \tl_new:N \reactionlistname
-\tl_new:N \l__chemmacros_reaction_heading_tl
+\tl_new:N \reactionautorefname
 \tl_new:N \l__chemmacros_reactions_args_tl
 
 % --------------------------------------------------------------------------
@@ -3998,23 +3985,13 @@
       { \tl_gset:Nn \g__chemmacros_reaction_description_tl {:~#1} }
   }
 
-\NewDocumentCommand \ChemReactionDescription {m}
+\NewDocumentCommand \AddRxnDesc {m}
   { \chemmacros_add_reaction_description:n {#1} }
-
-\chemmacros_deprecate_function:NN
-  \AddRxnDesc
-  \ChemReactionDescription
 
 % --------------------------------------------------------------------------
 % define \listofreactions
-\cs_new:Npn \__chemmacros_reaction_heading:n #1
-  { \l__chemmacros_reaction_heading_tl {#1} }
-\cs_generate_variant:Nn \__chemmacros_reaction_heading:n { V }
-
-\tl_set:Nn \l__chemmacros_reaction_lorname_tl
-  { \chemmacros_translate:n {Reaction} }
-
-\tl_set:Nn \reactionlistname { \chemmacros_translate:n {list-of-reactions} }
+\cs_new_protected:Npn \__chemmacros_reaction_heading:n #1 {#1}
+\cs_generate_variant:Nn \__chemmacros_reaction_heading:n {V}
 
 \cs_new_protected:Npn \listofreactions
   {
@@ -4029,7 +4006,8 @@
     \cs_new:Npn \listoflorname { \reactionlistname }
   }
 
-% --------------------------------------------------------------------------
+% --------------------------------------------------------------------------  
+% cleveref:
 \ChemCleverefSupport {reaction}
   { \chemmacros_translate:n {reaction} }
   [ \chemmacros_translate:n {Reaction} ]
@@ -4040,17 +4018,43 @@
   {
     \creflabelformat {reaction}
       {
-        #2
         \l__chemmacros_reactions_tag_open_tl
-        #1
+        #2 #1 #3
         \l__chemmacros_reactions_tag_close_tl
-        #3
       }
   }
 
-\ChemFancyrefSupport {rct}
-  { \chemmacros_translate:n {reaction} }
-  [ \chemmacros_translate:n {Reaction} ]
+% fancyref:
+\hook_gput_code:nnn {package/fancyref/after} {chemmacros}
+  {
+    \cs_set:Npn \fancyrefrctlabelprefix {rct}
+    \cs_set:Npn \frefrctname { \chemmacros_translate:n {reaction} }
+    \cs_set:Npn \Frefrctname { \chemmacros_translate:n {Reaction} }
+    \frefformat {vario} { \fancyrefrctlabelprefix }
+      {
+        \frefrctname \fancyrefdefaultspacing
+        \textup {
+          \l__chemmacros_reactions_tag_open_tl
+          #1
+          \l__chemmacros_reactions_tag_close_tl
+        }
+        #3
+      }
+    \Frefformat {vario} { \fancyrefrctlabelprefix }
+      {
+        \Frefrctname \fancyrefdefaultspacing
+        \textup {
+          \l__chemmacros_reactions_tag_open_tl
+          #1
+          \l__chemmacros_reactions_tag_close_tl
+        }
+        #3
+      }
+    \frefformat {plain} { \fancyrefrctlabelprefix }
+      { \frefrctname \fancyrefdefaultspacing #1 }
+    \Frefformat {plain} { \fancyrefrctlabelprefix }
+      { \Frefrctname \fancyrefdefaultspacing #1 }
+  }
 
 % --------------------------------------------------------------------------
 % begin and end reaction environments: switch to reaction counter:
@@ -4062,16 +4066,18 @@
         \cs_set_eq:NN \p@equation \p@reaction
         \cs_set_eq:NN \c@equation \c@reaction
         \chemmacros_patch_cmd:Nnn \thereaction {reaction} {equation}
+        \chemmacros_if_package_loaded:nT {cleveref}
+          { \crefalias {equation} {reaction} }
         % this only works if nobody steps counters inside reactions:
-        \chemmacros_patch_cmd:Nnn \refstepcounter
-          { \This@name }
-          { \This@name {reaction} \@gobble }
-        \chemmacros_patch_cmd:Nnn \hyper@refstepcounter
-          { \This@name }
-          { \This@name {reaction} \@gobble }
-        \chemmacros_patch_cmd:Nnn \hyper@refstepcounter
-          { \hyper@makecurrent }
-          { \hyper@makecurrent {reaction} \@gobble }
+        \bool_if:NT \l__chemmacros_hyperref_bool
+          {
+            \chemmacros_patch_cmd:Nnn \hyper@refstepcounter
+              { \This@name }
+              { \This@name {reaction} \@gobble }
+            \chemmacros_patch_cmd:Nnn \hyper@refstepcounter
+              { \hyper@makecurrent }
+              { \hyper@makecurrent {reaction} \@gobble }
+          }
         \usetagform {reaction}
       }
   }
@@ -4149,10 +4155,13 @@
 
 \chemmacros_define_keys:nn {reactions}
   {
-    list-name        .tl_set:N = \reactionlistname ,
-    list-entry       .tl_set:N = \l__chemmacros_reaction_lorname_tl ,
-    list-heading-cmd .code:n =
-      \cs_set_protected:Npn \__chemmacros_reaction_heading:n ##1 {#1} ,
+    list-name        .tl_set:N   = \reactionlistname ,
+    list-name        .initial:n  = \chemmacros_translate:n {list-of-reactions} ,
+    autoref-name     .tl_set:N   = \reactionautorefname ,
+    autoref-name     .initial:n  = \chemmacros_translate:n {Reaction} ,
+    list-entry       .tl_set:N   = \l__chemmacros_reaction_lorname_tl ,
+    list-entry       .initial:n  = \chemmacros_translate:n {Reaction} ,
+    list-heading-cmd .cs_set:Np  = \__chemmacros_reaction_heading:n #1 ,
     tocbasic         .code:n     = \chemmacros_deprecate_option: ,
     own-counter      .bool_set:N = \l__chemmacros_reactions_counter_bool ,
     own-counter      .initial:n  = true ,
@@ -5522,8 +5531,7 @@
                 \c_novalue_tl
                 \l__chemmacros_state_symbol_tl
                 \c_novalue_tl
-                \c_no
-                value_tl
+                \c_novalue_tl
               \chemmacros_set_keys_groups:nnn {thermodynamics} {variables} {##2}
               \IfBooleanF {##1} { = \qty {##4} { \l__chemmacros_state_unit_tl } }
             }

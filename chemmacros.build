@@ -8,7 +8,7 @@
 # E-Mail: clemens@cnltx.de
 # --------------------------------------------------------------------------
 # Copyright 2011--2021 Clemens Niederberger
-#           2022       Clemens Niederberger & Sonja K.
+#           2022--     Clemens Niederberger & Sonja K.
 # --------------------------------------------------------------------------
 # this is a personal bash script to build the chemmacros package
 # and very likely not of use for anybody else
@@ -22,8 +22,9 @@ pkgname="chemmacros"
 moduleext="code.tex"
 modulename="${pkgname}"
 styname="${pkgname}.sty"
-program="arara --verbose"
-manualfile="$pkgname-manual"
+program="arara"
+manualfile="$pkgname.manual"
+manualname="$pkgname-manual"
 zipname="$pkgname"
 
 build=true
@@ -44,7 +45,7 @@ where valid options are:
     -b  build sty file from modules (default: $build)
     -d  deletes auxiliary files from a latex compilation
         allowed values: 'none', 'all', 'code', 'doc' (default: 'none')
-    -f  name of manual file (without .tex) (default: '$manualfile')
+    -f  name of manual file (without .tex) (default: '$manualname')
     -h  show this help
     -l  run latex to (re-) create manual (default: $manual)
     -m  run mktexlsr, only when used together with -u (default: $runmktexlsr)
@@ -87,7 +88,7 @@ while [ -n "$1" ]; do
             esac
             shift ;;
         -f|--file)
-            manualfile="$2"
+            manualname="$2"
             shift ;;
         -h|--help)
             echo "$usage"
@@ -220,6 +221,7 @@ if [ "$build" == true ] ; then
     cd ${CODE_DIR}
     # build sty file from modules:
     cat \
+    ../$pkgname.intro.statement \
     $modulename.start.$moduleext \
     $modulename.base.$moduleext \
     $modulename.errorcheck.$moduleext \
@@ -248,6 +250,19 @@ if [ "$build" == true ] ; then
     $modulename.reactants.$moduleext \
     $modulename.translations.$moduleext \
     > $styname
+    if [ "$verbose" == true ] ; then
+        echo "writing manual files ..."
+    fi
+    cd ${DOC_DIR}
+    # build manual files:
+    cat \
+    ../$pkgname.intro.statement \
+    $manualfile.tex \
+    > $manualname.tex
+    cat \
+    ../$pkgname.intro.statement \
+    $manualfile.cls \
+    > $manualname.cls
 fi
 
 # build manual
@@ -304,11 +319,15 @@ if [ "$createzip" == true ] ; then
     if [ "$verbose" == true ] ; then
         echo "creating zip archive $zipname.zip ..."
     fi
-    cd ${CHEMMACROS_DEV_DIR}
-    mkdir $pkgname/
+    if [ ! -d "${SNAPSHOT_DIR}/$pkgname" ]; then
+        if [ "$verbose" == true ] ; then
+            echo "creating directory '${SNAPSHOT_DIR}/$pkgname' ..."
+        fi
+        mkdir ${SNAPSHOT_DIR}/$pkgname
+    fi
     cp ${CODE_DIR}/$styname $pkgname/
-    cp ${DOC_DIR}/$manualfile.tex $pkgname/
-    cp ${DOC_DIR}/$manualfile.pdf $pkgname/
+    cp ${DOC_DIR}/$manualname.tex $pkgname/
+    cp ${DOC_DIR}/$manualfile.pdf $pkgname/$manualname.pdf
     cp README $pkgname/
     zip -r $zipname.zip $pkgname/
     rm -r $pkgname/

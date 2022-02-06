@@ -168,43 +168,14 @@
   { \chemmacros_let_iupac:NN #1 #2 }
 
 % --------------------------------------------------------------------------
-\chemmacros_define_keys:nn {nomenclature}
-  {
-    iupac .choice: ,
-    iupac / restricted .code:n =
-      \bool_set_true:N \l__chemmacros_iupac_restricted_bool
-      \bool_set_false:N \l__chemmacros_iupac_strict_bool ,
-    iupac / auto .code:n =
-      \bool_set_false:N \l__chemmacros_iupac_restricted_bool
-      \bool_set_false:N \l__chemmacros_iupac_strict_bool ,
-    iupac / strict .code:n =
-      \bool_set_false:N \l__chemmacros_iupac_restricted_bool
-      \bool_set_true:N \l__chemmacros_iupac_strict_bool ,
-    iupac .initial:n = auto
-  }
-
-% --------------------------------------------------------------------------
 % stereo descriptors and other nomenclature commands
 % Cahn-Ingold-Prelog
 \dim_new:N  \l__chemmacros_cip_kern_dim
 \dim_set:Nn \l__chemmacros_cip_kern_dim {.075em}
 
-\chemmacros_define_keys:nn {nomenclature}
-  { cip-kern .dim_set:N = \l__chemmacros_cip_kern_dim }
-
 \tl_new:N \l__chemmacros_cip_inner_tl
 \tl_new:N \l__chemmacros_cip_outer_tl
 \tl_new:N \l__chemmacros_cip_number_tl
-
-\chemmacros_define_keys:nn {nomenclature}
-  {
-    cip-inner-format  .tl_set:N  = \l__chemmacros_cip_inner_tl ,
-    cip-inner-format  .initial:n = \itshape ,
-    cip-outer-format  .tl_set:N  = \l__chemmacros_cip_outer_tl ,
-    cip-outer-format  .initial:n = \upshape ,
-    cip-number-format .tl_set:N  = \l__chemmacros_cip_number_tl ,
-    cip-number-format .initial:n = \upshape
-  }
   
 \cs_new_protected:Npn \__chemmacros_cip:n #1
   {
@@ -272,17 +243,6 @@
 
 % coordination chemistry
 \bool_new:N \l__chemmacros_bridge_super_bool
-
-\chemmacros_define_keys:nn {nomenclature}
-  {
-    bridge-number         .choice: ,
-    bridge-number / sub   .code:n     =
-      \bool_set_false:N \l__chemmacros_bridge_super_bool ,
-    bridge-number / super .code:n     =
-      \bool_set_true:N \l__chemmacros_bridge_super_bool ,
-    coord-use-hyphen      .bool_set:N = \l__chemmacros_coord_use_hyphen_bool ,
-    coord-use-hyphen      .initial:n  = true
-  }
 
 % #1: boolean - if true hyphen is turned on
 % #2: boolean - if true superscript will be used
@@ -394,13 +354,6 @@
 \dim_set:Nn \l__chemmacros_iupac_break_dim { .03em }
 \skip_new:N  \l__chemmacros_iupac_break_skip
 \skip_set:Nn \l__chemmacros_iupac_break_skip { .03em plus .07em }
-
-\chemmacros_define_keys:nn {nomenclature}
-  {
-    hyphen-pre-space  .dim_set:N = \l__chemmacros_iupac_hyphen_pre_dim ,
-    hyphen-post-space .dim_set:N = \l__chemmacros_iupac_hyphen_post_dim ,
-    break-space       .skip_set:N = \l__chemmacros_iupac_break_skip
-  }
 
 \cs_new_protected:Npn \chemmacros_break_point_hyphen:
   {
@@ -523,17 +476,8 @@
 \NewDocumentCommand \RemoveChemIUPACShorthand {m} 
   { \chemmacros_remove_shorthand:N #1 }
 
-\NewChemIUPACShorthand ^ \chemmacros_superscript:n
-\NewChemIUPACShorthand | \chemmacros_break_point:
-\NewChemIUPACShorthand - \chemmacros_break_point_hyphen:
-\NewChemIUPACShorthand ( \chemmacros_break_point_opening_paren:
-\NewChemIUPACShorthand ) \chemmacros_break_point_closing_paren:
-\NewChemIUPACShorthand [ \chemmacros_break_point_opening_bracket:
-\NewChemIUPACShorthand ] \chemmacros_break_point_closing_bracket:
-\NewChemIUPAC \chemprime { \ensuremath {{}^{\prime}} }
-\NewChemIUPACShorthand ' \chemprime
-\NewChemIUPAC \nonbreakinghyphen { \mbox{-} \nobreak \hspace{0pt} }
-\NewChemIUPACShorthand = \nonbreakinghyphen
+% --------------------------------------------------------------------------
+\tl_new:N \l__chemmacros_iupac_format_tl
 
 \cs_new_protected:Npn \chemmacros_iupac:nn #1#2
   {
@@ -546,7 +490,7 @@
       \tl_set_rescan:Nnn \l__chemmacros_tmpa_tl
         { \chemmacros_activate_all_iupac_shorthands: }
         {#2}
-      \l__chemmacros_tmpa_tl
+      \l__chemmacros_iupac_format_tl { \l__chemmacros_tmpa_tl }
     \group_end:
   }
 
@@ -556,6 +500,18 @@
 \NewDocumentCommand \iupac {O{}m} { \chemmacros_iupac:nn {#1} {#2} }
 
 % --------------------------------------------------------------------------
+\NewChemIUPACShorthand ^ \chemmacros_superscript:n
+\NewChemIUPACShorthand | \chemmacros_break_point:
+\NewChemIUPACShorthand - \chemmacros_break_point_hyphen:
+\NewChemIUPACShorthand ( \chemmacros_break_point_opening_paren:
+\NewChemIUPACShorthand ) \chemmacros_break_point_closing_paren:
+\NewChemIUPACShorthand [ \chemmacros_break_point_opening_bracket:
+\NewChemIUPACShorthand ] \chemmacros_break_point_closing_bracket:
+\NewChemIUPAC \chemprime { \ensuremath {{}^{\prime}} }
+\NewChemIUPACShorthand ' \chemprime
+\NewChemIUPAC \nonbreakinghyphen { \mbox{-} \nobreak \hspace{0pt} }
+\NewChemIUPACShorthand = \nonbreakinghyphen
+
 % R(ectus)/S(inister):
 \NewChemIUPAC \rectus   { \cip {R} }
 \NewChemIUPAC \sinister { \cip {S} }
@@ -639,12 +595,6 @@
   
 \NewChemMacroset {Latin} {mm}
   { \chemmacros_define_latin:Nn #1 {#2} }
-
-\chemmacros_define_keys:nn {nomenclature}
-  {
-    format .tl_set:N  = \l__chemmacros_latin_format_tl ,
-    format .initial:n = \emph ,
-  }
   
 \cs_new_protected:Npn \chemmacros_write_latin:n #1
   {
@@ -671,6 +621,43 @@
 \NewChemLatin \invacuo  {in~vacuo}
 \NewChemLatin \abinitio {ab~initio}
 \NewChemLatin \insitu   {in~situ}
+
+% --------------------------------------------------------------------------
+\chemmacros_define_keys:nn {nomenclature}
+  {
+    iupac .choice: ,
+    iupac / restricted .code:n =
+      \bool_set_true:N \l__chemmacros_iupac_restricted_bool
+      \bool_set_false:N \l__chemmacros_iupac_strict_bool ,
+    iupac / auto .code:n =
+      \bool_set_false:N \l__chemmacros_iupac_restricted_bool
+      \bool_set_false:N \l__chemmacros_iupac_strict_bool ,
+    iupac / strict .code:n =
+      \bool_set_false:N \l__chemmacros_iupac_restricted_bool
+      \bool_set_true:N \l__chemmacros_iupac_strict_bool ,
+    iupac .initial:n = auto ,
+    iupac-format .tl_set:N = \l__chemmacros_iupac_format_tl ,
+    cip-kern .dim_set:N = \l__chemmacros_cip_kern_dim ,
+    cip-inner-format  .tl_set:N  = \l__chemmacros_cip_inner_tl ,
+    cip-inner-format  .initial:n = \itshape ,
+    cip-outer-format  .tl_set:N  = \l__chemmacros_cip_outer_tl ,
+    cip-outer-format  .initial:n = \upshape ,
+    cip-number-format .tl_set:N  = \l__chemmacros_cip_number_tl ,
+    cip-number-format .initial:n = \upshape ,
+    bridge-number         .choice: ,
+    bridge-number / sub   .code:n     =
+      \bool_set_false:N \l__chemmacros_bridge_super_bool ,
+    bridge-number / super .code:n     =
+      \bool_set_true:N \l__chemmacros_bridge_super_bool ,
+    coord-use-hyphen      .bool_set:N = \l__chemmacros_coord_use_hyphen_bool ,
+    coord-use-hyphen      .initial:n  = true ,
+    hyphen-pre-space  .dim_set:N = \l__chemmacros_iupac_hyphen_pre_dim ,
+    hyphen-post-space .dim_set:N = \l__chemmacros_iupac_hyphen_post_dim ,
+    break-space       .skip_set:N = \l__chemmacros_iupac_break_skip ,
+    latin-format .tl_set:N  = \l__chemmacros_latin_format_tl ,
+    latin-format .initial:n = \emph ,
+    format .code:n = \chemmacros_deprecate_option:n {latin-format}
+  }
 
 % --------------------------------------------------------------------------
 % hyperref support

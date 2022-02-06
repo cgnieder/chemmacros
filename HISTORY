@@ -11,7 +11,7 @@ If you have any ideas, questions, suggestions or bugs to report, please
 feel free to contact us.
 --------------------------------------------------------------------------
 Copyright 2011--2021 Clemens Niederberger
-          2022       Clemens Niederberger & Sonja K.
+          2022--     Clemens Niederberger & Sonja K.
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3c
@@ -412,7 +412,7 @@ Version history
                              declarations there
 2022/01/18 - version 6.0a  - fix issue #46
                            - fix bug related to package option `modules='
-2022/??/?? - version 6.1   - extend syntax of \state command (thermodynamics)
+2022/02/06 - version 6.1   - extend syntax of \state command (thermodynamics)
                            - add `reactants' module to the `errorcheck' module
                            - fix bug in Danish translation
                            - rename module `chemformula' > `formula'
@@ -425,12 +425,18 @@ Version history
                              there is a conflict (formula)
                            - use last instead of first found method for
                              defining floats (scheme)
-                           - new option `scheme/float-method'
-                           - rename \AddRxnDesc into \ChemReactionDescription
-                             (reactions)
-                           - new option `reactions/own-counter'
-                           - deprecate option `reactions/tocbasic'
+                           - new option `scheme/float-method' (schemes}
+                           - new option `reactions/own-counter' (reactions)
+                           - new oprion `reactions/autoref-name' (reactions)
+                           - deprecate option `reactions/tocbasic' (reactions)
                            - make \autoref work with reaction environments
                              through some possibly dangerous patches
+                             (reactions)
+                           - fix support for cleveref and fancyref with
+                             reactions (reactions)
                            - reorganization of deprecation, removal, and
                              patching
+                           - rename `nomenclature/format' into
+                             `nomenclature/latin-format' (nomenclature)
+                           - new option `nomenclature/iupac-format'
+                             (nomenclature)

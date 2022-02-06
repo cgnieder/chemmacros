@@ -21,7 +21,7 @@
 \tl_new:N \l__chemmacros_reactions_before_tag_tl
 \tl_new:N \l__chemmacros_reaction_lorname_tl
 \tl_new:N \reactionlistname
-\tl_new:N \l__chemmacros_reaction_heading_tl
+\tl_new:N \reactionautorefname
 \tl_new:N \l__chemmacros_reactions_args_tl
 
 % --------------------------------------------------------------------------
@@ -80,23 +80,13 @@
       { \tl_gset:Nn \g__chemmacros_reaction_description_tl {:~#1} }
   }
 
-\NewDocumentCommand \ChemReactionDescription {m}
+\NewDocumentCommand \AddRxnDesc {m}
   { \chemmacros_add_reaction_description:n {#1} }
-
-\chemmacros_deprecate_function:NN
-  \AddRxnDesc
-  \ChemReactionDescription
 
 % --------------------------------------------------------------------------
 % define \listofreactions
-\cs_new:Npn \__chemmacros_reaction_heading:n #1
-  { \l__chemmacros_reaction_heading_tl {#1} }
-\cs_generate_variant:Nn \__chemmacros_reaction_heading:n { V }
-
-\tl_set:Nn \l__chemmacros_reaction_lorname_tl
-  { \chemmacros_translate:n {Reaction} }
-
-\tl_set:Nn \reactionlistname { \chemmacros_translate:n {list-of-reactions} }
+\cs_new_protected:Npn \__chemmacros_reaction_heading:n #1 {#1}
+\cs_generate_variant:Nn \__chemmacros_reaction_heading:n {V}
 
 \cs_new_protected:Npn \listofreactions
   {
@@ -111,7 +101,8 @@
     \cs_new:Npn \listoflorname { \reactionlistname }
   }
 
-% --------------------------------------------------------------------------
+% --------------------------------------------------------------------------  
+% cleveref:
 \ChemCleverefSupport {reaction}
   { \chemmacros_translate:n {reaction} }
   [ \chemmacros_translate:n {Reaction} ]
@@ -122,17 +113,43 @@
   {
     \creflabelformat {reaction}
       {
-        #2
         \l__chemmacros_reactions_tag_open_tl
-        #1
+        #2 #1 #3
         \l__chemmacros_reactions_tag_close_tl
-        #3
       }
   }
 
-\ChemFancyrefSupport {rct}
-  { \chemmacros_translate:n {reaction} }
-  [ \chemmacros_translate:n {Reaction} ]
+% fancyref:
+\hook_gput_code:nnn {package/fancyref/after} {chemmacros}
+  {
+    \cs_set:Npn \fancyrefrctlabelprefix {rct}
+    \cs_set:Npn \frefrctname { \chemmacros_translate:n {reaction} }
+    \cs_set:Npn \Frefrctname { \chemmacros_translate:n {Reaction} }
+    \frefformat {vario} { \fancyrefrctlabelprefix }
+      {
+        \frefrctname \fancyrefdefaultspacing
+        \textup {
+          \l__chemmacros_reactions_tag_open_tl
+          #1
+          \l__chemmacros_reactions_tag_close_tl
+        }
+        #3
+      }
+    \Frefformat {vario} { \fancyrefrctlabelprefix }
+      {
+        \Frefrctname \fancyrefdefaultspacing
+        \textup {
+          \l__chemmacros_reactions_tag_open_tl
+          #1
+          \l__chemmacros_reactions_tag_close_tl
+        }
+        #3
+      }
+    \frefformat {plain} { \fancyrefrctlabelprefix }
+      { \frefrctname \fancyrefdefaultspacing #1 }
+    \Frefformat {plain} { \fancyrefrctlabelprefix }
+      { \Frefrctname \fancyrefdefaultspacing #1 }
+  }
 
 % --------------------------------------------------------------------------
 % begin and end reaction environments: switch to reaction counter:
@@ -144,16 +161,18 @@
         \cs_set_eq:NN \p@equation \p@reaction
         \cs_set_eq:NN \c@equation \c@reaction
         \chemmacros_patch_cmd:Nnn \thereaction {reaction} {equation}
+        \chemmacros_if_package_loaded:nT {cleveref}
+          { \crefalias {equation} {reaction} }
         % this only works if nobody steps counters inside reactions:
-        \chemmacros_patch_cmd:Nnn \refstepcounter
-          { \This@name }
-          { \This@name {reaction} \@gobble }
-        \chemmacros_patch_cmd:Nnn \hyper@refstepcounter
-          { \This@name }
-          { \This@name {reaction} \@gobble }
-        \chemmacros_patch_cmd:Nnn \hyper@refstepcounter
-          { \hyper@makecurrent }
-          { \hyper@makecurrent {reaction} \@gobble }
+        \bool_if:NT \l__chemmacros_hyperref_bool
+          {
+            \chemmacros_patch_cmd:Nnn \hyper@refstepcounter
+              { \This@name }
+              { \This@name {reaction} \@gobble }
+            \chemmacros_patch_cmd:Nnn \hyper@refstepcounter
+              { \hyper@makecurrent }
+              { \hyper@makecurrent {reaction} \@gobble }
+          }
         \usetagform {reaction}
       }
   }
@@ -231,10 +250,13 @@
 
 \chemmacros_define_keys:nn {reactions}
   {
-    list-name        .tl_set:N = \reactionlistname ,
-    list-entry       .tl_set:N = \l__chemmacros_reaction_lorname_tl ,
-    list-heading-cmd .code:n =
-      \cs_set_protected:Npn \__chemmacros_reaction_heading:n ##1 {#1} ,
+    list-name        .tl_set:N   = \reactionlistname ,
+    list-name        .initial:n  = \chemmacros_translate:n {list-of-reactions} ,
+    autoref-name     .tl_set:N   = \reactionautorefname ,
+    autoref-name     .initial:n  = \chemmacros_translate:n {Reaction} ,
+    list-entry       .tl_set:N   = \l__chemmacros_reaction_lorname_tl ,
+    list-entry       .initial:n  = \chemmacros_translate:n {Reaction} ,
+    list-heading-cmd .cs_set:Np  = \__chemmacros_reaction_heading:n #1 ,
     tocbasic         .code:n     = \chemmacros_deprecate_option: ,
     own-counter      .bool_set:N = \l__chemmacros_reactions_counter_bool ,
     own-counter      .initial:n  = true ,
