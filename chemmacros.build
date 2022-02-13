@@ -269,9 +269,9 @@ fi
 if [ "$manual" == true ] ; then
     cd ${DOC_DIR}
     if [ "$verbose" == true ] ; then
-        echo "running '$program' on '$manualfile'..."
+        echo "running '$program' on '$manualname'..."
     fi
-    $program $manualfile
+    $program $manualname
 fi
 
 # remove temporary and auxiliary files
@@ -313,6 +313,7 @@ if [ "$update" == true ] ; then
 fi
 
 if [ "$createzip" == true ] ; then
+    cd ${START_DIR}
     if [ -f "${SNAPSHOT_DIR}/$pkgname/$zipname.zip" ] ; then
         rm ${SNAPSHOT_DIR}/$pkgname/$zipname.zip
     fi
@@ -325,10 +326,12 @@ if [ "$createzip" == true ] ; then
         fi
         mkdir ${SNAPSHOT_DIR}/$pkgname
     fi
+    mkdir $pkgname/
     cp ${CODE_DIR}/$styname $pkgname/
     cp ${DOC_DIR}/$manualname.tex $pkgname/
-    cp ${DOC_DIR}/$manualfile.pdf $pkgname/$manualname.pdf
+    cp ${DOC_DIR}/$manualname.pdf $pkgname/
     cp README $pkgname/
+    cp HISTORY $pkgname/
     zip -r $zipname.zip $pkgname/
     rm -r $pkgname/
     if [ "$verbose" == true ] ; then
