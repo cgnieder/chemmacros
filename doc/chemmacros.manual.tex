@@ -168,18 +168,21 @@ Since version~6.0 the different modules of \chemmacros\ are divided into three
 groups:
 \begin{enumerate}
   \item Core modules which provide underlying functionality or basic
-    functionality which is not of direct interest from a user perspective but
-    might be if you plan to write a module yourself (see
-    section~\ref{sec:own-modules} for details).
+    functionality and which are not of direct interest from a user perspective
+    but might be if you plan to write a module yourself (see
+    section~\ref{sec:own-modules} for details).  These modules are described in
+    part~\ref{part:core-modules} of this manual.
   \item Main modules which provide all the stuff for typesetting and which are
-    always loaded.
+    always loaded.  These modules are described in
+    part~\ref{part:main-modules} of this manual.
   \item Additional modules which are also loaded in the default setup. They
     are not loaded if \chemmacros\ is loaded with the minimal setup:
-    \cs*{usepackage}\Oarg{minimal}\Marg{chemmacros}.
+    \cs*{usepackage}\Oarg{minimal}\Marg{chemmacros}.  These modules are described in
+    part~\ref{part:additional-modules} of this manual.
 \end{enumerate}
 
 \subsection{\chemmacros' Options}\label{sec:using-chemm-opti}
-Prior to v5.0 \chemmacros\ had quite a number of package options.
+Prior to v5.0 \chemmacros\ had quite a number of load-time options.
 \chemmacros\ v6.0 has only two:
 \begin{options}
   \keybool{minimal}\Default{false}
@@ -188,7 +191,7 @@ Prior to v5.0 \chemmacros\ had quite a number of package options.
     When \option{minimal} is used this option allows to load additional
     modules.
 \end{options}
-These are load-time option that only can be used in the optional argument of
+These options only can be used in the optional argument of
 \cs*{usepackage}. \emph{All} other of \chemmacros' options are set using the
 command
 \begin{commands}
@@ -1918,8 +1921,8 @@ Common declarations will look like this:
     \cs{Reactant} can be used in order to start a sentence with an upper case
     version of a compound's name. The corresponding text must be defined
     through \cs{DeclareChemReactant}'s \option{upper-name} option. Further
-    variants of \cs{reactant} with different suffixes, such as \code{*},
-    \code{+}, \code{l}, \code{s} or \code{plain} will be described later.
+    variants of \cs{reactant} with different suffixes, such as \sarg,
+    \parg, \code{l}, \code{s} or \code{plain} will be described later.
   \command{solvent}[\oarg{data and units}\marg{ID}]
     Analogous to \cs{reactants}. Can be used to insert solvent names and
     corresponding data in the text. Format and order depend on the on the
@@ -1969,9 +1972,9 @@ Typical uses will look like this:
     which they were declared in the preamble or in an external document.
   \keybool{switch}\Module{reactants}\Default{false}
     While \cs{reactants} will output name and number of a reactant, its
-    starred variant \cs{reactant*}, will by default result in the name without
-    the corresponding number. Setting \keyis{switch}{true}, globally or
-    locally, reverses this behavior and outputs a reactant's number without
+    starred variant \cs{reactant}\sarg, will by default result in the name
+    without the corresponding number. Setting \keyis{switch}{true}, globally
+    or locally, reverses this behavior and outputs a reactant's number without
     its name.
 \end{options}
 Other options are described at later places when the corresponding behavior is
@@ -1987,7 +1990,9 @@ argument that can be used to easily input this data:
 
 \begin{commands}
   \command{reactant}[\oarg{data and units}\marg{ID}]
+    \phantom{X}\vspace*{-\baselineskip}
   \command{solvent}[\oarg{data and units}\marg{ID}]
+    \phantom{X}\vspace*{-\baselineskip}
 \end{commands}
 
 \begin{table}[bp]
@@ -2001,16 +2006,16 @@ argument that can be used to easily input this data:
     \toprule
       \tablehead{Key} & \tablehead{default unit} & \tablehead{option} \\
     \midrule
-      mass          & \unit{\gram}                 & mass-unit          \\
-      volume        & \unit{\milli\liter}          & volume-unit        \\
-      fraction      & w/w\%                      & fraction-unit      \\
-      amount        & \unit{\milli\mole}           & amount-unit        \\
-      equiv         & eq                         & equiv-unit         \\
-      purity        & \%                         & purity-unit        \\
-      concentration & \unit{\Molar}                & concentration-unit \\
-      solvent       & n.a.                       &                    \\
+      mass            & \unit{\gram}             & mass-unit          \\
+      volume          & \unit{\milli\liter}      & volume-unit        \\
+      fraction        & w/w\%                    & fraction-unit      \\
+      amount          & \unit{\milli\mole}       & amount-unit        \\
+      equiv           & eq                       & equiv-unit         \\
+      purity          & \%                       & purity-unit        \\
+      concentration   & \unit{\Molar}            & concentration-unit \\
+      solvent         & n.a.                     &                    \\
     \midrule
-      solution-name & solution in                & solution           \\
+      solution-name   & solution in              & solution           \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -2149,11 +2154,11 @@ contents of the categories are typeset.
 Using the \cs{reactants} command inside of section headings or captions can
 mess up the order in which the molecules are numbered, especially when also
 using a table of contents and/or a list of figures/tables. To prevent this,
-the \module{reactants} module offers the \code{+} suffixed variant of
-\cs{reactants}, comparable to \pkg{chemnum}'s \cs{cmpd+} command.
+the \module{reactants} module offers the \parg\ suffixed variant of
+\cs{reactants}, comparable to \pkg{chemnum}'s \cs{cmpd}\parg\ command.
 
 \begin{commands}
-  \command{reactant+}[\oarg{data and units}\marg{ID}]
+  \command{reactant}[\parg\oarg{data and units}\marg{ID}]
     This command is used to insert name, number, and, if present, data of a
     predefined reactant with the \meta{ID} in a section heading or caption.
 \end{commands}
@@ -2231,7 +2236,7 @@ uses either \pkg{longtable} or \pkg{xltabular} to typeset this list:
     are responsible for formatting the list of reactants. Be aware that with
     \code{longtable}, the column widths are hard coded, thus you could
     experience overfull box warnings if you use exceptionally long \meta{ID}s
-    in combination with the starred variant \cs{printreactants*}, which is
+    in combination with the starred variant \cs{printreactants}\sarg, which is
     responsible for adding the \meta{ID} in resulting list, as well.
 \end{options}
 
@@ -3148,8 +3153,7 @@ units.  Like all \pkg{siunitx} units they're only valid inside
 \end{commands}
 
 
-\part{Core Modules}
-
+\part{Core Modules}\label{part:core-modules}
 The modules described in this part are always loaded and mainly concern module
 writers.
 
@@ -3187,7 +3191,7 @@ modules. In the macro descriptions below \TF\ denotes that a \code{T}, an
   \explcommand{chemmacros_allow_break:}
     Inserts a penalty of \num{0}.
   \explcommand{chemmacros_skip_nobreak:N}[ \meta{skip/length variable}]
-    Insert a horizontal skip where a linebreak is disallowed.
+    Inserts a horizontal skip where a linebreak is disallowed.
   \expandable\explcommand{chemmacros_if_is_int:n}[\TF\ \marg{input} \marg{true}
   \marg{false}]
     Checks if \meta{input} is an integer or something else.
@@ -3195,7 +3199,7 @@ modules. In the macro descriptions below \TF\ denotes that a \code{T}, an
     Checks if the current font weight is one of \chemboldchecks{or}.
   \explcommand{chemmacros_bold:n}[ \marg{text}]
     Checks if the current font weight is bold and if yes places \meta{text} in
-    \cs*{textbf} if in text mode or in \cs*{bm} if in math mode.  If no
+    \cs*{textbf} if in text mode or in \cs*{bm} if in math mode.  If no,
     \meta{text} simply is placed in the input stream as is.
   \explcommand{chemmacros_text:n}[ \marg{text}]
     Ensures that \meta{text} is placed in text mode.
@@ -3252,24 +3256,22 @@ This is how the macros \cs{NewChemParticle}, \cs{RenewChemParticle},
 The following macros strictly speaking are not provided by the
 \chemmodule{base} module but this place fits best for their description.
 \begin{commands}
-  \expandable\explcommand{chemmacros_if_module_exist:n}[\TF\ \marg{module}
+  \expandable\explcommand{chemmacros_module_if_exist:n}[\TF\ \marg{module}
   \marg{true} \marg{false}]
     Checks if a file with the correct name for a module \meta{module} can be
     found.
-  \expandable\explcommand{chemmacros_if_module_loaded:n}[\TF\ \marg{module}
+  \expandable\explcommand{chemmacros_module_if_loaded:n}[\TF\ \marg{module}
   \marg{true} \marg{false}]
     Checks if the module \meta{module} has already been loaded or not.
-  \explcommand{chemmacros_load_module:n}[ \marg{module}]
-    Loads module \meta{module} if it hasn't been loaded, yet.
-  \explcommand{chemmacros_load_modules:n}[ \marg{csv list of modules}]
-    Loads every module in \meta{csv list of modules} if they haven't been
-    loaded, yet. This is the code level variant of \cs{usechemmodule}.
-  \explcommand{chemmacros_before_module:nn}[ \marg{module} \marg{code}]
+  \explcommand{chemmacros_module_load:n}[ \marg{module}]
+    Loads module \meta{module} if it hasn't been loaded, yet.  The module must
+    exist as a separate file as described in section~\ref{sec:own-modules}.
+  \explcommand{chemmacros_module_before:nn}[ \marg{module} \marg{code}]
     Saves\sinceversion{5.1} \meta{code} and inserts it right before
     \meta{module} is loaded.  If \meta{module} is never loaded then
     \meta{code} is never inserted.  If \meta{module} already is loaded when
     the command is used then \meta{code} also is never inserted.
-  \explcommand{chemmacros_after_module:nn}[ \marg{module} \marg{code}]
+  \explcommand{chemmacros_module_after:nn}[ \marg{module} \marg{code}]
     Saves\sinceversion{5.1} \meta{code} and inserts it right after
     \meta{module} is loaded.  If \meta{module} is never loaded then
     \meta{code} is never inserted.  If \meta{module} already is loaded when
@@ -3383,13 +3385,13 @@ following macros are available:
     A token list variable that holds the language which is used by
     \explcs{chemmacros_translate:n} for translation, \emph{after begin
       document}.
-  \command{ChemTranslate}[\marg{translation key}]
+  \expandable\command{ChemTranslate}[\marg{translation key}]
     A version of \explcs{chemmacros_translate:n} for those who prefer
     traditional \LaTeXe\ programming over expl3.
-  \explcommand{chemmacros_declare_translation:nnn}[\marg{language}\marg{key}%
+  \explcommand{chemmacros_declare_translation:nnn}[ \marg{language} \marg{key}
     \marg{translation}]
     The expl3 version of \cs{DeclareChemTranslation}.
-  \explcommand{chemmacros_declare_translations:nn}[\marg{key}\Marg{\meta{language}
+  \explcommand{chemmacros_declare_translations:nn}[ \marg{key} \Marg{\meta{language}
     = \meta{translation}}]
     The expl3 version of \cs{DeclareChemTranslations}.
 \end{commands}
@@ -3519,46 +3521,41 @@ me (see section~\vref{sec:submitting-module}) so they can be added to the
 
 \appendix
 \part{Appendix}
-\section{Own Modules}\label{sec:own-modules}
+\section{Own Modules Called Styles}\label{sec:own-modules}
 \subsection{How To}
 
 If you have additional functionality which you think might be useful as a
 \chemmacros\ module then you can easily write one yourself.  The module must
 be a file in a path where \TeX\ can find it following a certain naming
 scheme.  The file for a module \chemmodule*{foo} \emph{must be named}
-\code{chemmacros.module.foo.code.tex}.
+\code{chemmacros.style.foo.code.tex}.
 
 \begin{commands}
-  \command{ChemModule}[\sarg\marg{name}\marg{description}\oarg{minimal
-    compatibility version}]
-    Register module \meta{name}.  The optional argument \meta{minimal
-      compatibility version} ensures that this module is only loaded if the
-    option \option{compatibility} has a high enough version number.  If it is
-    omitted the module can be loaded in each version~5.0 or higher.
+  \command{ChemStyle}[\sarg\marg{name}\oarg{version description}]
+    Register module \meta{name} where the optional argument is passed to the
+    optional argument of \cs*{ProvidesFile}.
 \end{commands}
 
 The first line in the file then should look similar to this:
 \begin{sourcecode}
-  \ChemModule{foo}{2015/07/14 description of foo}
+  \ChemStyle{foo}[2022-02-07 description of foo]
 \end{sourcecode}
-This registers module \chemmodule*{foo} which means \chemmacros\ will accept
-this file as a valid module.
+This registers the style \chemmodule*{foo} which means \chemmacros\ will
+accept this file as a valid style.
+
+Such a style can then be loaded to your document via
+\begin{commands}
+  \command{usechemstyle}[\marg{csv list of style names}]
+    which should be used in the preamble of your document.
+\end{commands}
 
 Since \chemmacros\ is written using expl3 \cs{ChemModule} starts an expl3
 programming environment.  If you don't want that but rather want to write your
 module using traditional \LaTeXe\ methods then use the starred variant:
 \begin{sourcecode}
-  \ChemModule*{foo}{2015/07/14 description of foo}
+  \ChemStyle*{foo}[2022-02-07 description of foo]
 \end{sourcecode}
 In both variants \code{@} has category code~11 (letter).
-
-Since new modules very likely might rely on code provided first in a certain
-version of \chemmacros\ you might want to make sure that your module only is
-loaded when the compatibility mode is high enough to provide the features you
-want:
-\begin{sourcecode}
-  \ChemModule{foo}{2015/10/14 description of foo}[5.2]
-\end{sourcecode}
 
 If you decide to write your module \chemmodule*{foo} using expl3 and add
 options you want to be able to set using

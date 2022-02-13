@@ -412,7 +412,7 @@ Version history
                              declarations there
 2022/01/18 - version 6.0a  - fix issue #46
                            - fix bug related to package option `modules='
-2022/02/06 - version 6.1   - extend syntax of \state command (thermodynamics)
+2022/02/13 - version 6.1   - extend syntax of \state command (thermodynamics)
                            - add `reactants' module to the `errorcheck' module
                            - fix bug in Danish translation
                            - rename module `chemformula' > `formula'
@@ -440,3 +440,9 @@ Version history
                              `nomenclature/latin-format' (nomenclature)
                            - new option `nomenclature/iupac-format'
                              (nomenclature)
+                           - properly implement and document user modules
+                             (i.e., styles) as opposed to chemmacros' own
+                             modules; since v6 \ChemModule has a new function
+                             which is why \ChemStyle is introduced
+                           - add load-time option `stop' which can prevent
+                             modules and styles from being loaded

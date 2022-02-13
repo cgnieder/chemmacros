@@ -30,7 +30,7 @@
 \dim_new:N \l__chemmacros_el_length_dim
 
 % full tip for pairs
-\pgfarrowsdeclare { el } { el }
+\pgfarrowsdeclare {el} {el}
   {
     \dim_set:Nn \l__chemmacros_el_length_dim
       { 2.5pt + 2.5\pgflinewidth }
@@ -40,10 +40,10 @@
   {
     \dim_set:Nn \l__chemmacros_el_length_dim
       { 2.5pt + 2.5\pgflinewidth }
-    \pgfsetdash {} { 0pt }
+    \pgfsetdash {} {0pt}
     \pgfsetroundjoin
     \pgfsetroundcap
-    \pgfpathmoveto { \pgfpoint { 0pt } { 0pt } }
+    \pgfpathmoveto { \pgfpoint {0pt} {0pt} }
     \pgfpathlineto
       {
         \pgfpoint
@@ -51,19 +51,19 @@
           { .3\l__chemmacros_el_length_dim }
       }
     \pgfpathlineto
-      { \pgfpoint { -.5\l__chemmacros_el_length_dim } { 0pt } }
+      { \pgfpoint { -.5\l__chemmacros_el_length_dim } {0pt} }
     \pgfpathlineto
       {
         \pgfpoint
           { -\l__chemmacros_el_length_dim }
           { -.3\l__chemmacros_el_length_dim }
       }
-    \pgfpathlineto { \pgfpoint { 0pt } { 0pt } }
+    \pgfpathlineto { \pgfpoint {0pt} {0pt} }
     \pgfusepathqfillstroke
   }
 
 % half tip on the left
-\pgfarrowsdeclare { left~el } { left~el }
+\pgfarrowsdeclare {left~ el} {left~ el}
   {
     \dim_set:Nn \l__chemmacros_el_length_dim
       { 2.5pt + 2.5\pgflinewidth }
@@ -73,23 +73,23 @@
   {
     \dim_set:Nn \l__chemmacros_el_length_dim
       { 2.5pt + 2.5\pgflinewidth }
-    \pgfsetdash {} { 0pt }
+    \pgfsetdash {} {0pt}
     \pgfsetroundjoin
     \pgfsetroundcap
-    \pgfpathmoveto { \pgfpoint { 0pt } { 0pt } }
+    \pgfpathmoveto { \pgfpoint {0pt} {0pt} }
     \pgfpathlineto
       {
         \pgfpoint
           { -\l__chemmacros_el_length_dim }
           { .3\l__chemmacros_el_length_dim }
       }
-    \pgfpathlineto { \pgfpoint { -.5\l__chemmacros_el_length_dim } { 0pt } }
-    \pgfpathlineto { \pgfpoint { 0pt } { 0pt } }
+    \pgfpathlineto { \pgfpoint { -.5\l__chemmacros_el_length_dim } {0pt} }
+    \pgfpathlineto { \pgfpoint {0pt} {0pt} }
     \pgfusepathqfillstroke
   }
 
 % half tip in the right
-\pgfarrowsdeclare { right~el } { right~el }
+\pgfarrowsdeclare {right~ el} {right~ el}
   {
     \dim_set:Nn \l__chemmacros_el_length_dim
       { 2.5pt + 2.5\pgflinewidth }
@@ -99,18 +99,18 @@
   {
     \dim_set:Nn \l__chemmacros_el_length_dim
       { 2.5pt + 2.5\pgflinewidth }
-    \pgfsetdash {} { 0pt }
+    \pgfsetdash {} {0pt}
     \pgfsetroundjoin
     \pgfsetroundcap
-    \pgfpathmoveto { \pgfpoint { 0pt } { 0pt } }
+    \pgfpathmoveto { \pgfpoint {0pt} {0pt} }
     \pgfpathlineto
       {
         \pgfpoint
           { -\l__chemmacros_el_length_dim }
           { -.3\l__chemmacros_el_length_dim }
       }
-    \pgfpathlineto { \pgfpoint { -.5\l__chemmacros_el_length_dim } { 0pt } }
-    \pgfpathlineto { \pgfpoint { 0pt } { 0pt } }
+    \pgfpathlineto { \pgfpoint { -.5\l__chemmacros_el_length_dim } {0pt} }
+    \pgfpathlineto { \pgfpoint {0pt} {0pt} }
     \pgfusepathqfillstroke
   }
 % --------------------------------------------------------------------------

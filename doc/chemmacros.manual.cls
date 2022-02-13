@@ -1,4 +1,4 @@
-\ProvidesClass{chemmacros-manual}[2022/02/06]
+\ProvidesClass{chemmacros-manual}[2022/02/13]
 
 \LoadClass[load-preamble,add-index]{cnltx-doc}
 \RequirePackage{imakeidx}
@@ -21,8 +21,8 @@
     cd, ch, changechemgreeksymbol, charrow, chcpd, chemabove, chemalpha,
       chembeta, ChemCleverefSupport, chemdelta, chemDelta,
       ChemFancyrefSupport, chemformula@bondlength, chemgamma, ChemModule,
-      chemomega, chemphi, chemPhi, chemsetup, chlewis, chname , cip, cis, ch,
-      CNMR,
+      chemomega, chemphi, chemPhi, chemsetup, ChemStyle, chlewis, chname ,
+      cip, cis, ch, CNMR,
     data, DeclareChemArrow, DeclareChemBond, DeclareChemBondAlias,
       DeclareChemCharge, DeclareChemEqConstant, declarechemgreekmapping,
       DeclareChemIUPAC, DeclareChemIUPACShorthand, DeclareChemLatin,
@@ -64,7 +64,7 @@
       ShowChemArrow, ShowChemBond, sld, Sod, solvent, solvents, solventl,
       state, sulfur, submainreactantplain,
     trans,
-    usechemmodule,
+    usechemstyle,
     val,
     zusammen
   } ,
@@ -532,6 +532,6 @@
 \chemmacros@add@version{2020-11-29}{5.12}
 \chemmacros@add@version{2022-01-16}{6.0}
 \chemmacros@add@version{2022-01-18}{6.0a}
-\chemmacros@add@version{2022-02-06}{6.1}
+\chemmacros@add@version{2022-02-13}{6.1}
 
 \endinput

@@ -1,5 +1,5 @@
 % --------------------------------------------------------------------------
-% the CHEMMACROS package v6.1 2022/02/06
+% the CHEMMACROS package v6.1 2022/02/13
 %
 %   comprehensive support for typesetting chemistry documents
 %
@@ -30,7 +30,7 @@
 
 % --------------------------------------------------------------------------
 % package information:
-\tl_const:Nn \c_chemmacros_date_tl {2022/02/06}
+\tl_const:Nn \c_chemmacros_date_tl {2022/02/13}
 \tl_const:Nn \c_chemmacros_version_major_number_tl {6}
 \tl_const:Nn \c_chemmacros_version_minor_number_tl {1}
 \tl_const:Nn \c_chemmacros_version_subrelease_tl   {}
@@ -68,7 +68,7 @@
 
 \cs_generate_variant:Nn \int_to_arabic:n {V}
 
-\cs_generate_variant:Nn \msg_error:nnnnn {nnnx}
+\cs_generate_variant:Nn \msg_error:nnnnn {nnnx,nnnxx}
 \cs_generate_variant:Nn \msg_error:nnnn {nnnx}
 \cs_generate_variant:Nn \msg_error:nnn {nnV}
 \cs_generate_variant:Nn \msg_warning:nnn {nnV}
@@ -133,6 +133,11 @@
     thermodynamics, units, reactants, translations
   }
 
+\tl_new:N \g__chemmacros_module_stop_tl
+
+\cs_new_protected:Npn \chemmacros_stop_module:n #1
+  { \tl_gput_right:Nn \g__chemmacros_module_stop_tl {{#1}} }
+
 \keys_define:nn {chemmacros/load-time}
   {
     minimal .bool_set:N = \l__chemmacros_minimal_bool ,
@@ -140,6 +145,8 @@
     modules .code:n     =
       \clist_if_in:NnF \l_chemmacros_modules_clist {#1}
         { \clist_put_right:Nn \l_chemmacros_modules_clist {#1} } ,
+    stop    .code:n     =
+      \clist_map_inline:nn {#1} { \chemmacros_stop_module:n {##1} } ,
     unknown .code:n     = \__chemmacros_loadtime_warning:n {unknown-option}
   }
 
@@ -317,7 +324,7 @@
 % ----------------------------------------------------------------------------
 % this is for external file modules called "styles":
 \tl_const:Nn \c__chemmacros_module_extension_tl {code.tex}
-\tl_const:Nn \c__chemmacros_module_prefix_tl    {chemmacros}
+\tl_const:Nn \c__chemmacros_module_prefix_tl    {chemmacros.style}
 
 \tl_new:N \g__chemmacros_modules_loaded_tl
 
@@ -339,7 +346,8 @@
         \chemmacros_module_if_exist:nTF {#1}
           {
             \__chemmacros_module_hook_use:nn {#1} {before}
-            \msg_info:nnn {chemmacros} {loading-module} {#1}
+            \msg_log:nnn {chemmacros} {loading-module} {#1}
+            \msg_term:nnn {chemmacros} {loading-module} {#1}
             \@onefilewithoptions
               {\c__chemmacros_module_prefix_tl.#1}[][]
               \c__chemmacros_module_extension_tl
@@ -411,14 +419,9 @@
 \cs_generate_variant:Nn \__chemmacros_module_hook_use:nn {V}
 
 % --------------------------------------------------------------------------
-\tl_new:N \l__chemmacros_module_date_tl
-\tl_new:N \l__chemmacros_module_version_tl
-
-\tl_set_eq:NN \l__chemmacros_module_date_tl \c_chemmacros_date_tl
-\tl_set_eq:NN \l__chemmacros_module_version_tl \c_chemmacros_version_tl
-
 \cs_new_protected:Npn \__chemmacros_module:nn #1#2
   {
+    \str_if_in:NnT \g__chemmacros_module_stop_tl {{#1}} { \file_input_stop: }
     \tl_gput_right:Nn \g__chemmacros_modules_loaded_tl {{#1}}
     \str_if_eq:xxF
       {\c__chemmacros_module_prefix_tl.#1.\c__chemmacros_module_extension_tl}
@@ -428,24 +431,38 @@
           {#1}
           {\@currname.\@currext}
       }
-    \ProvidesFile
-      {\c__chemmacros_module_prefix_tl.#1.\c__chemmacros_module_extension_tl}
-      [
-        \l__chemmacros_module_date_tl
-        \c_space_tl
-        v \l__chemmacros_module_version_tl
-        \c_space_tl
-        chemmacros~ style~ file~ `#1'~ (#2)
-      ]
+    \tl_if_blank:nTF {#2}
+      {
+        \ProvidesFile
+          {\c__chemmacros_module_prefix_tl.#1.\c__chemmacros_module_extension_tl}
+      }
+      {
+        \ProvidesFile
+          {\c__chemmacros_module_prefix_tl.#1.\c__chemmacros_module_extension_tl}
+          [#2]
+      }
   }
+
+% define a chemmacros style:
+% standard modules are written in the expl3 programming environment, the
+% starred version only uses a 2e programming environment, i.e., with @ as a
+% letter
+% #1: name
+% #2: description
+\NewDocumentCommand \ChemStyle {smo}
+  {
+    \IfNoValueTF {#3}
+      { \__chemmacros_module:nn {#2} {#3} }
+      { \__chemmacros_module:nn {#2} {} }
+    \bool_if:nF {#1} { \ExplSyntaxOn }
+  }
+
+% command for loading styles:
+\NewDocumentCommand \usechemstyle {m} { \chemmacros_modules_load:n {#1} }
 
 % --------------------------------------------------------------------------
 % define internal chemmacros modules:
 \tl_new:N \g_chemmacros_module_tl
-\tl_new:N \g__chemmacros_module_stop_tl
-
-\cs_new_protected:Npn \chemmacros_stop_module:n #1
-  { \tl_gput_right:Nn \g__chemmacros_module_stop_tl {{#1}} }
 
 % #1: name
 % #2: description
@@ -453,8 +470,8 @@
   {
     \str_if_in:NnT \g__chemmacros_module_stop_tl {{#1}}
       { \__chemmacros_gobble_module:w }
-    \msg_log:nnnn {chemmacros} {loading-module} {#1} {#2}
-    \msg_term:nnnn {chemmacros} {loading-module} {#1} {#2}
+    \msg_log:nnn {chemmacros} {loading-module} {#1}
+    \msg_term:nnn {chemmacros} {loading-module} {#1}
     \tl_gput_right:Nn \g__chemmacros_modules_loaded_tl {{#1}}
     \tl_gset:Nn \g_chemmacros_module_tl {#1}
     \__chemmacros_module_hook_use:nn {#1} {before}
@@ -2570,7 +2587,7 @@
 \dim_new:N \l__chemmacros_el_length_dim
 
 % full tip for pairs
-\pgfarrowsdeclare { el } { el }
+\pgfarrowsdeclare {el} {el}
   {
     \dim_set:Nn \l__chemmacros_el_length_dim
       { 2.5pt + 2.5\pgflinewidth }
@@ -2580,10 +2597,10 @@
   {
     \dim_set:Nn \l__chemmacros_el_length_dim
       { 2.5pt + 2.5\pgflinewidth }
-    \pgfsetdash {} { 0pt }
+    \pgfsetdash {} {0pt}
     \pgfsetroundjoin
     \pgfsetroundcap
-    \pgfpathmoveto { \pgfpoint { 0pt } { 0pt } }
+    \pgfpathmoveto { \pgfpoint {0pt} {0pt} }
     \pgfpathlineto
       {
         \pgfpoint
@@ -2591,19 +2608,19 @@
           { .3\l__chemmacros_el_length_dim }
       }
     \pgfpathlineto
-      { \pgfpoint { -.5\l__chemmacros_el_length_dim } { 0pt } }
+      { \pgfpoint { -.5\l__chemmacros_el_length_dim } {0pt} }
     \pgfpathlineto
       {
         \pgfpoint
           { -\l__chemmacros_el_length_dim }
           { -.3\l__chemmacros_el_length_dim }
       }
-    \pgfpathlineto { \pgfpoint { 0pt } { 0pt } }
+    \pgfpathlineto { \pgfpoint {0pt} {0pt} }
     \pgfusepathqfillstroke
   }
 
 % half tip on the left
-\pgfarrowsdeclare { left~el } { left~el }
+\pgfarrowsdeclare {left~ el} {left~ el}
   {
     \dim_set:Nn \l__chemmacros_el_length_dim
       { 2.5pt + 2.5\pgflinewidth }
@@ -2613,23 +2630,23 @@
   {
     \dim_set:Nn \l__chemmacros_el_length_dim
       { 2.5pt + 2.5\pgflinewidth }
-    \pgfsetdash {} { 0pt }
+    \pgfsetdash {} {0pt}
     \pgfsetroundjoin
     \pgfsetroundcap
-    \pgfpathmoveto { \pgfpoint { 0pt } { 0pt } }
+    \pgfpathmoveto { \pgfpoint {0pt} {0pt} }
     \pgfpathlineto
       {
         \pgfpoint
           { -\l__chemmacros_el_length_dim }
           { .3\l__chemmacros_el_length_dim }
       }
-    \pgfpathlineto { \pgfpoint { -.5\l__chemmacros_el_length_dim } { 0pt } }
-    \pgfpathlineto { \pgfpoint { 0pt } { 0pt } }
+    \pgfpathlineto { \pgfpoint { -.5\l__chemmacros_el_length_dim } {0pt} }
+    \pgfpathlineto { \pgfpoint {0pt} {0pt} }
     \pgfusepathqfillstroke
   }
 
 % half tip in the right
-\pgfarrowsdeclare { right~el } { right~el }
+\pgfarrowsdeclare {right~ el} {right~ el}
   {
     \dim_set:Nn \l__chemmacros_el_length_dim
       { 2.5pt + 2.5\pgflinewidth }
@@ -2639,18 +2656,18 @@
   {
     \dim_set:Nn \l__chemmacros_el_length_dim
       { 2.5pt + 2.5\pgflinewidth }
-    \pgfsetdash {} { 0pt }
+    \pgfsetdash {} {0pt}
     \pgfsetroundjoin
     \pgfsetroundcap
-    \pgfpathmoveto { \pgfpoint { 0pt } { 0pt } }
+    \pgfpathmoveto { \pgfpoint {0pt} {0pt} }
     \pgfpathlineto
       {
         \pgfpoint
           { -\l__chemmacros_el_length_dim }
           { -.3\l__chemmacros_el_length_dim }
       }
-    \pgfpathlineto { \pgfpoint { -.5\l__chemmacros_el_length_dim } { 0pt } }
-    \pgfpathlineto { \pgfpoint { 0pt } { 0pt } }
+    \pgfpathlineto { \pgfpoint { -.5\l__chemmacros_el_length_dim } {0pt} }
+    \pgfpathlineto { \pgfpoint {0pt} {0pt} }
     \pgfusepathqfillstroke
   }
 % --------------------------------------------------------------------------
