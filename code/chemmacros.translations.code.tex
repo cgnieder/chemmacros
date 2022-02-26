@@ -1,169 +1,100 @@
-\ChemModule{translations}{2022/01/26 translations for defined keys at one place}
+\ChemModule{translations}{2022/02/24 translations for defined keys at one place}
 
-% --------------------------------------------------------------------------
-\chemmacros_declare_translations:nn {K-acid}
-  {
-    German = \mathrm {s} ,
-    Danish = \mathrm {s} ,
-    Dutch  = \mathrm {z}
-  }
+\chemmacros_add_translations:nn {fallback} {
+  phase-sld   = s ,
+  phase-lqd   = l ,
+  phase-gas   = g ,
+  phase-aq    = aq ,
+  solution    = solution~ in ,
+  list-of-reactions = List~ of~ Reactions ,
+  reaction    = reaction ,
+  reactions   = reactions ,
+  Reaction    = Reaction ,
+  Reactions   = Reactions ,
+  scheme-name = Scheme ,
+  scheme-list = List~ of~ Schemes ,
+  scheme      = scheme ,
+  schemes     = schemes ,
+  Scheme      = Scheme ,
+  Schemes     = Schemes
+}
 
-\chemmacros_declare_translations:nn {K-water}
-  { Danish = \mathrm {v} }
+\chemmacros_add_translations:nn {German} {
+  K-acid      = \mathrm {s} ,
+  phase-sld   = f ,
+  phase-lqd   = f\/l ,
+  solution    = L\"osung~ in ,
+  list-of-reactions = Reaktionsverzeichnis ,
+  reaction    = Reaktion ,
+  reactions   = Reaktionen ,
+  Reaction    = Reaktion ,
+  Reactions   = Reaktionen ,
+  scheme-name = Schema ,
+  scheme-list = Verzeichnis~ der~ Schemata ,
+  scheme      = Schema ,
+  schemes     = Schemata ,
+  Scheme      = Schema ,
+  Schemes     = Schemata
+}
 
-% --------------------------------------------------------------------------
-\chemmacros_declare_translations:nn {phase-sld}
-  {
-    fallback = s ,
-    German   = f
-  }
+\chemmacros_add_translations:nn {Danish} {
+  K-acid      = \mathrm {s} ,
+  K-water     = \mathrm {v} ,
+  list-of-reactions = Reaktionsliste ,
+  reaction    = reaktion ,
+  reactions   = reaktioner ,
+  Reaction    = Reaktion ,
+  Reactions   = Reaktioner ,
+  scheme-name = Skema ,
+  scheme-list = Skemaliste ,
+  scheme      = skema ,
+  schemes     = skemaer ,
+  Scheme      = Skema ,
+  Schemes     = Skemaer
+}
 
-\chemmacros_declare_translations:nn {phase-lqd}
-  {
-    fallback = l ,
-    German   = f\/l
-  }
+\chemmacros_add_translations:nn {Dutch} {
+  K-acid      = \mathrm {z} ,
+  list-of-reactions = Lijst~ van~ reacties ,
+  reaction    = reactie ,
+  reactions   = reacties ,
+  Reaction    = Reactie ,
+  Reactions   = Reacties
+}
 
-\chemmacros_declare_translations:nn {phase-gas}
-  { fallback = g }
+\chemmacros_add_translations:nn {Italian} {
+  list-of-reactions = Elenco~ delle~ reazioni ,
+  reaction    = reazione ,
+  reactions   = reazioni ,
+  Reaction    = Reazione ,
+  Reactions   = Reazioni
+}
 
-\chemmacros_declare_translations:nn {phase-aq}
-  { fallback = aq }
+\chemmacros_add_translations:nn {French} {
+  list-of-reactions = Table~ des~ r\'{e}actions ,
+  reaction    = r\'{e}action ,
+  reactions   = r\'{e}actions ,
+  Reaction    = R\'{e}action ,
+  Reactions   = R\'{e}actions
+}
 
-% --------------------------------------------------------------------------
-\chemmacros_declare_translations:nn {solution}
-  {
-    fallback = solution~ in ,
-    English  = solution~ in ,
-    German   = L\"osung~ in ,
-  }
+\chemmacros_add_translations:nn {Norwegian} {
+  list-of-reactions = Reaksjonsliste ,
+  reaction    = reaksjon ,
+  reactions   = reaksjoner ,
+  Reaction    = Reaksjon ,
+  Reactions   = Reaksjoner ,
+  scheme-name = Skjema ,
+  scheme-list = Skjemaliste ,
+  scheme      = skjema ,
+  schemes     = skjema ,
+  Scheme      = Skjema ,
+  Schemes     = Skjema
+}
 
-% --------------------------------------------------------------------------
-\chemmacros_declare_translations:nn {list-of-reactions}
-  {
-    fallback  = List~ of~ Reactions ,
-    English   = List~ of~ Reactions ,
-    German    = Reaktionsverzeichnis ,
-    Italian   = Elenco~ delle~ reazioni ,
-    French    = Table~ des~ r\'{e}actions ,
-    Dutch     = Lijst~ van~ reacties ,
-    Norwegian = Reaksjonsliste ,
-    Nynorsk   = Reaksjonsliste ,
-    Danish    = Reaktionsliste
-  }
+\chemmacros_add_translations:nn {Nynorsk} {
+  reactions   = reaksjonar ,
+  Reactions   = Reaksjonar
+}
 
-\chemmacros_declare_translations:nn {reaction}
-  {
-    fallback  = reaction ,
-    English   = reaction ,
-    German    = Reaktion ,
-    Italian   = reazione ,
-    French    = r\'{e}action ,
-    Dutch     = reactie ,
-    Norwegian = reaksjon ,
-    Nynorsk   = reaksjon ,
-    Danish    = reaktion
-  }
-
-\chemmacros_declare_translations:nn {reactions}
-  {
-    fallback  = reactions ,
-    English   = reactions ,
-    German    = Reaktionen ,
-    Italian   = reazioni ,
-    French    = r\'{e}actions ,
-    Dutch     = reacties ,
-    Norwegian = reaksjoner ,
-    Nynorsk   = reaksjonar ,
-    Danish    = reaktioner
-  }
-
-\chemmacros_declare_translations:nn {Reaction}
-  {
-    fallback  = Reaction ,
-    English   = Reaction ,
-    German    = Reaktion ,
-    Italian   = Reazione ,
-    French    = R\'{e}action ,
-    Dutch     = Reactie ,
-    Norwegian = Reaksjon ,
-    Nynorsk   = Reaksjon ,
-    Danish    = Reaktion
-  }
-
-\chemmacros_declare_translations:nn {Reactions}
-  {
-    fallback  = Reactions ,
-    English   = Reactions ,
-    German    = Reaktionen ,
-    Italian   = Reazioni ,
-    French    = R\'{e}actions ,
-    Dutch     = Reacties ,
-    Norwegian = Reaksjoner ,
-    Nynorsk   = Reaksjonar ,
-    Danish    = Reaktioner
- }
-
-% --------------------------------------------------------------------------
-\chemmacros_declare_translations:nn {scheme-name}
-  {
-    fallback  = Scheme ,
-    English   = Scheme ,
-    German    = Schema ,
-    Norwegian = Skjema ,
-    Nynorsk   = Skjema ,
-    Danish    = Skema
-  }
-
-\chemmacros_declare_translations:nn {scheme-list}
-  {
-    fallback  = List~ of~ Schemes ,
-    English   = List~ of~ Schemes ,
-    German    = Verzeichnis~ der~ Schemata ,
-    Norwegian = Skjemaliste ,
-    Nynorsk   = Skjemaliste ,
-    Danish    = Skemaliste
-  }
-
-\chemmacros_declare_translations:nn {scheme}
-  {
-    fallback  = scheme ,
-    English   = scheme ,
-    German    = Schema ,
-    Norwegian = skjema ,
-    Nynorsk   = skjema ,
-    Danish    = skema
-  }
-
-\chemmacros_declare_translations:nn {Scheme}
-  {
-    fallback  = Scheme ,
-    English   = Scheme ,
-    German    = Schema ,
-    Norwegian = Skjema ,
-    Nynorsk   = Skjema ,
-    Danish    = Skema
-  }
-
-\chemmacros_declare_translations:nn {schemes}
-  {
-    fallback  = schemes ,
-    English   = schemes ,
-    German    = Schemata ,
-    Norwegian = skjema ,
-    Nynorsk   = skjema ,
-    Danish    = skemaer
-  }
-
-\chemmacros_declare_translations:nn {Schemes}
-  {
-    fallback  = Schemes ,
-    English   = Schemes ,
-    German    = Schemata ,
-    Norwegian = Skjema ,
-    Nynorsk   = Skjema ,
-    Danish    = Skemaer
-  }
-
-% --------------------------------------------------------------------------
 \ChemModuleEnd
