@@ -1,0 +1,268 @@
+% --------------------------------------------------------------------------
+% the CHEMMACROS package
+%
+%   comprehensive support for typesetting chemistry documents
+%
+% --------------------------------------------------------------------------
+% Clemens Niederberger
+% --------------------------------------------------------------------------
+% https://github.org/cgnieder/chemmacros/
+% contact@mychemistry.eu
+% --------------------------------------------------------------------------
+% If you have any ideas, questions, suggestions or bugs to report, please
+% feel free to contact me.
+% --------------------------------------------------------------------------
+% Copyright 2011--2020 Clemens Niederberger
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Clemens Niederberger.
+% --------------------------------------------------------------------------
+\RequirePackage{expl3,xparse,l3keys2e}
+\ExplSyntaxOn
+
+% --------------------------------------------------------------------------
+% package information:
+\tl_const:Nn \c_chemmacros_date_tl {2020/03/07}
+\tl_const:Nn \c_chemmacros_version_major_number_tl {5}
+\tl_const:Nn \c_chemmacros_version_minor_number_tl {11}
+\tl_const:Nn \c_chemmacros_version_subrelease_tl   {}
+\tl_const:Nx \c_chemmacros_version_number_tl
+  {
+    \c_chemmacros_version_major_number_tl .
+    \c_chemmacros_version_minor_number_tl
+  }
+\tl_const:Nx \c_chemmacros_version_tl
+  {
+    \c_chemmacros_version_number_tl
+    \c_chemmacros_version_subrelease_tl
+  }
+\tl_const:Nn \c_chemmacros_info_tl
+  {comprehensive~ support~ for~ typesetting~ chemistry~ documents}
+
+\ProvidesExplPackage
+  {chemmacros}
+  {\c_chemmacros_date_tl}
+  {\c_chemmacros_version_tl}
+  {\c_chemmacros_info_tl \c_space_tl (CN)}
+
+% --------------------------------------------------------------------------
+% set compatibility
+\tl_new:N \l__chemmacros_compatibility_version_tl
+\tl_set_eq:NN \l__chemmacros_compatibility_version_tl \c_chemmacros_version_tl
+
+\keys_define:nn {chemmacros/compatibility}
+  {
+    compatibility .code:n =
+      \str_case:nnTF {#1}
+        {
+          {newest} {}
+          {latest} {}
+        }
+        {
+          \tl_set_eq:NN
+            \l__chemmacros_compatibility_version_tl
+            \c_chemmacros_version_tl
+        }
+        { \tl_set:Nn \l__chemmacros_compatibility_version_tl {#1} } ,
+    unknown       .code:n =
+      \PassOptionsToPackage{\CurrentOption}{chemmacros4}
+      \PassOptionsToPackage{\CurrentOption}{chemmacros5}
+  }
+
+\ProcessKeysPackageOptions {chemmacros/compatibility}
+
+% --------------------------------------------------------------------------
+% compare version numbers
+% #1: version
+% #2: relation
+% #3: version
+% #4: true
+% #5: false
+\prg_new_conditional:Npnn \chemmacros_if_version:nnn #1#2#3 {p,T,F,TF}
+  {
+    \fp_compare:nTF
+      {
+        (
+          \chemmacros_get_major_version:n {#1} * 1e6 +
+          \chemmacros_get_minor_version:n {#1} * 1e3 +
+          0 \chemmacros_get_subrelease:n {#1}
+        )
+        #2
+        (
+          \chemmacros_get_major_version:n {#3} * 1e6 +
+          \chemmacros_get_minor_version:n {#3} * 1e3 +
+          0 \chemmacros_get_subrelease:n {#3}
+        )
+      }
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+\cs_generate_variant:Nn \chemmacros_if_version:nnnTF {fnf}
+
+\cs_new:Npn \__chemmacros_get_minor_version:w #1.#2.#3 \q_stop
+  {
+    \tl_if_blank:nTF {#2} {0} {
+       \tl_map_function:nN {#2} \__chemmacros_get_minor_number:n
+    }
+  }
+
+\cs_new:Npn \chemmacros_get_minor_version:n #1
+  { \__chemmacros_get_minor_version:w #1.. \q_stop }
+
+\cs_new:Npn \__chemmacros_get_minor_number:n #1
+  {
+    \str_case:nn {#1}
+      {
+        {0} {0}
+        {1} {1}
+        {2} {2}
+        {3} {3}
+        {4} {4}
+        {5} {5}
+        {6} {6}
+        {7} {7}
+        {8} {8}
+        {9} {9}
+      }
+  }
+
+\cs_new:Npn \__chemmacros_get_major_version:w #1.#2.#3 \q_stop
+  { \tl_if_blank:nTF {#1} {0} {#1} }
+
+\cs_new:Npn \chemmacros_get_major_version:n #1
+  { \__chemmacros_get_major_version:w #1.. \q_stop }
+
+\cs_new:Npn \__chemmacros_get_subrelease:w #1.#2.#3 \q_stop
+  {
+    \tl_if_blank:nTF {#2} {0} {
+       \tl_map_function:nN {#2} \__chemmacros_get_subrelease_number:n
+    }
+  }
+
+\cs_new:Npn \chemmacros_get_subrelease:n #1
+  { \__chemmacros_get_subrelease:w #1.. \q_stop }
+
+\cs_new:Npn \__chemmacros_get_subrelease_number:n #1
+  {
+    \str_case:nnF {#1}
+      {
+        {0} {}
+        {1} {}
+        {2} {}
+        {3} {}
+        {4} {}
+        {5} {}
+        {6} {}
+        {7} {}
+        {8} {}
+        {9} {}
+      }
+      { \int_from_alph:n {#1} }
+  }
+
+% check compatibility
+% #1: relation
+% #2: number
+% #3: true
+% #4: false
+\prg_new_conditional:Npnn \chemmacros_if_compatibility:nn #1#2 {p,T,F,TF}
+  {
+    \chemmacros_if_version:fnfTF
+      { \l__chemmacros_compatibility_version_tl }
+      {#1}
+      {#2}
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+\cs_generate_variant:Nn \chemmacros_if_compatibility:nnT {nV}
+
+% user checks:
+\NewExpandableDocumentCommand \IfChemCompatibilityTF {mm+m+m}
+  { \chemmacros_if_compatibility:nnTF {#1} {#2} {#3} {#4} }
+
+\NewExpandableDocumentCommand \IfChemCompatibilityT {mm+m}
+  { \chemmacros_if_compatibility:nnT {#1} {#2} {#3} }
+
+\NewExpandableDocumentCommand \IfChemCompatibilityF {mm+m}
+  { \chemmacros_if_compatibility:nnF {#1} {#2} {#3} }
+
+% --------------------------------------------------------------------------
+% compatibility coding:
+\cs_new_protected:Npn \ChemCompatibility #1#2 \EndChemCompatibility
+  { \chemmacros_if_compatibility:nnT {=} {#1} {#2} }
+  
+\cs_new_protected:Npn \ChemCompatibilityFrom #1#2 \EndChemCompatibility
+  { \chemmacros_if_compatibility:nnT {>=} {#1} {#2} }
+
+\cs_new_protected:Npn \ChemCompatibilityTo #1#2 \EndChemCompatibility
+  { \chemmacros_if_compatibility:nnT {<} {#1} {#2} }
+
+\cs_new_protected:Npn \ChemCompatibilityBetween #1#2#3 \EndChemCompatibility
+  {
+    \bool_lazy_and:nnT
+      { \chemmacros_if_compatibility_p:nn {>=} {#1} }
+      { \chemmacros_if_compatibility_p:nn {<} {#2} }
+      {#3}
+  }
+
+% --------------------------------------------------------------------------
+% messages:
+\msg_new:nnn {chemmacros} {too-low-compatibility}
+  {
+    Compatibility~ for~ versions~ below~ v4.7~ is~ not~ supported!~ You~
+    requested~ version~ v #1.~ Loading~ v4.7~ instead.
+  }
+
+\msg_new:nnn {chemmacros} {too-high-compatibility}
+  {
+    You~ requested~ compatibility~ mode~ v #1~ while~ the~ current~ version~
+    of~ chemmacros~ is~ v \c_chemmacros_version_tl .~ Falling~ back~
+    to~ v \c_chemmacros_version_number_tl !
+  }
+
+\msg_new:nnn {chemmacros} {low-compatibility}
+  {
+    You~ requested~ compatibility~ mode~ v #1~ while~ the~ current~ version~
+    of~ chemmacros~ is~ v \c_chemmacros_version_tl .~ Not~ all~ features~
+    or~ fixes~ will~ be~ available!
+  }
+
+% --------------------------------------------------------------------------
+% let's see that the max number is the newest (=current) version
+\chemmacros_if_compatibility:nnT {>} { \c_chemmacros_version_tl }
+  {
+    \tl_set_eq:NN
+      \l__chemmacros_compatibility_version_tl
+      \c_chemmacros_version_tl
+  }
+
+% --------------------------------------------------------------------------
+% compatibility too low:
+\chemmacros_if_compatibility:nnT {<} {4.7}
+  {
+    \msg_warning:nnx {chemmacros} {too-low-compatibility}
+      { \l__chemmacros_compatibility_version_tl }
+  }
+
+% not the newest version:
+\chemmacros_if_compatibility:nnT {<} { \c_chemmacros_version_tl }
+  {
+    \msg_warning:nnx {chemmacros} {low-compatibility}
+      { \l__chemmacros_compatibility_version_tl }
+  }
+  
+% --------------------------------------------------------------------------
+\chemmacros_if_compatibility:nnTF {<} {5.0}
+  { \RequirePackage{chemmacros4} }
+  { \RequirePackage{chemmacros5} }
+
+\file_input_stop:
