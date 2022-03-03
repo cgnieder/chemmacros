@@ -1132,6 +1132,7 @@
       {#3}
     \prop_gput:Nnn \g_chemmacros_translations_prop {#1(#2)} {#3}
   }
+\cs_generate_variant:Nn \chemmacros_declare_translation:nnn {V}
 
 % #1: key
 % #2: csv list: { <lang1> = <translation1> , <lang2> = <translation2> }
@@ -1858,7 +1859,7 @@
   {
     \mode_leave_vertical:
     \bool_if:NTF \l__chemmacros_phases_sub_bool
-      { \chemmacros_formula:n { {}_{(#1)} } }
+      { \ensuremath { \c_math_subscript_token { \chemmacros_text:n { (#1) } } } }
       {
         \skip_horizontal:N \l__chemmacros_phases_space_dim
         \chemmacros_text:n { (#1) }
