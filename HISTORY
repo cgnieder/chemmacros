@@ -446,7 +446,8 @@ Version history
                              which is why \ChemStyle is introduced
                            - add load-time option `stop' which can prevent
                              modules and styles from being loaded
-2022/??/?? - version 6??   - enable giving translation keys per language
+2022/03/05 - version 6.2   - enable giving translation keys per language
                              (lang)
                            - re-write translations module giving keys per
                              language rather than vice versa
+                           - fix issue with phases/sub=true (issue #49)

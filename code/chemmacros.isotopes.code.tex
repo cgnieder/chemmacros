@@ -23,7 +23,7 @@
           { \tl_set:Nx #2 { \use:c { @elements@atom@name@num@ \str_lowercase:n {#1} } } }
       }
   }
-\cs_generate_variant:Nn \chemmacros_get_atom_number:nN { V }
+\cs_generate_variant:Nn \chemmacros_get_atom_number:nN {V}
 
 % #1: atomic number|element symbol|element name
 % #2: tl to store the result in
@@ -64,7 +64,7 @@
       { \prg_return_true: }
       { \prg_return_false: }
   }
-\cs_generate_variant:Nn \chemmacros_check_isotope:nnF { V }
+\cs_generate_variant:Nn \chemmacros_check_isotope:nnF {V}
 
 % #1: atomic number|element symbol|element name
 % #2: tl to store the result in
@@ -81,7 +81,7 @@
           { \seq_map_break: }
       }
   }
-\cs_generate_variant:Nn \chemmacros_get_main_isotope:nN { V }
+\cs_generate_variant:Nn \chemmacros_get_main_isotope:nN {V}
 
 % #1: atomic number|element symbol|element name
 % #2: seq to store the results in
@@ -198,11 +198,9 @@
         #1
       }
   }
-\cs_generate_variant:Nn \chemmacros_isotope_write:nnn { VnV , VVV , nnV , nVV }
+\cs_generate_variant:Nn \chemmacros_isotope_write:nnn {VnV,VVV,nnV,nVV}
 
-% TODO: option for the layout of the written isotope: ^{12}_6C vs C-12
-
-\NewDocumentCommand \isotope { sm }
+\NewDocumentCommand \isotope {sm}
   { \chemmacros_isotope:nn {#1} {#2} }
   
 % --------------------------------------------------------------------------

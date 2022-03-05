@@ -1,5 +1,5 @@
 % --------------------------------------------------------------------------
-% the CHEMMACROS package v6.1 2022/02/13
+% the CHEMMACROS package v6.2 2022/03/05
 %
 %   comprehensive support for typesetting chemistry documents
 %
@@ -34,9 +34,9 @@
 
 % --------------------------------------------------------------------------
 % package information:
-\tl_const:Nn \c_chemmacros_date_tl {2022/02/13}
+\tl_const:Nn \c_chemmacros_date_tl {2022/03/05}
 \tl_const:Nn \c_chemmacros_version_major_number_tl {6}
-\tl_const:Nn \c_chemmacros_version_minor_number_tl {1}
+\tl_const:Nn \c_chemmacros_version_minor_number_tl {2}
 \tl_const:Nn \c_chemmacros_version_subrelease_tl   {}
 \tl_const:Nx \c_chemmacros_version_number_tl
   {
@@ -1038,7 +1038,7 @@
 % --------------------------------------------------------------------------
 
 \ChemModuleEnd
-\ChemModule{lang}{2022/02/24 language settings for chemmacros}
+\ChemModule{lang}{2022/03/05 language settings for chemmacros}
 
 \RequirePackage{translations}
 
@@ -1160,18 +1160,28 @@
       {#2}
   }
 
+% #1: key
+% #2: lang
+% #3: translation
 \NewDocumentCommand \DeclareChemTranslations {mm}
   { \chemmacros_declare_translations:nn {#1} {#2} }
 \@onlypreamble \DeclareChemTranslations
-  
+
+% #1: key
+% #2: csv list: { <lang1> = <translation1> , <lang2> = <translation2> }
 \NewDocumentCommand \DeclareChemTranslation {mmm}
   { \chemmacros_declare_translation:nnn {#1} {#2} {#3} }
 \@onlypreamble \DeclareChemTranslation
 
+% #1: lang
+% #2: csv list: { <key1> = <translation1> , <key2> = <translation2> }
 \NewDocumentCommand \AddChemTranslations {mm}
   { \chemmacros_add_translations:nn {#1} {#2} }
 \@onlypreamble \AddChemTranslations
-  
+
+% #1: lang
+% #2: key
+% #3: translation
 \NewDocumentCommand \AddChemTranslation {mmm}
   { \chemmacros_add_translation:nnn {#1} {#2} {#3} }
 \@onlypreamble \AddChemTranslation
@@ -1819,7 +1829,7 @@
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd
-\ChemModule{phases}{2020/11/29 phase descriptors}
+\ChemModule{phases}{2022/03/03 phase descriptors}
 
 \bool_new:N \l__chemmacros_phases_sub_bool
 \dim_new:N  \l__chemmacros_phases_space_dim
@@ -2767,7 +2777,7 @@
           { \tl_set:Nx #2 { \use:c { @elements@atom@name@num@ \str_lowercase:n {#1} } } }
       }
   }
-\cs_generate_variant:Nn \chemmacros_get_atom_number:nN { V }
+\cs_generate_variant:Nn \chemmacros_get_atom_number:nN {V}
 
 % #1: atomic number|element symbol|element name
 % #2: tl to store the result in
@@ -2808,7 +2818,7 @@
       { \prg_return_true: }
       { \prg_return_false: }
   }
-\cs_generate_variant:Nn \chemmacros_check_isotope:nnF { V }
+\cs_generate_variant:Nn \chemmacros_check_isotope:nnF {V}
 
 % #1: atomic number|element symbol|element name
 % #2: tl to store the result in
@@ -2825,7 +2835,7 @@
           { \seq_map_break: }
       }
   }
-\cs_generate_variant:Nn \chemmacros_get_main_isotope:nN { V }
+\cs_generate_variant:Nn \chemmacros_get_main_isotope:nN {V}
 
 % #1: atomic number|element symbol|element name
 % #2: seq to store the results in
@@ -2942,11 +2952,9 @@
         #1
       }
   }
-\cs_generate_variant:Nn \chemmacros_isotope_write:nnn { VnV , VVV , nnV , nVV }
+\cs_generate_variant:Nn \chemmacros_isotope_write:nnn {VnV,VVV,nnV,nVV}
 
-% TODO: option for the layout of the written isotope: ^{12}_6C vs C-12
-
-\NewDocumentCommand \isotope { sm }
+\NewDocumentCommand \isotope {sm}
   { \chemmacros_isotope:nn {#1} {#2} }
   
 % --------------------------------------------------------------------------
@@ -3236,7 +3244,7 @@
         { #2 } ;
     \group_end:
   }
-\cs_generate_variant:Nn \chemmacros_newman_back_node:nn { nf }
+\cs_generate_variant:Nn \chemmacros_newman_back_node:nn {nf}
 
 % place front nodes:
 \cs_new_protected:Npn \chemmacros_newman_front_node:nn #1#2
@@ -3267,7 +3275,7 @@
       )
       { #2 } ;
   }
-\cs_generate_variant:Nn \chemmacros_newman_front_node:nn { nf }
+\cs_generate_variant:Nn \chemmacros_newman_front_node:nn {nf}
 
 % --------------------------------------------------------------------------
 \ChemModuleEnd
@@ -4199,7 +4207,7 @@
       #3
     \end{#1}
   }
-\cs_generate_variant:Nn \__chemmacros_reaction_write:nnn { nnV }
+\cs_generate_variant:Nn \__chemmacros_reaction_write:nnn {nnV}
 
 \chemmacros_define_keys:nn {reactions}
   {
@@ -5086,7 +5094,7 @@
         \tl_gclear:N \g__chemmacros_nmr_element_coupled_tl
       }
   }
-\cs_generate_variant:Nn \__chemmacros_nmr_nucleus:nn { VV }
+\cs_generate_variant:Nn \__chemmacros_nmr_nucleus:nn {VV}
 
 \cs_new_protected:Npn \__chemmacros_nmr_nucleus:w #1,#2 \q_stop
   {
@@ -5138,7 +5146,7 @@
     \group_end:
   }
 
-\cs_generate_variant:Nn \__chemmacros_nmr_base:nn { VV }
+\cs_generate_variant:Nn \__chemmacros_nmr_base:nn {VV}
 
 \cs_new_protected:Npn \__chemmacros_nmr_frequency:n #1
   {
@@ -5535,7 +5543,7 @@
         }
     \group_end:
   }
-\cs_generate_variant:Nn \chemmacros_state:nnnnnn { nVVVVV }
+\cs_generate_variant:Nn \chemmacros_state:nnnnnn {nVVVVV}
 
 \exp_args:NNe
 \NewDocumentCommand \state { O{}e{\char_generate:nn {`_}{8}^}me{\char_generate:nn {`_}{8}^} }

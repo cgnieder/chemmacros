@@ -1,4 +1,4 @@
-\ChemModule{lang}{2022/02/24 language settings for chemmacros}
+\ChemModule{lang}{2022/03/05 language settings for chemmacros}
 
 \RequirePackage{translations}
 
@@ -120,18 +120,28 @@
       {#2}
   }
 
+% #1: key
+% #2: lang
+% #3: translation
 \NewDocumentCommand \DeclareChemTranslations {mm}
   { \chemmacros_declare_translations:nn {#1} {#2} }
 \@onlypreamble \DeclareChemTranslations
-  
+
+% #1: key
+% #2: csv list: { <lang1> = <translation1> , <lang2> = <translation2> }
 \NewDocumentCommand \DeclareChemTranslation {mmm}
   { \chemmacros_declare_translation:nnn {#1} {#2} {#3} }
 \@onlypreamble \DeclareChemTranslation
 
+% #1: lang
+% #2: csv list: { <key1> = <translation1> , <key2> = <translation2> }
 \NewDocumentCommand \AddChemTranslations {mm}
   { \chemmacros_add_translations:nn {#1} {#2} }
 \@onlypreamble \AddChemTranslations
-  
+
+% #1: lang
+% #2: key
+% #3: translation
 \NewDocumentCommand \AddChemTranslation {mmm}
   { \chemmacros_add_translation:nnn {#1} {#2} {#3} }
 \@onlypreamble \AddChemTranslation

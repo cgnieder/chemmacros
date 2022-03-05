@@ -278,7 +278,7 @@ important and \emph{breaking} differences:
     \option{minimal} allows to load \chemmacros\ with smallest subset
     necessary. Then additional modules can be added with the
     \option{modules}.
-  \item A new module \module{reactants} has been added, thanks to \leandriis.
+  \item A new module \module{reactants} has been added, thanks to \leandriis!
 \end{itemize}
 
 \part{Main Modules}\label{part:main-modules}
@@ -3323,11 +3323,6 @@ is provided.  For a few keys also other translations are provided.  If you
 find that a translation for your language is missing you can provide it in the
 preamble:
 \begin{commands}
-  % \command{DeclareTranslation}[\marg{language}\marg{key}\marg{translation}]
-  %   Defines a translation of key \meta{key} for the language \meta{language}.
-  %   No error will be raised if a translation of \meta{key} already exists.
-  %   This command can only be used in the preamble and is defined by the
-  %   \pkg{translations} package.
   \command{DeclareChemTranslation}[\marg{key}\marg{language}\marg{translation}]
     \sinceversion{5.6}A command which makes an abstraction from the
     \pkg{translations} package.  It should be used in documents for adding
@@ -3339,6 +3334,15 @@ preamble:
     used by document authors as well, of course.  It gets a csv list of
     key\slash value pairs of translations.  This command can only be used in
     the preamble.
+  \command{AddChemTranslation}[\marg{language}\marg{key}\marg{translation}]
+    \sinceversion{6.2}Basically the same as \cs{DeclareChemTranslation} but
+    with focus on the language instead of the key and thus has a different
+    argument order. This command can only be used in the preamble.
+  \command{AddChemTranslations}[\marg{languagen}\Marg{\meta{key} = \meta{translation}}]
+    \sinceversion{6.2}Basically the same as \cs{DeclareChemTranslations} but
+    with focus on the language instead of the key. It lets you define the
+    translations of several keys for one language in one go.  This command can
+    only be used in the preamble.
 \end{commands}
 If you send me an email (see section~\vref{sec:sugg-bug-reports}) with the
 translations for your language I'll gladly add them to the next release of
