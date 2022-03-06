@@ -394,7 +394,7 @@ The \chemmodule{charges} module loads the module \chemmodule{formula}.
 
 \subsection{Ion Charges}\label{sec:ion-charges}
 Simple displaying of (real) charges.  It is worth noting that these commands
-really are relicts from a time when \chemmacros\ tried hard to be compliant
+really are relics from a time when \chemmacros\ tried hard to be compliant
 with \pkg{mhchem} and \chemformula\ didn't exist, yet.  \textbf{They are still
   provided for backwards compatibility but \emph{my recommendation is to use}
   \cs{ch} (see the documentation of the \chemformula\
@@ -554,7 +554,7 @@ and \cs*{textsuperscript} instead of \sym{\textasciicircum} without
     Prints\sinceversion{5.3} a prime character in superscript position.  It is
     defined as \verbcode+\ensuremath{{}^{\prime}}+.
   \command{nonbreakinghyphen}
-    Prints\sinceversion{5.8c} a hyphen which doesn't allow a linebreak after
+    Prints\sinceversion{5.8c} a hyphen which doesn't allow a line-break after
     it.  It is defined as \verbcode+\mbox{-}\nobreak\hspace{0pt}+.
 \end{commands}
 
@@ -721,7 +721,7 @@ further:
     works additive to the outer format.
   \keyval{cip-number-format}{format}\Default{\cs*{upshape}}
     \changedversion{6.0}The format of numbers in \cs{cip}.  This format works
-    additive to the outer format and is applied to arabic figures only.
+    additive to the outer format and is applied to Arabic figures only.
 \end{options}
 
 \subsection{Fischer}
@@ -793,7 +793,7 @@ Two options allow customization:
     Append a hyphen to \cs{hapto}, \cs{dento} and \cs{bridge} or don't.
 \end{options}
 
-The default behaviour\sinceversion{5.8} of \cs{hapto} and \cs{dento} has
+The default behavior\sinceversion{5.8} of \cs{hapto} and \cs{dento} has
 changed with version~5.8 to follow \ac{iupac} recommendations.
 
 \subsection{Examples}
@@ -871,7 +871,7 @@ existing ones:
 
 \subsection{Latin Phrases}
 
-\chemmacros\ provides a command for typesetting latin phrases:
+\chemmacros\ provides a command for typesetting Latin phrases:
 \begin{commands}
   \command{latin}[\oarg{options}\marg{phrase}]
     Typesets \meta{phrase} according to the option \option{format} described
@@ -887,14 +887,14 @@ will \emph{not} define its own \cs{latin}.
 The last three commands mentioned above are defined through
 \begin{commands}
   \command{NewChemLatin}[\marg{cs}\marg{phrase}]
-    Define a new latin phrase.  Gives an error if \meta{cs} already exists.
+    Define a new Latin phrase.  Gives an error if \meta{cs} already exists.
   \command{DeclareChemLatin}[\marg{cs}\marg{phrase}]
-    Define a new latin phrase.  Silently redefined existing macros.
+    Define a new Latin phrase.  Silently redefined existing macros.
   \command{RenewChemLatin}[\marg{cs}\marg{phrase}]
-    Redefine an existing latin phrase.  Gives an error if \meta{cs} doesn't
+    Redefine an existing Latin phrase.  Gives an error if \meta{cs} doesn't
     exist.
   \command{ProvideChemLatin}[\marg{cs}\marg{phrase}]
-    Define a new latin phrase only if \meta{cs} doesn't exist.
+    Define a new Latin phrase only if \meta{cs} doesn't exist.
 \end{commands}
 \begin{example}[side-by-side]
   \NewChemLatin\ltn{latin text}\ltn
@@ -902,7 +902,7 @@ The last three commands mentioned above are defined through
 You can change the appearance with this option:
 \begin{options}
   \keyval{format}{definition}\Module{nomenclature}\Default{\cs*{emph}}
-    \changedversion{5.7}Sets the format for the latin phrases.
+    \changedversion{5.7}Sets the format for the Latin phrases.
 \end{options}
 
 \section{The \chemmodule*{particles} Module}\label{sec:particles-module}
@@ -1007,7 +1007,7 @@ A macro defined this way will have an optional argument for the
 
 \section{The \chemmodule*{phases} Module}\label{sec:phases-module}
 
-The \chemmodule{phases} module loads the \chemmodule{formula} modul.
+The \chemmodule{phases} module loads the \chemmodule{formula} module.
 
 \subsection{Basics}
 
@@ -1493,7 +1493,7 @@ Depending on the type you have different options to modify the orbitals:
   \orbital[angle=135,scale=1.5]{p} \orbital[half]{p}
 \end{example}
 
-Additionally there are two options, with which the \TikZ\ behaviour can be
+Additionally there are two options, with which the \TikZ\ behavior can be
 changed.
 \begin{options}
   \keybool{overlay}\Module{orbital}
@@ -1585,7 +1585,7 @@ implements the following macro based on the same idea:
     node}\marg{closing node}]
     The value of \meta{depth} is the same as \meta{height} unless it is
     specified explicitly.  \meta{opening node} and \meta{closing node} are the
-    names of \TikZ' nodes where the delimites are placed.
+    names of \TikZ' nodes where the delimiters are placed.
 \end{commands}
 \begin{options}
   \keychoice{delimiters}{\Marg{\meta{left}\meta{right}}}\Module{polymers}\Default{[]}
@@ -1765,7 +1765,7 @@ You can create new types of reactions with the command:
   \NewChemReaction{reactions*}{align*}
 \end{sourcecode}
 
-Let's suppose, you'd like to have the alignment behaviour of the \env{alignat}
+Let's suppose, you'd like to have the alignment behavior of the \env{alignat}
 environment for \chemformula\ reactions.  You could do the following:
 
 \begin{sourcecode}
@@ -2280,14 +2280,14 @@ There are a number of options that can be used to modify the typeset result:
   \keybool{parse}\Module{redox}\Default{true}
     When \code{false} an arbitrary entry can be used for \code{<number>}.
   \keybool{roman}\Module{redox}\Default{false}
-    Switches from roman to arabic numbers.
+    Switches from Roman to Arabic numbers.
   \keychoice{pos}{top,super,side}\Module{redox}\Default{super}
     \code{top} places \meta{number} above \meta{atom}, \code{super} to the
     upper right as superscript and \code{side} to the right and inside
     brackets.  Both \code{super} and \code{side} follow \ac{iupac}
     recommendation, \code{top} does not!
   \keybool{explicit-sign}\Module{redox}\Default{false}
-    Shows the $+$ for positiv numbers and the $\pm$ for $0$.
+    Shows the $+$ for positive numbers and the $\pm$ for $0$.
   \keybool{explizit-zero-sign}\Module{redox}\Default{true}
     Only\sinceversion{5.4} if both \option{explicit-sign} and
     \option{explicit-zero-sign} are set to \code{true} $\pm0$ will be
@@ -2359,7 +2359,7 @@ redox reactions.  Both commands are using \TikZ.
   \command{OX}[\Marg{\meta{name},\meta{atom}}]
     Label \meta{atom} with the label \meta{name}.
   \command{redox}[\Darg{\meta{name1},\meta{name2}}\oarg{tikz}\oarg{num}\marg{text}]
-    Connect two \meta{atom}s previously labelled with \cs{OX}.  Only the first
+    Connect two \meta{atom}s previously labeled with \cs{OX}.  Only the first
     argument \Darg{\meta{name1},\meta{name2}} is required, the others are all
     optional.
 \end{commands}
@@ -2584,16 +2584,16 @@ It is possible to define short cut commands for specific nuclei.
 \begin{commands}
   \command{NewChemNMR}[\marg{cs}\Marg{\meta{num},\meta{atom}}]
     Define a new shortcut macro for typesetting a certain type of magnetic
-    resonence data.  Gives an error if \meta{cs} already exists.
+    resonance data.  Gives an error if \meta{cs} already exists.
   \command{DeclareChemNMR}[\marg{cs}\Marg{\meta{num},\meta{atom}}]
     Define a new shortcut macro for typesetting a certain type of magnetic
-    resonence data.  Overwrites an existing macro.
+    resonance data.  Overwrites an existing macro.
   \command{RenewChemNMR}[\marg{cs}\Marg{\meta{num},\meta{atom}}]
     Redefine an existing shortcut macro for typesetting a certain type of
-    magnetic resonence data.  Gives an error if \meta{cs} doesn't exist.
+    magnetic resonance data.  Gives an error if \meta{cs} doesn't exist.
   \command{ProvideChemNMR}[\marg{cs}\Marg{\meta{num},\meta{atom}}]
     Define a new shortcut macro for typesetting a certain type of magnetic
-    resonence data.  \meta{cs} is only defined if it doesn't exist, yet.
+    resonance data.  \meta{cs} is only defined if it doesn't exist, yet.
 \end{commands}
 
 This defines a command with the same arguments as \cs{NMR} \emph{except} for
@@ -2735,7 +2735,7 @@ Of course options can also be chosen with \cs{chemsetup}.
 
 \begin{sourcecode}
   \sisetup{separate-uncertainty,per-mode=symbol,detect-all,range-phrase=--}
-  \begin{experimental}[<optionen>]
+  \begin{experimental}[<options>]
     \data*{yield} \qty{17}{\milli\gram} yellow needles (\qty{0.04}{\milli\mole},
       \qty{13}{\percent}).
     %
@@ -3018,7 +3018,7 @@ number and unit:
   \keyval{subscript}{text}\Module{thermodynamics}
     An alias of \option{subscript-left}.
   \keychoice{subscript-pos}{left,right}\Module{thermodynamics}\Default{left}
-    Determines wether the subscript given in \darg{subscript} is placed to the
+    Determines whether the subscript given in \darg{subscript} is placed to the
     left or the right of the variable.
   \keyval{symbol}{symbol}\Module{thermodynamics}\Default
     The symbol of the variable.  Inserted in math mode.
@@ -3078,7 +3078,7 @@ The argument \meta{options} is a comma separated list of key/value options:
   \keyval{subscript}{text}\Module{thermodynamics}
     An alias of \option{subscript-left}.
   \keychoice{subscript-pos}{left,right}\Module{thermodynamics}\Default{left}
-    Determines wether the subscript given in \darg{subscript} is placed to the
+    Determines whether the subscript given in \darg{subscript} is placed to the
     left or the right of the variable.
   \keyval{symbol}{symbol}\Module{thermodynamics}\Default
     The symbol of the variable.
@@ -3338,7 +3338,7 @@ preamble:
     \sinceversion{6.2}Basically the same as \cs{DeclareChemTranslation} but
     with focus on the language instead of the key and thus has a different
     argument order. This command can only be used in the preamble.
-  \command{AddChemTranslations}[\marg{languagen}\Marg{\meta{key} = \meta{translation}}]
+  \command{AddChemTranslations}[\marg{language}\Marg{\meta{key} = \meta{translation}}]
     \sinceversion{6.2}Basically the same as \cs{DeclareChemTranslations} but
     with focus on the language instead of the key. It lets you define the
     translations of several keys for one language in one go.  This command can

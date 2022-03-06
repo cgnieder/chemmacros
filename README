@@ -25,6 +25,8 @@ The Current Maintainers of this work are Clemens Niederberger and Sonja K.
 The chemmacros package consists of the following files
  == STYLE FILES ==
     chemmacros.sty
+    chemmacros-2015-02-08.sty
+    chemmacros-2020-03-07.sty
  == DOCUMENTATION FILES ==
     chemmacros-manual.tex
     chemmacros-manual.pdf

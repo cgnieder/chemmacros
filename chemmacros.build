@@ -328,6 +328,8 @@ if [ "$createzip" == true ] ; then
     fi
     mkdir $pkgname/
     cp ${CODE_DIR}/$styname $pkgname/
+    cp ${CODE_DIR}/$pkgname-2015-02-08.sty $pkgname/
+    cp ${CODE_DIR}/$pkgname-2020-03-07.sty $pkgname/
     cp ${DOC_DIR}/$manualname.tex $pkgname/
     cp ${DOC_DIR}/$manualname.pdf $pkgname/
     cp README $pkgname/
