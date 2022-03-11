@@ -1,6 +1,7 @@
-\ChemModule{reactions}{2022/02/05 reaction environments}
+\ChemModule{reactions}{2022/03/11 reaction environments}
 
 \newcounter {reaction}
+
 \hook_gput_code:nnn {package/hyperref/after} {chemmacros}
   {
     \cs_if_exist:NTF \chapter
@@ -157,10 +158,11 @@
   {
     \bool_if:NT \l__chemmacros_reactions_counter_bool
       {
+        \chemmacros_patch_cmd:Nnn \thereaction {reaction} {equation}
         \cs_set_eq:NN \r@equation \r@reaction
         \cs_set_eq:NN \p@equation \p@reaction
         \cs_set_eq:NN \c@equation \c@reaction
-        \chemmacros_patch_cmd:Nnn \thereaction {reaction} {equation}
+        \cs_set_eq:NN \theequation \thereaction
         \chemmacros_if_package_loaded:nT {cleveref}
           { \crefalias {equation} {reaction} }
         % this only works if nobody steps counters inside reactions:
