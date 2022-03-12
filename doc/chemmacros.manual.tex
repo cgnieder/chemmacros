@@ -185,9 +185,9 @@ groups:
 Prior to v5.0 \chemmacros\ had quite a number of load-time options.
 \chemmacros\ v6.0 has only two:
 \begin{options}
-  \keybool{minimal}\Default{false}
+  \keybool{minimal}\Initial{false}
     Loads \chemmacros\ with the basic preset of modules.
-  \keyval{modules}{comma separated list of module names}\Default
+  \keyval{modules}{comma separated list of module names}\Initial
     When \option{minimal} is used this option allows to load additional
     modules.
 \end{options}
@@ -202,18 +202,18 @@ command
 When an option is described then in the left margin the module the option
 belongs to is denoted.  This looks something like this:
 \begin{options}
-  \keyval{option}{value}\Module{module}\Default
+  \keyval{option}{value}\Module{module}\Initial
     Description of \option{option}. The module is printed in the left margin.
     The default value to the right is the setting the option has when
     \chemmacros\ is loaded.  This can be an explicit setting but the option
     can also be empty.
-  \keychoice{choice-option}{list,of,\default{choices}}\Module{module}\Default{list}
+  \keychoice{choice-option}{list,of,\default{choices}}\Module{module}\Initial{list}
     Description of \option{choice-option}.  A choice option can only be used
     with a predefined list of values. If one of the values is underlined it
     means that the option can be used without value in which case the
     underlined value is chosen.  If no value is underlined then a value
     \emph{has} to be given by the user.
-  \keybool{boolean-option}\Module{module}\Default{true}
+  \keybool{boolean-option}\Module{module}\Initial{true}
     Description of \option{boolean-option}.  A boolean option is a choice
     option with exactly the two values \code{true} and \code{false}.  If the
     option is called without value then the underlined value is chosen (which
@@ -314,15 +314,15 @@ Easy representation of \pH, \pKa \ldots
 There is one option which changes the style the \p{} is typeset, other options
 allow to change the subscript of the constants:
 \begin{options}
-  \keychoice{p-style}{italics,slanted,upright}\Module{acid-base}\Default{upright}
+  \keychoice{p-style}{italics,slanted,upright}\Module{acid-base}\Initial{upright}
     Set the style of the \p{} operator.
-  \keyval{K-acid}{text}\Module{acid-base}\Default{\cs{ChemTranslate}\Marg{K-acid}}
+  \keyval{K-acid}{text}\Module{acid-base}\Initial{\cs{ChemTranslate}\Marg{K-acid}}
     The subscript to \cs{Ka} and \cs{pKa}.
-  \keyval{K-base}{text}\Module{acid-base}\Default{\cs{ChemTranslate}\Marg{K-base}}
+  \keyval{K-base}{text}\Module{acid-base}\Initial{\cs{ChemTranslate}\Marg{K-base}}
     The subscript to \cs{Kb} and \cs{pKb}.
-  \keyval{K-water}{text}\Module{acid-base}\Default{\cs{ChemTranslate}\Marg{K-water}}
+  \keyval{K-water}{text}\Module{acid-base}\Initial{\cs{ChemTranslate}\Marg{K-water}}
     The subscript to \cs{Kw}.
-  \keyval{eq-constant}{text}\Module{acid-base}\Default{K}
+  \keyval{eq-constant}{text}\Module{acid-base}\Initial{K}
     The\sinceversion{5.4} symbol of the constants.
 \end{options}
 \begin{example}
@@ -438,16 +438,16 @@ section~\vref{sec:redox-module}) or with the \pkg{chemfig} package:
 \subsection{Charge Options}
 
 \begin{options}
-  \keychoice{circled}{formal,\default{all},none}\Module{charges}\Default{formal}
+  \keychoice{circled}{formal,\default{all},none}\Module{charges}\Initial{formal}
     \chemmacros\ uses two different kinds of charges which indicate the usage
     of real ($+/-$) and formal (\fplus/\fminus) charges.  The option
     \code{formal} distinguishes between them, option \code{none} displays them
     all without circle, option \code{all} circles all.
-  \keychoice{circletype}{chem,math}\Module{charges}\Default{chem}
+  \keychoice{circletype}{chem,math}\Module{charges}\Initial{chem}
     This option switches between two kinds of circled charge symbols:
     \cs{fplus} \fplus/\cs{fminus} \fminus\ (\code{chem}) and
     \verbcode+$\oplus$+ $\oplus$/\verbcode+$\ominus$+ $\ominus$ (\code{math}).
-  \keyval{partial-format}{\LaTeX\ code}\Module{charges}\Default{\cs*{tiny}}
+  \keyval{partial-format}{\LaTeX\ code}\Module{charges}\Initial{\cs*{tiny}}
     Code which formats the macros defined with \cs{NewChemPartialCharge} (see
     section~\ref{sec:own-charge-macros}).
 \end{options}
@@ -561,11 +561,11 @@ and \cs*{textsuperscript} instead of \sym{\textasciicircum} without
 The spaces inserted by \sym{-} and \sym{\textbar} can be
 customized.
 \begin{options}
-  \keyval{hyphen-pre-space}{dim}\Module{nomenclature}\Default{.01em}
+  \keyval{hyphen-pre-space}{dim}\Module{nomenclature}\Initial{.01em}
     Set the space that is inserted before the hyphen set with \sym{-}.
-  \keyval{hyphen-post-space}{dim}\Module{nomenclature}\Default{-.03em}
+  \keyval{hyphen-post-space}{dim}\Module{nomenclature}\Initial{-.03em}
     Set the space that is inserted after the hyphen set with \sym{-}.
-  \keyval{break-space}{dim}\Module{nomenclature}\Default{.01em}
+  \keyval{break-space}{dim}\Module{nomenclature}\Initial{.01em}
     Set the space inserted by \sym{\textbar}.
 \end{options}
 
@@ -580,7 +580,7 @@ a number of the naming commands have very general names: \cs{meta}, \cs{D},
 defines both \cs{D} and \cs{E}, for example).  In order to give you control
 which commands are defined in which way, there is the option \option{iupac}:
 \begin{options}
-  \keychoice{iupac}{auto,restricted,strict}\Module{nomenclature}\Default{auto}
+  \keychoice{iupac}{auto,restricted,strict}\Module{nomenclature}\Initial{auto}
     Take care of how \ac{iupac} naming commands are defined.
 \end{options}
 It has three modes:
@@ -707,19 +707,19 @@ Both these commands and the entgegen/zusammen descriptors get a small
 additional amount of kerning after the closing parenthesis.  This amount can
 be changed through the following option:
 \begin{options}
-  \keyval{cip-kern}{dim}\Module{nomenclature}\Default{.075em}
+  \keyval{cip-kern}{dim}\Module{nomenclature}\Initial{.075em}
     Set the amount of kerning after the closing parenthesis.
 \end{options}
 The entries typeset by and implemented with \cs{cip} can be customized
 further:
 \begin{options}
-  \keyval{cip-outer-format}{format}\Default{\cs*{upshape}}
+  \keyval{cip-outer-format}{format}\Initial{\cs*{upshape}}
     \sinceversion{5.8}The format of parentheses and commas typeset by
     \cs{cip}.
-  \keyval{cip-inner-format}{format}\Default{\cs*{itshape}}
+  \keyval{cip-inner-format}{format}\Initial{\cs*{itshape}}
     \sinceversion{5.8}The format of the entries in \cs{cip}.  This format
     works additive to the outer format.
-  \keyval{cip-number-format}{format}\Default{\cs*{upshape}}
+  \keyval{cip-number-format}{format}\Initial{\cs*{upshape}}
     \changedversion{6.0}The format of numbers in \cs{cip}.  This format works
     additive to the outer format and is applied to Arabic figures only.
 \end{options}
@@ -786,10 +786,10 @@ Although these commands are provided I like to cite
 
 Two options allow customization:
 \begin{options}
-  \keychoice{bridge-number}{sub,super}\Module{nomenclature}\Default{sub}
+  \keychoice{bridge-number}{sub,super}\Module{nomenclature}\Initial{sub}
     Appends the number as a subscript or superscript, depending on the choice.
     The \ac{iupac} recommendation is the subscript~\cite{iupac:redbook}.
-  \keybool{coord-use-hyphen}\Module{nomenclature}\Default{true}
+  \keybool{coord-use-hyphen}\Module{nomenclature}\Initial{true}
     Append a hyphen to \cs{hapto}, \cs{dento} and \cs{bridge} or don't.
 \end{options}
 
@@ -901,7 +901,7 @@ The last three commands mentioned above are defined through
 \end{example}
 You can change the appearance with this option:
 \begin{options}
-  \keyval{format}{definition}\Module{nomenclature}\Default{\cs*{emph}}
+  \keyval{format}{definition}\Module{nomenclature}\Initial{\cs*{emph}}
     \changedversion{5.7}Sets the format for the Latin phrases.
 \end{options}
 
@@ -925,10 +925,10 @@ details are explained in section~\vref{sec:defin-own-part}.
 The macros \cs{Nuc} and \cs{ba} are special:  they have an optional argument
 for the following options:
 \begin{options}
-  \keychoice{elpair}{dots,dash,false}\Module{particles}\Default{false}
+  \keychoice{elpair}{dots,dash,false}\Module{particles}\Initial{false}
     Determine how the electron pair of the nucleophiles is displayed.  The
     electron pair is drawn using \chemformula's \cs{chlewis} macro.
-  \keyval{space}{dim}\Module{particles}\Default{.1em}
+  \keyval{space}{dim}\Module{particles}\Initial{.1em}
     Sets\sinceversion{5.3} the space that is inserted between the electron
     pair and the negative charge sign.
 \end{options}
@@ -1032,9 +1032,9 @@ might want to put it as a subscript which is also very common.
 
 There are two options to customize the output:
 \begin{options}
-  \keychoice{pos}{side,sub}\Module{phases}\Default{side}
+  \keychoice{pos}{side,sub}\Module{phases}\Initial{side}
     Switch the position of the phase indicator.
-  \keyval{space}{dim}\Module{phases}\Default{.1333em}
+  \keyval{space}{dim}\Module{phases}\Initial{.1333em}
     Change the default spacing between compound a phase indicator if
     \keyis{pos}{side}. A \TeX\ dimension.
 \end{options}
@@ -1148,7 +1148,7 @@ they like.
 
 this is done with the following general option:
 \begin{options}
-  \keyval{formula}{method}\Default{chemformula}
+  \keyval{formula}{method}\Initial{chemformula}
     This\sinceversion{5.1} option let's you choose how chemical formulas are
     typeset.  Available methods are
     \begin{itemize}
@@ -1345,10 +1345,10 @@ the \pkg{elements} package.
 
 There are options which allow you to determine how the isotope is printed:
 \begin{options}
-  \keychoice{format}{super,side}\Module{isotopes}\Default{super}
+  \keychoice{format}{super,side}\Module{isotopes}\Initial{super}
     Either print the isotope number as superscript or to the right of the
     element symbol.
-  \keyval{side-connect}{input}\Module{isotopes}\Default{-}
+  \keyval{side-connect}{input}\Module{isotopes}\Initial{-}
     Determine what is printed between the element symbol and the isotope
     number if \keyis{format}{side}.
 \end{options}
@@ -1417,15 +1417,15 @@ projections.  It loads the \chemmodule{tikz} module.
 
 Several options allow customization:
 \begin{options}
-  \keyval{angle}{angle}\Module{newman}\Default{0}
+  \keyval{angle}{angle}\Module{newman}\Initial{0}
     Default angle.
-  \keyval{scale}{factor}\Module{newman}\Default{1}
+  \keyval{scale}{factor}\Module{newman}\Initial{1}
     Scale the whole projection by factor \meta{factor}.
-  \keyval{ring}{tikz}\Module{newman}\Default
+  \keyval{ring}{tikz}\Module{newman}\Initial
     Customize the ring with \TikZ\ keys.
-  \keyval{atoms}{tikz}\Module{newman}\Default
+  \keyval{atoms}{tikz}\Module{newman}\Initial
     Customize the nodes within which the atoms are set with \TikZ\ keys.
-  \keyval{back-atoms}{tikz}\Module{newman}\Default
+  \keyval{back-atoms}{tikz}\Module{newman}\Initial
     Explicitly customize the nodes of the back atoms with \TikZ\ keys.
 \end{options}
 
@@ -1471,16 +1471,16 @@ There are the following types available for \meta{type}:
 
 Depending on the type you have different options to modify the orbitals:
 \begin{options}
-  \keychoice{phase}{+,-}\Module{orbital}\Default{+}
+  \keychoice{phase}{+,-}\Module{orbital}\Initial{+}
     changes the phase of the orbital (all types)
-  \keyval{scale}{factor}\Module{orbital}\Default{1}
+  \keyval{scale}{factor}\Module{orbital}\Initial{1}
     changes the size of the orbital (all types)
-  \keyval{color}{color}\Module{orbital}\Default{black}
+  \keyval{color}{color}\Module{orbital}\Initial{black}
     changes the color of the orbital (all types)
-  \keyval{angle}{angle}\Module{orbital}\Default{0}
+  \keyval{angle}{angle}\Module{orbital}\Initial{0}
     rotates the orbitals with a p contribution counter clockwise (all types
     except \code{s})
-  \keybool{half}\Module{orbital}\Default{false}
+  \keybool{half}\Module{orbital}\Initial{false}
     displays only half an orbital (only \code{p})
 \end{options}
 
@@ -1588,11 +1588,11 @@ implements the following macro based on the same idea:
     names of \TikZ' nodes where the delimiters are placed.
 \end{commands}
 \begin{options}
-  \keychoice{delimiters}{\Marg{\meta{left}\meta{right}}}\Module{polymers}\Default{[]}
+  \keychoice{delimiters}{\Marg{\meta{left}\meta{right}}}\Module{polymers}\Initial{[]}
     This option demands two tokens as argument, the first being the opening
     brace, the second the closing brace.  A dot (\code{.}) denotes an empty
     delimiter.
-  \keyval{subscript}{subscript}\Module{polymers}\Default{\$n\$}
+  \keyval{subscript}{subscript}\Module{polymers}\Initial{\$n\$}
     Subscript to the right delimiter.
   \keyval{superscript}{superscript}\Module{polymers}
     Superscript to the right delimiter.
@@ -1685,11 +1685,11 @@ If you want to change the layout of the counter tags, you can use
 \end{commands}
 or use the following options:
 \begin{options}
-  \keyval{tag-open}{left delimiter}\Module{reactions}\Default{\{}
+  \keyval{tag-open}{left delimiter}\Module{reactions}\Initial{\cs*{\{}}
     \sinceversion{5.6}The left delimiter.
-  \keyval{tag-close}{right delimiter}\Module{reactions}\Default{\}}
+  \keyval{tag-close}{right delimiter}\Module{reactions}\Initial{\cs*{\}}}
     \sinceversion{5.6}The right delimiter.
-  \keyval{before-tag}{format}\Module{reactions}\Default
+  \keyval{before-tag}{format}\Module{reactions}\Initial
     \sinceversion{5.6}Code inserted before the tags.
 \end{options}
 
@@ -1707,7 +1707,7 @@ or use the following options:
 You\sinceversion{6.1} can also make reactions share a counter with math
 equations (by using the \code{equation} counter).
 \begin{options}
-  \keybool{own-counter}\Module{reactions}\Default{true}
+  \keybool{own-counter}\Module{reactions}\Initial{true}
     If set to false the reaction environments will use the \code{equation}
     counter instead of the \code{reaction} counter.
 \end{options}
@@ -1728,15 +1728,21 @@ or \pkg{fancyref}~\cite{pkg:fancyref} and have set \keyis{own-counter}{true}
 the \env{reaction} counter is supported by both packages and already set up by
 \chemmacros.
 
-For \pkg{fancyref} use the prefix \code{rct} by defining the following:
+For \pkg{fancyref} \chemmacros' uses the prefix \code{rct} by defining the
+following:
 \begin{sourcecode}
   \newcommand*\fancyrefrctlabelprefix{rct}
 \end{sourcecode}
+You can of course redefine \cs{fancyrefrctlabelprefix} into whatever suits you
+best.
 
 Also \pkg{hyperref}'s \cs*{autoref} is supported.
 \begin{options}
-  \keyval{autoref-name}{name}\Module{reactions}\Default{\cs*{ChemTranslate}\Marg{reaction}}
-    \sinceversion{6.1}Change the name used by \pkg{hyperref}'s \cs*{autoref}.
+  \keyval{autoref-name}{name}\Module{reactions}\Initial{\cs*{ChemTranslate}\Marg{reaction}}
+    \sinceversion{6.1}Change the name used by \pkg{hyperref}'s
+    \cs*{autoref}.
+
+    Alternatively you can just redefine \cs{reactionautorefname}.
 \end{options}
 
 \subsection{Own Reactions}
@@ -1801,14 +1807,15 @@ the reactions created with the \env{reaction} environment.
 The output of this list can be modified by two options:
 \begin{options}
   \keyval{list-name}{name of the
-    list}\Module{reactions}\Default{\cs*{ChemTranslate}\Marg{{list-of-reactions}}}
+    list}\Module{reactions}\Initial{\cs*{ChemTranslate}\Marg{{list-of-reactions}}}
     Let's you set the name of the list manually.  The default name is language
-    dependent, see section~\vref{sec:lang-module}.
+    dependent, see section~\vref{sec:lang-module}.  Alternatively you can
+    redefine \cs{reactionlistname}.
   \keyval{list-entry}{prefix to each
-    entry}\Module{reactions}\Default{\cs*{ChemTranslate}\Marg{reaction}}
+    entry}\Module{reactions}\Initial{\cs*{ChemTranslate}\Marg{reaction}}
     Let's you set a prefix to each list entry.  The default name is language
     dependent, see section~\vref{sec:lang-module}.
-  \keyval{list-heading-cmd}{code}\Module{reactions}\Default{\cs*{section}\sarg\Marg{\#1}}
+  \keyval{list-heading-cmd}{code}\Module{reactions}\Initial{\cs*{section}\sarg\Marg{\#1}}
     The\sinceversion{5.2} macro that is called at the beginning of the list.
     Inside of \meta{code} \code{\#1} refers to the actual heading of the list.
     The default setting is not entirely true: if a macro \cs*{chapter} is
@@ -1958,7 +1965,7 @@ Typical uses will look like this:
 
 \subsection{Options}
 \begin{options}
-  \keybool{initiate}\Module{reactants}\Default{false}
+  \keybool{initiate}\Module{reactants}\Initial{false}
     The \pkg{chemnum} package that is internally used for numbering the
     reactants offers two ways of initiating a new label: either when \cs{cmpd}
     is first used or through \cs{initcmpd}.  The \module{reactants} module
@@ -1970,7 +1977,7 @@ Typical uses will look like this:
     Reactants are automatically numbered in the order of their first
     appearance, while \option{initiate} numbers the compounds in the order in
     which they were declared in the preamble or in an external document.
-  \keybool{switch}\Module{reactants}\Default{false}
+  \keybool{switch}\Module{reactants}\Initial{false}
     While \cs{reactants} will output name and number of a reactant, its
     starred variant \cs{reactant}\sarg, will by default result in the name
     without the corresponding number. Setting \keyis{switch}{true}, globally
@@ -2057,19 +2064,19 @@ The options that change the units of the properties can be set with
 \cs{chemsetup} or in the optional argument of \cs{reactant}. Accepted units
 are units defined by the \pkg{siunitx} package or by the \module{units} module.
 \begin{options}
-  \keyval{mass-unit}{unit}\Module{reactants}\Default{\cs*{gram}}
+  \keyval{mass-unit}{unit}\Module{reactants}\Initial{\cs*{gram}}
     Change the unit of the \code{mass} property.
-  \keyval{volume-unit}{unit}\Module{reactants}\Default{\cs*{milli}\cs*{liter}}
+  \keyval{volume-unit}{unit}\Module{reactants}\Initial{\cs*{milli}\cs*{liter}}
     Change the unit of the \code{volume} property.
-  \keyval{fraction-unit}{unit}\Module{reactants}\Default{\code{w/w \cs*{percent}}}
+  \keyval{fraction-unit}{unit}\Module{reactants}\Initial{\code{w/w \cs*{percent}}}
     Change the unit of the \code{fraction} property.
-  \keyval{amount-unit}{unit}\Module{reactants}\Default{\cs*{milli}\cs*{mole}}
+  \keyval{amount-unit}{unit}\Module{reactants}\Initial{\cs*{milli}\cs*{mole}}
     Change the unit of the \code{amount} property.
-  \keyval{equiv-unit}{unit}\Module{reactants}\Default{\code{eq}}
+  \keyval{equiv-unit}{unit}\Module{reactants}\Initial{\code{eq}}
     Change the unit of the \code{equiv} property.
-  \keyval{concentration-unit}{unit}\Module{reactants}\Default{\cs*{Molar}}
+  \keyval{concentration-unit}{unit}\Module{reactants}\Initial{\cs*{Molar}}
     Change the unit of the \code{concentration} property.
-  \keyval{purity-unit}{unit}\Module{reactants}\Default{\cs*{percent}}
+  \keyval{purity-unit}{unit}\Module{reactants}\Initial{\cs*{percent}}
     Change the unit of the \code{purity} property.
 \end{options} 
 
@@ -2088,10 +2095,10 @@ output styles:
 \begin{options}
   \keychoice{reactant-output-style}{name-main-other,main-name-other,main-other-name}%
     \Module{reactants}\\[-\baselineskip]
-    \Default{name-main-other}
+    \Initial{name-main-other}
     Select one of the three predefined styles to determine the output style of
     the data and their units in the \cs{reactant} command.
-  \keychoice{solvent-output-style}{main-name,name-main}\Module{reactants}\Default{main-name}
+  \keychoice{solvent-output-style}{main-name,name-main}\Module{reactants}\Initial{main-name}
     Select one of the two predefined styles to determine the output style of
     the data and their units in the \cs{solvent} command.
 \end{options}
@@ -2125,7 +2132,7 @@ contents of the categories are typeset.
 \end{example}
 
 \begin{options}
-  \keychoice{main}{default,amount,equiv}\Module{reactants}\Default{default}
+  \keychoice{main}{default,amount,equiv}\Module{reactants}\Initial{default}
     By default, only \code{mass} and \code{volume} are assigned to the
     \code{main} category. Using the \option{main} option,  \code{equiv} or
     \code{amount} can be added to the main category. 
@@ -2142,7 +2149,7 @@ contents of the categories are typeset.
 \end{example}
 
 \begin{options}
-  \keybool{equivalents}\Module{reactants}\Default{true}
+  \keybool{equivalents}\Module{reactants}\Initial{true}
     Can be used to prevent \code{equiv} from being output while still keeping
     the corresponding information in the input code. If you used the
     \keyis{main}{equiv} option, the \keyis{equivalents}{false} option will be
@@ -2212,7 +2219,7 @@ module also offers the following \code{s} and \code{l} suffixed variants:
 \end{commands}
 
 \begin{options}
-  \keychoice{acronym-support}{acro,glossaries,none}\Module{reactants}\Default{none}
+  \keychoice{acronym-support}{acro,glossaries,none}\Module{reactants}\Initial{none}
     Can be used to select, which of the two packages \pkg{acro} or
     \pkg{glossaries-extra} is used in the background in order to format and
     sort acronyms.
@@ -2231,7 +2238,7 @@ As mentioned before, \cs{printreactants} can be used to print a list of all
 used reactants and their numbers. The \module{reactants} module internally
 uses either \pkg{longtable} or \pkg{xltabular} to typeset this list:
 \begin{options}
-  \keychoice{printreactants-style}{xltabular,longtable,none}\Module{reactants}\Default{none}
+  \keychoice{printreactants-style}{xltabular,longtable,none}\Module{reactants}\Initial{none}
     Can be used to switch between \pkg{longtable} and \pkg{xltabular} which
     are responsible for formatting the list of reactants. Be aware that with
     \code{longtable}, the column widths are hard coded, thus you could
@@ -2277,33 +2284,33 @@ There are a number of options that can be used to modify the typeset result:
     \sinceversion{5.11}Allows to apply arbitrary \meta{code} in front of the
     typeset oxidation numbers.  The last command may expect the oxidation
     number as an argument.  An example might be \cs*{textcolor}\Marg{red}.
-  \keybool{parse}\Module{redox}\Default{true}
+  \keybool{parse}\Module{redox}\Initial{true}
     When \code{false} an arbitrary entry can be used for \code{<number>}.
-  \keybool{roman}\Module{redox}\Default{false}
+  \keybool{roman}\Module{redox}\Initial{false}
     Switches from Roman to Arabic numbers.
-  \keychoice{pos}{top,super,side}\Module{redox}\Default{super}
+  \keychoice{pos}{top,super,side}\Module{redox}\Initial{super}
     \code{top} places \meta{number} above \meta{atom}, \code{super} to the
     upper right as superscript and \code{side} to the right and inside
     brackets.  Both \code{super} and \code{side} follow \ac{iupac}
     recommendation, \code{top} does not!
-  \keybool{explicit-sign}\Module{redox}\Default{false}
+  \keybool{explicit-sign}\Module{redox}\Initial{false}
     Shows the $+$ for positive numbers and the $\pm$ for $0$.
-  \keybool{explizit-zero-sign}\Module{redox}\Default{true}
+  \keybool{explizit-zero-sign}\Module{redox}\Initial{true}
     Only\sinceversion{5.4} if both \option{explicit-sign} and
     \option{explicit-zero-sign} are set to \code{true} $\pm0$ will be
     printed.
-  \keychoice{decimal-marker}{comma,point}\Module{redox}\Default{point}
+  \keychoice{decimal-marker}{comma,point}\Module{redox}\Initial{point}
     Choice for the decimal marker for formal oxidation numbers like \ox{1.2,X}.
-  \keychoice{align}{center,right}\Module{redox}\Default{center}
+  \keychoice{align}{center,right}\Module{redox}\Initial{center}
     Center the oxidation number relative to the atom or right-align it.
-  \keyval{side-connect}{code}\Module{redox}\Default{\cs*{,}}
+  \keyval{side-connect}{code}\Module{redox}\Initial{\cs*{,}}
     Code that is inserted between atom and oxidation number if
     \keyis{pos}{side} is used.
-  \keyval{text-frac}{cs}\Module{redox}\Default{\cs{chemfrac}\Oarg{text}\Marg{\#1}\Marg{\#2}}
+  \keyval{text-frac}{cs}\Module{redox}\Initial{\cs{chemfrac}\Oarg{text}\Marg{\#1}\Marg{\#2}}
     The fraction macro that is used for fractions if \keyis{pos}{side} is
     used.  \meta{cs} must be a macro that takes two mandatory arguments, the
     first for the numerator and the second for the denominator.
-  \keyval{super-frac}{cs}\Module{redox}\Default{\cs{chemfrac}\Oarg{superscript}%
+  \keyval{super-frac}{cs}\Module{redox}\Initial{\cs{chemfrac}\Oarg{superscript}%
     \Marg{\#1}\Marg{\#2}}
     The fraction macro that is used for fractions if \keyis{pos}{top} or
     \keyis{pos}{super} is used.  \meta{cs} must be a macro that takes two
@@ -2396,7 +2403,7 @@ the text.
 
 The default length of the vertical lines can be customized with the option
 \begin{options}
-  \keyval{dist}{dim}\Module{redox}\Default{.6em}
+  \keyval{dist}{dim}\Module{redox}\Initial{.6em}
     A \TeX\ dimension.
 \end{options}
 
@@ -2407,7 +2414,7 @@ The default length of the vertical lines can be customized with the option
 \end{example}
 
 \begin{options}
-  \keyval{sep}{dim}\Module{redox}\Default{.2em}
+  \keyval{sep}{dim}\Module{redox}\Initial{.2em}
     The option can be used to change the distance between the atom and the
     beginning of the line.
 \end{options}
@@ -2518,10 +2525,13 @@ If\sinceversion{5.6} you are using either \pkg{cleveref}~\cite{pkg:cleveref}
 or \pkg{fancyref}~\cite{pkg:fancyref} the \env{scheme} counter is supported by
 both packages and already set up by \chemmacros.
 
-For \pkg{fancyref} use the prefix \code{sch} by defining the following:
+For \pkg{fancyref} \chemmacros\ uses the prefix \code{sch} by defining the
+following:
 \begin{sourcecode}
   \newcommand*\fancyrefschlabelprefix{sch}
 \end{sourcecode}
+You can of course redefine \cs{fancyrefschlabelprefix} into whatever suits you
+best.
 
 \section{The \chemmodule*{spectroscopy} Module}\label{sec:spectroscopy-module}
 
@@ -2652,54 +2662,54 @@ of experimental data.
 The output of the environment and of the NMR commands can be customized be a
 number of options.  
 \begin{options}
-  \keyval{unit}{unit}\Module{spectroscopy}\Default{\cs*{mega}\cs*{hertz}}
+  \keyval{unit}{unit}\Module{spectroscopy}\Initial{\cs*{mega}\cs*{hertz}}
     The used default unit.
-  \keychoice{nucleus}{\Marg{\meta{num},\meta{atom}}}\Module{spectroscopy}\Default{\Marg{1,H}}
+  \keychoice{nucleus}{\Marg{\meta{num},\meta{atom}}}\Module{spectroscopy}\Initial{\Marg{1,H}}
     The used default nucleus.
-  \keyval{connector}{code}\Module{spectroscopy}\Default{-}
+  \keyval{connector}{code}\Module{spectroscopy}\Initial{-}
     Places \meta{code} between the nucleus and the method.
-  \keyval{method}{code}\Module{spectroscopy}\Default{NMR}
+  \keyval{method}{code}\Module{spectroscopy}\Initial{NMR}
     The measuring method.
-  \keyval{format}{commands}\Module{spectroscopy}\Default
+  \keyval{format}{commands}\Module{spectroscopy}\Initial
     For example \cs*{bfseries}.
-  \keyval{nmr-base-format}{commands}\Module{spectroscopy}\Default
+  \keyval{nmr-base-format}{commands}\Module{spectroscopy}\Initial
     \sinceversion{5.8}Formatting instructions for the NMR base.
-  \keychoice{pos-number}{side,sub,super}\Module{spectroscopy}\Default{side}
+  \keychoice{pos-number}{side,sub,super}\Module{spectroscopy}\Initial{side}
     Position of the number next to the atom.
-  \keyval{coupling-symbol}{code}\Module{spectroscopy}\Default{J}
+  \keyval{coupling-symbol}{code}\Module{spectroscopy}\Initial{J}
     The symbol used for the coupling constant.
-  \keyval{coupling-unit}{unit}\Module{spectroscopy}\Default{\cs*{hertz}}
+  \keyval{coupling-unit}{unit}\Module{spectroscopy}\Initial{\cs*{hertz}}
     A \pkg{siunitx} unit.
-  \keychoice{coupling-pos}{side,sub}\Module{spectroscopy}\Default{side}
+  \keychoice{coupling-pos}{side,sub}\Module{spectroscopy}\Initial{side}
     Placement of the coupling nuclei next to the symbol $J$ (or rather the
     symbol specified with option \option{coupling-symbol}).
-  \keyval{coupling-nuclei-pre}{code}\Module{spectroscopy}\Default{(}
+  \keyval{coupling-nuclei-pre}{code}\Module{spectroscopy}\Initial{(}
     Code inserted before the coupling nuclei when \keyis{coupling-pos}{side}.
-  \keyval{coupling-nuclei-post}{code}\Module{spectroscopy}\Default{)}
+  \keyval{coupling-nuclei-post}{code}\Module{spectroscopy}\Initial{)}
     Code inserted after the coupling nuclei when \keyis{coupling-pos}{side}.
-  \keyval{coupling-bonds-pre}{code}\Module{spectroscopy}\Default
+  \keyval{coupling-bonds-pre}{code}\Module{spectroscopy}\Initial
     Code inserted before the coupling bonds.
-  \keyval{coupling-bonds-post}{code}\Module{spectroscopy}\Default{\cs*{!}}
+  \keyval{coupling-bonds-post}{code}\Module{spectroscopy}\Initial{\cs*{!}}
     Code inserted after the coupling bonds.
-  \keyval{coupling-pos-cs}{cs}\Module{spectroscopy}\Default{\cs*{@firstofone}}
+  \keyval{coupling-pos-cs}{cs}\Module{spectroscopy}\Initial{\cs*{@firstofone}}
     Set the macro that prints the number set with the \cs{pos} macro.  This
     needs to be a command with one mandatory argument.
-  \keyval{atom-number-cs}{cs}\Module{spectroscopy}\Default{\cs*{@firstofone}}
+  \keyval{atom-number-cs}{cs}\Module{spectroscopy}\Initial{\cs*{@firstofone}}
     Set the macro that prints the number set with the \cs{\#} macro.  This
     needs to be a command with one mandatory argument.
-  \keyval{atom-number-space}{dim}\Module{spectroscopy}\Default{.16667em}
+  \keyval{atom-number-space}{dim}\Module{spectroscopy}\Initial{.16667em}
     Horizontal\sinceversion{5.3} space inserted between number and atom
     (printed by \cs{\#}).
-  \keybool{parse}\Module{spectroscopy}\Default{true}
+  \keybool{parse}\Module{spectroscopy}\Initial{true}
     Treat the solvent as \chemformula\ formula (this depends on the setting of
     the \option{formula} option, see~\vref{sec:formula-module}) or not.
-  \keyval{delta}{tokens}\Module{spectroscopy}\Default
+  \keyval{delta}{tokens}\Module{spectroscopy}\Initial
     The \meta{tokens} are added after $\delta$.
-  \keybool{list}\Module{spectroscopy}\Default{false}
+  \keybool{list}\Module{spectroscopy}\Initial{false}
     The environment \env{experimental} is formatted as a list
   \keyval{list-setup}{setup}\Module{spectroscopy}
     Setup of the list. See below for the default settings.
-  \keybool{use-equal}\Module{spectroscopy}\Default{false}
+  \keybool{use-equal}\Module{spectroscopy}\Initial{false}
     Add equal sign after \cs{NMR} and \cs{data}.
 \end{options}
 
@@ -2949,19 +2959,19 @@ This macro can be used to write the thermodynamic state variables.
 
 These options are available:
 \begin{options}
-  \keyval{pre}{text}\Module{thermodynamics}\Default{\cs{changestate}}
+  \keyval{pre}{text}\Module{thermodynamics}\Initial{\cs{changestate}}
     Code inserted before the variable.  Inserted in text mode.
-  \keyval{post}{text}\Module{thermodynamics}\Default
+  \keyval{post}{text}\Module{thermodynamics}\Initial
     Code inserted after the variable. Inserted in text mode.
-  \keyval{superscript-left}{text}\Module{thermodynamics}\Default
+  \keyval{superscript-left}{text}\Module{thermodynamics}\Initial
     The left superscript. Inserted in text mode.
-  \keyval{superscript-right}{text}\Module{thermodynamics}\Default{\cs{standardstate}}
+  \keyval{superscript-right}{text}\Module{thermodynamics}\Initial{\cs{standardstate}}
     The right superscript. Inserted in text mode.
   \keyval{superscript}{text}\Module{thermodynamics}
     An alias of \option{superscript-right}.
-  \keyval{subscript-left}{text}\Module{thermodynamics}\Default
+  \keyval{subscript-left}{text}\Module{thermodynamics}\Initial
     The left subscript. Inserted in text mode.
-  \keyval{subscript-right}{text}\Module{thermodynamics}\Default
+  \keyval{subscript-right}{text}\Module{thermodynamics}\Initial
     The right subscript. Inserted in text mode.
   \keyval{subscript}{text}\Module{thermodynamics}
     An alias of \option{subscript-left}.
@@ -3001,28 +3011,28 @@ number and unit:
 \end{example}
 
 \begin{options}
-  \keyval{pre}{text}\Module{thermodynamics}\Default{\cs{changestate}}
+  \keyval{pre}{text}\Module{thermodynamics}\Initial{\cs{changestate}}
     Code inserted before the variable.  Inserted in text mode.
-  \keyval{post}{text}\Module{thermodynamics}\Default
+  \keyval{post}{text}\Module{thermodynamics}\Initial
     Code inserted after the variable.  Inserted in text mode.
-  \keyval{superscript-left}{text}\Module{thermodynamics}\Default
+  \keyval{superscript-left}{text}\Module{thermodynamics}\Initial
     The left superscript.  Inserted in text mode.
-  \keyval{superscript-right}{text}\Module{thermodynamics}\Default{\cs{standardstate}}
+  \keyval{superscript-right}{text}\Module{thermodynamics}\Initial{\cs{standardstate}}
     The right superscript. Inserted in text mode.
   \keyval{superscript}{text}\Module{thermodynamics}
     An alias of \option{superscript-right}.
-  \keyval{subscript-left}{text}\Module{thermodynamics}\Default
+  \keyval{subscript-left}{text}\Module{thermodynamics}\Initial
     The left subscript.  Inserted in text mode.
-  \keyval{subscript-right}{text}\Module{thermodynamics}\Default
+  \keyval{subscript-right}{text}\Module{thermodynamics}\Initial
     The right subscript.  Inserted in text mode.
   \keyval{subscript}{text}\Module{thermodynamics}
     An alias of \option{subscript-left}.
-  \keychoice{subscript-pos}{left,right}\Module{thermodynamics}\Default{left}
+  \keychoice{subscript-pos}{left,right}\Module{thermodynamics}\Initial{left}
     Determines whether the subscript given in \darg{subscript} is placed to the
     left or the right of the variable.
-  \keyval{symbol}{symbol}\Module{thermodynamics}\Default
+  \keyval{symbol}{symbol}\Module{thermodynamics}\Initial
     The symbol of the variable.  Inserted in math mode.
-  \keyval{unit}{unit}\Module{thermodynamics}\Default
+  \keyval{unit}{unit}\Module{thermodynamics}\Initial
     A valid \pkg{siunitx} unit.
 \end{options}
 
@@ -3061,28 +3071,28 @@ its settings:
 \end{commands}
 The argument \meta{options} is a comma separated list of key/value options:
 \begin{options}
-  \keyval{pre}{text}\Module{thermodynamics}\Default{\cs{changestate}}
+  \keyval{pre}{text}\Module{thermodynamics}\Initial{\cs{changestate}}
     Code inserted before the variable.  Inserted in text mode.
-  \keyval{post}{text}\Module{thermodynamics}\Default
+  \keyval{post}{text}\Module{thermodynamics}\Initial
     Code inserted after the variable.  Inserted in text mode.
-  \keyval{superscript-left}{text}\Module{thermodynamics}\Default
+  \keyval{superscript-left}{text}\Module{thermodynamics}\Initial
     The left superscript.  Inserted in text mode.
-  \keyval{superscript-right}{text}\Module{thermodynamics}\Default{\cs{standardstate}}
+  \keyval{superscript-right}{text}\Module{thermodynamics}\Initial{\cs{standardstate}}
     The right superscript.
   \keyval{superscript}{text}\Module{thermodynamics}
     An alias of \option{superscript-right}.
-  \keyval{subscript-left}{text}\Module{thermodynamics}\Default
+  \keyval{subscript-left}{text}\Module{thermodynamics}\Initial
     The left subscript.  Inserted in text mode.
-  \keyval{subscript-right}{text}\Module{thermodynamics}\Default
+  \keyval{subscript-right}{text}\Module{thermodynamics}\Initial
     The right subscript.  Inserted in text mode.
   \keyval{subscript}{text}\Module{thermodynamics}
     An alias of \option{subscript-left}.
-  \keychoice{subscript-pos}{left,right}\Module{thermodynamics}\Default{left}
+  \keychoice{subscript-pos}{left,right}\Module{thermodynamics}\Initial{left}
     Determines whether the subscript given in \darg{subscript} is placed to the
     left or the right of the variable.
-  \keyval{symbol}{symbol}\Module{thermodynamics}\Default
+  \keyval{symbol}{symbol}\Module{thermodynamics}\Initial
     The symbol of the variable.
-  \keyval{unit}{unit}\Module{thermodynamics}\Default
+  \keyval{unit}{unit}\Module{thermodynamics}\Initial
     A valid \pkg{siunitx} unit.
 \end{options}
 
@@ -3292,7 +3302,7 @@ loads the package \pkg{translations}~\cite{pkg:translations}.
 
 This module defines the following option:
 \begin{options}
-  \keychoice{language}{auto,\meta{language}}\Default{auto}
+  \keychoice{language}{auto,\meta{language}}\Initial{auto}
     If set to \code{auto} \chemmacros\ will detect the language used by
     \pkg{babel}~\cite{pkg:babel} or \pkg{polyglossia}~\cite{pkg:polyglossia}
     automatically, the fallback translation is English and will be used if no 

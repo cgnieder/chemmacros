@@ -451,7 +451,7 @@ Version history
                            - re-write translations module giving keys per
                              language rather than vice versa
                            - fix issue with phases/sub=true (issue #49)
-2022/??/?? - version 6.??  - use LaTeX's release mechanism and provide v4 and
+2022/03/12 - version 6.2a  - use LaTeX's release mechanism and provide v4 and
                              v5
                            - fix small but annoying bug in the reactions
                              module

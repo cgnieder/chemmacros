@@ -1,4 +1,4 @@
-\ProvidesClass{chemmacros-manual}[2022/03/05]
+\ProvidesClass{chemmacros-manual}[2022/03/11]
 
 \LoadClass[load-preamble,add-index]{cnltx-doc}
 \RequirePackage{imakeidx}
@@ -301,6 +301,8 @@
     #3\ifblank{#1}{}{\ifblank{#3}{}{ }An alias for this command is \cs{#1}.}%
 }
 
+\NewCommandCopy\Initial\Default
+
 \newidxcmd\chemmodule{\code{#1}}[ (module)]
 \newidxcmd\tikzdecoration{\code{#1}}[ (\TikZ\ decoration)]
 \AtEndPreamble{%
@@ -534,5 +536,6 @@
 \chemmacros@add@version{2022-01-18}{6.0a}
 \chemmacros@add@version{2022-02-13}{6.1}
 \chemmacros@add@version{2022-03-05}{6.2}
+\chemmacros@add@version{2022-03-11}{6.2a}
 
 \endinput
