@@ -158,7 +158,7 @@
     pos-number / side .code:n =
       \tl_set:Nn \l__chemmacros_nmr_position_tl {-}
       \bool_set_true:N \l__chemmacros_nmr_position_side_bool ,
-    pos-number /  .initial:n  = side ,
+    pos-number    .initial:n  = side ,
     coupling-unit .tl_set:N   = \l__chemmacros_nmr_coupling_unit_tl ,
     coupling-pos  .choice: ,
     coupling-pos / sub .code:n =
@@ -364,7 +364,7 @@
         \bool_if:NF \l__chemmacros_nmr_position_side_bool
           {
             \exp_not:V \l__chemmacros_nmr_position_tl
-            \exp_not:n { _{#1} }
+            \exp_not:n { {#1} }
           }
       }
     \bool_if:NT \l__chemmacros_nmr_position_side_bool
