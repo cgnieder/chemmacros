@@ -4918,9 +4918,17 @@
             \@starttoc {#2}
             \legacy_if:nT {@restonecol} { \twocolumn }
           }
-        \chemmacros_patch_cmd:Nnn \@chapter
-          { \addtocontents }
-          { \addtocontents {#2} { \protect \addvspace {10\p@} } \addtocontents }
+        \cs_if_exist:NTF \NR@chapter
+          {
+            \chemmacros_patch_cmd:Nnn \NR@chapter
+              { \addtocontents }
+              { \addtocontents {#2} { \protect \addvspace {10\p@} } \addtocontents }
+          }
+          {
+            \chemmacros_patch_cmd:Nnn \@chapter
+              { \addtocontents }
+              { \addtocontents {#2} { \protect \addvspace {10\p@} } \addtocontents }
+          }
       }
       {
         \cs_new_protected:cpn {listof#1s}
@@ -6712,7 +6720,7 @@
               {xltabular}
               {
                 \chemmacros_if_package_loaded:nTF {xltabular}
-                  {	  
+                  {
                     \bool_if:nTF {#1}
                       {
                         \begin {xltabular}
@@ -6738,7 +6746,7 @@
               {longtable}
               {
                 \chemmacros_if_package_loaded:nTF {longtable}
-                  {	  
+                  {
                     \bool_if:nTF {#1}
                       {
                         \begin {longtable}[l]
@@ -6760,7 +6768,7 @@
                   }
               }
             }
-	}
+        }
         { \msg_warning:nn {chemmacros} {missing-printreactants-style} }
     \group_end:
   }
